@@ -1,7 +1,7 @@
-=== build start 2026-10-15T06:02:36Z
+=== build start 2026-10-15T14:08:33Z
 Build completed successfully (43 jobs).
-=== build exit 0 end 2026-10-15T06:02:36Z
-=== replay every module with leanchecker (about 30 minutes)
+=== build exit 0 end 2026-10-15T14:08:33Z
+=== replay every module with leanchecker, 4 at a time
 OK   LeanCheckedNetwork.CircleOnly.AllInputs
 OK   LeanCheckedNetwork.CircleOnly.Rows00
 OK   LeanCheckedNetwork.CircleOnly.Rows01
@@ -42,11 +42,13 @@ OK   LeanCheckedNetwork.Trained.Rows14
 OK   LeanCheckedNetwork.Trained.Rows15
 OK   LeanCheckedNetwork.Trained.Table
 OK   LeanCheckedNetwork.Trained.Weights
-OK   LeanCheckedNetwork
+replayed 40 of 40 modules
 === planted fault (must be rejected by the kernel)
 rejected by the kernel, as it should be:
 expected_fail/FaultRow.lean:18:2: error: (kernel) application type mismatch
 === axioms
 'LeanCheckedNetwork.Trained.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
 'LeanCheckedNetwork.CircleOnly.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
-=== done 2026-10-15T08:31:02Z
+both theorems use only the standard axioms
+=== done 2026-10-15T14:29:32Z
+script exit 0

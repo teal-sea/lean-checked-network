@@ -79,7 +79,7 @@ multiplication updates every score at once. `answer_eq_fastAnswer` proves the fa
 exactly the network's answer, under checks the kernel also performs for every input. With it,
 both networks checked in 26 minutes on a 4-core machine (37 minutes in the audit's clean
 rebuild, with one core busy), at about 2 GB per Lean process. `run_lean.sh` then replays every
-module with `leanchecker`, four at a time (about 30 more minutes).
+module with `leanchecker`, four at a time (about 20 more minutes).
 
 ## How the circle explanation becomes a proof
 

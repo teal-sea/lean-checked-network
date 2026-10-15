@@ -14,7 +14,9 @@ echo "=== build exit $b end $(date -u +%FT%TZ)"
 [ $b -eq 0 ] || status=1
 JOBS=${JOBS:-4}
 echo "=== replay every module with leanchecker, $JOBS at a time"
-mods=$( (find LeanCheckedNetwork -name '*.lean' -not -path '*/Fault/*'; echo LeanCheckedNetwork.lean) | sed 's/\.lean$//; s|/|.|g' | sort)
+# Every module with declarations. The root file LeanCheckedNetwork.lean only imports these; replaying
+# it rechecks all of them at once (over 9 GB), so it is left out: each declaration is replayed once here.
+mods=$(find LeanCheckedNetwork -name '*.lean' -not -path '*/Fault/*' | sed 's/\.lean$//; s|/|.|g' | sort)
 nmods=$(printf '%s\n' $mods | wc -l)
 printf '%s\n' $mods | xargs -P "$JOBS" -I{} sh -c \
   'if lake env leanchecker {} > /tmp/leanchecker.{}.out 2>&1; then echo "OK   {}"; else echo "FAIL {}"; cat /tmp/leanchecker.{}.out; fi' \

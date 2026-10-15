@@ -1,5 +1,7 @@
 # A trained network, checked by Lean
 
+[![check](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml/badge.svg)](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml)
+
 A small neural network learned to add on a clock with 113 hours: given two numbers `a` and
 `b` from 0 to 112, it answers `(a + b) mod 113`. It was trained on half of the 12,769 possible
 pairs. This repository proves, with Lean's kernel, that it is right on every pair, and shows how
@@ -35,7 +37,7 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | --- | --- |
 | The trained network answers `(a + b) mod 113` for all 12,769 pairs | kernel-checked: `LeanCheckedNetwork.Trained.adds_mod_113` |
 | Keep only one circle wave per neuron (each weight table keeps its own amplitude and phase at the neuron's frequency), rounded to whole numbers, drop everything else: still right on all 12,769 pairs, smallest margin 1,980,696 | kernel-checked: `LeanCheckedNetwork.CircleOnly.adds_mod_113` |
-| Both theorems re-checked by independent checkers: `leanchecker` replayed every module (41 of 41 in `lean_run.log`), and nanoda, a separate type checker written in Rust, checked the three main theorems (2,569 declarations, in the audit) | kernel-checked twice (see `AUDIT.md`) |
+| Both theorems re-checked by independent checkers: `leanchecker` replayed every module that contains a declaration (40 of 40 in `lean_run.log`), and nanoda, a separate type checker written in Rust, checked the three main theorems (2,569 declarations, in the audit) | kernel-checked twice (see `AUDIT.md`) |
 | Swapping the read-out rows of answers 0 and 1 (226 pairs then wrong) makes the same proof fail | kernel rejection: `lean/expected_fail/FaultRow.lean` |
 | The circle explanation, with every error bounded exactly, proves the right answer for all 12,769 pairs (tightest pair keeps 1.7% of the margin) | derived (`mechanism.py`, `MECHANISM.md`) |
 | No single weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one weight change can shift the gap between two scores (at most 254 × 255² = 16,516,350) | derived |
@@ -77,7 +79,7 @@ multiplication updates every score at once. `answer_eq_fastAnswer` proves the fa
 exactly the network's answer, under checks the kernel also performs for every input. With it,
 both networks checked in 26 minutes on a 4-core machine (37 minutes in the audit's clean
 rebuild, with one core busy), at about 2 GB per Lean process. `run_lean.sh` then replays every
-module with `leanchecker` (about 2.5 more hours, one module at a time; 41 of 41 passed).
+module with `leanchecker`, four at a time (about 30 more minutes).
 
 ## How the circle explanation becomes a proof
 

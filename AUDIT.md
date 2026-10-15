@@ -24,7 +24,7 @@ not in this repository.
   main theorems and for `answer_eq_fastAnswer`. A scan of all 857 constants found no axiom,
   `opaque`, `extern` or `implemented_by`.
 - **Independent checkers.** `leanchecker` (shipped with the toolchain) replayed all 40 modules:
-  40 OK (the final `lean_run.log` replays 41, counting the root file). **nanoda 0.4.17, a separate type checker written in Rust, checked the three main
+  40 OK. (`run_lean.sh` replays the same 40; the root file only imports them.) **nanoda 0.4.17, a separate type checker written in Rust, checked the three main
   theorems: 2,569 declarations, no errors**, standard axioms only. lean4lean could not read this
   toolchain's files; con-ron did not finish in 75 minutes.
 - **The fast evaluator's checks bite.** Weakening any of them (the digit bound, the range

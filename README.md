@@ -2,12 +2,20 @@
 
 A small neural network learned to add on a clock with 113 hours: given two numbers `a` and
 `b` from 0 to 112, it answers `(a + b) mod 113`. It was trained on half of the 12,769 possible
-pairs. This repository proves, with Lean's kernel, that the trained network gives the right
-answer on **every** pair, including the half it never saw. It also shows **how** the network
-does it: each neuron turns numbers into points on a circle, and the answer comes from adding
-angles. Lean checks that the circle waves alone, rounded to whole numbers, still get every pair
-right, and an exact calculation (not yet in Lean) proves every answer from the circle
-explanation plus explicit error bounds.
+pairs. This repository proves, with Lean's kernel, that it is right on every pair, and shows how
+it works: each neuron turns numbers into points on a circle, and the answer comes from adding
+angles.
+
+**In short**
+
+- **It is right everywhere.** Lean proves the trained network answers `(a + b) mod 113` for all
+  12,769 pairs, including the 6,385 it never saw in training. A second, independent proof
+  checker confirms it.
+- **The circles are the mechanism.** Cut every neuron down to its single circle wave and Lean
+  proves the network is still right everywhere. Remove the circle waves instead and it gets 50
+  of 12,769 right.
+- **The explanation proves every answer.** An exact calculation built only from the circle
+  explanation and explicit error bounds proves all 12,769 answers (in Python, not yet in Lean).
 
 ![the circle, from the trained weights](figures/circle.svg)
 
@@ -27,7 +35,7 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | --- | --- |
 | The trained network answers `(a + b) mod 113` for all 12,769 pairs | kernel-checked: `LeanCheckedNetwork.Trained.adds_mod_113` |
 | Keep only one circle wave per neuron (each weight table keeps its own amplitude and phase at the neuron's frequency), rounded to whole numbers, drop everything else: still right on all 12,769 pairs, smallest margin 1,980,696 | kernel-checked: `LeanCheckedNetwork.CircleOnly.adds_mod_113` |
-| Both theorems re-checked by independent checkers: `leanchecker` replayed all 40 modules, and nanoda (a separate type checker written in Rust) checked the three main theorems, 2,569 declarations | kernel-checked twice (see `AUDIT.md`) |
+| Both theorems re-checked by independent checkers: `leanchecker` replayed every module (41 of 41 in `lean_run.log`), and nanoda, a separate type checker written in Rust, checked the three main theorems (2,569 declarations, in the audit) | kernel-checked twice (see `AUDIT.md`) |
 | Swapping the read-out rows of answers 0 and 1 (226 pairs then wrong) makes the same proof fail | kernel rejection: `lean/expected_fail/FaultRow.lean` |
 | The circle explanation, with every error bounded exactly, proves the right answer for all 12,769 pairs (tightest pair keeps 1.7% of the margin) | derived (`mechanism.py`, `MECHANISM.md`) |
 | No single weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one weight change can shift the gap between two scores (at most 254 × 255² = 16,516,350) | derived |
@@ -35,8 +43,10 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | 114 of the 128 neurons are alive; each puts a median 97% of its weight energy into one circle frequency | measured |
 | In all 114 live neurons, the largest leftover piece is the wave at three times the neuron's frequency | measured |
 
-The kernel run's output is in `lean_run.log`. The claims were attacked by three independent
-reviewing agents on 2026-10-15; what they found and what changed is in `AUDIT.md`.
+The full check's output is in `lean_run.log`; `lean_run.first.log` is the first run, kept because
+its planted-fault check was broken and the correction is recorded there. The claims were
+attacked by three reviewing agents on 2026-10-15; what they found and what changed is in
+`AUDIT.md`.
 
 ## The network
 
@@ -81,18 +91,37 @@ number in it comes from the explanation. Details, checks and costs are in `MECHA
 
 ## Reproduce
 
+Check everything with the committed weights (Python needs only numpy; Lean needs elan, version
+in `lean/lean-toolchain`):
+
 ```bash
-python3 train.py 113 128 0 1e-2 1.0 0.5 20000 runs/p113_h128.npz   # ~20 min on one core; reproduces network/trained.npz exactly
-cp runs/p113_h128.npz network/trained.npz
-python3 circle_only.py network/trained.npz network/circle_only.npz
-python3 mechanism.py network/trained.npz --diag
-python3 gen_lean.py network/trained.npz Trained 16
-python3 gen_lean.py network/circle_only.npz CircleOnly 16
-./run_lean.sh                       # needs elan; Lean version in lean/lean-toolchain
+./run_lean.sh                                # build, replay every module, planted fault, axioms: ~3 h on 4 cores
+python3 mechanism.py network/trained.npz     # the circle proof and its soundness checks: ~10 s, non-zero exit on failure
 ```
 
-`network/` holds the exact weights used here, so the Lean step can be rerun without training.
-Python needs only numpy.
+Rebuild from scratch:
+
+```bash
+python3 train.py 113 128 0 1e-2 1.0 0.5 20000 runs/p113_h128.npz   # ~20 min on one core; same integer weights as network/trained.npz
+python3 circle_only.py network/trained.npz network/circle_only.npz
+python3 gen_lean.py network/trained.npz Trained 16                 # writes the Lean weights and row proofs
+python3 gen_lean.py network/circle_only.npz CircleOnly 16
+python3 figure.py network/trained.npz figures/circle.svg
+```
+
+## Files
+
+| Path | What it is |
+| --- | --- |
+| `network/` | the frozen weights: trained, circle-only, and the planted fault |
+| `lean/LeanCheckedNetwork/Network.lean` | the network, defined in Lean |
+| `lean/LeanCheckedNetwork/Fast.lean` | the fast evaluator and the proof that it equals the network |
+| `lean/LeanCheckedNetwork/Trained/`, `CircleOnly/` | weights, one proof per row, and the main theorem `adds_mod_113` (generated by `gen_lean.py`) |
+| `lean/expected_fail/FaultRow.lean` | the planted fault; it must be rejected |
+| `train.py`, `circle_only.py`, `mechanism.py`, `figure.py`, `gen_lean.py` | training, the circle-only network, the circle proof, the figure, Lean generation |
+| `run_lean.sh`, `lean_run.log` | the full check and its output |
+| `MECHANISM.md`, `AUDIT.md` | the circle proof in detail; the adversarial audit |
+| `runs/` | training logs |
 
 ## Prior work, and what is new here
 

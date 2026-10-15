@@ -45,7 +45,7 @@ not in this repository.
 | False: "the 64-neuron run got 2 or 3 pairs wrong at every checkpoint"; it was right on all pairs at step 12,000 | README corrected |
 | The circle certificate's 82% came from taking each table's worst case separately; taking the worst case over the wrong answers jointly certifies **all 12,769 pairs** with the same bounds | `mechanism.py` now reports both; README and MECHANISM.md updated |
 | Cost overstated: "a ninth of the multiplications" compared 2^200-sized products with 64-bit ones, and "about p²·H (21 million)" was not p²·H | Restated: the certificate is not faster (6 s against 0.3 s in numpy); its value is that it is built from the explanation |
-| "About 20 CPU-hours" for the direct Lean route was an extrapolation, called measured in the vault | Restated as 7 to 20 CPU-hours, extrapolated from one row in two encodings |
+| "About 20 CPU-hours" for the direct Lean route was an extrapolation, not a measurement | Restated as 7 to 20 CPU-hours, extrapolated from one row in two encodings |
 | `run_lean.sh` trusted `lake build` and `#print axioms`, which a `set_option debug.skipKernelTC true` can fool (shown with a planted `2 + 2 = 5`) | The script now replays every module with `leanchecker`, which rejects that trick, and exits non-zero on any failure. The package sets no such option |
 | Figure caption "always turns by the same angle" | Now "on average"; steps range from 0.56 to 1.42 of 11/113 of a turn |
 | The circle-only weights reach 130, outside the [-127, 127] stated for the frozen weights | Stated |

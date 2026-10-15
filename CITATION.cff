@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "A trained network, checked by Lean"
+abstract: >-
+  A two-layer neural network trained on half of the pairs of addition modulo 113, with Lean 4
+  kernel-checked proofs that its frozen integer weights give the right answer on all 12,769
+  inputs and that its circle (Fourier) waves alone suffice, plus an exact certificate built from
+  that explanation.
+authors:
+  - family-names: Lince
+    given-names: Thomas
+repository-code: "https://github.com/teal-sea/lean-checked-network"
+license: MIT
+date-released: 2026-10-15
+keywords:
+  - Lean 4
+  - formal verification
+  - mechanistic interpretability
+  - neural networks
+  - modular arithmetic

@@ -11,7 +11,7 @@ lake build LeanCheckedNetwork > /tmp/build.out 2>&1; b=$?
 grep -E "✖|error|Build completed|warning" /tmp/build.out
 echo "=== build exit $b end $(date -u +%FT%TZ)"
 [ $b -eq 0 ] || status=1
-echo "=== replay every module with leanchecker (about 30 minutes)"
+echo "=== replay every module with leanchecker (about 2.5 hours, one module at a time)"
 for f in $(find LeanCheckedNetwork -name '*.lean' -not -path '*/Fault/*' | sort) LeanCheckedNetwork.lean; do
   mod=$(echo "${f%.lean}" | tr / .)
   if lake env leanchecker "$mod" > /tmp/leanchecker.out 2>&1; then echo "OK   $mod"; else echo "FAIL $mod"; cat /tmp/leanchecker.out; status=1; fi

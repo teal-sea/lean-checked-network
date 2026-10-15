@@ -1,21 +1,52 @@
-=== build start 2026-10-15T02:26:07Z
+=== build start 2026-10-15T06:02:36Z
 Build completed successfully (43 jobs).
-=== build exit 0 end 2026-10-15T02:52:18Z
-=== planted fault (must FAIL)
-error: build failed
-rejected as it should be:
-expected_fail/FaultRow.lean:1:0: error: object file '/home/user/lean-checked-network/lean/.lake/build/lib/lean/LeanCheckedNetwork/Fault/Table.olean' of module LeanCheckedNetwork.Fault.Table does not exist
-=== axioms
-'LeanCheckedNetwork.Trained.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
-'LeanCheckedNetwork.CircleOnly.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
-=== done 2026-10-15T02:52:21Z
-
-=== correction, 2026-10-15T03:00Z
-The planted-fault section above did NOT test anything: that fault set one weight to 678, outside
-the [-128, 127] range the fast route requires, so the fault's table failed to build and the
-old script counted the build failure as a rejection. Replaced by an in-range fault (read-out
-rows of answers 0 and 1 swapped, 226 pairs wrong) and a script that only accepts a kernel
-rejection after the fault's table builds. Rerun:
+=== build exit 0 end 2026-10-15T06:02:36Z
+=== replay every module with leanchecker (about 30 minutes)
+OK   LeanCheckedNetwork.CircleOnly.AllInputs
+OK   LeanCheckedNetwork.CircleOnly.Rows00
+OK   LeanCheckedNetwork.CircleOnly.Rows01
+OK   LeanCheckedNetwork.CircleOnly.Rows02
+OK   LeanCheckedNetwork.CircleOnly.Rows03
+OK   LeanCheckedNetwork.CircleOnly.Rows04
+OK   LeanCheckedNetwork.CircleOnly.Rows05
+OK   LeanCheckedNetwork.CircleOnly.Rows06
+OK   LeanCheckedNetwork.CircleOnly.Rows07
+OK   LeanCheckedNetwork.CircleOnly.Rows08
+OK   LeanCheckedNetwork.CircleOnly.Rows09
+OK   LeanCheckedNetwork.CircleOnly.Rows10
+OK   LeanCheckedNetwork.CircleOnly.Rows11
+OK   LeanCheckedNetwork.CircleOnly.Rows12
+OK   LeanCheckedNetwork.CircleOnly.Rows13
+OK   LeanCheckedNetwork.CircleOnly.Rows14
+OK   LeanCheckedNetwork.CircleOnly.Rows15
+OK   LeanCheckedNetwork.CircleOnly.Table
+OK   LeanCheckedNetwork.CircleOnly.Weights
+OK   LeanCheckedNetwork.Fast
+OK   LeanCheckedNetwork.Network
+OK   LeanCheckedNetwork.Trained.AllInputs
+OK   LeanCheckedNetwork.Trained.Rows00
+OK   LeanCheckedNetwork.Trained.Rows01
+OK   LeanCheckedNetwork.Trained.Rows02
+OK   LeanCheckedNetwork.Trained.Rows03
+OK   LeanCheckedNetwork.Trained.Rows04
+OK   LeanCheckedNetwork.Trained.Rows05
+OK   LeanCheckedNetwork.Trained.Rows06
+OK   LeanCheckedNetwork.Trained.Rows07
+OK   LeanCheckedNetwork.Trained.Rows08
+OK   LeanCheckedNetwork.Trained.Rows09
+OK   LeanCheckedNetwork.Trained.Rows10
+OK   LeanCheckedNetwork.Trained.Rows11
+OK   LeanCheckedNetwork.Trained.Rows12
+OK   LeanCheckedNetwork.Trained.Rows13
+OK   LeanCheckedNetwork.Trained.Rows14
+OK   LeanCheckedNetwork.Trained.Rows15
+OK   LeanCheckedNetwork.Trained.Table
+OK   LeanCheckedNetwork.Trained.Weights
+OK   LeanCheckedNetwork
 === planted fault (must be rejected by the kernel)
 rejected by the kernel, as it should be:
 expected_fail/FaultRow.lean:18:2: error: (kernel) application type mismatch
+=== axioms
+'LeanCheckedNetwork.Trained.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.CircleOnly.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+=== done 2026-10-15T08:31:02Z

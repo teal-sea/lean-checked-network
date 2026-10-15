@@ -3,7 +3,7 @@
 Left: one neuron's 113 input weights E1[a, h] against a, with its best-fitting wave.
 Right: the 4 neurons that share frequency 11, embedding of every number a in their 4 weights,
 projected onto the two directions of largest variation (computed from the data, no circle
-assumed). The 113 numbers land on a circle, and a -> a+1 always turns by the same angle.
+assumed). The 113 numbers land near a circle, and a -> a+1 turns by k/p of a turn on average.
 
 Usage: python3 figure.py network/trained.npz figures/circle.svg
 """
@@ -52,9 +52,13 @@ for a in range(p):
     out.append(f'<circle cx="{cx + sc * P2[a, 0]:.1f}" cy="{cy - sc * P2[a, 1]:.1f}" r="2.6" fill="#3d5a80"/>')
 for a in [0, 1, 2, 3]:
     out.append(f'<text x="{cx + sc * P2[a, 0] * 1.13:.1f}" y="{cy - sc * P2[a, 1] * 1.13 + 4:.1f}" text-anchor="middle" fill="#e07a5f" font-weight="bold">{a}</text>')
-out.append(f'<text x="{470}" y="24" font-weight="bold">{len(group)} neurons of frequency {k}: all {p} numbers sit on a circle</text>')
-out.append(f'<text x="{470}" y="{y0 + hgt + 24}" fill="#555">each step a → a+1 turns by the same angle, {k}/{p} of a full turn</text>')
+out.append(f'<text x="{470}" y="24" font-weight="bold">{len(group)} neurons of frequency {k}: the {p} numbers lie near a circle</text>')
+out.append(f'<text x="{470}" y="{y0 + hgt + 24}" fill="#555">a → a+1 turns by {k}/{p} of a turn on average</text>')
 out.append("</svg>")
 open(sys.argv[2], "w").write("\n".join(out))
 var2 = (S_[:2] ** 2).sum() / (S_ ** 2).sum()
-print(f"wrote {sys.argv[2]}; neuron {h0}; group {group}; top-2 directions hold {var2:.3f} of the group's variation")
+steps = np.abs(np.angle(np.exp(1j * np.diff(np.angle(P2[:, 0] + 1j * P2[:, 1]), append=np.angle(P2[0, 0] + 1j * P2[0, 1])))))
+rad = np.hypot(P2[:, 0], P2[:, 1])
+print(f"wrote {sys.argv[2]}; neuron {h0}; group {group}; top-2 directions hold {var2:.3f} of the group's variation; "
+      f"step a->a+1 between {steps.min() / (2 * np.pi * k / p):.2f} and {steps.max() / (2 * np.pi * k / p):.2f} of {k}/{p} turn; "
+      f"radius between {rad.min() / rad.max():.2f} and 1.00 of the largest")

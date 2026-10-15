@@ -234,6 +234,6 @@
 <text x="712.7" y="53.2" text-anchor="middle" fill="#e07a5f" font-weight="bold">1</text>
 <text x="788.6" y="106.6" text-anchor="middle" fill="#e07a5f" font-weight="bold">2</text>
 <text x="842.9" y="192.9" text-anchor="middle" fill="#e07a5f" font-weight="bold">3</text>
-<text x="470" y="24" font-weight="bold">4 neurons of frequency 11: all 113 numbers sit on a circle</text>
-<text x="470" y="384" fill="#555">each step a → a+1 turns by the same angle, 11/113 of a full turn</text>
+<text x="470" y="24" font-weight="bold">4 neurons of frequency 11: the 113 numbers lie near a circle</text>
+<text x="470" y="384" fill="#555">a → a+1 turns by 11/113 of a turn on average</text>
 </svg>

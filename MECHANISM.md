@@ -60,24 +60,39 @@ Multiplying out `(wave + remainder)` three times splits `2^90·X` into:
 
 For a pair `(a, b)` with `s = (a + b) mod p`, the network is right if `N(a,b,s) > N(a,b,c)` for
 every `c ≠ s`. Each piece of the decomposition is a table indexed by one combination of `a`, `b`,
-`c`, so its worst case over `c ≠ s` comes from the top two entries of that table: no loop over
-`c` per pair is needed. The certificate adds those worst cases, subtracts the error bounds, and
-passes if the total is positive. Total work is about `p²·H` multiplications for the whole table
-(about 21 million here, counted from the code), against about 186 million for checking every score directly.
+`c`. For each pair, the certificate adds the tables up for every candidate answer `c` (additions
+only), takes the best wrong answer, and passes if the right answer still leads after subtracting
+the error bounds twice (once for each of the two scores being compared).
+
+**Cost.** Building the tables takes a fixed multiple of `p²·H` multiplications on large integers
+(numbers up to about 2^200); an independent count found about 24 million. The joint step adds
+about 17 million large-integer additions. Checking every score directly takes about 186 million
+multiply-adds on numbers that fit in 64 bits, and in numpy the direct check is faster (about
+0.3 s against about 6 s). The certificate is not a speed-up. Its point is that every number in
+it comes from the circle explanation plus explicit error bounds.
+
+An earlier version took each table's worst case separately and added those up. That needs no
+loop over `c` at all, but it is looser: it certified 10,473 pairs (82%). The adversarial audit of
+2026-10-15 pointed out that taking the worst case jointly certifies every pair.
 
 ## Checks that the argument is sound
 
 `mechanism.py` exits non-zero unless both hold:
 
 - On 300 random triples `(a, b, c)`, the real score and the decomposition differ by at most the
-  stated error bound (worst ratio seen: 0.12).
-- On 200 random pairs, the certified lower bound never exceeds the true gap between the right
-  answer's score and the best wrong one (0 violations).
+  stated error bound (worst ratio seen: 0.12). The audit checked all 1,442,897 triples: worst
+  ratio 0.347, no violation.
+- On **every one of the 12,769 pairs**, neither certified lower bound (joint or term by term)
+  exceeds the true gap between the right answer's score and the best wrong one.
 
 ## Where it stands
 
-On the network in `network/trained.npz`: **10,473 of 12,769 pairs certified (82%)**.
-Per-term costs, as a fraction of the peak wave's margin (median over a grid of pairs):
+On the network in `network/trained.npz`: **all 12,769 pairs certified** by the joint version,
+with the tightest pair keeping 1.7% of the peak wave's margin (median 50%). Status: derived, in
+exact integer arithmetic, cross-checked exhaustively as above; not written in Lean.
+
+Per-term costs in the term-by-term version, as a fraction of the peak wave's margin (median over a
+grid of pairs):
 
 | Piece | Median cost |
 | --- | --- |
@@ -88,20 +103,17 @@ Per-term costs, as a fraction of the peak wave's margin (median over a grid of p
 | second-order remainders (Cauchy-Schwarz) | 0.37 |
 | circle rounding | below 0.0001 |
 
-The largest cost is the second-order bound, and it is loose: on samples the true second-order
-term is about a tenth of the bound, because Cauchy-Schwarz assumes the remainders line up
-across 114 neurons and they do not. Two further observations:
+The second-order bound is loose: the true second-order term is about a tenth of it (median 0.118,
+from the audit), because Cauchy-Schwarz assumes the remainders line up across 114 neurons and
+they do not. Two further observations, for the term-by-term version:
 
 - Coverage rose with training: 69%, 77%, 85% at steps 12,000, 14,000 and 16,000, then 84% and
   82% at 18,000 and 20,000. The network used here is the final one, not the best checkpoint.
 - In every live neuron the biggest remainder is the third harmonic (frequency `3k`). Adding it
   to the waves (`--harmonics 1,3`) shrinks the second-order cost but multiplies the number of
-  wave tables, and coverage drops to 40% (5,062 pairs): summing worst cases over more tables costs more than
-  the smaller remainder saves.
+  wave tables, and coverage drops to 40% (5,062 pairs).
 
-## Next steps
+## Next step
 
-1. Tighten the second-order bound without paying `p³` (for example by grouping neurons by
-   frequency before applying Cauchy-Schwarz).
-2. Write the decomposition and its bounds in Lean, so the 82% (or more) becomes kernel-checked
-   and the circle explanation becomes a theorem, not just an ablation.
+Write the decomposition, its error bounds and the joint check in Lean, so that "the circle
+explanation is enough" becomes a kernel-checked theorem and not only a kernel-checked ablation.

@@ -1,4 +1,4 @@
-"""How the network adds, measured, and turned into a cheap proof that it adds correctly.
+"""How the network adds, measured, and turned into a proof built from that explanation.
 
 The network (see train.py) scores each candidate answer c for the input pair (a, b) as
 
@@ -17,14 +17,16 @@ table with its rounding error tracked exactly, turns the network's score into
   * one wave in (a + b - c), which peaks exactly at the right answer,
   * other waves and tables that can only blur that peak by a bounded amount,
   * remainders with explicit bounds.
-If the peak's margin beats the sum of the blurs for a pair (a, b), the network's answer for
-that pair is provably (a + b) mod p. The certificate costs about p * p * H operations for all
-pairs together, where checking every score directly costs p * p * p * H.
+If, for a pair (a, b), the right answer still leads once every blur and error bound is
+subtracted, the network's answer for that pair is provably (a + b) mod p. The tables cost a
+fixed multiple of p * p * H large-integer multiplications; the final comparison adds them up for
+each of the p candidate answers (additions only). This is not faster than computing every
+score; its value is that it is built from the explanation.
 
-Part 3 checks the certificate against the real scores on random samples. It must never claim
+Part 3 checks the certificate against the real scores: on every pair it must never claim
 more margin than the network really has.
 
-Usage: python3 mechanism.py RUN.npz [--harmonics 1,3] [--diag]
+Usage: python3 mechanism.py RUN.npz [--harmonics 1,3] [--diag]   (default: harmonics 1)
 """
 import sys
 import numpy as np
@@ -54,7 +56,7 @@ sh = np.array(list(share.values()))
 print(f"share of each neuron's weight energy in its own frequency: median {np.median(sh):.3f}, min {sh.min():.3f}")
 
 # ---------------------------------------------------------------- Part 2: certificate
-HARM = (1, 3)
+HARM = (1,)
 if "--harmonics" in sys.argv:
     HARM = tuple(int(x) for x in sys.argv[sys.argv.index("--harmonics") + 1].split(","))
 M = 1 << 20        # radius of the integer circle
@@ -233,9 +235,36 @@ def lower_bound(a, b, parts=False):
 LB = np.array([[lower_bound(a, b) for b in range(p)] for a in range(p)], dtype=O)
 ref = 2 * drop(Tmain[PEAK], 0, t2M[PEAK])
 cert = int(sum(1 for v in LB.ravel() if v > 0))
-print(f"certified by the circle argument: {cert} of {p * p} input pairs")
+print(f"certified, worst case taken term by term: {cert} of {p * p} input pairs")
 ratio = np.array([float(v) / float(ref) for v in LB.ravel()])
-print(f"certified gap / peak-wave margin: min {ratio.min():.3f}, median {np.median(ratio):.3f}")
+print(f"  certified gap / peak-wave margin: min {ratio.min():.3f}, median {np.median(ratio):.3f}")
+
+# Joint version: same tables and the same error bounds, but the worst wrong answer c is found
+# for the sum of all the tables at once (113 additions per table per pair, no multiplications),
+# instead of adding up each table's own worst case.
+cs = np.arange(p)
+def model_scores(a, b):
+    """4 SIG^3 * (decomposition of the score of every answer c), without the error terms."""
+    v = 4 * S3 * U[:, a] + 4 * S3 * V[:, b]
+    for (A, B), t in Tmain.items():
+        v = v + 2 * t[(A * a + B * b + cs) % p]
+    for K, t in W1.items():
+        v = v + 4 * t[:, (a + K * b) % p]
+    for K, t in W2t.items():
+        v = v + 4 * t[a, (cs + K * b) % p]
+    for K, t in W3.items():
+        v = v + 4 * t[b, (cs + K * a) % p]
+    return v
+def joint_lower_bound(a, b):
+    s = (a + b) % p
+    v = model_scores(a, b)
+    best_other = max(v[c] for c in range(p) if c != s)
+    return v[s] - best_other - ERR - 16 * QB[a, b]
+LBJ = np.array([[joint_lower_bound(a, b) for b in range(p)] for a in range(p)], dtype=O)
+certJ = int(sum(1 for v in LBJ.ravel() if v > 0))
+print(f"certified, worst case taken jointly over c: {certJ} of {p * p} input pairs")
+ratioJ = np.array([float(v) / float(ref) for v in LBJ.ravel()])
+print(f"  certified gap / peak-wave margin: min {ratioJ.min():.3f}, median {np.median(ratioJ):.3f}")
 
 if "--diag" in sys.argv:
     rows = [lower_bound(a, b, True)[1] for a in range(0, p, 7) for b in range(0, p, 7)]
@@ -263,14 +292,16 @@ for _ in range(300):
     worst = max(worst, abs(real - model) / allowed)
 print(f"(i) |real score - decomposition| / allowed error, worst of 300 samples: {worst:.3f} ({'ok' if worst <= 1 else 'FAIL'})")
 ok &= worst <= 1
-# (ii) the certified bound never exceeds the true gap
-bad = 0
-for _ in range(200):
-    a, b = (int(x) for x in rng.integers(0, p, 2))
-    s = (a + b) % p
-    sc = scores(a, b)
-    gap = sc[s] - max(v for n, v in enumerate(sc) if n != s)
-    bad += LB[a, b] > 4 * S3 * gap
-print(f"(ii) certified bound above the true gap in {bad} of 200 samples ({'ok' if bad == 0 else 'FAIL'})")
-ok &= bad == 0
+# (ii) neither certified bound exceeds the true gap, on every pair (exact integers)
+pairs = np.array([(a, b) for a in range(p) for b in range(p)])
+z = E1[pairs[:, 0]] + E2[pairs[:, 1]]
+S_all = (z * z) @ W2.T                      # int64 is exact here: |score| < 2^37
+sidx = pairs.sum(1) % p
+Sm = S_all.copy(); Sm[np.arange(len(S_all)), sidx] = np.iinfo(np.int64).min
+gaps = S_all[np.arange(len(S_all)), sidx] - Sm.max(1)
+bad = sum(1 for (a, b), g in zip(pairs, gaps) if LB[a, b] > 4 * S3 * int(g))
+badJ = sum(1 for (a, b), g in zip(pairs, gaps) if LBJ[a, b] > 4 * S3 * int(g))
+print(f"(ii) certified bound above the true gap: term by term {bad}, joint {badJ}, of {p * p} pairs "
+      f"({'ok' if bad == 0 and badJ == 0 else 'FAIL'})")
+ok &= bad == 0 and badJ == 0
 sys.exit(0 if ok else 1)

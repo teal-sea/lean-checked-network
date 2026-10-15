@@ -1,0 +1,12 @@
+step 2000: train 1.0000  held-out 0.9995
+  step 2000 frozen integer network: wrong on 3 of 12769, ties 0, smallest winning gap 1427183
+step 4000: train 1.0000  held-out 0.9997
+  step 4000 frozen integer network: wrong on 2 of 12769, ties 0, smallest winning gap 1161106
+step 6000: train 1.0000  held-out 0.9995
+  step 6000 frozen integer network: wrong on 3 of 12769, ties 0, smallest winning gap 943139
+step 8000: train 1.0000  held-out 0.9997
+  step 8000 frozen integer network: wrong on 2 of 12769, ties 0, smallest winning gap 2549096
+step 10000: train 1.0000  held-out 0.9997
+  step 10000 frozen integer network: wrong on 2 of 12769, ties 0, smallest winning gap 399810
+step 12000: train 1.0000  held-out 0.9998
+  step 12000 frozen integer network: wrong on 0 of 12769, ties 0, smallest winning gap 175330

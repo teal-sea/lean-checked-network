@@ -1,0 +1,7 @@
+lean/.lake/
+runs/*.npz
+bench/
+__pycache__/
+*.log
+!lean_run.log
+!runs/*.log

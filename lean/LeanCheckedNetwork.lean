@@ -1,0 +1,2 @@
+import LeanCheckedNetwork.Trained.AllInputs
+import LeanCheckedNetwork.CircleOnly.AllInputs

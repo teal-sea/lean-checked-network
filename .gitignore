@@ -11,3 +11,6 @@ prime_env/tests/work/
 prime_env/tests/tmp_tasks/
 prime_env/nets/runs_*/
 sweep-results/
+phasegrid/instances/PhaseGridInstances/P7LastFault/
+phasegrid/instances/PhaseGridInstances/P113LastFault/
+phasegrid/instances/last_fault_build.*.out

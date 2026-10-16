@@ -18,6 +18,8 @@ so the count is exactly the number of wrong inputs (`sweep/WrongSet.lean`). An e
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2,000 | 1.0000 / 0.9995 | 3: (26, 35), (87, 97), (105, 54) | 1,427,183 | 235 | built, `wrongPairs_length`, `_nodup`, `_in_range` | 41 of 41, 1307 s | standard | 1420 s |
 | 4,000 | 1.0000 / 0.9997 | 2: (5, 25), (105, 54) | 2,162,978 | 291 | built, `wrongPairs_length`, `_nodup`, `_in_range` | 41 of 41, 1249 s | standard | 1254 s |
+| 6,000 | 1.0000 / 0.9995 | 3: (5, 25), (9, 18), (9, 29) | 5,416,548 | 308 | built, `wrongPairs_length`, `_nodup`, `_in_range` | 41 of 41, 1190 s | standard | 1303 s |
+| 8,000 | 1.0000 / 0.9997 | 2: (5, 25), (9, 29) | 2,549,096 | 344 | built, `wrongPairs_length`, `_nodup`, `_in_range` | 41 of 41, 1190 s | standard | 1294 s |
 | 10,000 | 1.0000 / 0.9997 | 2: (5, 25), (9, 84) | 1,988,014 | 341 | built, `wrongPairs_length`, `_nodup`, `_in_range` | 41 of 41, 1248 s | standard | 1331 s |
 | 12,000 | 1.0000 / 0.9998 | 0: none | 175,330 | 328 | built, `wrongPairs_length`, `_nodup`, `_in_range` | 41 of 41, 1326 s | standard | 1487 s |
 

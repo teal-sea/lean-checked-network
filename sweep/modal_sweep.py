@@ -70,6 +70,9 @@ def tag_of(pt):
     # and the replay runs 2 leanchecker processes at once: 16 GiB requested, 24 GiB hard limit.
     memory=(16384, 24576),
     timeout=4 * 3600,          # the largest grid point is estimated under 2 h on 4 cores
+    # The account's container limit is 100 and other jobs share it; an uncapped map of the grid
+    # took all 100 on 2026-10-16. 30 at a time leaves 70 free and runs the grid in about 5 waves.
+    max_containers=30,
     retries=modal.Retries(max_retries=2, initial_delay=10.0, backoff_coefficient=2.0),
     volumes={"/results": vol},
 )

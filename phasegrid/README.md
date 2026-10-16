@@ -150,6 +150,103 @@ the general theorem; stated in words in `Open.lean`, since those tables are not 
 proof is the brute-force kernel check of stage 3. (2) `fullSetWorksAtTwo` (`def … : Prop`): the loose
 bound, M = 2 suffices for the full set at every odd p, measured at five moduli, not proved.
 
+## Stage 2, continued: the six-phase cycle of `FIXED_PHASE.md`, proved (2026-10-16)
+
+`FIXED_PHASE.md` builds its 12-neuron networks (`FixedPhase12` at p = 113, `Mod257Min` at p = 257)
+from six neurons per frequency with phases `phi1 = 2 pi j/6`, `phi2 = 4 phi1`, `j = 0..5`
+(`make_fixed_phase6.py`), states the cancellation and the bound `M > 24|S|/g(S)` for that
+construction, and marks them derived. `mathlib/PhaseGrid/Cycle.lean` proves them, on the lemmas of
+`Score.lean`, `Close.lean`, `FullSet.lean` and `FullSetEven.lean`, with the verbatim `Network.lean`
+as the evaluator. Nothing in the earlier modules changed.
+
+**Stage 1 for the cycle, measured** (`stage1/cycle_check.py`, log `logs/cycle_stage1.log`, numpy
+2.5.3): over 20,000 random angles the cycle sum `sum_{j<6} cos(theta + m 2 pi j/6)` of each of the
+eight unwanted families, `m = u + 4v` in {-3, 7, 3, 13, 10, -8, 2, 5}, has largest absolute value
+1.30e-14 (and the control `m = 6`, which does not cancel, gives 6.00); one sextet
+`sum_j cos(tc + 5 phi_j)(cos(ta + phi_j) + cos(tb + 4 phi_j))^2` differs from `3 cos(ta + tb - tc)`
+by at most 2.24e-14, with least-squares coefficient 3.000000000000. On the real networks the score
+differs from `3 sum_{k in S} cos(2 pi k (a + b - c)/p)` by at most 3.75e-14 (p = 7, all), 6.16e-14
+(p = 12, all), 2.76e-12 (p = 113, all), 5.29e-13 (p = 113, {39, 45}), 1.17e-11 (p = 257, all),
+1.81e-12 (p = 257, {114, 125}). The integer networks (exact int64 scores, first-index argmax as in
+`Network.lean`), with `B = 24|S|/g(S)` and the smallest integer `M` above it:
+
+| p | S | neurons | g(S) | B | M just above B: wrong, ties, margin | M just below: wrong, ties, margin | smallest M with no wrong answer and no tie (scan 1..40) | at M = 127: wrong, ties, margin |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 7 | all (1..3) | 18 | 3.5 | 20.57 | 21: 0, 0, 94,228 | 20: 0, 0, 81,132 | 1 | 0, 0, 21,256,784 |
+| 12 | all (1..5) | 30 | 5 | 24 | 25: 0, 0, 220,705 | 24: 0, 0, 207,360 | 2 | 0, 0, 30,374,049 |
+| 113 | all (1..56) | 336 | 56.5 | 23.79 | 24: 0, 0, 2,325,624 | 23: 0, 0, 2,003,608 | 1 | 0, 0, 345,206,636 |
+| 113 | {39, 45} (`FixedPhase12`) | 12 | 0.187468 | 256.04 | 257: 0, 0, 8,987,644 | 256: 0, 0, 8,995,696 | 14 | 0, 0, 1,021,168 |
+| 113 | Nanda's {14, 35, 41, 42, 52} | 30 | 2.41018 | 49.79 | 50: 0, 0, 868,856 | 49: 0, 0, 809,776 | 3 | 0, 0, 14,547,572 |
+| 257 | all (1..128) | 768 | 128.5 | 23.91 | 24: 0, 0, 5,287,052 | 23: 0, 0, 4,549,824 | 1 | 0, 0, 785,539,904 |
+| 257 | {114, 125} (`Mod257Min`) | 12 | 0.0829989 | 578.32 | 579: 0, 0, 45,199,620 | 578: 0, 0, 45,765,996 | 32 | 0, 0, 375,872 |
+
+The margins at M = 127 for {39, 45} and {114, 125} are the ones `FIXED_PHASE.md` reports for
+`FixedPhase12` (1,021,168) and `Mod257Min` (375,872). The bound suffices in every case and is loose
+by the same order as for the grid: the two 12-neuron networks of `FIXED_PHASE.md` run at M = 127,
+which is **below** the bound (257 and 579), so the theorem below does not cover them at that scale;
+it covers the same frequency sets from M = 257 and M = 579 on (see "Open").
+
+**Proved** (`Cycle.lean`; every theorem prints `[propext, Classical.choice, Quot.sound]`, except
+`neuronsC_length`, `[propext]`; `logs/cycle_axioms.log`, 27 declarations; module replayed by
+`leanchecker`, exit 0, 9 s, `logs/cycle_leanchecker.log`; source scan for `sorry`, `native_decide`,
+`axiom`, `opaque`, `implemented_by`, `extern`, `skipKernelTC`: none found):
+
+| Name | Statement (one line) |
+| --- | --- |
+| `sum_cos_cycle_eq_zero` | for real `t` and integer `m` with `6 ∤ m`: `Σ_{j<6} cos(t + m · 2πj/6) = 0`; the real part of `e^{it} Σ_j ζ^j` with `ζ = e^{2πim/6}`, `ζ⁶ = 1`, `ζ ≠ 1`, `geom_sum_eq` |
+| `cancel5`, `cancel7`, `cancel_m3`, `cancel13`, `cancel3`, `cancel10`, `cancel2`, `cancel_m8` | the lemma at the eight values `u + 4v` |
+| `expand_abc` | `cos C (cos A + cos B)² = (1/2) cos(A + B − C) + cos C + (1/4)[cos(2A + C) + cos(2A − C) + cos(2B + C) + cos(2B − C)] + (1/2)[cos(A + B + C) + cos(A − B + C) + cos(A − B − C)]`, a polynomial identity after the addition and double-angle formulas |
+| `expand_phase` | the same at `A = ta + ψ`, `B = tb + 4ψ`, `C = tc + 5ψ`: the wanted wave `(1/2) cos(ta + tb − tc)` and eight waves with phases `5ψ, 7ψ, −3ψ, 13ψ, 3ψ, 10ψ, 2ψ, −8ψ` |
+| `sextet` | `Σ_{j<6} cos(tc + 5ψ_j)(cos(ta + ψ_j) + cos(tb + 4ψ_j))² = 3 cos(ta + tb − tc)` with `ψ_j = 2πj/6` |
+| `realScoreC_eq` | the cycle network's real score is `3 · waveSum p S (a + b − c)` |
+| `intScoreC_close` | the integer score is within `36 M² |S|` of `M³` times the real score (`6|S|` neurons, `6M²` each by `neuron_bound` of `Score.lean`, unchanged) |
+| `intScoreC_lt` | with `24|S| < M g`: every wrong answer's integer score is strictly below the right one's; the margin is at least `3 M² (M g − 24|S|)` |
+| `adds_mod_p_cycle` | **`0 < p`, `g` a gap for `S`, `24|S| < M g` ⟹ `∀ a < p, ∀ b < p, answerC p S M a b = (a + b) % p`** |
+| `adds_mod_p_cycle_of_gap` | the same with `g = gap p S` |
+| `intScoreCT_close`, `intScoreCT_lt`, `adds_mod_p_cycle_tables` | the same for any integer tables whose in-range entries are within `1/2` of `M cos(…)` over the cycle neurons (the `Close.lean` route; `neuron_bound_close` unchanged) |
+| `adds_mod_p_cycle_full_odd` | every odd `p = 2m + 1 ≥ 3`, `S = [1..m]`, every `M ≥ 24` |
+| `adds_mod_p_cycle_full_even` | every even `p = 2m ≥ 4`, `S = [1..m − 1]`, every `M ≥ 25` |
+| `adds_mod_p_cycle_full` | **every `p ≥ 3`, `S = [1..⌊(p − 1)/2⌋]`, every `M ≥ 25`** |
+| `adds_mod_113_cycle_full`, `adds_mod_257_cycle_full` | the two moduli of the 12-neuron networks with all frequencies (336 and 768 neurons), `M ≥ 24` |
+
+The exact statement, with `cyclePhase j = 2πj/6`, `neuronsC S` the pairs `(k, j)` for `k ∈ S`,
+`j = 0..5`, `rE1c p a (k, j) = cos(2πka/p + cyclePhase j)`, `rE2c p b (k, j) = cos(2πkb/p + 4 cyclePhase j)`,
+`rW2c p c (k, j) = cos(2πkc/p + cyclePhase j + 4 cyclePhase j)`, the tables `E1c`, `E2c`, `W2c` the
+`List (List ℤ)` of `round (M · r…)` (`round x = ⌊x + 1/2⌋`) and
+`answerC p S M a b := LeanCheckedNetwork.answer (E1c p S M) (E2c p S M) (W2c p S M) a b`:
+
+    theorem adds_mod_p_cycle (p : ℕ) (hp : 0 < p) (S : List ℕ) (M : ℕ) (g : ℝ)
+        (hg : ∀ s : ℕ, 0 < s → s < p → waveSum p S s ≤ S.length - g)
+        (hM : 24 * (S.length : ℝ) < M * g) :
+        ∀ a, a < p → ∀ b, b < p → answerC p S M a b = (a + b) % p
+
+**The constants, as proved.** Per neuron the rounding error is `6M²` (the same lemma as for the
+grid; nothing about the phases enters it). A score has `6|S|` neurons, so it is within `36 M² |S|`
+of `M³` times the real score; the real score is `3|S|` at the right answer and at most `3(|S| − g)`
+at a wrong one; the integer margin is therefore at least `3gM³ − 72|S|M² = 3M²(Mg − 24|S|)`. The
+hypothesis `24|S| < Mg` is the same as for the eight-neuron grid, and the threshold for the full
+frequency set is the same `M ≥ 25` (`M ≥ 24` at odd p): the grid has 8 neurons per frequency, error
+`48M²` and wanted coefficient 4, the cycle 6 neurons, error `36M²` and coefficient 3, and both ratios
+are 12. `FIXED_PHASE.md`'s "`M > 24|S|/g(S)` is enough" and "`M = 25` covers every `p ≥ 3`" are
+proved as stated; its "at most about `6M²` per neuron" is exactly `6M²`.
+
+**Cost** (`logs/cycle_build.log`, `logs/cycle_profile.log`): `lake build PhaseGrid.Cycle` reported
+339 s for the job on the shared 4-core machine with `LEAN_NUM_THREADS=1`, nearly all of it Lake's
+trace check of the 9,050 Mathlib jobs (the same no-op check of `PhaseGrid.Close` took 192 s wall
+just before); `lean -Dprofiler=true` on the file alone takes 10 s wall, import 5.69 s, tactic
+execution 0.88 s, typeclass inference 2 s. The root module with the new import builds in 7.5 s
+(`logs/cycle_root_build.log`). The full `verify2.sh` with the module added (`logs/cycle_verify2.log`, 16:21:05Z to 16:23:03Z): build exit 0 (9,060 jobs), source scan `none found`, `Network.lean` `identical`, `replayed 12 of 12 modules` (each `OK`), `59 of 59 theorems use only standard axioms`, exit 0.
+
+**Open, for the cycle.** (1) `FixedPhase12`'s and `Mod257Min`'s explicit tables are not linked to
+`adds_mod_p_cycle_tables`: that needs their entries certified within `1/2` of `127 cos(…)` at
+frequencies 39 and 45 of p = 113 (and 114, 125 of p = 257) by the method of `P7Link.lean`, not done,
+and it also needs the gap: `g({39, 45}) = 0.187468` at p = 113 is a statement about `cos(2π · 39 s/113)
++ cos(2π · 45 s/113)` at all 112 nonzero shifts, which the package has no certified bound for.
+(2) Even with both, the theorem would not cover those networks at M = 127: the bound needs M ≥ 257
+for {39, 45} and M ≥ 579 for {114, 125} (table above). The kernel check of their 12,769 and 66,049
+pairs in `FIXED_PHASE.md` remains their proof; a bound sharp enough for M = 127 is open. (3) The
+measured thresholds (M = 14 and M = 32 for the two sets, M = 1 for the full set at odd p) are not proved.
+
 ## Stage 3: explicit networks, kernel-checked, core Lean only
 
 Lake project `instances/`, toolchain `leanprover/lean4:v4.35.0-rc2`, no
@@ -216,18 +313,25 @@ For comparison the first repository checked its two 128-neuron networks in 26 mi
 
 - **Proved** (kernel, axioms printed, `leanchecker` replayed): everything in the stage 2 table, including
   `adds_mod_p`, `adds_mod_p_tables`, `adds_mod_p_full` and `P7FullTables.adds_mod_7_by_theorem`.
+  Everything in the cycle table (`Cycle.lean`): `sum_cos_cycle_eq_zero`, `sextet`, `adds_mod_p_cycle`,
+  `adds_mod_p_cycle_tables`, `adds_mod_p_cycle_full`.
 - **Checked** (kernel, specific instances): `PhaseGridInstances.P7Full.adds_mod_7` (p = 7, all frequencies, M = 25, 24 neurons),
   `PhaseGridInstances.P113Nanda5.adds_mod_113` (Nanda's five frequencies, M = 30, 40 neurons), both replayed by
   `leanchecker` with standard axioms; the planted fault rejected; `PhaseGridInstances.P113Full.adds_mod_113` (all 56 frequencies, M = 25, 448 neurons), replayed by `leanchecker` (21 of 21 modules) with standard axioms; and the 504 entries of the p = 7 tables decided as `t1 a n = v` lookups and the table equalities `ofFn_t1` and so on by `decide` inside `P7Link.lean`.
-- **Measured** (Python): the stage 1 table; the looseness of the bound; the p = 1009 cases.
+- **Measured** (Python): the stage 1 table; the looseness of the bound; the p = 1009 cases. For the cycle: the
+  table in the cycle section (`cycle_check.py`), including that M = 127 is below the proved bound for both
+  12-neuron networks of `FIXED_PHASE.md`.
 - **Derived** (pen and paper, then proved in Lean): the nine-wave expansion and its grid cancellation;
   the `6M²` per-neuron bound and `M > 24|S|/g`.
 - **Open**: the three statements in `Open.lean`; the link between the p = 113 tables and the theorem.
+  For the cycle: the three items under "Open, for the cycle" (certified cosines and gap for {39, 45} and
+  {114, 125}; a bound that reaches M = 127; the measured thresholds).
 
 ## Run
 
     cd stage1 && python3 -I families.py && python3 -I rounding2.py 113 30
-    cd mathlib && lake exe cache get && ./verify2.sh    # build, leanchecker on all 11 modules, axioms, source scan
+    cd stage1 && python3 -I cycle_check.py                 # the cycle's stage 1, 167 s here on the shared machine
+    cd mathlib && lake exe cache get && ./verify2.sh    # build, leanchecker on all 12 modules, axioms, source scan
     cd instances && ./check_instance.sh P7Full 7 1 && ./check_fault.sh && ./check_last_fault.sh   # about 5 min, mostly the two 448-neuron Weights modules
     cd instances && ./check_instance.sh P113Nanda5 113 1 && ./check_instance.sh P113Full 113 1   # 20 min and about 6 hours
 

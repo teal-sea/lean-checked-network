@@ -1,0 +1,14 @@
+{
+ "task_id": "p23_h32_s1",
+ "p": 23,
+ "H": 32,
+ "seed": 1,
+ "train_fraction": 0.9,
+ "steps": 20000,
+ "wd": 0.2,
+ "theorem_name": "LeanCheckedNetwork.Net.adds_mod_23",
+ "split": "train",
+ "pairs": 529,
+ "wrong": 0,
+ "ties": 0
+}

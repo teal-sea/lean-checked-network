@@ -1,0 +1,14 @@
+{
+ "task_id": "p11_h32_s2",
+ "p": 11,
+ "H": 32,
+ "seed": 2,
+ "train_fraction": 0.9,
+ "steps": 20000,
+ "wd": 1.0,
+ "theorem_name": "LeanCheckedNetwork.Net.adds_mod_11",
+ "split": "eval",
+ "pairs": 121,
+ "wrong": 0,
+ "ties": 0
+}

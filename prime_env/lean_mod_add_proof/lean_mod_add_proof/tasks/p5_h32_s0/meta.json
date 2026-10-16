@@ -1,0 +1,14 @@
+{
+ "task_id": "p5_h32_s0",
+ "p": 5,
+ "H": 32,
+ "seed": 0,
+ "train_fraction": 1.0,
+ "steps": 20000,
+ "wd": 1.0,
+ "theorem_name": "LeanCheckedNetwork.Net.adds_mod_5",
+ "split": "train",
+ "pairs": 25,
+ "wrong": 0,
+ "ties": 0
+}

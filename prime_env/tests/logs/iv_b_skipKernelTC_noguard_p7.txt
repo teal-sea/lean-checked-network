@@ -1,0 +1,46 @@
+{
+ "reward": 0.0,
+ "stage": "leanchecker",
+ "reason": "leanchecker rejected the module",
+ "axioms": [],
+ "timings": {
+  "build_s": 1.27,
+  "leanchecker_s": 0.59,
+  "total_s": 1.86
+ },
+ "package_dir": "/home/user/lean-checked-network/prime_env/tests/work/pkg-75fa026ec2df"
+}
+--- build output ---
+info: lean-mod-add-proof: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+✔ [2/4] Built LeanCheckedNetwork.Network (353ms)
+✔ [3/4] Built LeanCheckedNetwork.Weights (526ms)
+✔ [4/4] Built LeanCheckedNetwork.Submission (287ms)
+Build completed successfully (4 jobs).
+--- leanchecker output ---
+leanchecker found a problem in LeanCheckedNetwork.Submission
+uncaught exception: while replaying declaration 'LeanCheckedNetwork.Net.adds_mod_7._proof_1_1':
+(kernel) application type mismatch
+  id (Eq.refl Bool.true)
+argument has type
+  Eq Bool.true Bool.true
+but function has type
+  Eq
+      ((Nat.decidableBallLT 7 fun a a_1 =>
+            ∀ (b : Nat),
+              instLTNat.lt b 7 → Eq (LeanCheckedNetwork.Net.answer a b) (instHMod.hMod (instHAdd.hAdd a b) 7)).decide
+        (∀ (a : Nat),
+          instLTNat.lt a 7 →
+            ∀ (b : Nat),
+              instLTNat.lt b 7 → Eq (LeanCheckedNetwork.Net.answer a b) (instHMod.hMod (instHAdd.hAdd a b) 7)))
+      Bool.true →
+    Eq
+      ((Nat.decidableBallLT 7 fun a a_1 =>
+            ∀ (b : Nat),
+              instLTNat.lt b 7 → Eq (LeanCheckedNetwork.Net.answer a b) (instHMod.hMod (instHAdd.hAdd a b) 7)).decide
+        (∀ (a : Nat),
+          instLTNat.lt a 7 →
+            ∀ (b : Nat),
+              instLTNat.lt b 7 → Eq (LeanCheckedNetwork.Net.answer a b) (instHMod.hMod (instHAdd.hAdd a b) 7)))
+      Bool.true
+wall 2.0s

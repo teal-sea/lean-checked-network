@@ -1,0 +1,5 @@
+name = "rnn-adder"
+defaultTargets = ["RnnAdder"]
+
+[[lean_lib]]
+name = "RnnAdder"

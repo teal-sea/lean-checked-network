@@ -1,0 +1,14 @@
+{
+ "task_id": "p7_h16_s1",
+ "p": 7,
+ "H": 16,
+ "seed": 1,
+ "train_fraction": 1.0,
+ "steps": 20000,
+ "wd": 1.0,
+ "theorem_name": "LeanCheckedNetwork.Net.adds_mod_7",
+ "split": "train",
+ "pairs": 49,
+ "wrong": 0,
+ "ties": 0
+}

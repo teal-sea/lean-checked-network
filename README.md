@@ -18,6 +18,13 @@ angles.
   of 12,769 right.
 - **The explanation proves every answer.** An exact calculation built only from the circle
   explanation and explicit error bounds proves all 12,769 answers (in Python, not yet in Lean).
+- **The explanation is also a theorem for every clock, 2026-10-16.** Fix the phases of Gromov's analytic
+  weights and the unwanted waves cancel exactly: a Lean proof on Mathlib that such a network adds mod p for
+  every modulus, with 5-bit weights, plus kernel-checked instances down to **12 neurons with 8-bit weights**
+  at 113 and at 257 (`phasegrid/`).
+- **Training runs become theorems too, 2026-10-16.** A runner kernel-checks any configuration and states
+  exactly where a network is wrong; a recurrent adder is proved for inputs of every length; and the six
+  checkpoints of this repository's 64-neuron run carry their exact scores as theorems (`sweep/`, `rnn/`).
 
 ![the circle, from the trained weights](figures/circle.svg)
 
@@ -42,8 +49,8 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | The circle explanation, with every error bounded exactly, proves the right answer for all 12,769 pairs (tightest pair keeps 1.7% of the margin) | derived (`mechanism.py`, `MECHANISM.md`) |
 | No single weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one weight change can shift the gap between two scores (at most 254 × 255² = 16,516,350) | derived |
 | Remove the circle waves, keep the rest: right on 50 of 12,769 pairs, fewer than the 113 that answering the same number every time would get | measured |
-| Networks built from the circle formula alone, no training (fixed phases on a cycle, so the unwanted waves cancel exactly), each right on every pair: 12 neurons on frequencies 39 and 45 with 8-bit weights, 16 and 40 neurons (Nanda et al.'s five key frequencies) with 8-bit weights, 448 neurons on every frequency with 5-bit weights; the same formula at moduli 7, 12 and 257 | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `FixedPhase40`, `FixedPhase448`, `Mod7All.adds_mod_7`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`). Construction, search, planted fault and numbers: `FIXED_PHASE.md` |
-| Counting instead of proving: the planted fault in the 12-neuron network is right on exactly 12,753 of 12,769 pairs; six checkpoints of the 64-neuron training run are right on exactly 12,766, 12,767, 12,766, 12,767, 12,767 and 12,769 pairs, a learning curve whose every point is a theorem | kernel-checked: `FaultFixed12.right_on_12753`, `H64Step2000.right_on_12766` … `H64Step12000.right_on_12769` (`lean/LeanCheckedNetwork/Count.lean`, `LEARNING_CURVE.md`) |
+| Networks written from the circle formula with fixed phases, no training, right on every pair: 12 neurons at modulus 113 with 8-bit weights (frequencies 39 and 45, the first survivor of all 1,540 two-frequency sets), 16 neurons on the same frequencies, 40 neurons on every frequency at modulus 12, and 12 neurons at modulus 257 (66,049 pairs); the theorem behind them and its three larger instances are in `phasegrid/` | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`); `phasegrid/smallest-networks.md` |
+| A learning curve whose every point is a theorem: the six checkpoints of this repository's 64-neuron training run (`runs/p113_h64.log`, reproduced exactly by `train.py`) are wrong on exactly 3, 2, 3, 2, 2 and 0 pairs, each pair named; every wrong pair is a held-out pair; at every checkpoint the circle-only reduction is wrong on hundreds of pairs, even at step 12,000 where the network is right everywhere | kernel-checked through `sweep/run_one.py`: `answer_iff_not_wrong` with the wrong list proved exact, both networks per checkpoint, 41 of 41 modules replayed by `leanchecker` each, standard axioms (2026-10-16); `sweep/tests/learning-curve-2026-10-16.md` |
 | 114 of the 128 neurons are alive; each puts a median 97% of its weight energy into one circle frequency | measured |
 | In all 114 live neurons, the largest leftover piece is the wave at three times the neuron's frequency | measured |
 
@@ -140,8 +147,7 @@ python3 figure.py network/trained.npz figures/circle.svg
 | `run_lean.sh`, `lean_run.log` | the full check and its output |
 | `.github/workflows/check.yml` | runs all checks on every push |
 | `MECHANISM.md`, `AUDIT.md` | the circle proof in detail; the adversarial audit |
-| `FIXED_PHASE.md`, `make_fixed_phase.py`, `make_fixed_phase6.py`, `search_min.py`, `run_lean_fixed_phase.sh`, `lean_run_fixed_phase.log` | networks built from the circle formula with fixed phases, the search for the smallest, their kernel check and its output |
-| `lean/LeanCheckedNetwork/Count.lean`, `gen_count.py`, `make_curve.py`, `LEARNING_CURVE.md` | counting right answers with the kernel; the count theorems of a training run's checkpoints |
+| `make_fixed_phase.py`, `make_fixed_phase6.py`, `search_min.py`, `run_lean_fixed_phase.sh`, `lean_run_fixed_phase.log` | the small fixed-phase networks: generators, the search for the smallest, their kernel check and its output; write-up in `phasegrid/smallest-networks.md` |
 | `rnn/`, `sweep/`, `prime_env/` | the three directories described above, each with its own README |
 | `phasegrid/` | the every-modulus theorem on Mathlib (`mathlib/`), the derivation's numerical check (`stage1/`), the kernel-checked instances in core Lean (`instances/`), logs |
 | `runs/` | training logs |
@@ -154,7 +160,7 @@ results above.
 | Directory | What it is | Status |
 | --- | --- | --- |
 | `rnn/` | A trained recurrent network (4 binary hidden units, integer weights) that adds two binary numbers bit by bit, with a Lean theorem that it is right on inputs of **every length**: the kernel checks the 5 reachable states under the 4 input pairs, then an induction on the input list does the rest. `RnnAdder.Trained.adds` states that the sum bits plus the final carry equal the sum of the two inputs, for every list of bit pairs. Axioms `[propext, Quot.sound]`, replayed by `leanchecker`, two planted faults rejected. A 16-unit companion network is checked the same way | kernel-checked here; built and replayed in about 10 s |
-| `sweep/` | A runner that trains any configuration (prime, width, seed, training fraction, weight decay, steps), freezes it, builds its circle-only reduction, and kernel-checks both: a network that is wrong gets the theorem "wrong on exactly these k pairs" (with the list proved duplicate-free and in range) instead of a failed build. Tested here at p = 7, 31 and 61, including a network wrong on 666 of 961 pairs and a negative control the kernel rejects. `modal_sweep.py` fans a 130-point grid out on Modal, one container per point, about $30 by its own estimate | runner tested here; the Modal app was written against Modal's docs and not run (no token in the container) |
+| `sweep/` | A runner that trains any configuration (prime, width, seed, training fraction, weight decay, steps), freezes it, builds its circle-only reduction, and kernel-checks both: a network that is wrong gets the theorem "wrong on exactly these k pairs" (with the list proved duplicate-free and in range) instead of a failed build. Tested here at p = 7, 31 and 61, including a network wrong on 666 of 961 pairs and a negative control the kernel rejects. `modal_sweep.py` fans a 130-point grid out on Modal, one container per point, about $30 by its own estimate | runner tested here; the Modal app was written against Modal's docs and not run (no token in the container). Run on the six checkpoints of this repository's 64-neuron training run: `sweep/tests/learning-curve-2026-10-16.md` |
 | `prime_env/` | A Prime Intellect environment (`verifiers` 0.4.0, the taskset interface) in which a model must prove in Lean that a given frozen network adds mod p; the reward is 1.0 only if the kernel accepts, `leanchecker` replays, the statement matches a `Spec` fixed before any submitted text is read, and the axioms are standard. 52 tasks at p from 5 to 23. Tested here: brute force passes; `sorry`, `native_decide`, `decide +native`, `set_option debug.skipKernelTC` with a false claim, a weakened statement under the required name, and a wrong network all score 0, with and without the text guard. An adversarial review the same day found three ways the first grader gave 1.0 without a proof (a self-defined specification without importing the weights, namespace shadowing through the checker's own theorem name, and a build-time `#eval` that overwrote the checker file); all three are fixed and kept as regression tests. Grading still runs on the worker host with only a text guard between it and build-time code, so an OS sandbox is needed before untrusted rollouts | grader tested here; no model rollout and no push to the Hub (no account in the container) |
 
 The grid in `sweep/grid.json` was chosen from the literature (Doshi, Das, He and Gromov 2024 is
@@ -185,6 +191,9 @@ tables are tied to the theorem only numerically, and the proved bound is loose (
 empirically where 24 is proved). The derivation and its bound were checked adversarially first
 (`phasegrid/stage1/`), which found that the score has nine waves per neuron, not eight, and that the
 bound is exact as a sufficient condition.
+Smaller witnesses of the same theorem, from a six-phase cycle in place of the eight-phase grid, down to 12
+neurons with 8-bit weights at 113 and at 257, with the search that found them and a planted fault:
+`phasegrid/smallest-networks.md`, networks under `lean/LeanCheckedNetwork/`.
 
 ## Prior work, and what is new here
 

@@ -1,10 +1,8 @@
 """Write a frozen network into the Lean package, with one theorem per row of the addition table.
 
-Usage: python3 gen_lean.py NETWORK.npz NAME CHUNKS [norows]
+Usage: python3 gen_lean.py NETWORK.npz NAME CHUNKS
   NAME   Lean namespace for this network, e.g. Trained or CircleOnly
   CHUNKS number of files the row theorems are split into (Lake checks files in parallel)
-  norows write only the weights and the table check, for a network that is not right on every pair;
-         gen_count.py then writes its count theorems
 """
 import sys
 from pathlib import Path
@@ -14,8 +12,6 @@ src, name, chunks = sys.argv[1], sys.argv[2], int(sys.argv[3])
 # Only the file name goes into the generated doc comment: Lean block comments nest, so a path that
 # contains "/-" (a directory name starting with a dash does it) would open a comment that never closes.
 src_label = Path(src).name
-rows = len(sys.argv) < 5 or sys.argv[4] != "norows"   # "norows": weights and table only, for a
-                                                       # network that is not right everywhere (see gen_count.py)
 net = np.load(src)
 p, H = int(net["p"]), int(net["H"])
 root = Path("lean/LeanCheckedNetwork") / name
@@ -34,8 +30,6 @@ desc = {
     "CircleOnly": "the trained network with every neuron reduced to its main circle wave",
     "FixedPhase12": "the 12-neuron fixed-phase circle network, frequencies 39 and 45, 8-bit weights",
     "FixedPhase16": "the 16-neuron fixed-phase circle network, frequencies 39 and 45, 8-bit weights",
-    "FixedPhase40": "the 40-neuron fixed-phase circle network on the five key frequencies, 8-bit weights",
-    "FixedPhase448": "the 448-neuron fixed-phase circle network on every frequency, 5-bit weights",
 }.get(name, name)
 (root / "Weights.lean").write_text(f"""import LeanCheckedNetwork.Network
 
@@ -77,10 +71,6 @@ theorem table_ok : tableOk W2 {H} = true := by decide +kernel
 
 end LeanCheckedNetwork.{name}
 """)
-
-if not rows:
-    print(f"wrote {root}: weights and table only, p={p}, H={H}")
-    sys.exit(0)
 
 # Row theorems, grouped into CHUNKS files that Lake checks in parallel. Each row: the kernel
 # runs the fast evaluator on every b (one `decide`), and `answer_eq_fastAnswer` turns that into

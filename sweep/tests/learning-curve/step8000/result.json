@@ -1,0 +1,1771 @@
+{
+ "config": {
+  "p": 113,
+  "H": 64,
+  "seed": 0,
+  "frac": 0.5,
+  "wd": 1.0,
+  "steps": 8000,
+  "lr": 0.01,
+  "chunks": 16,
+  "namespace": "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000"
+ },
+ "stages": {
+  "train": {
+   "exit": 0,
+   "log": "train.log"
+  },
+  "circle": {
+   "exit": 0,
+   "stdout": "circle-only network: wrong on 344 of 12769, ties 0, largest weight 133"
+  },
+  "gen": {
+   "modules": [
+    "LeanCheckedNetwork.Network",
+    "LeanCheckedNetwork.Fast",
+    "LeanCheckedNetwork.WrongSet",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Weights",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Table",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows00",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows01",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows02",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows03",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows04",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows05",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows06",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows07",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows08",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows09",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows10",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows11",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows12",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows13",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows14",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows15",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.AllInputs",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Weights",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Table",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows00",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows01",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows02",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows03",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows04",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows05",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows06",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows07",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows08",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows09",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows10",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows11",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows12",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows13",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows14",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows15",
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.AllInputs"
+   ],
+   "main_theorems": {
+    "trained": [
+     "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.answer_iff_not_wrong",
+     "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_length",
+     "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_nodup",
+     "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_in_range"
+    ],
+    "circle_only": [
+     "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.answer_iff_not_wrong",
+     "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_length",
+     "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_nodup",
+     "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_in_range"
+    ]
+   }
+  },
+  "build": {
+   "exit": 0,
+   "completed": true,
+   "warnings": 0,
+   "sorry_warnings": 0,
+   "errors": []
+  },
+  "replay": {
+   "ok": 41,
+   "of": 41,
+   "modules": {
+    "LeanCheckedNetwork.Network": {
+     "exit": 0,
+     "seconds": 0.5
+    },
+    "LeanCheckedNetwork.Fast": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.WrongSet": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Weights": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Table": {
+     "exit": 0,
+     "seconds": 1.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows01": {
+     "exit": 0,
+     "seconds": 76.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows00": {
+     "exit": 0,
+     "seconds": 84.1
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows02": {
+     "exit": 0,
+     "seconds": 72.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows03": {
+     "exit": 0,
+     "seconds": 73.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows04": {
+     "exit": 0,
+     "seconds": 69.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows05": {
+     "exit": 0,
+     "seconds": 70.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows06": {
+     "exit": 0,
+     "seconds": 72.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows07": {
+     "exit": 0,
+     "seconds": 71.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows08": {
+     "exit": 0,
+     "seconds": 71.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows09": {
+     "exit": 0,
+     "seconds": 70.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows10": {
+     "exit": 0,
+     "seconds": 70.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows11": {
+     "exit": 0,
+     "seconds": 71.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows12": {
+     "exit": 0,
+     "seconds": 76.6
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows13": {
+     "exit": 0,
+     "seconds": 74.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows14": {
+     "exit": 0,
+     "seconds": 72.6
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.AllInputs": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Weights": {
+     "exit": 0,
+     "seconds": 0.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Table": {
+     "exit": 0,
+     "seconds": 2.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.Rows15": {
+     "exit": 0,
+     "seconds": 74.1
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows01": {
+     "exit": 0,
+     "seconds": 78.6
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows00": {
+     "exit": 0,
+     "seconds": 89.6
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows02": {
+     "exit": 0,
+     "seconds": 75.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows03": {
+     "exit": 0,
+     "seconds": 74.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows04": {
+     "exit": 0,
+     "seconds": 73.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows05": {
+     "exit": 0,
+     "seconds": 76.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows06": {
+     "exit": 0,
+     "seconds": 75.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows07": {
+     "exit": 0,
+     "seconds": 72.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows08": {
+     "exit": 0,
+     "seconds": 72.6
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows09": {
+     "exit": 0,
+     "seconds": 75.1
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows10": {
+     "exit": 0,
+     "seconds": 72.6
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows11": {
+     "exit": 0,
+     "seconds": 70.6
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows12": {
+     "exit": 0,
+     "seconds": 73.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows13": {
+     "exit": 0,
+     "seconds": 72.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows14": {
+     "exit": 0,
+     "seconds": 73.5
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.AllInputs": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.Rows15": {
+     "exit": 0,
+     "seconds": 72.0
+    }
+   }
+  },
+  "axioms": {
+   "lines": [
+    "'LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.answer_iff_not_wrong' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.answer_iff_not_wrong' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_length' does not depend on any axioms",
+    "'LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_in_range' does not depend on any axioms",
+    "'LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_length' does not depend on any axioms",
+    "'LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_in_range' does not depend on any axioms"
+   ],
+   "parsed": {
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.answer_iff_not_wrong": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_nodup": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.answer_iff_not_wrong": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_nodup": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_length": [],
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.wrongPairs_in_range": [],
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_length": [],
+    "LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.wrongPairs_in_range": []
+   },
+   "standard": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ]
+  },
+  "scan": {
+   "hits": []
+  }
+ },
+ "seconds": {
+  "train": 191.8,
+  "circle": 0.2,
+  "numpy": 0.3,
+  "gen": 0.0,
+  "build": 1294.1,
+  "replay": 1190.4,
+  "axioms": 0.3,
+  "total": 2677.1
+ },
+ "ok": true,
+ "failures": [],
+ "repo_commit": "9a64faf281affd7db6b8e6ea2aba10d7dbd2b765",
+ "lean_version": "Lean (version 4.35.0-rc2, x86_64-unknown-linux-gnu, commit 11acb17ec6b07a8f9e9173e6845197929540936b, Release)",
+ "lean_toolchain": "leanprover/lean4:v4.35.0-rc2",
+ "host": {
+  "cpus": 4,
+  "argv": [
+   "sweep/run_one.py",
+   "113",
+   "64",
+   "0",
+   "0.5",
+   "1.0",
+   "8000",
+   "/tmp/claude-0/-home-user/3f5d581b-6ad4-53a9-955c-ee46d352d309/scratchpad/curve/step8000",
+   "--jobs",
+   "2"
+  ]
+ },
+ "networks": {
+  "trained": {
+   "wrong_count": 2,
+   "ties": 0,
+   "smallest_winning_gap": 2549096,
+   "largest_weight": 127,
+   "w2_in_fast_range": true,
+   "max_hidden_sum": 1655798,
+   "fast_digit_bound_ok": true,
+   "wrong_pairs": [
+    [
+     5,
+     25
+    ],
+    [
+     9,
+     29
+    ]
+   ],
+   "wrong_pairs_truncated": false
+  },
+  "circle_only": {
+   "wrong_count": 344,
+   "ties": 0,
+   "smallest_winning_gap": 3765,
+   "largest_weight": 133,
+   "w2_in_fast_range": true,
+   "max_hidden_sum": 1419937,
+   "fast_digit_bound_ok": true,
+   "wrong_pairs": [
+    [
+     0,
+     40
+    ],
+    [
+     0,
+     46
+    ],
+    [
+     1,
+     30
+    ],
+    [
+     1,
+     63
+    ],
+    [
+     2,
+     29
+    ],
+    [
+     2,
+     44
+    ],
+    [
+     3,
+     40
+    ],
+    [
+     3,
+     82
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     4,
+     39
+    ],
+    [
+     4,
+     42
+    ],
+    [
+     5,
+     4
+    ],
+    [
+     5,
+     28
+    ],
+    [
+     5,
+     35
+    ],
+    [
+     5,
+     41
+    ],
+    [
+     5,
+     66
+    ],
+    [
+     5,
+     80
+    ],
+    [
+     5,
+     112
+    ],
+    [
+     6,
+     25
+    ],
+    [
+     6,
+     40
+    ],
+    [
+     7,
+     36
+    ],
+    [
+     7,
+     39
+    ],
+    [
+     7,
+     40
+    ],
+    [
+     7,
+     70
+    ],
+    [
+     8,
+     38
+    ],
+    [
+     8,
+     109
+    ],
+    [
+     9,
+     0
+    ],
+    [
+     9,
+     1
+    ],
+    [
+     9,
+     3
+    ],
+    [
+     9,
+     11
+    ],
+    [
+     9,
+     22
+    ],
+    [
+     9,
+     25
+    ],
+    [
+     9,
+     29
+    ],
+    [
+     9,
+     32
+    ],
+    [
+     9,
+     34
+    ],
+    [
+     9,
+     37
+    ],
+    [
+     9,
+     38
+    ],
+    [
+     9,
+     55
+    ],
+    [
+     9,
+     58
+    ],
+    [
+     9,
+     68
+    ],
+    [
+     9,
+     76
+    ],
+    [
+     9,
+     84
+    ],
+    [
+     9,
+     94
+    ],
+    [
+     9,
+     99
+    ],
+    [
+     9,
+     108
+    ],
+    [
+     10,
+     33
+    ],
+    [
+     10,
+     36
+    ],
+    [
+     10,
+     37
+    ],
+    [
+     10,
+     56
+    ],
+    [
+     10,
+     61
+    ],
+    [
+     10,
+     67
+    ],
+    [
+     11,
+     27
+    ],
+    [
+     12,
+     19
+    ],
+    [
+     12,
+     34
+    ],
+    [
+     13,
+     18
+    ],
+    [
+     13,
+     33
+    ],
+    [
+     13,
+     51
+    ],
+    [
+     14,
+     17
+    ],
+    [
+     14,
+     29
+    ],
+    [
+     14,
+     71
+    ],
+    [
+     15,
+     16
+    ],
+    [
+     15,
+     25
+    ],
+    [
+     15,
+     70
+    ],
+    [
+     15,
+     77
+    ],
+    [
+     16,
+     27
+    ],
+    [
+     16,
+     30
+    ],
+    [
+     16,
+     51
+    ],
+    [
+     17,
+     29
+    ],
+    [
+     18,
+     29
+    ],
+    [
+     19,
+     12
+    ],
+    [
+     19,
+     24
+    ],
+    [
+     19,
+     98
+    ],
+    [
+     20,
+     21
+    ],
+    [
+     21,
+     22
+    ],
+    [
+     21,
+     25
+    ],
+    [
+     21,
+     56
+    ],
+    [
+     22,
+     16
+    ],
+    [
+     22,
+     24
+    ],
+    [
+     22,
+     25
+    ],
+    [
+     22,
+     42
+    ],
+    [
+     23,
+     18
+    ],
+    [
+     23,
+     23
+    ],
+    [
+     23,
+     24
+    ],
+    [
+     24,
+     19
+    ],
+    [
+     25,
+     18
+    ],
+    [
+     25,
+     46
+    ],
+    [
+     25,
+     60
+    ],
+    [
+     25,
+     98
+    ],
+    [
+     26,
+     5
+    ],
+    [
+     26,
+     7
+    ],
+    [
+     26,
+     15
+    ],
+    [
+     26,
+     17
+    ],
+    [
+     26,
+     20
+    ],
+    [
+     26,
+     21
+    ],
+    [
+     26,
+     59
+    ],
+    [
+     26,
+     69
+    ],
+    [
+     26,
+     72
+    ],
+    [
+     26,
+     82
+    ],
+    [
+     26,
+     95
+    ],
+    [
+     26,
+     99
+    ],
+    [
+     26,
+     107
+    ],
+    [
+     27,
+     4
+    ],
+    [
+     27,
+     16
+    ],
+    [
+     28,
+     15
+    ],
+    [
+     28,
+     64
+    ],
+    [
+     29,
+     12
+    ],
+    [
+     29,
+     14
+    ],
+    [
+     29,
+     17
+    ],
+    [
+     31,
+     0
+    ],
+    [
+     31,
+     15
+    ],
+    [
+     31,
+     67
+    ],
+    [
+     31,
+     77
+    ],
+    [
+     33,
+     0
+    ],
+    [
+     33,
+     10
+    ],
+    [
+     33,
+     52
+    ],
+    [
+     33,
+     88
+    ],
+    [
+     34,
+     9
+    ],
+    [
+     34,
+     12
+    ],
+    [
+     34,
+     51
+    ],
+    [
+     35,
+     11
+    ],
+    [
+     35,
+     12
+    ],
+    [
+     35,
+     29
+    ],
+    [
+     35,
+     36
+    ],
+    [
+     35,
+     42
+    ],
+    [
+     36,
+     10
+    ],
+    [
+     36,
+     85
+    ],
+    [
+     36,
+     87
+    ],
+    [
+     37,
+     9
+    ],
+    [
+     37,
+     80
+    ],
+    [
+     38,
+     0
+    ],
+    [
+     38,
+     8
+    ],
+    [
+     38,
+     33
+    ],
+    [
+     39,
+     7
+    ],
+    [
+     39,
+     8
+    ],
+    [
+     39,
+     82
+    ],
+    [
+     39,
+     84
+    ],
+    [
+     40,
+     3
+    ],
+    [
+     40,
+     104
+    ],
+    [
+     41,
+     5
+    ],
+    [
+     41,
+     51
+    ],
+    [
+     41,
+     76
+    ],
+    [
+     43,
+     0
+    ],
+    [
+     43,
+     3
+    ],
+    [
+     43,
+     18
+    ],
+    [
+     43,
+     21
+    ],
+    [
+     43,
+     42
+    ],
+    [
+     43,
+     78
+    ],
+    [
+     43,
+     79
+    ],
+    [
+     44,
+     73
+    ],
+    [
+     45,
+     1
+    ],
+    [
+     45,
+     40
+    ],
+    [
+     45,
+     108
+    ],
+    [
+     45,
+     111
+    ],
+    [
+     46,
+     0
+    ],
+    [
+     47,
+     0
+    ],
+    [
+     47,
+     112
+    ],
+    [
+     48,
+     16
+    ],
+    [
+     48,
+     22
+    ],
+    [
+     48,
+     23
+    ],
+    [
+     48,
+     29
+    ],
+    [
+     48,
+     37
+    ],
+    [
+     48,
+     69
+    ],
+    [
+     48,
+     96
+    ],
+    [
+     48,
+     108
+    ],
+    [
+     48,
+     111
+    ],
+    [
+     49,
+     18
+    ],
+    [
+     49,
+     36
+    ],
+    [
+     49,
+     44
+    ],
+    [
+     49,
+     97
+    ],
+    [
+     49,
+     110
+    ],
+    [
+     49,
+     111
+    ],
+    [
+     50,
+     35
+    ],
+    [
+     51,
+     34
+    ],
+    [
+     51,
+     82
+    ],
+    [
+     51,
+     108
+    ],
+    [
+     51,
+     109
+    ],
+    [
+     52,
+     12
+    ],
+    [
+     52,
+     71
+    ],
+    [
+     52,
+     104
+    ],
+    [
+     52,
+     107
+    ],
+    [
+     53,
+     18
+    ],
+    [
+     53,
+     106
+    ],
+    [
+     55,
+     101
+    ],
+    [
+     56,
+     5
+    ],
+    [
+     56,
+     8
+    ],
+    [
+     56,
+     29
+    ],
+    [
+     56,
+     66
+    ],
+    [
+     56,
+     95
+    ],
+    [
+     57,
+     99
+    ],
+    [
+     57,
+     102
+    ],
+    [
+     58,
+     63
+    ],
+    [
+     60,
+     61
+    ],
+    [
+     60,
+     96
+    ],
+    [
+     60,
+     99
+    ],
+    [
+     61,
+     10
+    ],
+    [
+     61,
+     16
+    ],
+    [
+     61,
+     32
+    ],
+    [
+     61,
+     62
+    ],
+    [
+     61,
+     98
+    ],
+    [
+     62,
+     97
+    ],
+    [
+     63,
+     96
+    ],
+    [
+     64,
+     0
+    ],
+    [
+     65,
+     79
+    ],
+    [
+     65,
+     86
+    ],
+    [
+     65,
+     94
+    ],
+    [
+     65,
+     95
+    ],
+    [
+     67,
+     18
+    ],
+    [
+     67,
+     77
+    ],
+    [
+     67,
+     89
+    ],
+    [
+     67,
+     92
+    ],
+    [
+     67,
+     110
+    ],
+    [
+     68,
+     17
+    ],
+    [
+     68,
+     76
+    ],
+    [
+     68,
+     91
+    ],
+    [
+     69,
+     29
+    ],
+    [
+     70,
+     0
+    ],
+    [
+     70,
+     51
+    ],
+    [
+     70,
+     86
+    ],
+    [
+     71,
+     0
+    ],
+    [
+     71,
+     85
+    ],
+    [
+     74,
+     11
+    ],
+    [
+     74,
+     18
+    ],
+    [
+     74,
+     43
+    ],
+    [
+     74,
+     49
+    ],
+    [
+     74,
+     59
+    ],
+    [
+     74,
+     82
+    ],
+    [
+     74,
+     85
+    ],
+    [
+     74,
+     110
+    ],
+    [
+     75,
+     85
+    ],
+    [
+     76,
+     80
+    ],
+    [
+     76,
+     83
+    ],
+    [
+     77,
+     0
+    ],
+    [
+     77,
+     40
+    ],
+    [
+     77,
+     82
+    ],
+    [
+     78,
+     66
+    ],
+    [
+     78,
+     73
+    ],
+    [
+     78,
+     82
+    ],
+    [
+     79,
+     29
+    ],
+    [
+     79,
+     42
+    ],
+    [
+     79,
+     80
+    ],
+    [
+     79,
+     95
+    ],
+    [
+     80,
+     97
+    ],
+    [
+     80,
+     110
+    ],
+    [
+     81,
+     63
+    ],
+    [
+     81,
+     75
+    ],
+    [
+     82,
+     5
+    ],
+    [
+     82,
+     74
+    ],
+    [
+     82,
+     77
+    ],
+    [
+     82,
+     95
+    ],
+    [
+     83,
+     77
+    ],
+    [
+     84,
+     1
+    ],
+    [
+     84,
+     60
+    ],
+    [
+     84,
+     75
+    ],
+    [
+     85,
+     8
+    ],
+    [
+     85,
+     59
+    ],
+    [
+     85,
+     80
+    ],
+    [
+     86,
+     35
+    ],
+    [
+     86,
+     68
+    ],
+    [
+     86,
+     70
+    ],
+    [
+     86,
+     79
+    ],
+    [
+     87,
+     36
+    ],
+    [
+     87,
+     72
+    ],
+    [
+     87,
+     97
+    ],
+    [
+     87,
+     111
+    ],
+    [
+     88,
+     29
+    ],
+    [
+     88,
+     63
+    ],
+    [
+     88,
+     71
+    ],
+    [
+     89,
+     28
+    ],
+    [
+     89,
+     57
+    ],
+    [
+     89,
+     67
+    ],
+    [
+     89,
+     70
+    ],
+    [
+     90,
+     54
+    ],
+    [
+     90,
+     56
+    ],
+    [
+     90,
+     66
+    ],
+    [
+     90,
+     67
+    ],
+    [
+     90,
+     69
+    ],
+    [
+     90,
+     75
+    ],
+    [
+     90,
+     94
+    ],
+    [
+     90,
+     108
+    ],
+    [
+     91,
+     53
+    ],
+    [
+     91,
+     68
+    ],
+    [
+     91,
+     92
+    ],
+    [
+     92,
+     67
+    ],
+    [
+     93,
+     63
+    ],
+    [
+     93,
+     66
+    ],
+    [
+     94,
+     29
+    ],
+    [
+     94,
+     50
+    ],
+    [
+     94,
+     65
+    ],
+    [
+     94,
+     104
+    ],
+    [
+     95,
+     64
+    ],
+    [
+     95,
+     82
+    ],
+    [
+     96,
+     12
+    ],
+    [
+     96,
+     25
+    ],
+    [
+     96,
+     60
+    ],
+    [
+     96,
+     63
+    ],
+    [
+     98,
+     18
+    ],
+    [
+     98,
+     58
+    ],
+    [
+     98,
+     61
+    ],
+    [
+     99,
+     18
+    ],
+    [
+     99,
+     22
+    ],
+    [
+     99,
+     60
+    ],
+    [
+     99,
+     75
+    ],
+    [
+     100,
+     17
+    ],
+    [
+     100,
+     60
+    ],
+    [
+     100,
+     75
+    ],
+    [
+     100,
+     98
+    ],
+    [
+     101,
+     18
+    ],
+    [
+     101,
+     43
+    ],
+    [
+     101,
+     55
+    ],
+    [
+     101,
+     64
+    ],
+    [
+     101,
+     76
+    ],
+    [
+     102,
+     42
+    ],
+    [
+     102,
+     44
+    ],
+    [
+     102,
+     63
+    ],
+    [
+     102,
+     109
+    ],
+    [
+     103,
+     0
+    ],
+    [
+     103,
+     51
+    ],
+    [
+     104,
+     40
+    ],
+    [
+     104,
+     42
+    ],
+    [
+     104,
+     55
+    ],
+    [
+     104,
+     80
+    ],
+    [
+     105,
+     12
+    ],
+    [
+     105,
+     18
+    ],
+    [
+     105,
+     22
+    ],
+    [
+     105,
+     28
+    ],
+    [
+     105,
+     39
+    ],
+    [
+     105,
+     49
+    ],
+    [
+     105,
+     51
+    ],
+    [
+     105,
+     54
+    ],
+    [
+     105,
+     79
+    ],
+    [
+     105,
+     93
+    ],
+    [
+     105,
+     106
+    ],
+    [
+     106,
+     38
+    ],
+    [
+     108,
+     48
+    ],
+    [
+     108,
+     51
+    ],
+    [
+     108,
+     82
+    ],
+    [
+     109,
+     12
+    ],
+    [
+     109,
+     35
+    ],
+    [
+     109,
+     47
+    ],
+    [
+     109,
+     51
+    ],
+    [
+     110,
+     49
+    ],
+    [
+     111,
+     33
+    ],
+    [
+     111,
+     40
+    ],
+    [
+     111,
+     89
+    ]
+   ],
+   "wrong_pairs_truncated": false,
+   "as_written_by_circle_only_py": {
+    "wrong_count": 344,
+    "ties": 0,
+    "smallest_winning_gap": 3765,
+    "largest_weight": 133,
+    "w2_in_fast_range": true,
+    "max_hidden_sum": 1419937,
+    "fast_digit_bound_ok": true
+   },
+   "rescaled": false,
+   "rescale_factor": null,
+   "note": "circle_only.py's tables used as written"
+  }
+ },
+ "kernel": {
+  "trained": {
+   "status": "pass",
+   "statement": "wrong on exactly 2 of 12769 pairs (LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.Trained.answer_iff_not_wrong, wrongPairs_length, wrongPairs_nodup, wrongPairs_in_range)",
+   "wrong_count": 2,
+   "how": "lake build + leanchecker replay of every module + #print axioms"
+  },
+  "circle_only": {
+   "status": "pass",
+   "statement": "wrong on exactly 344 of 12769 pairs (LeanCheckedNetwork.Sweep.P113_H64_S0_F0p5_WD1_ST8000.CircleOnly.answer_iff_not_wrong, wrongPairs_length, wrongPairs_nodup, wrongPairs_in_range)",
+   "wrong_count": 344,
+   "how": "lake build + leanchecker replay of every module + #print axioms"
+  }
+ }
+}

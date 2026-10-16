@@ -88,6 +88,20 @@ most one weight change inside [-128, 127] can shift the gap between two scores, 
 the trained network's); the 12- and 16-neuron networks are below that line, which is why the fault
 is planted in the smallest one.
 
+## Counting, not only proving
+
+`adds_mod_p` says a network is right on every pair. A trained network part way through training
+is right on some number of pairs, and that number is what a study of training would certify, run
+by run and checkpoint by checkpoint. `lean/LeanCheckedNetwork/Count.lean` gives the count the same
+treatment as the answer, row by row so that each kernel evaluation stays small (a single
+evaluation over all 12,769 pairs was killed at about 8 GB; one row needs a few hundred MB):
+`fastRowCount` counts the correct `b` for one `a` with the packed evaluator, `rowCount_eq_fastRowCount`
+proves it equals the count on the network itself whenever the evaluator's cheap checks pass on
+that row (`rowOk`), and `count` is the sum over rows. The first instance is the planted fault,
+`FaultFixed12.right_on_12753`: 113 row theorems, each one kernel evaluation, then the sum. The
+network is right on exactly 12,753 of the 12,769 pairs, 16 wrong, by the kernel (verdict in
+`lean_run_fixed_phase.log`).
+
 ## What to prove, and what the kernel costs
 
 **The theorem to write in Lean over Mathlib** (not written; stated here so the next session starts

@@ -21,6 +21,7 @@ import LeanCheckedNetwork.FixedPhase448.AllInputs
 import LeanCheckedNetwork.Mod7All.AllInputs
 import LeanCheckedNetwork.Mod12All.AllInputs
 import LeanCheckedNetwork.Mod257Min.AllInputs
+import LeanCheckedNetwork.Fault.Fixed12Count
 #print axioms LeanCheckedNetwork.FixedPhase12.adds_mod_113
 #print axioms LeanCheckedNetwork.FixedPhase16.adds_mod_113
 #print axioms LeanCheckedNetwork.FixedPhase40.adds_mod_113
@@ -28,12 +29,13 @@ import LeanCheckedNetwork.Mod257Min.AllInputs
 #print axioms LeanCheckedNetwork.Mod7All.adds_mod_7
 #print axioms LeanCheckedNetwork.Mod12All.adds_mod_12
 #print axioms LeanCheckedNetwork.Mod257Min.adds_mod_257
+#print axioms LeanCheckedNetwork.FaultFixed12.right_on_12753
 LEAN
 lake env lean /tmp/axioms_check.lean 2>&1 | tee /tmp/axioms.out
 nstd=$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]$" /tmp/axioms.out)
-[ "$nstd" -eq 7 ] && echo "all seven theorems use only the standard axioms" || { echo "PROBLEM: unexpected axioms"; status=1; }
+[ "$nstd" -eq 8 ] && echo "all eight theorems use only the standard axioms" || { echo "PROBLEM: unexpected axioms"; status=1; }
 echo "=== planted fault (must be rejected by the kernel)"
-if ! lake build LeanCheckedNetwork.Fault.Fixed12Table > /tmp/fault12_table.out 2>&1; then
+if ! lake build LeanCheckedNetwork.Fault.Fixed12Table LeanCheckedNetwork.Fault.Fixed12Count > /tmp/fault12_table.out 2>&1; then
   echo "PROBLEM: the faulty network's table did not build, so the check did not run"; tail -5 /tmp/fault12_table.out; status=1
 elif lake env lean expected_fail/FaultFixed12Row.lean > /tmp/fault12.out 2>&1; then
   echo "PROBLEM: the faulty network was accepted"; status=1
@@ -44,7 +46,7 @@ else
 fi
 echo "=== replay with leanchecker, 4 at a time"
 mods=$(find LeanCheckedNetwork/FixedPhase12 LeanCheckedNetwork/FixedPhase16 LeanCheckedNetwork/FixedPhase40 LeanCheckedNetwork/FixedPhase448 LeanCheckedNetwork/Mod7All LeanCheckedNetwork/Mod12All LeanCheckedNetwork/Mod257Min -name '*.lean' | sed 's/\.lean$//; s|/|.|g' | sort)
-mods="LeanCheckedNetwork.Network LeanCheckedNetwork.Fast $mods"
+mods="LeanCheckedNetwork.Network LeanCheckedNetwork.Fast LeanCheckedNetwork.Count LeanCheckedNetwork.Fault.Fixed12Weights LeanCheckedNetwork.Fault.Fixed12Table LeanCheckedNetwork.Fault.Fixed12Count $mods"
 nmods=$(printf '%s\n' $mods | wc -l)
 printf '%s\n' $mods | xargs -P 4 -I{} sh -c 'if lake env leanchecker {} > /tmp/lc.{}.out 2>&1; then echo "OK   {}"; else echo "FAIL {}"; cat /tmp/lc.{}.out; fi' > /tmp/replay.out
 sort /tmp/replay.out | grep -c '^OK' | xargs -I{} echo "replayed {} of $nmods modules"

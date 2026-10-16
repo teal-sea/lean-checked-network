@@ -1,2 +1,5 @@
 import LeanCheckedNetwork.Trained.AllInputs
 import LeanCheckedNetwork.CircleOnly.AllInputs
+import LeanCheckedNetwork.FixedPhase12.AllInputs
+import LeanCheckedNetwork.FixedPhase16.AllInputs
+import LeanCheckedNetwork.FixedPhase40.AllInputs

@@ -9,11 +9,11 @@ standard axioms only, replayed by `leanchecker`), **measured** (a numpy computat
 Gromov (2023, arXiv:2301.02679, eqs. 6 to 16) gives analytic weights for this repository's
 two-layer square network: a neuron at frequency `k` has `E1[a] = cos(2πka/p + φ₁)`,
 `E2[b] = cos(2πkb/p + φ₂)`, `W2[c] = cos(2πkc/p + φ₁ + φ₂)`, with **random** phases. Expanding the
-score `Σ_h W2[c,h] (E1[a,h] + E2[b,h])²` gives eight families of waves (his equation 11); the one in
-`a + b − c` is the answer and the other seven cancel only on average over random phases, which is
+score `Σ_h W2[c,h] (E1[a,h] + E2[b,h])²` gives nine families of waves (his equation 11); the one in
+`a + b − c` is the answer and the other eight cancel only on average over random phases, which is
 why his solution is approximate and needs large width.
 
-**Fix the phases on a cycle and the seven families cancel exactly.** Each unwanted family carries a
+**Fix the phases on a cycle and the eight families cancel exactly.** Each unwanted family carries a
 phase `uφ₁ + vφ₂` with `(u, v)` in `{(1,−1), (3,1), (−1,1), (1,3), (2,2), (0,−2), (2,0), (1,1)}`. Take,
 per frequency, six neurons with `φ₁ = 2πj/6` and `φ₂ = 4φ₁` for `j = 0, …, 5`. Then every unwanted
 family has phase `(u + 4v)·2πj/6` with `u + 4v` never divisible by 6 (the eight values are −3, 7, 3, 13,
@@ -27,15 +27,17 @@ the **gap**
 
     g(S) = |S| − max_{s ≢ 0 (mod p)} Σ_{k ∈ S} cos(2πks/p)
 
-is positive. For `S` = all frequencies `1 … ⌊(p−1)/2⌋`, the sum of roots of unity gives `g = p/2`.
+is positive. For `S` = all frequencies `1 … ⌊(p−1)/2⌋`, the sum of roots of unity gives `g = p/2` for odd
+`p` and `g = p/2 − 1` for even `p`.
 Rounding every weight to an integer at scale `M` moves each neuron's score by at most about `6M²`,
 the margin is `3g(S)M³`, two scores are compared, so `M > 24|S|/g(S)` is enough (a crude bound; the
-measured minimum scales are far lower). The exact cancellation was checked numerically to
+measured minimum scales are far lower). With `S` every frequency that is `M ≥ 24` at odd `p`, and
+`M = 25` covers every `p ≥ 3`. The exact cancellation was checked numerically to
 floating-point noise (largest deviation `4.5 × 10⁻¹³`) before any integer network was built.
 
 **Status: derived.** The theorem for every `p`, every `S` with `g(S) > 0` and every large enough
 `M` is the obvious thing to prove in Lean over Mathlib (trigonometric identities, sums over a
-cycle, roots of unity, rounding bounds); nothing here does that yet. What this repository does
+cycle, roots of unity, rounding bounds); another session's lane reports it done the same day, see below. What this repository does
 instead is the finite thing: build the integer network for `p = 113` and let the kernel check every
 pair, exactly as it checks the trained network.
 
@@ -90,6 +92,10 @@ is planted in the smallest one.
 
 ## Counting, not only proving
 
+*Sibling on `main` since PR #1: `sweep/WrongSet.lean` states a wrong network's score as "wrong on
+exactly these k pairs", with the list proved strictly ordered, duplicate-free and in range. `Count.lean`
+states the number only, row by row; the two should become one before either grows.*
+
 `adds_mod_p` says a network is right on every pair. A trained network part way through training
 is right on some number of pairs, and that number is what a study of training would certify, run
 by run and checkpoint by checkpoint. `lean/LeanCheckedNetwork/Count.lean` gives the count the same
@@ -104,8 +110,12 @@ The same machinery then gave six checkpoints of a training run their exact score
 
 ## What to prove, and what the kernel costs
 
-**The theorem to write in Lean over Mathlib** (not written; stated here so the next session starts
-from the statement rather than the idea). With `gap p S := S.card − sup_{1 ≤ s < p} Σ_{k ∈ S} cos(2πks/p)`
+**The theorem in Lean over Mathlib.** Another session's lane reports it proved the same day
+(`PhaseGrid.adds_mod_p` for any `p > 0`, any frequency list, any gap and any `M` with `24|S| < M·g`,
+and `adds_mod_p_full`: every `p ≥ 3`, all frequencies, `M ≥ 25`; 20 theorems, standard axioms,
+replayed), unreviewed and not merged at the time of this file; its corrections to the first statement
+of the bound are folded in above (eight unwanted families, `M ≥ 24` at odd `p`, the even-`p` gap, no
+primality). The statement, as first written here: With `gap p S := S.card − sup_{1 ≤ s < p} Σ_{k ∈ S} cos(2πks/p)`
 and the tables `E1`, `E2`, `W2` defined from `Int.round (M · Real.cos …)` with the six-phase cycle:
 
     theorem fixedPhase_adds_mod (p : ℕ) (hp : 3 ≤ p) (S : Finset ℕ) (hS : ∀ k ∈ S, 1 ≤ k ∧ 2 * k < p)

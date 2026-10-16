@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Kernel-check the fixed-phase networks (four at modulus 113, then moduli 7, 12 and 257), print their
 # axioms, check the planted fault is rejected, replay every module with leanchecker.
+# STAGE=build skips the replay; STAGE=replay skips the builds (the audit and the fault run in both).
 set -u
 export PATH="/root/.elan/bin:$PATH"
 cd "$(dirname "$0")/lean"
@@ -23,6 +24,7 @@ for name in FixedPhase12 FixedPhase16 FixedPhase40 FixedPhase448 Mod7All Mod12Al
   echo "=== build $name exit $b end $(date -u +%FT%TZ)"
   [ $b -eq 0 ] || status=1
 done
+fi
 echo "=== axioms"
 cat > /tmp/axioms_check.lean <<'LEAN'
 import LeanCheckedNetwork.FixedPhase12.AllInputs
@@ -33,6 +35,12 @@ import LeanCheckedNetwork.Mod7All.AllInputs
 import LeanCheckedNetwork.Mod12All.AllInputs
 import LeanCheckedNetwork.Mod257Min.AllInputs
 import LeanCheckedNetwork.Fault.Fixed12Count
+import LeanCheckedNetwork.H64Step2000.Count
+import LeanCheckedNetwork.H64Step4000.Count
+import LeanCheckedNetwork.H64Step6000.Count
+import LeanCheckedNetwork.H64Step8000.Count
+import LeanCheckedNetwork.H64Step10000.Count
+import LeanCheckedNetwork.H64Step12000.Count
 #print axioms LeanCheckedNetwork.FixedPhase12.adds_mod_113
 #print axioms LeanCheckedNetwork.FixedPhase16.adds_mod_113
 #print axioms LeanCheckedNetwork.FixedPhase40.adds_mod_113
@@ -41,10 +49,16 @@ import LeanCheckedNetwork.Fault.Fixed12Count
 #print axioms LeanCheckedNetwork.Mod12All.adds_mod_12
 #print axioms LeanCheckedNetwork.Mod257Min.adds_mod_257
 #print axioms LeanCheckedNetwork.FaultFixed12.right_on_12753
+#print axioms LeanCheckedNetwork.H64Step2000.right_on_12766
+#print axioms LeanCheckedNetwork.H64Step4000.right_on_12767
+#print axioms LeanCheckedNetwork.H64Step6000.right_on_12766
+#print axioms LeanCheckedNetwork.H64Step8000.right_on_12767
+#print axioms LeanCheckedNetwork.H64Step10000.right_on_12767
+#print axioms LeanCheckedNetwork.H64Step12000.right_on_12769
 LEAN
 lake env lean /tmp/axioms_check.lean 2>&1 | tee /tmp/axioms.out
 nstd=$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]$" /tmp/axioms.out)
-[ "$nstd" -eq 8 ] && echo "all eight theorems use only the standard axioms" || { echo "PROBLEM: unexpected axioms"; status=1; }
+[ "$nstd" -eq 14 ] && echo "all fourteen theorems use only the standard axioms" || { echo "PROBLEM: unexpected axioms"; status=1; }
 echo "=== planted fault (must be rejected by the kernel)"
 if ! lake build LeanCheckedNetwork.Fault.Fixed12Table LeanCheckedNetwork.Fault.Fixed12Count > /tmp/fault12_table.out 2>&1; then
   echo "PROBLEM: the faulty network's table did not build, so the check did not run"; tail -5 /tmp/fault12_table.out; status=1
@@ -55,10 +69,9 @@ elif grep -q "(kernel)" /tmp/fault12.out; then
 else
   echo "PROBLEM: failed for a reason other than the kernel rejecting it:"; head -5 /tmp/fault12.out; status=1
 fi
-fi
 if [ "$STAGE" != build ]; then
 echo "=== replay with leanchecker, 2 at a time"
-mods=$(find LeanCheckedNetwork/FixedPhase12 LeanCheckedNetwork/FixedPhase16 LeanCheckedNetwork/FixedPhase40 LeanCheckedNetwork/FixedPhase448 LeanCheckedNetwork/Mod7All LeanCheckedNetwork/Mod12All LeanCheckedNetwork/Mod257Min -name '*.lean' | sed 's/\.lean$//; s|/|.|g' | sort)
+mods=$(find LeanCheckedNetwork/FixedPhase12 LeanCheckedNetwork/FixedPhase16 LeanCheckedNetwork/FixedPhase40 LeanCheckedNetwork/FixedPhase448 LeanCheckedNetwork/Mod7All LeanCheckedNetwork/Mod12All LeanCheckedNetwork/Mod257Min LeanCheckedNetwork/H64Step2000 LeanCheckedNetwork/H64Step4000 LeanCheckedNetwork/H64Step6000 LeanCheckedNetwork/H64Step8000 LeanCheckedNetwork/H64Step10000 LeanCheckedNetwork/H64Step12000 -name '*.lean' | sed 's/\.lean$//; s|/|.|g' | sort)
 mods="LeanCheckedNetwork.Network LeanCheckedNetwork.Fast LeanCheckedNetwork.Count LeanCheckedNetwork.Fault.Fixed12Weights LeanCheckedNetwork.Fault.Fixed12Table LeanCheckedNetwork.Fault.Fixed12Count $mods"
 nmods=$(printf '%s\n' $mods | wc -l)
 printf '%s\n' $mods | xargs -P 2 -I{} sh -c 'if lake env leanchecker {} > /tmp/lc.{}.out 2>&1; then echo "OK   {}"; else echo "FAIL {}"; cat /tmp/lc.{}.out; fi' > /tmp/replay.out

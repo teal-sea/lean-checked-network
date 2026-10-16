@@ -1,0 +1,29 @@
+{
+ "reward": 1.0,
+ "stage": "ok",
+ "reason": "kernel accepted; leanchecker replayed; statement matches; axioms standard",
+ "axioms": [
+  "propext",
+  "Classical.choice",
+  "Quot.sound"
+ ],
+ "timings": {
+  "build_s": 21.6,
+  "leanchecker_s": 15.68,
+  "check_s": 0.75,
+  "total_s": 38.23
+ },
+ "package_dir": null
+}
+--- build output ---
+info: lean-mod-add-proof: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+✔ [2/4] Built LeanCheckedNetwork.Network (581ms)
+✔ [3/4] Built LeanCheckedNetwork.Weights (2.2s)
+✔ [4/4] Built LeanCheckedNetwork.Submission (18s)
+Build completed successfully (4 jobs).
+--- leanchecker output ---
+(empty)
+--- check output ---
+'LeanCheckedNetwork.Net.adds_mod_23' depends on axioms: [propext, Classical.choice, Quot.sound]
+wall 44s

@@ -5,3 +5,9 @@ __pycache__/
 *.log
 !lean_run.log
 !runs/*.log
+**/.lake/
+**/.venv/
+prime_env/tests/work/
+prime_env/tests/tmp_tasks/
+prime_env/nets/runs_*/
+sweep-results/

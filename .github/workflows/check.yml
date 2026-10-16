@@ -32,5 +32,21 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Recurrent adder (rnn/), every input length, kernel check and replay, about 10 s
+        run: ./rnn/run_check.sh
+      - name: Sweep runner on a tiny network, right everywhere, then a wrong one, then the negative control, about 2 min
+        run: |
+          python3 sweep/run_one.py 7 8 0 1.0 1.0 3000 /tmp/sweep-right --repo .
+          python3 sweep/run_one.py 7 8 0 0.7 1.0 200 /tmp/sweep-wrong --repo .
+          python3 sweep/negative_control.py /tmp/sweep-wrong Trained
+      - name: Prime Intellect environment grader, the fast tests (brute force passes; sorry, native_decide, skipKernelTC, wrong statement, wrong network score 0)
+        run: |
+          cd prime_env/tests && ./run_all_tests.sh
+          grep -q '"reward": 1.0' logs/i_bruteforce_p7.txt
+          for t in ii_sorry_p7 ii_b_sorry_noguard_p7 iii_native_decide_p7 iii_b_native_noguard_p7 iii_c_decide_native_noguard_p7 iv_skipKernelTC_guard_p7 iv_b_skipKernelTC_noguard_p7 v_wrong_statement_p7 v_b_renamed_p7 vi_wrong_network_p7; do grep -q '"reward": 0.0' logs/$t.txt || { echo "test $t did not score 0.0"; exit 1; }; done
       - name: Build both networks, replay every module, planted fault, axioms
         run: ./run_lean.sh

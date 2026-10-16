@@ -1,0 +1,9 @@
+{
+ "task_id": "p7_h8_s0_WRONG",
+ "p": 7,
+ "H": 8,
+ "seed": 0,
+ "theorem_name": "LeanCheckedNetwork.Net.adds_mod_7",
+ "wrong": 12,
+ "ties": 0
+}

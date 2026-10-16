@@ -1,0 +1,25 @@
+{
+ "reward": 0.0,
+ "stage": "build",
+ "reason": "lake build failed",
+ "axioms": [],
+ "timings": {
+  "build_s": 1.36,
+  "total_s": 1.37
+ },
+ "package_dir": null
+}
+--- build output ---
+info: lean-mod-add-proof: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+✔ [2/4] Built LeanCheckedNetwork.Network (283ms)
+✔ [3/4] Built LeanCheckedNetwork.Weights (524ms)
+✖ [4/4] Building LeanCheckedNetwork.Submission (425ms)
+trace: .> LEAN_PATH=/home/user/lean-checked-network/prime_env/tests/work/pkg-25f99d694316/.lake/build/lib/lean /root/.elan/toolchains/leanprover--lean4---v4.35.0-rc2/bin/lean /home/user/lean-checked-network/prime_env/tests/work/pkg-25f99d694316/LeanCheckedNetwork/Submission.lean -o /home/user/lean-checked-network/prime_env/tests/work/pkg-25f99d694316/.lake/build/lib/lean/LeanCheckedNetwork/Submission.olean -i /home/user/lean-checked-network/prime_env/tests/work/pkg-25f99d694316/.lake/build/lib/lean/LeanCheckedNetwork/Submission.ilean -c /home/user/lean-checked-network/prime_env/tests/work/pkg-25f99d694316/.lake/build/ir/LeanCheckedNetwork/Submission.c --setup /home/user/lean-checked-network/prime_env/tests/work/pkg-25f99d694316/.lake/build/ir/LeanCheckedNetwork/Submission.setup.json --json
+error: LeanCheckedNetwork/Submission.lean:8:2: Tactic `decide` proved that the proposition
+  ∀ (a : Nat), a < 7 → ∀ (b : Nat), b < 7 → answer a b = (a + b) % 7
+is false
+Some required targets logged failures:
+- LeanCheckedNetwork.Submission
+error: build failed
+wall 1.5s

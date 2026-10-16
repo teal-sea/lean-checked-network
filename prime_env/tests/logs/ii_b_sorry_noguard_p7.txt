@@ -1,0 +1,29 @@
+{
+ "reward": 0.0,
+ "stage": "axioms",
+ "reason": "non-standard axioms: ['sorryAx']",
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "timings": {
+  "build_s": 0.96,
+  "leanchecker_s": 0.38,
+  "check_s": 0.27,
+  "total_s": 1.62
+ },
+ "package_dir": null
+}
+--- build output ---
+info: lean-mod-add-proof: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+✔ [2/4] Built LeanCheckedNetwork.Network (264ms)
+✔ [3/4] Built LeanCheckedNetwork.Weights (377ms)
+⚠ [4/4] Built LeanCheckedNetwork.Submission (239ms)
+warning: LeanCheckedNetwork/Submission.lean:5:8: declaration uses `sorry`
+Build completed successfully (4 jobs).
+--- leanchecker output ---
+(empty)
+--- check output ---
+'LeanCheckedNetwork.Net.adds_mod_7' depends on axioms: [propext, sorryAx]
+wall 1.7s

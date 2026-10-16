@@ -38,6 +38,10 @@ FORBIDDEN_TOKENS = (
     "extern", "unsafe", "partial", "skipKernelTC", "macro_rules", "macro", "elab", "elab_rules",
     "syntax", "notation", "infix", "infixl", "infixr", "prefix", "postfix", "initialize",
     "builtin_initialize", "Lean.Elab", "Lean.Meta", "Lean.Environment", "addDecl",
+    # Added 2026-10-16 after review: `#eval` runs arbitrary IO at build time (a submission
+    # overwrote Check.lean and got reward 1.0); the others are the remaining code-running
+    # commands and the `init` attribute. None of them appear in a proof.
+    "#eval", "run_cmd", "run_tac", "run_elab", "run_meta", "IO", "init", "evalExpr",
 )
 FORBIDDEN_PATTERNS = (
     r"\+\s*native",          # decide +native
@@ -45,6 +49,10 @@ FORBIDDEN_PATTERNS = (
     r"trace\.profiler",      # harmless, but no reason for it; keep the surface small
 )
 ALLOWED_IMPORTS = ("LeanCheckedNetwork.Network", "LeanCheckedNetwork.Weights")
+# Added 2026-10-16 after review: without this import a submission can define its own
+# `LeanCheckedNetwork.Net.Spec := True` and `answer`, and the statement check compares
+# against those. Check.lean now also imports Weights itself, so a redefinition collides.
+REQUIRED_IMPORT = "LeanCheckedNetwork.Weights"
 
 STAGES = ("extract", "guard", "package", "build", "leanchecker", "check", "axioms", "ok")
 
@@ -84,10 +92,14 @@ def text_guard(source: str) -> str | None:
     for pat in FORBIDDEN_PATTERNS:
         if re.search(pat, source):
             return f"forbidden pattern: {pat}"
+    imported = []
     for m in re.finditer(r"^\s*import\s+(.*)$", source, re.M):
         for mod in m.group(1).split():
             if mod not in ALLOWED_IMPORTS:
                 return f"import not allowed: {mod}"
+            imported.append(mod)
+    if REQUIRED_IMPORT not in imported:
+        return f"missing required import: {REQUIRED_IMPORT}"
     return None
 
 
@@ -104,9 +116,17 @@ def check_lean(theorem_name: str) -> str:
     # `Spec` is elaborated inside Weights.lean, before any submitted syntax exists, so a
     # submission cannot change what the required statement means. The term-mode proof below
     # type-checks only if the submitted theorem's type is (definitionally) that statement.
+    #
+    # Changed 2026-10-16 after review. The check theorem used to be named
+    # `LeanModAddProofCheck.statement_matches`; a dotted declaration name opens its namespace
+    # while the type and body are elaborated, so a submission that defined
+    # `LeanModAddProofCheck.LeanCheckedNetwork.Net.Spec := True` was accepted. The name is now
+    # flat, both constants are written with `_root_.`, and Weights is imported here too, so a
+    # submission that skips that import and redefines `Spec` fails at import time.
     return (
+        "import LeanCheckedNetwork.Weights\n"
         "import LeanCheckedNetwork.Submission\n\n"
-        f"theorem LeanModAddProofCheck.statement_matches : {NAMESPACE}.Spec := {theorem_name}\n\n"
+        f"theorem leanModAddProofCheck_statement_matches : _root_.{NAMESPACE}.Spec := _root_.{theorem_name}\n\n"
         f"#print axioms {theorem_name}\n"
     )
 
@@ -211,7 +231,6 @@ def _grade(
     (lib / "Network.lean").write_text(network_lean)
     (lib / "Weights.lean").write_text(weights_lean)
     (lib / "Submission.lean").write_text(source)
-    (pkg / "Check.lean").write_text(check_lean(theorem_name))
     env = lean_env(lean_threads)
     deadline = time.monotonic() + timeout_s
 
@@ -242,6 +261,11 @@ def _grade(
             return res
 
         res.stage = "check"
+        # Written only now (2026-10-16): anything the build may have done to the package
+        # directory cannot replace this file. (It cannot stop build-time code from touching
+        # the .olean files; the text guard on `#eval` and the import list is what prevents
+        # build-time code, and an OS sandbox is the real answer.)
+        (pkg / "Check.lean").write_text(check_lean(theorem_name))
         rc, out, dt = _run(["lake", "env", "lean", "Check.lean"], pkg, remaining(), env)
         res.timings["check_s"] = round(dt, 2)
         res.outputs["check"] = _tail(out)

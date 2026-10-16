@@ -4,23 +4,23 @@
  "reason": "the theorem LeanCheckedNetwork.Net.adds_mod_7 is missing or its statement is not the required one",
  "axioms": [],
  "timings": {
-  "build_s": 1.56,
-  "leanchecker_s": 1.24,
-  "check_s": 0.27,
-  "total_s": 3.08
+  "build_s": 1.81,
+  "leanchecker_s": 1.05,
+  "check_s": 0.34,
+  "total_s": 3.2
  },
  "package_dir": null
 }
 --- build output ---
 info: lean-mod-add-proof: no previous manifest, creating one from scratch
 info: toolchain not updated; already up-to-date
-✔ [2/4] Built LeanCheckedNetwork.Network (349ms)
-✔ [3/4] Built LeanCheckedNetwork.Weights (287ms)
-✔ [4/4] Built LeanCheckedNetwork.Submission (772ms)
+✔ [2/4] Built LeanCheckedNetwork.Network (344ms)
+✔ [3/4] Built LeanCheckedNetwork.Weights (336ms)
+✔ [4/4] Built LeanCheckedNetwork.Submission (922ms)
 Build completed successfully (4 jobs).
 --- leanchecker output ---
 (empty)
 --- check output ---
-Check.lean:3:80: error(lean.unknownIdentifier): Unknown identifier `LeanCheckedNetwork.Net.adds_mod_7`
-Check.lean:5:14: error(lean.unknownIdentifier): Unknown constant `LeanCheckedNetwork.Net.adds_mod_7`
-wall 3.2s
+Check.lean:4:87: error(lean.unknownIdentifier): Unknown identifier `_root_.LeanCheckedNetwork.Net.adds_mod_7`
+Check.lean:6:14: error(lean.unknownIdentifier): Unknown constant `LeanCheckedNetwork.Net.adds_mod_7`
+wall 3.3s

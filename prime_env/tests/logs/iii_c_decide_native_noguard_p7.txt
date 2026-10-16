@@ -7,23 +7,23 @@
   "LeanCheckedNetwork.Net.adds_mod_7._native.decide.ax_1_1"
  ],
  "timings": {
-  "build_s": 1.26,
-  "leanchecker_s": 0.43,
-  "check_s": 0.25,
-  "total_s": 1.94
+  "build_s": 1.35,
+  "leanchecker_s": 0.57,
+  "check_s": 0.46,
+  "total_s": 2.38
  },
  "package_dir": null
 }
 --- build output ---
 info: lean-mod-add-proof: no previous manifest, creating one from scratch
 info: toolchain not updated; already up-to-date
-✔ [2/4] Built LeanCheckedNetwork.Network (318ms)
-✔ [3/4] Built LeanCheckedNetwork.Weights (478ms)
-✔ [4/4] Built LeanCheckedNetwork.Submission (339ms)
+✔ [2/4] Built LeanCheckedNetwork.Network (445ms)
+✔ [3/4] Built LeanCheckedNetwork.Weights (445ms)
+✔ [4/4] Built LeanCheckedNetwork.Submission (401ms)
 Build completed successfully (4 jobs).
 --- leanchecker output ---
 (empty)
 --- check output ---
 'LeanCheckedNetwork.Net.adds_mod_7' depends on axioms: [propext,
  LeanCheckedNetwork.Net.adds_mod_7._native.decide.ax_1_1]
-wall 2.0s
+wall 2.5s

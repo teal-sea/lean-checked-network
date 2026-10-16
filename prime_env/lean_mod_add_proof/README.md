@@ -43,17 +43,26 @@ Splits: seeds 0 and 1 are `train` (35 tasks), seed 2 is `eval` (17 tasks).
    `native_decide`, `decide +native`, `ofReduceBool`, `axiom`, `opaque`, `implemented_by`,
    `extern`, `unsafe`, `partial`, `set_option debug.*`, `macro`, `macro_rules`, `elab`,
    `elab_rules`, `syntax`, `notation`, `infix`/`infixl`/`infixr`/`prefix`/`postfix`,
-   `initialize`, and imports only `LeanCheckedNetwork.Network` and
-   `LeanCheckedNetwork.Weights`. The match is on whole words anywhere in the file, comments
-   included.
+   `initialize`, `#eval`, `run_cmd`, `run_tac`, `run_elab`, `run_meta`, `IO`, `init`,
+   `evalExpr`, imports only `LeanCheckedNetwork.Network` and `LeanCheckedNetwork.Weights`,
+   and does import `LeanCheckedNetwork.Weights`. The match is on whole words anywhere in the
+   file, comments included. (The `#eval` family, `IO` and the required import were added on
+   2026-10-16 after a review found three submissions that got reward 1.0 with a trivial
+   theorem: one skipped the Weights import and defined its own `Spec := True`; one used
+   `#eval IO.FS.writeFile` at build time to overwrite `Check.lean`; one defined
+   `LeanModAddProofCheck.LeanCheckedNetwork.Net.Spec`, which the old dotted check theorem
+   name resolved to. See tests ix_a, ix_b, ix_c.)
 2. A fresh Lake package (toolchain `leanprover/lean4:v4.35.0-rc2`, no dependencies) with
    `Network.lean`, `Weights.lean` and the submission: `lake build LeanCheckedNetwork.Submission`
    succeeds within the time limit.
 3. `lake env leanchecker LeanCheckedNetwork.Submission` accepts the module. This replays every
    declaration through the kernel from the compiled file, so `set_option debug.skipKernelTC`
    cannot hide a bad proof (tested below).
-4. A file written by the grader, `Check.lean`, elaborates:
-   `theorem ... : LeanCheckedNetwork.Net.Spec := LeanCheckedNetwork.Net.adds_mod_<p>`.
+4. A file written by the grader after the build and the leanchecker run, `Check.lean`,
+   elaborates: `import LeanCheckedNetwork.Weights`, `import LeanCheckedNetwork.Submission`,
+   `theorem leanModAddProofCheck_statement_matches : _root_.LeanCheckedNetwork.Net.Spec := _root_.LeanCheckedNetwork.Net.adds_mod_<p>`.
+   The check theorem's name has no dots (a dotted name opens its namespace while the
+   statement is elaborated) and both constants are written with `_root_.`.
    `Spec` is defined in `Weights.lean`, so its meaning is fixed before any submitted text is
    read; a theorem with the required name but a weaker or different statement fails here.
 5. `#print axioms LeanCheckedNetwork.Net.adds_mod_<p>` lists nothing outside

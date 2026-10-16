@@ -1,0 +1,31 @@
+{
+ "reward": 0.0,
+ "stage": "check",
+ "reason": "the theorem LeanCheckedNetwork.Net.adds_mod_7 is missing or its statement is not the required one",
+ "axioms": [],
+ "timings": {
+  "build_s": 0.96,
+  "leanchecker_s": 0.58,
+  "check_s": 0.25,
+  "total_s": 1.79
+ },
+ "package_dir": null
+}
+--- build output ---
+info: lean-mod-add-proof: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+✔ [2/4] Built LeanCheckedNetwork.Network (290ms)
+✔ [3/4] Built LeanCheckedNetwork.Weights (285ms)
+✔ [4/4] Built LeanCheckedNetwork.Submission (304ms)
+Build completed successfully (4 jobs).
+--- leanchecker output ---
+(empty)
+--- check output ---
+Check.lean:4:87: error: Type mismatch
+  LeanCheckedNetwork.Net.adds_mod_7
+has type
+  True
+but is expected to have type
+  LeanCheckedNetwork.Net.Spec
+'LeanCheckedNetwork.Net.adds_mod_7' does not depend on any axioms
+wall 1.9s

@@ -1,0 +1,11 @@
+{
+ "reward": 0.0,
+ "stage": "guard",
+ "reason": "forbidden token: #eval",
+ "axioms": [],
+ "timings": {
+  "total_s": 0.0
+ },
+ "package_dir": null
+}
+wall 0.1s

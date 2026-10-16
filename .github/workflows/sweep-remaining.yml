@@ -1,0 +1,66 @@
+name: sweep-remaining
+
+# One-off: the 13 grid points the Modal run did not reach on 2026-10-16 (the Modal workspace
+# was disabled at its monthly credit). Same code, numpy pin and thread caps as the Modal points.
+# Triggered only by a push of this file to this branch; check.yml is not touched.
+on:
+  push:
+    branches: [vizier/sweep-build-jobs]
+    paths: [.github/workflows/sweep-remaining.yml]
+
+jobs:
+  point:
+    name: ${{ matrix.tag }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 345
+    strategy:
+      fail-fast: false
+      max-parallel: 8          # leave the account's other Actions slots free
+      matrix:
+        include:
+          - {tag: P97_H256_S0_F0p3_WD1_ST20000, p: 97, H: 256, seed: 0, frac: 0.3, wd: 1, steps: 20000, jobs: 2}
+          - {tag: P97_H256_S1_F0p3_WD1_ST20000, p: 97, H: 256, seed: 1, frac: 0.3, wd: 1, steps: 20000, jobs: 2}
+          - {tag: P97_H256_S2_F0p3_WD1_ST20000, p: 97, H: 256, seed: 2, frac: 0.3, wd: 1, steps: 20000, jobs: 2}
+          - {tag: P97_H128_S0_F0p15_WD1_ST200000, p: 97, H: 128, seed: 0, frac: 0.15, wd: 1, steps: 200000, jobs: 4}
+          - {tag: P97_H128_S1_F0p15_WD1_ST200000, p: 97, H: 128, seed: 1, frac: 0.15, wd: 1, steps: 200000, jobs: 4}
+          - {tag: P97_H192_S0_F0p3_WD1_ST20000, p: 97, H: 192, seed: 0, frac: 0.3, wd: 1, steps: 20000, jobs: 2}
+          - {tag: P97_H192_S1_F0p3_WD1_ST20000, p: 97, H: 192, seed: 1, frac: 0.3, wd: 1, steps: 20000, jobs: 2}
+          - {tag: P97_H192_S2_F0p3_WD1_ST20000, p: 97, H: 192, seed: 2, frac: 0.3, wd: 1, steps: 20000, jobs: 2}
+          - {tag: P97_H128_S0_F0p125_WD1_ST200000, p: 97, H: 128, seed: 0, frac: 0.125, wd: 1, steps: 200000, jobs: 4}
+          - {tag: P97_H128_S1_F0p125_WD1_ST200000, p: 97, H: 128, seed: 1, frac: 0.125, wd: 1, steps: 200000, jobs: 4}
+          - {tag: P97_H128_S0_F0p1_WD1_ST200000, p: 97, H: 128, seed: 0, frac: 0.1, wd: 1, steps: 200000, jobs: 4}
+          - {tag: P97_H128_S1_F0p1_WD1_ST200000, p: 97, H: 128, seed: 1, frac: 0.1, wd: 1, steps: 200000, jobs: 4}
+          - {tag: P113_H128_S2_F0p3_WD1_ST20000, p: 113, H: 128, seed: 2, frac: 0.3, wd: 1, steps: 20000, jobs: 4}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan with the repo's toolchain as default (run_one.py calls lean outside lean/)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain "$(cat lean/lean-toolchain)"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install numpy==2.5.3
+      - name: Base package, as the Modal image builds it
+        run: cd lean && lake build LeanCheckedNetwork.Fast
+      - name: run_one.py
+        env:
+          OMP_NUM_THREADS: "1"
+        run: |
+          python3 sweep/run_one.py ${{ matrix.p }} ${{ matrix.H }} ${{ matrix.seed }} ${{ matrix.frac }} ${{ matrix.wd }} ${{ matrix.steps }} \
+            "$RUNNER_TEMP/work/${{ matrix.tag }}" --repo "$GITHUB_WORKSPACE" \
+            --jobs ${{ matrix.jobs }} --build-jobs ${{ matrix.jobs }} 2>&1 | tee "$RUNNER_TEMP/run_one.stdout.log"
+      - name: Collect the point (without .lake and the negative-control copy), as modal_sweep.py does
+        if: always()
+        run: |
+          mkdir -p "out/${{ matrix.tag }}"
+          if [ -d "$RUNNER_TEMP/work/${{ matrix.tag }}" ]; then
+            rsync -a --exclude .lake --exclude negative_control "$RUNNER_TEMP/work/${{ matrix.tag }}/" "out/${{ matrix.tag }}/"
+          fi
+          cp "$RUNNER_TEMP/run_one.stdout.log" "out/${{ matrix.tag }}/" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.tag }}
+          path: out/${{ matrix.tag }}
+          retention-days: 30

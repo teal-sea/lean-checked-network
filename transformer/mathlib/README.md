@@ -173,7 +173,7 @@ exactly (`int_transformer.py` reports its ceiling, `2`); the proved bound is `2`
 | `lake build Transformer.Program`, `Logits`, `Compose`, `Raw` | 10 s, 9 s, 8 s, 46 s (first run, under load: 12 s, 70 s, 83 s, not built) |
 | `leanchecker` replay, one module per call | 10 s, 8 s, 8 s, 8 s, 9 s (first run, under load: 67 s, 68 s, 70 s, 11 s) |
 | `lake env lean axioms_all.lean` (64 `#print axioms`) | 8 s |
-| peak resident memory of `lean` on `Transformer/Raw.lean` (poll of `/proc` every 0.5 s, `rss.Raw.out`) | 2232 MB |
+| peak resident memory of `lean` on `Transformer/Raw.lean` (poll of `/proc` every 0.5 s, `rss.Raw.out`; that `lake build` took 354 s wall with the machine shared by three lanes, against 46 s in `verify.out`) | 2232 MB (2286064 kB) |
 
 The whole `verify.sh` ran from `17:11:02Z` to `17:13:48Z`. The elaboration of `deltaBound_chosen` (the
 exact rational `(1 + 17/334764638208000)^31` by `norm_num`) is inside `ExpFix`'s 10 s.

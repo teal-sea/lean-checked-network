@@ -1,0 +1,92 @@
+verify2 start 2026-10-16T16:21:05Z
+=== versions
+leanprover/lean4:v4.35.0
+Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)
+   "name": "mathlib",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "v4.35.0",
+   "rev": "56a005855ea17e0b0958f73ec801ae140b0a1679",
+=== build start 2026-10-16T16:21:05Z
+Build completed successfully (9060 jobs).
+build exit 0
+=== source scan (must be empty): sorry, native_decide, axiom, opaque, implemented_by, extern, skipKernelTC
+none found
+=== Network.lean identical to the repository's?
+identical
+=== replay every module with leanchecker, 2 at a time, start 2026-10-16T16:21:14Z
+OK   PhaseGrid.Close
+OK   PhaseGrid.Cycle
+OK   PhaseGrid.Defs
+OK   PhaseGrid.FullSet
+OK   PhaseGrid.FullSetEven
+OK   PhaseGrid.ListLemmas
+OK   PhaseGrid.Network
+OK   PhaseGrid.Open
+OK   PhaseGrid.P7FullTables
+OK   PhaseGrid.P7Link
+OK   PhaseGrid.Score
+OK   PhaseGrid.Trig
+replayed 12 of 12 modules, end 2026-10-16T16:22:55Z
+=== axioms
+'PhaseGrid.octet' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.realScore_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.waveSum_right' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.waveSum_wrong' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.abs_round_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.neuron_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.intScore_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.intScore_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_of_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.sum_cos_range_eq_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.sum_cos_half' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_full_odd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.sum_cos_even_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_full_even' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_full' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_7_full' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_113_full' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.argmax_of_strict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.answer_ofFn' depends on axioms: [propext, Quot.sound]
+'PhaseGrid.abs_int_le_of_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.neuron_bound_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.intScoreT_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.intScoreT_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_tables' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_of_close_round' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.cos_pi28' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.sin_pi28' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.double_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.bounds_2pi7' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.bounds_4pi7' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.cos_theta_quarter' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.E1_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.E2_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.W2_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.gap123' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.P7FullTables.adds_mod_7_by_theorem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.E1_round' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.E2_round' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.W2_round' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.tablesMatchP7' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.P7FullTables.adds_mod_7_by_full' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.sum_cos_cycle_eq_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.expand_abc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.expand_phase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.sextet' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.realScoreC_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.intScoreC_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.intScoreC_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_cycle' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_cycle_of_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.intScoreCT_close' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.intScoreCT_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_cycle_tables' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_cycle_full_odd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_cycle_full_even' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_p_cycle_full' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_113_cycle_full' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PhaseGrid.adds_mod_257_cycle_full' depends on axioms: [propext, Classical.choice, Quot.sound]
+59 of 59 theorems use only standard axioms
+=== done 2026-10-16T16:23:03Z, exit 0
+verify2 exit 0 end 2026-10-16T16:23:03Z

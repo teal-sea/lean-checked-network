@@ -14,9 +14,9 @@ diff PhaseGrid/Network.lean ../../lean/LeanCheckedNetwork/Network.lean && echo "
 echo "=== replay every module with leanchecker, 2 at a time, start $(date -u +%FT%TZ)"
 # The root module PhaseGrid only imports the others; replaying it re-checks every PhaseGrid module in one process
 # (6.4 GB, OOM-killed on this machine), so each module is replayed once, on its own, as the first repository does.
-mods="PhaseGrid.Network PhaseGrid.ListLemmas PhaseGrid.Trig PhaseGrid.Defs PhaseGrid.Score PhaseGrid.FullSet PhaseGrid.FullSetEven PhaseGrid.P7FullTables PhaseGrid.Close PhaseGrid.P7Link PhaseGrid.Open"
+mods="PhaseGrid.Network PhaseGrid.ListLemmas PhaseGrid.Trig PhaseGrid.Defs PhaseGrid.Score PhaseGrid.FullSet PhaseGrid.FullSetEven PhaseGrid.P7FullTables PhaseGrid.Close PhaseGrid.P7Link PhaseGrid.Open PhaseGrid.Cycle"
 printf '%s\n' $mods | xargs -P ${JOBS:-1} -I{} sh -c 'if lake env leanchecker {} > leanchecker.{}.out 2>&1; then echo "OK   {}"; else echo "FAIL {}"; cat leanchecker.{}.out; fi' > replay.out
-sort replay.out; nok=$(grep -c '^OK' replay.out); echo "replayed $nok of 11 modules, end $(date -u +%FT%TZ)"; [ "$nok" -eq 11 ] || status=1
+sort replay.out; nok=$(grep -c '^OK' replay.out); echo "replayed $nok of 12 modules, end $(date -u +%FT%TZ)"; [ "$nok" -eq 12 ] || status=1
 echo "=== axioms"
 cat > axioms_all.lean <<'LEAN'
 import PhaseGrid
@@ -62,6 +62,23 @@ import PhaseGrid
 #print axioms PhaseGrid.W2_round
 #print axioms PhaseGrid.tablesMatchP7
 #print axioms PhaseGrid.P7FullTables.adds_mod_7_by_full
+#print axioms PhaseGrid.sum_cos_cycle_eq_zero
+#print axioms PhaseGrid.expand_abc
+#print axioms PhaseGrid.expand_phase
+#print axioms PhaseGrid.sextet
+#print axioms PhaseGrid.realScoreC_eq
+#print axioms PhaseGrid.intScoreC_close
+#print axioms PhaseGrid.intScoreC_lt
+#print axioms PhaseGrid.adds_mod_p_cycle
+#print axioms PhaseGrid.adds_mod_p_cycle_of_gap
+#print axioms PhaseGrid.intScoreCT_close
+#print axioms PhaseGrid.intScoreCT_lt
+#print axioms PhaseGrid.adds_mod_p_cycle_tables
+#print axioms PhaseGrid.adds_mod_p_cycle_full_odd
+#print axioms PhaseGrid.adds_mod_p_cycle_full_even
+#print axioms PhaseGrid.adds_mod_p_cycle_full
+#print axioms PhaseGrid.adds_mod_113_cycle_full
+#print axioms PhaseGrid.adds_mod_257_cycle_full
 LEAN
 lake env lean axioms_all.lean 2>&1 | tee axioms_all.out
 nbad=$(grep -c "depends on axioms" axioms_all.out); nstd=$(grep -cE "depends on axioms: \[(propext, Classical.choice, Quot.sound|propext, Quot.sound)\]$" axioms_all.out)

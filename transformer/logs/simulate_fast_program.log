@@ -1,0 +1,5 @@
+tables: kTI 26092444094 kCI 5106312128 kTU 10601584377 kCU 122325928744832 kG 35663; delta 2, E 416063585574805997938804232439435952711840399411200 (169 bits)
+simulate: 113 rows, 12769 pairs, 0 mismatches or failed checks, 662 s
+  smallest margin 2712072545744072581180354764646724130914805759237991380 (181 bits), 2E = 832127171149611995877608464878871905423680798822400 (170 bits), margin/(2E) = 3259.2
+  largest K 169 bits, largest KL 193 bits, largest L digit 193 bits, B = 2^208; 2*KL < B needs KL < 2^207
+wrote /tmp/claude-0/-home-user/769f2320-042c-524c-8fef-c98915f41418/scratchpad/wf3/transformer/simout/Transformer/Net: Weights, Table, 113 row files, AllInputs

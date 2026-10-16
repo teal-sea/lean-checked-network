@@ -21,3 +21,4 @@ transformer/runs/launch.log
 !transformer/runs/train.log
 !transformer/smoke_test.log
 !transformer/scan_*.txt
+!transformer/logs/*.log

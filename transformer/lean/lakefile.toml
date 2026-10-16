@@ -1,0 +1,5 @@
+name = "transformer"
+defaultTargets = ["Transformer"]
+
+[[lean_lib]]
+name = "Transformer"

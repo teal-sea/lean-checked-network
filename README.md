@@ -42,8 +42,8 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | The circle explanation, with every error bounded exactly, proves the right answer for all 12,769 pairs (tightest pair keeps 1.7% of the margin) | derived (`mechanism.py`, `MECHANISM.md`) |
 | No single weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one weight change can shift the gap between two scores (at most 254 × 255² = 16,516,350) | derived |
 | Remove the circle waves, keep the rest: right on 50 of 12,769 pairs, fewer than the 113 that answering the same number every time would get | measured |
-| Networks built from the circle formula alone, no training (fixed phases on a cycle, so the unwanted waves cancel exactly), each right on every pair: 12 neurons on frequencies 39 and 45 with 8-bit weights, 16 and 40 neurons (Nanda et al.'s five key frequencies) with 8-bit weights, 448 neurons on every frequency with 5-bit weights; the same formula at moduli 7, 12 and 257 | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `FixedPhase40`, `FixedPhase448`, `Mod7All.adds_mod_7`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`). Construction, search, planted fault and numbers: `FIXED_PHASE.md` |
-| Counting instead of proving: the planted fault in the 12-neuron network is right on exactly 12,753 of 12,769 pairs; six checkpoints of the 64-neuron training run are right on exactly 12,766, 12,767, 12,766, 12,767, 12,767 and 12,769 pairs, a learning curve whose every point is a theorem | kernel-checked: `FaultFixed12.right_on_12753`, `H64Step2000.right_on_12766` … `H64Step12000.right_on_12769` (`lean/LeanCheckedNetwork/Count.lean`, `LEARNING_CURVE.md`) |
+| Networks built from the circle formula alone, no training (fixed phases on a cycle, so the unwanted waves cancel exactly), each right on every pair: 12 neurons on frequencies 39 and 45 with 8-bit weights, 16 and 40 neurons (Nanda et al.'s five key frequencies) with 8-bit weights, 448 neurons on every frequency with 5-bit weights; the same formula at moduli 7, 12 and 257 | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `FixedPhase40`, `FixedPhase448`, `Mod7All.adds_mod_7`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`). Construction, search, planted fault and numbers: `FIXED_PHASE.md`. The 448-neuron and modulus 7 networks are, integer for integer, the `P113Full` and `P7Full` instances of `phasegrid/instances/`, kernel-checked there a second time in a different encoding; the general theorem behind the grid construction is `PhaseGrid.adds_mod_p` in `phasegrid/mathlib/` (the section "One theorem for every modulus" below) |
+| Counting instead of proving: the planted fault in the 12-neuron network is right on exactly 12,753 of 12,769 pairs; six checkpoints of the 64-neuron training run are right on exactly 12,766, 12,767, 12,766, 12,767, 12,767 and 12,769 pairs, a learning curve whose every point is a theorem | kernel-checked: `FaultFixed12.right_on_12753`, `H64Step2000.right_on_12766` … `H64Step12000.right_on_12769` (`lean/LeanCheckedNetwork/Count.lean`, `LEARNING_CURVE.md`). The same score in list form, "wrong on exactly these k pairs", is `sweep/WrongSet.lean`; the plan to merge the two is recorded in `FIXED_PHASE.md` and `sweep/README.md` |
 | 114 of the 128 neurons are alive; each puts a median 97% of its weight energy into one circle frequency | measured |
 | In all 114 live neurons, the largest leftover piece is the wave at three times the neuron's frequency | measured |
 
@@ -88,7 +88,10 @@ multiplication updates every score at once. `answer_eq_fastAnswer` proves the fa
 exactly the network's answer, under checks the kernel also performs for every input. With it,
 both networks checked in 26 minutes on a 4-core machine (37 minutes in the audit's clean
 rebuild, with one core busy), at about 2 GB per Lean process. `run_lean.sh` then replays every
-module with `leanchecker`, four at a time (about 20 more minutes).
+module with `leanchecker`, four at a time (about 20 more minutes). Since PR #4 the root module also
+imports the 12-, 16- and 40-neuron fixed-phase networks, moduli 7 and 12, and the six count modules,
+so the whole script takes 1 h 41 min on GitHub's runner (the `.github/workflows/check.yml` row of
+the file table below).
 
 ## How the circle explanation becomes a proof
 
@@ -109,7 +112,7 @@ in `lean/lean-toolchain`):
 pip install -r requirements.txt
 python3 verify_weights.py                    # the Lean weight files equal network/*.npz and give the right answers: ~1 s
 python3 mechanism.py network/trained.npz     # the circle proof and its soundness checks: ~10 s
-./run_lean.sh                                # build, replay every module, planted fault, axioms: under 1.5 h on 4 cores
+./run_lean.sh                                # build, replay every module, planted fault, axioms: 1 h 41 min on GitHub's runner, 2026-10-16
 ```
 
 Each command exits non-zero if any check fails. The same checks run on GitHub Actions for every
@@ -138,7 +141,7 @@ python3 figure.py network/trained.npz figures/circle.svg
 | `train.py`, `circle_only.py`, `mechanism.py`, `figure.py`, `gen_lean.py` | training, the circle-only network, the circle proof, the figure, Lean generation |
 | `verify_weights.py` | checks, without Lean, that the Lean weight files are the networks in `network/` |
 | `run_lean.sh`, `lean_run.log` | the full check and its output |
-| `.github/workflows/check.yml` | runs all checks on every push |
+| `.github/workflows/check.yml` | runs all checks on every push. Its `lean` job (`run_lean.sh`) took 1 h 41 min on GitHub's runner for the merge of PR #4 (run 38904544116, 2026-10-16 13:00:16Z to 14:41:06Z; `run_lean.sh` itself 1 h 39 min) against 30 min on the push before it (run 38891458216, 11:05:17Z to 11:35:09Z), because the root now imports the 12-, 16- and 40-neuron fixed-phase networks, moduli 7 and 12, and the six count modules |
 | `MECHANISM.md`, `AUDIT.md` | the circle proof in detail; the adversarial audit |
 | `FIXED_PHASE.md`, `make_fixed_phase.py`, `make_fixed_phase6.py`, `search_min.py`, `run_lean_fixed_phase.sh`, `lean_run_fixed_phase.log` | networks built from the circle formula with fixed phases, the search for the smallest, their kernel check and its output |
 | `lean/LeanCheckedNetwork/Count.lean`, `gen_count.py`, `make_curve.py`, `LEARNING_CURVE.md` | counting right answers with the kernel; the count theorems of a training run's checkpoints |
@@ -184,7 +187,12 @@ could not finish in the time given is listed in `phasegrid/README.md`. Still ope
 tables are tied to the theorem only numerically, and the proved bound is loose (M = 2 suffices
 empirically where 24 is proved). The derivation and its bound were checked adversarially first
 (`phasegrid/stage1/`), which found that the score has nine waves per neuron, not eight, and that the
-bound is exact as a sufficient condition.
+bound is exact as a sufficient condition. The same construction was built separately in the
+repository's own package the same day (`FIXED_PHASE.md`, the fixed-phase row of the results table
+above): its `FixedPhase448` and `Mod7All` are, integer for integer, the `P113Full` and `P7Full`
+instances here, so those two networks carry two kernel verdicts in two encodings; `FIXED_PHASE.md`'s
+six-phase cycle (12 neurons at p = 113 and at p = 257) is the variant of the construction that the
+theorem does not yet cover.
 
 ## Prior work, and what is new here
 

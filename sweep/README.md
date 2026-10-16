@@ -54,6 +54,19 @@ exactly these k pairs" rather than a failed build. The conventions of `gen_lean.
 `set_option maxRecDepth 100000` in the weights file, `set_option Elab.async false` in the row
 files, `.ofNat` / `.negSucc` literals, `decide +kernel` per row, no `native_decide`.
 
+**Open item, with `lean/LeanCheckedNetwork/Count.lean` (recorded 2026-10-16, plan only).** PR #4 added
+`Count.lean`, which states a wrong network's score as a number only, row by row (`right_on_N`: the
+planted fault `FaultFixed12` is right on exactly 12,753 of 12,769 pairs, and six checkpoints of the
+64-neuron run in `LEARNING_CURVE.md`). The statement here is the stronger one: `answer_iff_not_wrong`
+with `wrongPairs_length`, `wrongPairs_strictLex` (hence `Nodup`) and `wrongPairs_in_range` says exactly
+which `k` pairs are wrong, and a strictly ordered, duplicate-free, in-range list of `k` pairs among
+`p · p` implies the count `p · p − k`. So `WrongSet.lean` is the one to keep, and the plan is: add a
+corollary `right_on_count : count E1 E2 W2 p = p * p − wrongPairs.length` (with `count` as `Count.lean`
+defines it, proved by list counting from `answer_iff_not_wrong` and `Nodup`, no new kernel
+evaluation), then regenerate the six `H64Step*` count modules through this runner's generator the
+next time anyone touches them, about 40 minutes of kernel time (six builds of 372 to 382 s on 4 cores,
+`LEARNING_CURVE.md`). Not done in this change; `FIXED_PHASE.md` records the same item.
+
 `run_one.py` passes a configuration only if all of these hold: `lake build` completed with no
 `sorry` warning; `lake env leanchecker` exited 0 on every generated module (Network, Fast,
 WrongSet, and Weights, Table, every Rows file and AllInputs for both networks); `#print axioms`
@@ -214,5 +227,8 @@ network that was actually produced).
 - The planted-fault file of the repo (`expected_fail/FaultRow.lean`) is not regenerated per
   point; the negative control here plays that role for the wrong-set theorem.
 - `nanoda` or another second checker is not run; only `leanchecker`.
+- `Count.lean` (PR #4) and `WrongSet.lean` state a wrong network's score in two shapes; the plan
+  above (`right_on_count`, then regenerate the six count modules through this runner) is recorded
+  and not done.
 - Prime Intellect: nothing here targets it; the same `run_one.py` would run on any Linux box
   with elan and numpy.

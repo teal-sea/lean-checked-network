@@ -167,8 +167,11 @@ module with `leanchecker`, prints axioms.
 | `P113Nanda5` | 113 | 14, 35, 41, 42, 52 | 40 | 30 | 245,012 | `PhaseGridInstances.P113Nanda5.adds_mod_113` | 1048 s (earlier session, 3 jobs, loaded machine) | 21 of 21 OK, 1176 s serial | `[propext, Classical.choice, Quot.sound]` |
 | `P113Full` | 113 | 1..56 | 448 | 25 | 3,514,188 | `PhaseGridInstances.P113Full.adds_mod_113` | 8017 s wall (05:11:25Z to 07:25:02Z, two row files at a time, machine shared): `Weights` 114 s, `Table` 5.9 s, the 16 row files 860 to 1292 s each (15,668 s in all, mean 979 s), `AllInputs` 0.7 s | 21 of 21 OK (row files 604 to 858 s each, two at a time, overlapping the build; `logs/stage3_P113Full_replay_driver.log`, `instances/replay.P113Full.out`) | `[propext, Classical.choice, Quot.sound]` |
 
-Two changes were needed for the 448-neuron instance, both in how the same proof is written, not in
-what is proved: the tables are written as 113 row definitions per table (one 50,624-entry list
+The 448-neuron and p = 7 tables here are, integer for integer, the repository's own `FixedPhase448`
+and `Mod7All` networks (`FIXED_PHASE.md`, PR #4), which were built separately and kernel-checked in a
+different encoding and package, so those two networks have two kernel verdicts each; `instances/README.md`
+has the comparison. Two changes were needed for the 448-neuron instance, both in how the same proof is
+written, not in what is proved: the tables are written as 113 row definitions per table (one 50,624-entry list
 literal exhausted the elaborator's memory: Lean killed with exit code 137 after 369 s), and each row's
 check is split into five `decide +kernel` calls over consecutive ranges of `b` (one call per row needed
 4.3 to 5.8 GB and was OOM-killed when two ran at once; the kernel frees its caches between

@@ -28,8 +28,18 @@ evaluator's checks pass on the row and how many `b` get `(a + b) % 113` right; `
 the 113 rows through `rowCount_eq_fastRowCount` (`lean/LeanCheckedNetwork/Count.lean`) into
 `right_on_N`, a statement about `count`, the plain definition over `answer` in `Network.lean`. The
 six `Count` modules are imported by the root, so `run_lean.sh` and the Actions workflow build and
-replay them with everything else.
+replay them with everything else. That is where the CI time went: the `lean` job of
+`.github/workflows/check.yml` took 1 h 41 min on GitHub's runner for the merge of PR #4 (run
+38904544116, 2026-10-16 13:00:16Z to 14:41:06Z, of which `run_lean.sh` 1 h 39 min) against 30 min on
+the push before it (run 38891458216, 11:05:17Z to 11:35:09Z), because the root now also imports the
+six count modules (2,269 s of build on 4 cores here, the table above, before their replay), the 12-,
+16- and 40-neuron fixed-phase networks (522 s, `FIXED_PHASE.md`) and moduli 7 and 12 (10 s). The
+448-neuron and modulus 257 networks are not in the root and stay in `run_lean_fixed_phase.sh`.
 
 **What this is not.** Six points of one run at one width. The ablations, the circle-only
 reduction and the margins per checkpoint are the same machinery and are not run here. A study
 across data fraction, weight decay, width and seed is the proposal in the vault, not this file.
+These six modules are also the subject of an open item: `sweep/WrongSet.lean` states a wrong
+network's score as an explicit list of pairs, which implies the count, and the plan in
+`FIXED_PHASE.md` and `sweep/README.md` is to regenerate the six through the sweep route, with a
+`right_on_count` corollary, when they are next touched (about 40 minutes of kernel time).

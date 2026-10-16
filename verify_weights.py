@@ -31,7 +31,8 @@ def answers(E1, E2, W2):
 ok = True
 for name, npz, expect_wrong in [("Trained", "trained", 0), ("CircleOnly", "circle_only", 0), ("Fault", "fault", 226),
                                 ("FixedPhase12", "fixed12", 0), ("FixedPhase16", "fixed16", 0),
-                                ("FixedPhase40", "fixed40", 0), ("FixedPhase448", "fixedall", 0)]:
+                                ("FixedPhase40", "fixed40", 0), ("FixedPhase448", "fixedall", 0),
+                                ("Mod7All", "mod7_all", 0), ("Mod12All", "mod12_all", 0)]:
     src = Path(f"lean/LeanCheckedNetwork/{name}/Weights.lean").read_text()
     lean = {t: parse_table(src, t) for t in ["E1", "E2", "W2"]}
     net = np.load(f"network/{npz}.npz")

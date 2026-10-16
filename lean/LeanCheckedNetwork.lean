@@ -3,3 +3,5 @@ import LeanCheckedNetwork.CircleOnly.AllInputs
 import LeanCheckedNetwork.FixedPhase12.AllInputs
 import LeanCheckedNetwork.FixedPhase16.AllInputs
 import LeanCheckedNetwork.FixedPhase40.AllInputs
+import LeanCheckedNetwork.Mod7All.AllInputs
+import LeanCheckedNetwork.Mod12All.AllInputs

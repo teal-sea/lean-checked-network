@@ -62,6 +62,18 @@ and replayed every module with `leanchecker`. `lean_run_fixed_phase_small.log` i
 three small networks from the first run; the full log, with the 448-neuron network and the replay, follows
 when that run completes.
 
+## Other moduli, same formula
+
+The construction is stated for every modulus, prime or not, and the bound `M > 24|S|/g(S)` with `S`
+every frequency gives `M = 25` for all of them. Two cheap instances, kernel-checked the same way
+(`Mod7All.adds_mod_7`, `Mod12All.adds_mod_12`, standard axioms, 10 seconds for both on 4 cores,
+2026-10-16):
+
+| Modulus | Frequencies | Neurons | Weights | Smallest winning margin (measured) | Kernel verdict |
+|---|---|---|---|---|---|
+| 7 | all 3 | 24 | 5-bit (`M = 25`) | 219,400 | **kernel-checked** |
+| 12 (composite) | all 5 | 40 | 5-bit (`M = 25`) | 308,750 | **kernel-checked** |
+
 ## Why it matters next to the trained network
 
 The trained network (`Trained`) is right on every pair and the kernel says so, but the only

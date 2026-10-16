@@ -8,7 +8,7 @@ mathematics the Lean kernel accepts, in three stages. Nothing elsewhere in this 
 | --- | --- | --- | --- |
 | 1 | `stage1/`, `logs/stage1_*.log` | the derivation checked adversarially in Python | measured; one miscount and one restriction in the proposal found, the bound confirmed and found loose |
 | 2 | `mathlib/` (Lake project on Mathlib) | the general theorem, proved: for every modulus, every frequency set with a positive gap, every scale above the bound, the rounded phase-grid network adds mod p; plus a version for any tables within 1/2 of the analytic weights, and the p = 7 tables of stage 3 proved right by that theorem with certified cosines | proved, replayed by `leanchecker`, standard axioms |
-| 3 | `instances/` (Lake project, core Lean only) | three explicit integer networks kernel-checked by the first repository's own route | all three kernel-checked and replayed by `leanchecker`, standard axioms; planted fault rejected |
+| 3 | `instances/` (Lake project, core Lean only) | three explicit integer networks kernel-checked by the first repository's own route | all three kernel-checked and replayed by `leanchecker`, standard axioms; three planted faults rejected, two of them wrong only at the last pair of a row |
 
 Versions: stage 2 uses `leanprover/lean4:v4.35.0` with Mathlib tag `v4.35.0` (commit
 `56a005855ea17e0b0958f73ec801ae140b0a1679`; `git ls-remote --tags` on 2026-10-16 lists `v4.35.0` and its release candidates as Mathlib's newest tags, so this is the latest stable Lean release Mathlib supports), oleans from `lake exe cache get` (9031 files from the Mathlib cache, nothing compiled from source); stage 3 uses
@@ -185,6 +185,21 @@ same proof term `of_decide_eq_true _ _ (Eq.refl true)` and calls `addDecl` direc
 `Elab.async false`: output `kernel REJECTED fault_row0: (kernel) application type mismatch …` and
 `kernel ACCEPTED real_row0` (2.5 s).
 
+**Last-pair faults.** The fault above is wrong in row 0, so a check that stopped at the first bad
+pair would already catch it. The second reviewer's two faults are wrong only in the last column:
+`P7LastFault` is `P7Full` with E2 row 6 replaced by row 5, and `P113LastFault` is the 448-neuron
+`P113Full` with `E2_112` replaced by `E2_111`. Both are regenerated from the committed tables by text
+substitution (`instances/gen_last_fault.py`, byte-identical to the reviewer's files apart from the
+header line) and are not committed (2 MB at p = 113). `check_last_fault.sh` builds their tables one
+Lake call at a time, confirms that the kernel rejects `expected_fail/P7LastRow.lean` (the last row,
+wrong only at (6, 6)) and `expected_fail/P113LastChunk.lean` (the last chunk of the last row, the
+statement of `P113Full.fast_112_4`, wrong only at (112, 112)), then hands six proof terms to `addDecl`
+in `kernel_reject_last.lean`: for each fault the range that stops before the bad pair is accepted, the
+range that includes it is rejected, and the real network's same range is accepted. Run here on
+2026-10-16, 10:28:32Z to 10:32:56Z (264 s: the two 448-neuron `Weights` modules 103 s and 100 s, the
+six verdicts 43 s): all six as required (`instances/last_fault_kernel.out`, `last_fault_p7.out`,
+`last_fault_p113.out`). The CI job runs it on every push.
+
 **Cost per network** (kernel time, this machine, 4 cores shared with another Lean job throughout):
 
 | Network | neurons | build (sum over files) | build (wall) | `leanchecker` replay (sum over modules) | peak RSS per process |
@@ -213,5 +228,5 @@ For comparison the first repository checked its two 128-neuron networks in 26 mi
 
     cd stage1 && python3 -I families.py && python3 -I rounding2.py 113 30
     cd mathlib && lake exe cache get && ./verify2.sh    # build, leanchecker on all 11 modules, axioms, source scan
-    cd instances && ./check_instance.sh P7Full 7 1 && ./check_fault.sh
+    cd instances && ./check_instance.sh P7Full 7 1 && ./check_fault.sh && ./check_last_fault.sh   # about 5 min, mostly the two 448-neuron Weights modules
     cd instances && ./check_instance.sh P113Nanda5 113 1 && ./check_instance.sh P113Full 113 1   # 20 min and about 6 hours

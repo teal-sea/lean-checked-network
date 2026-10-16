@@ -79,15 +79,53 @@ directly with `Elab.async false`:
 (`../logs/stage3_kernel_reject.log`; with the default asynchronous checking the same rejection is
 reported as an error at the command instead of being caught.)
 
+## The last-pair faults
+
+The fault above is wrong in row 0. The second reviewer (2026-10-16) prepared two faults that are wrong
+only in the last column, so a check cannot stop early on a bad pair: `P7LastFault` is `P7Full` with E2
+row 6 replaced by row 5 (column b = 6 wrong on every row; the last row's check is right on b = 0 to 5
+and wrong only at (6, 6)), and `P113LastFault` is `P113Full` with `E2_112` replaced by `E2_111`
+(column b = 112 wrong; the last chunk of the last row, the statement of `P113Full.fast_112_4`, is
+right on b = 90 to 111 and wrong only at (112, 112)). `gen_last_fault.py` regenerates both from the
+committed `Weights.lean` files by text substitution, with no numerics (the result is byte-identical
+to the reviewer's files apart from the header line); the generated directories are git-ignored since
+the p = 113 one is 2 MB. `check_last_fault.sh` (2026-10-16, 10:28:32Z to 10:32:56Z, `LEAN_NUM_THREADS=2`,
+one Lake call per module since a 448-neuron `Weights` module peaks near 4.4 GB):
+
+    built PhaseGridInstances.P7LastFault.Table, 1 s
+    built PhaseGridInstances.P7Full.Table, 0 s
+    built PhaseGridInstances.P113LastFault.Table, 103 s
+    built PhaseGridInstances.P113Full.Table, 100 s
+    expected_fail/P7LastRow.lean rejected by the kernel, as it should be:
+    expected_fail/P7LastRow.lean:18:2: error: Tactic `decide` proved that the proposition
+    expected_fail/P113LastChunk.lean rejected by the kernel, as it should be:
+    expected_fail/P113LastChunk.lean:18:2: error: (kernel) application type mismatch
+    === kernel verdicts through addDecl, 43 s
+    kernel ACCEPTED fault7_row6_first6
+    kernel REJECTED fault7_row6_all: (kernel) application type mismatch
+    kernel ACCEPTED real7_row6
+    kernel ACCEPTED fault113_row112_b90_111
+    kernel REJECTED fault113_row112_b90_112: (kernel) application type mismatch
+    kernel ACCEPTED real113_row112_b90_112
+    === done 2026-10-16T10:32:56Z, exit 0
+
+The two `expected_fail` messages differ in wording for the reason given above. The six `addDecl`
+verdicts (`kernel_reject_last.lean`, full output in `last_fault_kernel.out`) are the kernel's own: for
+each fault, the range that stops before the bad pair is accepted, the range that includes it is
+rejected, and the real network's same range is accepted, so what is rejected is the fault and not
+the setup. The CI job runs this script on every push.
+
 ## Files
 
 | Path | What it is |
 | --- | --- |
 | `gen_phase_grid.py` | `python3 gen_phase_grid.py P M NAME CHUNKS [k1,k2,...] [--rowdefs] [--bchunks N]`: builds, checks and writes an instance |
 | `gen_fault.py` | the planted fault |
+| `gen_last_fault.py` | the two last-pair faults, regenerated from the committed tables (output git-ignored) |
 | `check_instance.sh` | `./check_instance.sh NAME P JOBS`: `lake build`, replay every module with `leanchecker`, `#print axioms` |
 | `check_fault.sh` | the planted-fault check through `expected_fail/FaultRow.lean` |
 | `kernel_reject.lean` | the planted fault and the real tables submitted to `addDecl` directly |
+| `check_last_fault.sh`, `kernel_reject_last.lean` | the last-pair faults: `expected_fail/P7LastRow.lean` and `expected_fail/P113LastChunk.lean` must fail; six `addDecl` verdicts |
 | `PhaseGridInstances/`, `expected_fail/` | the Lake package (this directory): `Network.lean`, `Fast.lean`, one directory per instance (`Weights`, `Table`, `RowsNN`, `AllInputs`), `P7Fault`, `expected_fail/FaultRow.lean`, the `.npz` of each instance's tables |
 | `*.out` | the build, replay and axiom outputs kept from the runs described above |
 | `../logs/stage3_*.log` | the session logs |

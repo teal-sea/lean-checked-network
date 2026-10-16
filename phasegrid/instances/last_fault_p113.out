@@ -1,0 +1,15 @@
+expected_fail/P113LastChunk.lean:18:2: error: (kernel) application type mismatch
+  id (Eq.refl true)
+argument has type
+  true = true
+but function has type
+  decide
+        (∀ (b : Nat),
+          b < 23 →
+            (fastOk E1 E2 448 112 (90 + b) && fastAnswer E1 E2 W2 448 112 (90 + b) == (112 + (90 + b)) % 113) = true) =
+      true →
+    decide
+        (∀ (b : Nat),
+          b < 23 →
+            (fastOk E1 E2 448 112 (90 + b) && fastAnswer E1 E2 W2 448 112 (90 + b) == (112 + (90 + b)) % 113) = true) =
+      true

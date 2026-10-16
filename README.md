@@ -172,8 +172,8 @@ A variant (`adds_mod_p_tables`) covers any integer tables within 1/2 of the anal
 theorems, every one on `[propext, Classical.choice, Quot.sound]` or a subset, every module replayed by
 `leanchecker`. Three concrete networks of that shape are also kernel-checked here by the
 repository's brute-force route in core Lean (p = 7 with all frequencies; p = 113 with Nanda et al.'s
-five key frequencies, 40 neurons; p = 113 with all 56 frequencies, 448 neurons), with a planted fault
-rejected; and at p = 7 certified cosine bounds prove the explicit tables are the rounded weights, so
+five key frequencies, 40 neurons; p = 113 with all 56 frequencies, 448 neurons), with three planted faults rejected, two of
+them wrong only at the last pair of a row so that no early pair can end the check; and at p = 7 certified cosine bounds prove the explicit tables are the rounded weights, so
 that instance is right by the theorem with no enumeration. Two adversarial reviews reproduced the
 Mathlib project from source with byte-identical compiled files and replayed every module; what they
 could not finish in the time given is listed in `phasegrid/README.md`. Still open: the p = 113

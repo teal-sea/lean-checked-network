@@ -1,0 +1,5 @@
+'PhaseGridInstances.P113Full.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+real	0m0.434s
+user	0m0.294s
+sys	0m0.131s

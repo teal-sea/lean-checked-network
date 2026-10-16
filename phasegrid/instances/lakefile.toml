@@ -1,0 +1,5 @@
+name = "phasegrid-instances"
+defaultTargets = ["PhaseGridInstances"]
+
+[[lean_lib]]
+name = "PhaseGridInstances"

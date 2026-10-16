@@ -50,3 +50,24 @@ jobs:
           for t in ii_sorry_p7 ii_b_sorry_noguard_p7 iii_native_decide_p7 iii_b_native_noguard_p7 iii_c_decide_native_noguard_p7 iv_skipKernelTC_guard_p7 iv_b_skipKernelTC_noguard_p7 v_wrong_statement_p7 v_b_renamed_p7 vi_wrong_network_p7 ix_a_fake_spec_noimport_p7 ix_a_b_fake_spec_noguard_p7 ix_b_eval_io_p7 ix_b_b_eval_io_noguard_p7 ix_c_namespace_shadow_p7; do grep -q '"reward": 0.0' logs/$t.txt || { echo "test $t did not score 0.0"; exit 1; }; done
       - name: Build both networks, replay every module, planted fault, axioms
         run: ./run_lean.sh
+
+  phasegrid:
+    name: Every-modulus theorem (Mathlib, from cache) and the p = 7 instance
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan (toolchains come from the two lean-toolchain files)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Kernel-check the p = 7 phase-grid network, replay it, reject the planted fault (core Lean, seconds)
+        run: |
+          cd phasegrid/instances
+          ./check_instance.sh P7Full 7 1
+          ./check_fault.sh
+      - name: Build the Mathlib project from the cache, replay every module, print axioms, scan sources
+        run: |
+          cd phasegrid/mathlib
+          lake exe cache get
+          ./verify2.sh

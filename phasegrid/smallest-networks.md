@@ -39,7 +39,7 @@ then `gen_lean.py`; checked by `run_lean_fixed_phase.sh`, whose output is `lean_
 the repository root. That log is the run of 2026-10-16 and also covers three networks since removed
 from `lean/` as duplicates of `instances/` (p = 7 all frequencies, p = 113 Nanda's five at `M = 127`,
 p = 113 all frequencies at `M = 25`, the last built in 4,011 s with its row files one at a time) and the
-count theorems since restated through `sweep/` (see `sweep/LEARNING_CURVE.md`).
+count theorems since restated through `sweep/` (see `sweep/tests/learning-curve-2026-10-16.md`).
 
 ## The planted fault
 

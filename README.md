@@ -43,7 +43,7 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | No single weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one weight change can shift the gap between two scores (at most 254 × 255² = 16,516,350) | derived |
 | Remove the circle waves, keep the rest: right on 50 of 12,769 pairs, fewer than the 113 that answering the same number every time would get | measured |
 | Networks built from the circle formula alone, no training (fixed phases on a cycle, so the unwanted waves cancel exactly), each right on every pair: 12 neurons on frequencies 39 and 45 with 8-bit weights, 16 and 40 neurons (Nanda et al.'s five key frequencies) with 8-bit weights, 448 neurons on every frequency with 5-bit weights; the same formula at moduli 7, 12 and 257 | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `FixedPhase40`, `FixedPhase448`, `Mod7All.adds_mod_7`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`). Construction, search, planted fault and numbers: `FIXED_PHASE.md`. The 448-neuron and modulus 7 networks are, integer for integer, the `P113Full` and `P7Full` instances of `phasegrid/instances/`, kernel-checked there a second time in a different encoding; the general theorem behind the grid construction is `PhaseGrid.adds_mod_p` in `phasegrid/mathlib/` (the section "One theorem for every modulus" below) |
-| Counting instead of proving: the planted fault in the 12-neuron network is right on exactly 12,753 of 12,769 pairs; six checkpoints of the 64-neuron training run are right on exactly 12,766, 12,767, 12,766, 12,767, 12,767 and 12,769 pairs, a learning curve whose every point is a theorem | kernel-checked: `FaultFixed12.right_on_12753`, `H64Step2000.right_on_12766` … `H64Step12000.right_on_12769` (`lean/LeanCheckedNetwork/Count.lean`, `LEARNING_CURVE.md`). The same score in list form, "wrong on exactly these k pairs", is `sweep/WrongSet.lean`; the plan to merge the two is recorded in `FIXED_PHASE.md` and `sweep/README.md` |
+| Counting instead of proving: the planted fault in the 12-neuron network is right on exactly 12,753 of 12,769 pairs; six checkpoints of the 64-neuron training run are right on exactly 12,766, 12,767, 12,766, 12,767, 12,767 and 12,769 pairs, a learning curve whose every point is a theorem | kernel-checked: `FaultFixed12.right_on_12753`, `H64Step2000.right_on_12766` … `H64Step12000.right_on_12769` (`lean/LeanCheckedNetwork/Count.lean`, `LEARNING_CURVE.md`). The same score in list form, "wrong on exactly these k pairs", is the statement `sweep/run_one.py` generates on the lemmas of `sweep/WrongSet.lean`; the plan to merge the two is recorded in `FIXED_PHASE.md` and `sweep/README.md` |
 | 114 of the 128 neurons are alive; each puts a median 97% of its weight energy into one circle frequency | measured |
 | In all 114 live neurons, the largest leftover piece is the wave at three times the neuron's frequency | measured |
 
@@ -90,8 +90,8 @@ both networks checked in 26 minutes on a 4-core machine (37 minutes in the audit
 rebuild, with one core busy), at about 2 GB per Lean process. `run_lean.sh` then replays every
 module with `leanchecker`, four at a time (about 20 more minutes). Since PR #4 the root module also
 imports the 12-, 16- and 40-neuron fixed-phase networks, moduli 7 and 12, and the six count modules,
-so the whole script takes 1 h 41 min on GitHub's runner (the `.github/workflows/check.yml` row of
-the file table below).
+so the script takes 1 h 39 min on GitHub's runner, 1 h 41 min for the whole `lean` job (the
+`.github/workflows/check.yml` row of the file table below).
 
 ## How the circle explanation becomes a proof
 
@@ -112,7 +112,7 @@ in `lean/lean-toolchain`):
 pip install -r requirements.txt
 python3 verify_weights.py                    # the Lean weight files equal network/*.npz and give the right answers: ~1 s
 python3 mechanism.py network/trained.npz     # the circle proof and its soundness checks: ~10 s
-./run_lean.sh                                # build, replay every module, planted fault, axioms: 1 h 41 min on GitHub's runner, 2026-10-16
+./run_lean.sh                                # build, replay every module, planted fault, axioms: 1 h 39 min on GitHub's runner (the lean job 1 h 41 min), 2026-10-16
 ```
 
 Each command exits non-zero if any check fails. The same checks run on GitHub Actions for every

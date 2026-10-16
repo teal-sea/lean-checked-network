@@ -39,7 +39,8 @@ six count modules (2,269 s of build on 4 cores here, the table above, before the
 **What this is not.** Six points of one run at one width. The ablations, the circle-only
 reduction and the margins per checkpoint are the same machinery and are not run here. A study
 across data fraction, weight decay, width and seed is the proposal in the vault, not this file.
-These six modules are also the subject of an open item: `sweep/WrongSet.lean` states a wrong
-network's score as an explicit list of pairs, which implies the count, and the plan in
+These six modules are also the subject of an open item: the wrong-set statement that
+`sweep/run_one.py` generates on the lemmas of `sweep/WrongSet.lean` gives a wrong network's score as
+an explicit list of pairs, which implies the count, and the plan in
 `FIXED_PHASE.md` and `sweep/README.md` is to regenerate the six through the sweep route, with a
 `right_on_count` corollary, when they are next touched (about 40 minutes of kernel time).

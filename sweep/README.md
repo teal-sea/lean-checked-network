@@ -58,12 +58,15 @@ files, `.ofNat` / `.negSucc` literals, `decide +kernel` per row, no `native_deci
 `Count.lean`, which states a wrong network's score as a number only, row by row (`right_on_N`: the
 planted fault `FaultFixed12` is right on exactly 12,753 of 12,769 pairs, and six checkpoints of the
 64-neuron run in `LEARNING_CURVE.md`). The statement here is the stronger one: `answer_iff_not_wrong`
-with `wrongPairs_length`, `wrongPairs_strictLex` (hence `Nodup`) and `wrongPairs_in_range` says exactly
-which `k` pairs are wrong, and a strictly ordered, duplicate-free, in-range list of `k` pairs among
-`p · p` implies the count `p · p − k`. So `WrongSet.lean` is the one to keep, and the plan is: add a
-corollary `right_on_count : count E1 E2 W2 p = p * p − wrongPairs.length` (with `count` as `Count.lean`
-defines it, proved by list counting from `answer_iff_not_wrong` and `Nodup`, no new kernel
-evaluation), then regenerate the six `H64Step*` count modules through this runner's generator the
+with `wrongPairs_length`, `wrongPairs_strictLex` (hence `Nodup`) and `wrongPairs_in_range`, the
+theorems `run_one.py` writes into each generated package on the list lemmas of `WrongSet.lean`, says
+exactly which `k` pairs are wrong, and a strictly ordered, duplicate-free, in-range list of `k` pairs
+among `p · p` implies the count `p · p − k`. So the generated wrong-set statement is the one to keep,
+and the plan is: add to `WrongSet.lean` a lemma `right_on_count` with the three generated facts as
+hypotheses and the conclusion `count E1 E2 W2 p = p * p − wrongPairs.length` (with `count` as
+`Count.lean` defines it, proved by list counting from `answer_iff_not_wrong` and `Nodup`, no new kernel
+evaluation), have `run_one.py` instantiate it, then regenerate the six `H64Step*` count modules
+through this runner's generator the
 next time anyone touches them, about 40 minutes of kernel time (six builds of 372 to 382 s on 4 cores,
 `LEARNING_CURVE.md`). Not done in this change; `FIXED_PHASE.md` records the same item.
 
@@ -227,8 +230,8 @@ network that was actually produced).
 - The planted-fault file of the repo (`expected_fail/FaultRow.lean`) is not regenerated per
   point; the negative control here plays that role for the wrong-set theorem.
 - `nanoda` or another second checker is not run; only `leanchecker`.
-- `Count.lean` (PR #4) and `WrongSet.lean` state a wrong network's score in two shapes; the plan
-  above (`right_on_count`, then regenerate the six count modules through this runner) is recorded
-  and not done.
+- `Count.lean` (PR #4) and the wrong-set statement `run_one.py` generates on the lemmas of
+  `WrongSet.lean` state a wrong network's score in two shapes; the plan above (`right_on_count`, then
+  regenerate the six count modules through this runner) is recorded and not done.
 - Prime Intellect: nothing here targets it; the same `run_one.py` would run on any Linux box
   with elan and numpy.

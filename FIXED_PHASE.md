@@ -115,20 +115,23 @@ is planted in the smallest one.
 
 ## Counting, not only proving
 
-**Open item: `Count.lean` and `sweep/WrongSet.lean` state one thing in two shapes (plan recorded
-2026-10-16, no Lean changed).** `sweep/WrongSet.lean` (on `main` since PR #1) gives a wrong network the
-statement "wrong on exactly these `k` pairs": `answer_iff_not_wrong` (the answer is right if and only
-if the pair is not in the explicit list `wrongPairs`), with `wrongPairs_length = k`,
+**Open item: `Count.lean` and the sweep's wrong-set statement say one thing in two shapes (plan
+recorded 2026-10-16, no Lean changed).** The sweep route (`sweep/`, on `main` since PR #1) gives a wrong
+network the statement "wrong on exactly these `k` pairs": `answer_iff_not_wrong` (the answer is right
+if and only if the pair is not in the explicit list `wrongPairs`), with `wrongPairs_length = k`,
 `wrongPairs_strictLex` (so `wrongPairs.Nodup`, by `nodup_of_strictLex`) and `wrongPairs_in_range`.
-`Count.lean` gives the number only, row by row (`right_on_N`). The first implies the second: a strictly
-ordered, duplicate-free, in-range list of exactly `k` wrong pairs among `p · p` gives
-`count = p · p − k`. So `WrongSet.lean` is the one to keep. The plan: add to it a corollary
-`right_on_count`, from `answer_iff_not_wrong`, `wrongPairs_nodup` and `wrongPairs_in_range` to
-`count E1 E2 W2 p = p * p − wrongPairs.length` (`count` and `rowCount` as `Count.lean` defines them;
-the proof is list counting, with no new kernel evaluation), and regenerate the six learning-curve
-modules `lean/LeanCheckedNetwork/H64Step*/` through the sweep route (`sweep/run_one.py`'s generator,
-which already writes `wrongRows` per row) the next time anyone touches them, so that each checkpoint
-states which pairs it gets wrong and the count follows. That regeneration is about 40 minutes of
+Those per-network theorems are written into each generated package by `sweep/run_one.py`; what
+`sweep/WrongSet.lean` holds is the list lemmas they rest on (`rowsToPairs`, `mem_rowsToPairs`,
+`strictLex`, `nodup_of_strictLex`). `Count.lean` gives the number only, row by row (`right_on_N`). The
+first implies the second: a strictly ordered, duplicate-free, in-range list of exactly `k` wrong pairs
+among `p · p` gives `count = p · p − k`. So the generated wrong-set statement is the one to keep. The
+plan: add to `WrongSet.lean` a lemma `right_on_count` that takes the three generated facts as
+hypotheses and concludes `count E1 E2 W2 p = p * p − wrongPairs.length` (`count` and `rowCount` as
+`Count.lean` defines them, so the generated package would carry that definition too; the proof is list
+counting, with no new kernel evaluation), have `run_one.py` instantiate it, and regenerate the six
+learning-curve modules `lean/LeanCheckedNetwork/H64Step*/` through the sweep route (`run_one.py`'s
+generator, which already writes `wrongRows` per row) the next time anyone touches them, so that each
+checkpoint states which pairs it gets wrong and the count follows. That regeneration is about 40 minutes of
 kernel time (the six count builds took 372 to 382 s each on 4 cores, 2,269 s in all,
 `LEARNING_CURVE.md`; the sweep route is also one kernel evaluation per row) and is not in this change.
 The same item is recorded in `sweep/README.md`.

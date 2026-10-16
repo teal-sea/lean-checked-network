@@ -74,6 +74,31 @@ every frequency gives `M = 25` for all of them. Two cheap instances, kernel-chec
 | 7 | all 3 | 24 | 5-bit (`M = 25`) | 219,400 | **kernel-checked** |
 | 12 (composite) | all 5 | 40 | 5-bit (`M = 25`) | 308,750 | **kernel-checked** |
 
+## What to prove, and what the kernel costs
+
+**The theorem to write in Lean over Mathlib** (not written; stated here so the next session starts
+from the statement rather than the idea). With `gap p S := S.card − sup_{1 ≤ s < p} Σ_{k ∈ S} cos(2πks/p)`
+and the tables `E1`, `E2`, `W2` defined from `Int.round (M · Real.cos …)` with the six-phase cycle:
+
+    theorem fixedPhase_adds_mod (p : ℕ) (hp : 3 ≤ p) (S : Finset ℕ) (hS : ∀ k ∈ S, 1 ≤ k ∧ 2 * k < p)
+        (M : ℕ) (hg : 0 < gap p S) (hM : (24 * S.card : ℝ) < M * gap p S) :
+        ∀ a b, a < p → b < p → answer (E1 p S M) (E2 p S M) (W2 p S M) a b = (a + b) % p
+
+with `answer` the definition in `Network.lean`. Ingredients, all in Mathlib: the product-to-sum
+identities, sums of `exp (2πi j m / 6)` over `j` vanishing unless `6 ∣ m`, the roots-of-unity sum for
+`S` = every frequency (so `gap = p/2` there), and `|Int.round x − x| ≤ 1/2`. The constant 24 is
+crude; what the instances above show is that the true threshold is far lower (the 448-neuron
+network survives at `M = 8`, measured). A companion statement for a trained network replaces each
+column by a wave plus a remainder with a norm bound, as `MECHANISM.md` does in Python; the theorem
+then certifies a trained network from a finite check of its hypotheses rather than from 12,769
+evaluations, which is the compact proof of Gross et al. (2024) inside a proof assistant.
+
+**Kernel cost, measured 2026-10-16 on 4 cores** (build of the 16 row files plus the table check,
+`lake build …AllInputs`, no replay): 12 neurons 149 s, 16 neurons 152 s, 40 neurons 221 s; the
+trained 128-neuron network took about 13 minutes per network in this repository's own README
+timing. So the cost is a floor of a couple of minutes plus a few seconds per neuron, as the packed
+evaluator predicts: one big-number multiply-add per neuron per input.
+
 ## Why it matters next to the trained network
 
 The trained network (`Trained`) is right on every pair and the kernel says so, but the only

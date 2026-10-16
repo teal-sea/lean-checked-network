@@ -1,0 +1,3 @@
+expected_fail/FaultRow.lean:17:2: error: Tactic `decide` proved that the proposition
+  ∀ (b : Nat), b < 7 → (fastOk E1 E2 24 0 b && fastAnswer E1 E2 W2 24 0 b == (0 + b) % 7) = true
+is false

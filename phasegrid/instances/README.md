@@ -1,0 +1,131 @@
+# Phase-grid networks, kernel-checked as explicit integer tables (core Lean only)
+
+Lean `leanprover/lean4:v4.35.0-rc2`, the first repository's toolchain; no Mathlib, no dependencies.
+`PhaseGridInstances/Network.lean` and `Fast.lean` are the first repository's files, unchanged except
+that `Fast.lean`'s import line names this package (`diff` against the repository's `lean/LeanCheckedNetwork/`:
+`Network.lean` identical, `Fast.lean` differs in line 1 only). The proof route is the repository's:
+one `decide +kernel` per row of the addition table through the packed evaluator,
+`answer_eq_fastAnswer` turning it into a statement about `answer`, and `adds_mod_p` assembling the
+rows. First session 2026-10-16 03:30Z to 04:16Z; second session the same day from 04:30Z (this file).
+
+| Instance | p | S | neurons | M | smallest margin (numpy, exact) | theorem |
+| --- | --- | --- | --- | --- | --- | --- |
+| `P7Full` | 7 | 1, 2, 3 (all) | 24 | 25 | 219,400 | `PhaseGridInstances.P7Full.adds_mod_7` |
+| `P113Nanda5` | 113 | 14, 35, 41, 42, 52 (Nanda's five) | 40 | 30 | 245,012 | `PhaseGridInstances.P113Nanda5.adds_mod_113` |
+| `P113Full` | 113 | 1 .. 56 (all) | 448 | 25 | 3,514,188 | `PhaseGridInstances.P113Full.adds_mod_113` |
+
+Each table entry is `round(M cos(2 pi k x / p + phase))`, rounded half up, computed in double
+precision; the generator refuses to write a table if any weight is within 1e-9 of a half-integer
+(smallest distances: 0.024 at p = 7, 7.5e-4 for Nanda's five, 5.5e-3 for the full set at 113), so
+the rounding is unambiguous. The generator also checks in numpy, in exact integer arithmetic with the
+first-index argmax of `Network.lean`, that the network is right on every pair before writing Lean.
+
+## Two changes of encoding for the 448-neuron instance (what is proved is unchanged)
+
+- `--rowdefs`: the three tables are written as 113 row definitions each (`E1_0 .. E1_112`, then
+  `E1 := [E1_0, ...]`). One 50,624-entry list literal first hit the default elaboration budget
+  (`maxHeartbeats`) and, with the budget lifted, exhausted the elaborator's memory: Lean was killed
+  with exit code 137 after 369 s. A 448-entry row elaborates in a fraction of a second.
+- `--bchunks 5`: each row's check `∀ b < 113` is split into five `decide +kernel` calls over
+  consecutive ranges of `b` (`fast_a_0 .. fast_a_4`, ranges of 23, 22, 23, 22, 23 values), joined by
+  `omega` into the same `row_a` statement. One call per row at 448 neurons needed 4.3 to 5.8 GB of
+  resident memory and two in parallel were OOM-killed (dmesg: `Memory cgroup out of memory: Killed
+  process ... (lean) ... anon-rss:5819556kB`); the kernel's caches are per declaration, and with the
+  split a row file stays near 2.2 GB.
+  The `p = 7` and Nanda instances keep the first repository's plain form (one call per row). The
+  chunked form was also built at p = 7 as a test (`P7ChunkTest`, 3.9 s) and removed.
+
+## Results of the second session
+
+| Instance | build (wall, `lake build`, this machine, 4 cores shared with other Lean jobs) | `leanchecker` replay | `#print axioms` of the theorem |
+| --- | --- | --- | --- |
+| `P7Full` | 8.3 s fresh in a copy of the package at load 8.3 (row files 1.0 s and 1.4 s; cached rebuild 1 s) | 7 of 7 modules OK, 7 s serial | `[propext, Classical.choice, Quot.sound]` |
+| `P113Nanda5` | 1048 s in the first session (16 row files, 3 jobs, loaded machine); fresh timing of one row file in a copy: `Rows00` (rows 0 to 7) 114 s, `Weights` 23 s, at load 8.7 | 21 of 21 modules OK, 1176 s serial | `[propext, Classical.choice, Quot.sound]` |
+| `P113Full` | 8017 s wall (05:11:25Z to 07:25:02Z, `LEAN_NUM_THREADS=2`): `Weights` 114 s, `Table` 5.9 s, 16 row files 860 to 1292 s each (sum 15,668 s, mean 979 s), `AllInputs` 0.7 s; peak RSS 2.26 GB per row file, 4.4 GB for `Weights` (`../logs/stage3_P113Full_rss.log`) | 21 of 21 modules OK, row files 604 to 858 s, two at a time (`replay.P113Full.out`; sum 12,650 s) | `[propext, Classical.choice, Quot.sound]` (`../logs/stage3_P113Full_axioms.log`) |
+
+Per input pair, the kernel costs about 0.13 s at 40 neurons and about 1.6 s at 448 neurons
+(`Rows15`, rows 106 to 112: 1268 s; `Rows14`: 1292 s), which is 12 times for 11.2 times the
+neurons, on an oversubscribed machine (load 6 to 9 on 4 cores throughout).
+
+## The planted fault
+
+`P7Fault` is `P7Full` with the read-out rows of answers 0 and 1 swapped (14 of 49 pairs wrong, 2 of
+them in row 0; `gen_fault.py`). `check_fault.sh` builds its table and runs
+`lake env lean expected_fail/FaultRow.lean`, which must fail:
+
+    === planted fault (must be rejected by the kernel) 2026-10-16T05:15:05Z
+    rejected by the kernel, as it should be:
+    expected_fail/FaultRow.lean:17:2: error: Tactic `decide` proved that the proposition
+    === done 2026-10-16T05:15:06Z, exit 0
+
+The wording differs from the first repository's "(kernel) application type mismatch" for the same
+reason in both: in this toolchain `decide +kernel` hands the proof term to the kernel first and, only
+after the kernel throws, evaluates the instance in the elaborator to word the message
+(`src/lean/Lean/Elab/Tactic/Decide.lean`, `doKernel`: `mkAuxLemma` then, in the `catch`, `whnf` of
+`Decidable.decide`); at p = 7 that evaluation finishes and says "proved ... is false", at p = 113 it
+does not and the kernel's exception is printed. `kernel_reject.lean` removes the tactic from the
+picture: it builds the proof term `of_decide_eq_true _ _ (Eq.refl true)` by hand and calls `addDecl`
+directly with `Elab.async false`:
+
+    kernel REJECTED fault_row0: (kernel) application type mismatch
+      of_decide_eq_true (Eq.refl true)
+    argument has type
+      true = true
+    but function has type
+      decide (∀ (b : Nat), b < 7 → (fastOk PhaseGridInstances.P7Fault.E1 ... == (0 + b) % 7) = true) = true → ...
+    kernel ACCEPTED real_row0
+    real 0m2.478s
+
+(`../logs/stage3_kernel_reject.log`; with the default asynchronous checking the same rejection is
+reported as an error at the command instead of being caught.)
+
+## The last-pair faults
+
+The fault above is wrong in row 0. The second reviewer (2026-10-16) prepared two faults that are wrong
+only in the last column, so a check cannot stop early on a bad pair: `P7LastFault` is `P7Full` with E2
+row 6 replaced by row 5 (column b = 6 wrong on every row; the last row's check is right on b = 0 to 5
+and wrong only at (6, 6)), and `P113LastFault` is `P113Full` with `E2_112` replaced by `E2_111`
+(column b = 112 wrong; the last chunk of the last row, the statement of `P113Full.fast_112_4`, is
+right on b = 90 to 111 and wrong only at (112, 112)). `gen_last_fault.py` regenerates both from the
+committed `Weights.lean` files by text substitution, with no numerics (the result is byte-identical
+to the reviewer's files apart from the header line); the generated directories are git-ignored since
+the p = 113 one is 2 MB. `check_last_fault.sh` (2026-10-16, 10:28:32Z to 10:32:56Z, `LEAN_NUM_THREADS=2`,
+one Lake call per module since a 448-neuron `Weights` module peaks near 4.4 GB):
+
+    built PhaseGridInstances.P7LastFault.Table, 1 s
+    built PhaseGridInstances.P7Full.Table, 0 s
+    built PhaseGridInstances.P113LastFault.Table, 103 s
+    built PhaseGridInstances.P113Full.Table, 100 s
+    expected_fail/P7LastRow.lean rejected by the kernel, as it should be:
+    expected_fail/P7LastRow.lean:18:2: error: Tactic `decide` proved that the proposition
+    expected_fail/P113LastChunk.lean rejected by the kernel, as it should be:
+    expected_fail/P113LastChunk.lean:18:2: error: (kernel) application type mismatch
+    === kernel verdicts through addDecl, 43 s
+    kernel ACCEPTED fault7_row6_first6
+    kernel REJECTED fault7_row6_all: (kernel) application type mismatch
+    kernel ACCEPTED real7_row6
+    kernel ACCEPTED fault113_row112_b90_111
+    kernel REJECTED fault113_row112_b90_112: (kernel) application type mismatch
+    kernel ACCEPTED real113_row112_b90_112
+    === done 2026-10-16T10:32:56Z, exit 0
+
+The two `expected_fail` messages differ in wording for the reason given above. The six `addDecl`
+verdicts (`kernel_reject_last.lean`, full output in `last_fault_kernel.out`) are the kernel's own: for
+each fault, the range that stops before the bad pair is accepted, the range that includes it is
+rejected, and the real network's same range is accepted, so what is rejected is the fault and not
+the setup. The CI job runs this script on every push.
+
+## Files
+
+| Path | What it is |
+| --- | --- |
+| `gen_phase_grid.py` | `python3 gen_phase_grid.py P M NAME CHUNKS [k1,k2,...] [--rowdefs] [--bchunks N]`: builds, checks and writes an instance |
+| `gen_fault.py` | the planted fault |
+| `gen_last_fault.py` | the two last-pair faults, regenerated from the committed tables (output git-ignored) |
+| `check_instance.sh` | `./check_instance.sh NAME P JOBS`: `lake build`, replay every module with `leanchecker`, `#print axioms` |
+| `check_fault.sh` | the planted-fault check through `expected_fail/FaultRow.lean` |
+| `kernel_reject.lean` | the planted fault and the real tables submitted to `addDecl` directly |
+| `check_last_fault.sh`, `kernel_reject_last.lean` | the last-pair faults: `expected_fail/P7LastRow.lean` and `expected_fail/P113LastChunk.lean` must fail; six `addDecl` verdicts |
+| `PhaseGridInstances/`, `expected_fail/` | the Lake package (this directory): `Network.lean`, `Fast.lean`, one directory per instance (`Weights`, `Table`, `RowsNN`, `AllInputs`), `P7Fault`, `expected_fail/FaultRow.lean`, the `.npz` of each instance's tables |
+| `*.out` | the build, replay and axiom outputs kept from the runs described above |
+| `../logs/stage3_*.log` | the session logs |

@@ -1,0 +1,46 @@
+kernel ACCEPTED fault7_row6_first6
+kernel REJECTED fault7_row6_all: (kernel) application type mismatch
+  of_decide_eq_true (Eq.refl true)
+argument has type
+  true = true
+but function has type
+  decide
+        (∀ (b : Nat),
+          b < 7 →
+            (fastOk PhaseGridInstances.P7LastFault.E1 PhaseGridInstances.P7LastFault.E2 24 6 b &&
+                fastAnswer PhaseGridInstances.P7LastFault.E1 PhaseGridInstances.P7LastFault.E2
+                    PhaseGridInstances.P7LastFault.W2 24 6 b ==
+                  (6 + b) % 7) =
+              true) =
+      true →
+    ∀ (b : Nat),
+      b < 7 →
+        (fastOk PhaseGridInstances.P7LastFault.E1 PhaseGridInstances.P7LastFault.E2 24 6 b &&
+            fastAnswer PhaseGridInstances.P7LastFault.E1 PhaseGridInstances.P7LastFault.E2
+                PhaseGridInstances.P7LastFault.W2 24 6 b ==
+              (6 + b) % 7) =
+          true
+kernel ACCEPTED real7_row6
+kernel ACCEPTED fault113_row112_b90_111
+kernel REJECTED fault113_row112_b90_112: (kernel) application type mismatch
+  of_decide_eq_true (Eq.refl true)
+argument has type
+  true = true
+but function has type
+  decide
+        (∀ (b : Nat),
+          b < 23 →
+            (fastOk PhaseGridInstances.P113LastFault.E1 PhaseGridInstances.P113LastFault.E2 448 112 (90 + b) &&
+                fastAnswer PhaseGridInstances.P113LastFault.E1 PhaseGridInstances.P113LastFault.E2
+                    PhaseGridInstances.P113LastFault.W2 448 112 (90 + b) ==
+                  (112 + (90 + b)) % 113) =
+              true) =
+      true →
+    ∀ (b : Nat),
+      b < 23 →
+        (fastOk PhaseGridInstances.P113LastFault.E1 PhaseGridInstances.P113LastFault.E2 448 112 (90 + b) &&
+            fastAnswer PhaseGridInstances.P113LastFault.E1 PhaseGridInstances.P113LastFault.E2
+                PhaseGridInstances.P113LastFault.W2 448 112 (90 + b) ==
+              (112 + (90 + b)) % 113) =
+          true
+kernel ACCEPTED real113_row112_b90_112

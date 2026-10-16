@@ -143,6 +143,7 @@ python3 figure.py network/trained.npz figures/circle.svg
 | `FIXED_PHASE.md`, `make_fixed_phase.py`, `make_fixed_phase6.py`, `search_min.py`, `run_lean_fixed_phase.sh`, `lean_run_fixed_phase.log` | networks built from the circle formula with fixed phases, the search for the smallest, their kernel check and its output |
 | `lean/LeanCheckedNetwork/Count.lean`, `gen_count.py`, `make_curve.py`, `LEARNING_CURVE.md` | counting right answers with the kernel; the count theorems of a training run's checkpoints |
 | `rnn/`, `sweep/`, `prime_env/` | the three directories described above, each with its own README |
+| `phasegrid/` | the every-modulus theorem on Mathlib (`mathlib/`), the derivation's numerical check (`stage1/`), the kernel-checked instances in core Lean (`instances/`), logs |
 | `runs/` | training logs |
 
 ## Three things built on top of this, 2026-10-16
@@ -161,12 +162,38 @@ the only published fraction x weight-decay map for this architecture, at p = 97)
 crosses the boundary where generalisation stops; nobody has published what integer rounding does
 to a grokked network, so every point is new data as well as a theorem.
 
+## One theorem for every modulus: `phasegrid/`, 2026-10-16
+
+Gromov (2023) gave analytic weights for this architecture, cosines at a frequency with random
+phases, whose unwanted waves cancel only on average. Fix the phases on a grid instead (four values
+for the first input's phase, two for the second: eight neurons per frequency) and they cancel
+exactly. `phasegrid/` proves, in Lean 4 on Mathlib, with the repository's own `answer` from
+`Network.lean` copied verbatim: for every modulus p, every list of frequencies S whose wave sums have
+a positive gap g, and every scale M with 24|S| < Mg, the integer network with weights round(M cos ...)
+answers (a + b) mod p on every pair (`PhaseGrid.adds_mod_p`); and for every p ≥ 3, with all
+frequencies and any M ≥ 25, it adds mod p (`adds_mod_p_full`): 5-bit weights add on every clock.
+A variant (`adds_mod_p_tables`) covers any integer tables within 1/2 of the analytic weights. 42
+theorems, every one on `[propext, Classical.choice, Quot.sound]` or a subset, every module replayed by
+`leanchecker`. Three concrete networks of that shape are also kernel-checked here by the
+repository's brute-force route in core Lean (p = 7 with all frequencies; p = 113 with Nanda et al.'s
+five key frequencies, 40 neurons; p = 113 with all 56 frequencies, 448 neurons), with three planted faults rejected, two of
+them wrong only at the last pair of a row so that no early pair can end the check; and at p = 7 certified cosine bounds prove the explicit tables are the rounded weights, so
+that instance is right by the theorem with no enumeration. Two adversarial reviews reproduced the
+Mathlib project from source with byte-identical compiled files and replayed every module; what they
+could not finish in the time given is listed in `phasegrid/README.md`. Still open: the p = 113
+tables are tied to the theorem only numerically, and the proved bound is loose (M = 2 suffices
+empirically where 24 is proved). The derivation and its bound were checked adversarially first
+(`phasegrid/stage1/`), which found that the score has nine waves per neuron, not eight, and that the
+bound is exact as a sufficient condition.
+
 ## Prior work, and what is new here
 
 - Nanda et al. (2023), *Progress measures for grokking via mechanistic interpretability*:
   found the circle (Fourier) mechanism in a one-layer transformer trained on addition mod 113.
 - Gromov (2023), *Grokking modular arithmetic*: the two-layer architecture used here, with an
-  exact circle-wave solution.
+  analytic circle-wave solution whose random phases cancel the unwanted waves only on average;
+  `phasegrid/` fixes the phases on a grid, makes the cancellation exact, and proves the result in
+  Lean for every modulus.
 - Gross et al. (2024), *Compact proofs of model performance via mechanistic
   interpretability*; Yip, Agrawal, Chan, Gross (2024), *Modular addition without black-boxes*;
   Wu, Jaburi, Drori, Gross (2024; ICLR 2025 as *Towards a unified and verified understanding of

@@ -1,0 +1,875 @@
+{
+ "config": {
+  "p": 97,
+  "H": 128,
+  "seed": 1,
+  "frac": 0.7,
+  "wd": 0.0,
+  "steps": 20000,
+  "lr": 0.01,
+  "chunks": 16,
+  "namespace": "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000"
+ },
+ "stages": {
+  "train": {
+   "exit": 0,
+   "log": "train.log"
+  },
+  "circle": {
+   "exit": 0,
+   "stdout": "circle-only network: wrong on 19 of 9409, ties 0, largest weight 107"
+  },
+  "gen": {
+   "modules": [
+    "LeanCheckedNetwork.Network",
+    "LeanCheckedNetwork.Fast",
+    "LeanCheckedNetwork.WrongSet",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Weights",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Table",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows00",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows01",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows02",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows03",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows04",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows05",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows06",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows07",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows08",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows09",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows10",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows11",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows12",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows13",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows14",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows15",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.AllInputs",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Weights",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Table",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows00",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows01",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows02",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows03",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows04",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows05",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows06",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows07",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows08",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows09",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows10",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows11",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows12",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows13",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows14",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows15",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.AllInputs"
+   ],
+   "main_theorems": {
+    "trained": [
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.answer_iff_not_wrong",
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_length",
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_nodup",
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_in_range"
+    ],
+    "circle_only": [
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.answer_iff_not_wrong",
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_length",
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_nodup",
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_in_range"
+    ]
+   }
+  },
+  "build": {
+   "exit": 0,
+   "completed": true,
+   "warnings": 0,
+   "sorry_warnings": 0,
+   "errors": []
+  },
+  "replay": {
+   "ok": 41,
+   "of": 41,
+   "modules": {
+    "LeanCheckedNetwork.Network": {
+     "exit": 0,
+     "seconds": 8.5
+    },
+    "LeanCheckedNetwork.Fast": {
+     "exit": 0,
+     "seconds": 8.5
+    },
+    "LeanCheckedNetwork.WrongSet": {
+     "exit": 0,
+     "seconds": 8.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Weights": {
+     "exit": 0,
+     "seconds": 8.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Table": {
+     "exit": 0,
+     "seconds": 9.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows02": {
+     "exit": 0,
+     "seconds": 66.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows01": {
+     "exit": 0,
+     "seconds": 67.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows03": {
+     "exit": 0,
+     "seconds": 62.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows00": {
+     "exit": 0,
+     "seconds": 76.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows04": {
+     "exit": 0,
+     "seconds": 65.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows05": {
+     "exit": 0,
+     "seconds": 66.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows06": {
+     "exit": 0,
+     "seconds": 64.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows07": {
+     "exit": 0,
+     "seconds": 66.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows08": {
+     "exit": 0,
+     "seconds": 72.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows09": {
+     "exit": 0,
+     "seconds": 71.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows10": {
+     "exit": 0,
+     "seconds": 73.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows11": {
+     "exit": 0,
+     "seconds": 72.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows12": {
+     "exit": 0,
+     "seconds": 72.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows14": {
+     "exit": 0,
+     "seconds": 69.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows13": {
+     "exit": 0,
+     "seconds": 73.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.AllInputs": {
+     "exit": 0,
+     "seconds": 7.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.Rows15": {
+     "exit": 0,
+     "seconds": 70.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Weights": {
+     "exit": 0,
+     "seconds": 9.0
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Table": {
+     "exit": 0,
+     "seconds": 10.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows02": {
+     "exit": 0,
+     "seconds": 72.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows01": {
+     "exit": 0,
+     "seconds": 74.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows03": {
+     "exit": 0,
+     "seconds": 71.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows00": {
+     "exit": 0,
+     "seconds": 85.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows04": {
+     "exit": 0,
+     "seconds": 62.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows05": {
+     "exit": 0,
+     "seconds": 64.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows06": {
+     "exit": 0,
+     "seconds": 64.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows07": {
+     "exit": 0,
+     "seconds": 60.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows08": {
+     "exit": 0,
+     "seconds": 56.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows09": {
+     "exit": 0,
+     "seconds": 56.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows10": {
+     "exit": 0,
+     "seconds": 58.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows11": {
+     "exit": 0,
+     "seconds": 55.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows13": {
+     "exit": 0,
+     "seconds": 53.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows12": {
+     "exit": 0,
+     "seconds": 57.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.AllInputs": {
+     "exit": 0,
+     "seconds": 2.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows14": {
+     "exit": 0,
+     "seconds": 58.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.Rows15": {
+     "exit": 0,
+     "seconds": 57.6
+    }
+   }
+  },
+  "axioms": {
+   "lines": [
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.answer_iff_not_wrong' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.answer_iff_not_wrong' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_length' does not depend on any axioms",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_in_range' does not depend on any axioms",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_length' does not depend on any axioms",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_in_range' does not depend on any axioms"
+   ],
+   "parsed": {
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.answer_iff_not_wrong": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_nodup": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.answer_iff_not_wrong": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_nodup": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_length": [],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.wrongPairs_in_range": [],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_length": [],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.wrongPairs_in_range": []
+   },
+   "standard": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ]
+  },
+  "scan": {
+   "hits": []
+  }
+ },
+ "seconds": {
+  "train": 651.7,
+  "circle": 0.3,
+  "numpy": 0.4,
+  "gen": 0.0,
+  "build": 518.7,
+  "replay": 552.4,
+  "axioms": 0.7,
+  "total": 1724.2
+ },
+ "ok": true,
+ "failures": [],
+ "repo_commit": null,
+ "lean_version": "Lean (version 4.35.0-rc2, x86_64-unknown-linux-gnu, commit 11acb17ec6b07a8f9e9173e6845197929540936b, Release)",
+ "lean_toolchain": "leanprover/lean4:v4.35.0-rc2",
+ "host": {
+  "cpus": 20,
+  "argv": [
+   "/root/lcn/sweep/run_one.py",
+   "97",
+   "128",
+   "1",
+   "0.7",
+   "0.0",
+   "20000",
+   "/tmp/work/P97_H128_S1_F0p7_WD0_ST20000",
+   "--repo",
+   "/root/lcn",
+   "--jobs",
+   "4",
+   "--build-jobs",
+   "4"
+  ]
+ },
+ "networks": {
+  "trained": {
+   "wrong_count": 102,
+   "ties": 0,
+   "smallest_winning_gap": 65566,
+   "largest_weight": 127,
+   "w2_in_fast_range": true,
+   "max_hidden_sum": 1560406,
+   "fast_digit_bound_ok": true,
+   "wrong_pairs": [
+    [
+     0,
+     81
+    ],
+    [
+     2,
+     70
+    ],
+    [
+     4,
+     9
+    ],
+    [
+     5,
+     46
+    ],
+    [
+     6,
+     32
+    ],
+    [
+     6,
+     42
+    ],
+    [
+     11,
+     85
+    ],
+    [
+     11,
+     88
+    ],
+    [
+     13,
+     22
+    ],
+    [
+     13,
+     43
+    ],
+    [
+     13,
+     73
+    ],
+    [
+     14,
+     84
+    ],
+    [
+     15,
+     27
+    ],
+    [
+     18,
+     7
+    ],
+    [
+     18,
+     13
+    ],
+    [
+     18,
+     33
+    ],
+    [
+     20,
+     92
+    ],
+    [
+     21,
+     13
+    ],
+    [
+     21,
+     77
+    ],
+    [
+     24,
+     3
+    ],
+    [
+     24,
+     51
+    ],
+    [
+     24,
+     53
+    ],
+    [
+     25,
+     16
+    ],
+    [
+     25,
+     31
+    ],
+    [
+     25,
+     45
+    ],
+    [
+     25,
+     54
+    ],
+    [
+     26,
+     50
+    ],
+    [
+     28,
+     53
+    ],
+    [
+     30,
+     1
+    ],
+    [
+     31,
+     55
+    ],
+    [
+     31,
+     91
+    ],
+    [
+     32,
+     14
+    ],
+    [
+     34,
+     88
+    ],
+    [
+     36,
+     5
+    ],
+    [
+     37,
+     45
+    ],
+    [
+     38,
+     45
+    ],
+    [
+     38,
+     70
+    ],
+    [
+     42,
+     42
+    ],
+    [
+     43,
+     45
+    ],
+    [
+     43,
+     76
+    ],
+    [
+     45,
+     33
+    ],
+    [
+     47,
+     36
+    ],
+    [
+     49,
+     13
+    ],
+    [
+     49,
+     34
+    ],
+    [
+     49,
+     37
+    ],
+    [
+     49,
+     53
+    ],
+    [
+     49,
+     71
+    ],
+    [
+     49,
+     75
+    ],
+    [
+     50,
+     61
+    ],
+    [
+     51,
+     36
+    ],
+    [
+     51,
+     81
+    ],
+    [
+     51,
+     91
+    ],
+    [
+     53,
+     41
+    ],
+    [
+     53,
+     42
+    ],
+    [
+     55,
+     88
+    ],
+    [
+     57,
+     34
+    ],
+    [
+     57,
+     84
+    ],
+    [
+     58,
+     91
+    ],
+    [
+     60,
+     55
+    ],
+    [
+     61,
+     8
+    ],
+    [
+     61,
+     81
+    ],
+    [
+     61,
+     88
+    ],
+    [
+     62,
+     82
+    ],
+    [
+     63,
+     64
+    ],
+    [
+     65,
+     60
+    ],
+    [
+     66,
+     44
+    ],
+    [
+     67,
+     23
+    ],
+    [
+     69,
+     69
+    ],
+    [
+     70,
+     17
+    ],
+    [
+     71,
+     23
+    ],
+    [
+     71,
+     69
+    ],
+    [
+     72,
+     14
+    ],
+    [
+     72,
+     60
+    ],
+    [
+     72,
+     88
+    ],
+    [
+     73,
+     39
+    ],
+    [
+     73,
+     60
+    ],
+    [
+     75,
+     2
+    ],
+    [
+     75,
+     6
+    ],
+    [
+     75,
+     59
+    ],
+    [
+     75,
+     75
+    ],
+    [
+     75,
+     88
+    ],
+    [
+     77,
+     40
+    ],
+    [
+     77,
+     56
+    ],
+    [
+     77,
+     62
+    ],
+    [
+     78,
+     78
+    ],
+    [
+     80,
+     10
+    ],
+    [
+     83,
+     26
+    ],
+    [
+     83,
+     84
+    ],
+    [
+     83,
+     88
+    ],
+    [
+     85,
+     51
+    ],
+    [
+     87,
+     31
+    ],
+    [
+     88,
+     7
+    ],
+    [
+     88,
+     34
+    ],
+    [
+     89,
+     34
+    ],
+    [
+     90,
+     11
+    ],
+    [
+     90,
+     17
+    ],
+    [
+     91,
+     62
+    ],
+    [
+     92,
+     96
+    ],
+    [
+     93,
+     29
+    ],
+    [
+     95,
+     24
+    ],
+    [
+     95,
+     92
+    ],
+    [
+     96,
+     84
+    ]
+   ],
+   "wrong_pairs_truncated": false
+  },
+  "circle_only": {
+   "wrong_count": 19,
+   "ties": 0,
+   "smallest_winning_gap": 258951,
+   "largest_weight": 107,
+   "w2_in_fast_range": true,
+   "max_hidden_sum": 1072727,
+   "fast_digit_bound_ok": true,
+   "wrong_pairs": [
+    [
+     3,
+     75
+    ],
+    [
+     4,
+     28
+    ],
+    [
+     5,
+     73
+    ],
+    [
+     5,
+     76
+    ],
+    [
+     14,
+     69
+    ],
+    [
+     16,
+     62
+    ],
+    [
+     19,
+     62
+    ],
+    [
+     20,
+     92
+    ],
+    [
+     25,
+     5
+    ],
+    [
+     41,
+     40
+    ],
+    [
+     47,
+     34
+    ],
+    [
+     49,
+     80
+    ],
+    [
+     66,
+     15
+    ],
+    [
+     74,
+     7
+    ],
+    [
+     75,
+     54
+    ],
+    [
+     77,
+     4
+    ],
+    [
+     83,
+     95
+    ],
+    [
+     90,
+     88
+    ],
+    [
+     96,
+     16
+    ]
+   ],
+   "wrong_pairs_truncated": false,
+   "as_written_by_circle_only_py": {
+    "wrong_count": 19,
+    "ties": 0,
+    "smallest_winning_gap": 258951,
+    "largest_weight": 107,
+    "w2_in_fast_range": true,
+    "max_hidden_sum": 1072727,
+    "fast_digit_bound_ok": true
+   },
+   "rescaled": false,
+   "rescale_factor": null,
+   "note": "circle_only.py's tables used as written"
+  }
+ },
+ "kernel": {
+  "trained": {
+   "status": "pass",
+   "statement": "wrong on exactly 102 of 9409 pairs (LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.Trained.answer_iff_not_wrong, wrongPairs_length, wrongPairs_nodup, wrongPairs_in_range)",
+   "wrong_count": 102,
+   "how": "lake build + leanchecker replay of every module + #print axioms"
+  },
+  "circle_only": {
+   "status": "pass",
+   "statement": "wrong on exactly 19 of 9409 pairs (LeanCheckedNetwork.Sweep.P97_H128_S1_F0p7_WD0_ST20000.CircleOnly.answer_iff_not_wrong, wrongPairs_length, wrongPairs_nodup, wrongPairs_in_range)",
+   "wrong_count": 19,
+   "how": "lake build + leanchecker replay of every module + #print axioms"
+  }
+ }
+}

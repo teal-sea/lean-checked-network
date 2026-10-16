@@ -66,10 +66,13 @@ def tag_of(pt):
 
 @app.function(
     cpu=4.0,
-    # lake build runs up to 4 Lean processes (about 2 GB each at p=113, H=128; more at H=256),
+    # lake build is capped at 4 Lean processes by --build-jobs (about 2 GB each at p=113, H=128; more at H=256),
     # and the replay runs 2 leanchecker processes at once: 16 GiB requested, 24 GiB hard limit.
     memory=(16384, 24576),
     timeout=4 * 3600,          # the largest grid point is estimated under 2 h on 4 cores
+    # The account's container limit is 100 and other jobs share it; an uncapped map of the grid
+    # took all 100 on 2026-10-16. 30 at a time leaves 70 free and runs the grid in about 5 waves.
+    max_containers=30,
     retries=modal.Retries(max_retries=2, initial_delay=10.0, backoff_coefficient=2.0),
     volumes={"/results": vol},
 )
@@ -85,8 +88,10 @@ def run_point(pt: dict) -> dict:
         shutil.rmtree(work)
     cmd = [sys.executable, "/root/lcn/sweep/run_one.py", str(pt["p"]), str(pt["H"]), str(pt["seed"]), str(pt["frac"]),
            str(pt["wd"]), str(pt["steps"]), str(work), "--repo", "/root/lcn",
-           # replay 4 modules at once (about 2 GB each at H <= 128), 2 at once for the larger networks
-           "--jobs", "4" if pt["H"] <= 128 else "2"]
+           # replay 4 modules at once (about 2 GB each at H <= 128), 2 at once for the larger networks;
+           # the build gets the same cap, because the container reports 20 cores, not the 4 requested
+           "--jobs", "4" if pt["H"] <= 128 else "2",
+           "--build-jobs", "4" if pt["H"] <= 128 else "2"]
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     # keep everything except the compiled .lake tree and the negative-control copy
     if dest.exists():

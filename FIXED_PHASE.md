@@ -73,6 +73,20 @@ every frequency gives `M = 25` for all of them. Two cheap instances, kernel-chec
 |---|---|---|---|---|---|
 | 7 | all 3 | 24 | 5-bit (`M = 25`) | 219,400 | **kernel-checked** |
 | 12 (composite) | all 5 | 40 | 5-bit (`M = 25`) | 308,750 | **kernel-checked** |
+| 257 | {114, 125}, the first survivor of all 8,128 two-frequency sets, six phases each | 12 | 8-bit (`M = 127`) | 375,872 | build in progress at this commit |
+
+## The planted fault
+
+Beside every proved network this repository keeps a variant the kernel must reject. `FaultFixed12`
+is `FixedPhase12` with one read-out weight raised by 22 (`W2[104][7]`, from 1 to 23, still inside
+[-128, 127]); that flips its tightest pair (11, 35) to the answer 104 and 15 others, 16 of 12,769
+wrong (measured). `lean/expected_fail/FaultFixed12Row.lean` is the row-11 proof for that network;
+`run_lean_fixed_phase.sh` requires it to fail with a kernel error. It does: *"(kernel) application
+type mismatch"* (2026-10-16). The 40-neuron network's smallest margin, 19,523,208, exceeds the
+most one weight change inside [-128, 127] can shift the gap between two scores, 254 × 255² =
+16,516,350, so no single weight change can flip any of its answers (derived, the same argument as
+the trained network's); the 12- and 16-neuron networks are below that line, which is why the fault
+is planted in the smallest one.
 
 ## What to prove, and what the kernel costs
 

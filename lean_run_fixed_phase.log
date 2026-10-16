@@ -1,0 +1,67 @@
+=== build FixedPhase12 start 2026-10-16T03:12:15Z
+Build completed successfully (22 jobs).
+wall 139s
+=== build FixedPhase12 exit 0 end 2026-10-16T03:14:34Z
+=== build FixedPhase16 start 2026-10-16T03:14:34Z
+Build completed successfully (22 jobs).
+wall 150s
+=== build FixedPhase16 exit 0 end 2026-10-16T03:17:04Z
+=== build FixedPhase40 start 2026-10-16T03:17:04Z
+Build completed successfully (22 jobs).
+wall 217s
+=== build FixedPhase40 exit 0 end 2026-10-16T03:20:41Z
+=== build FixedPhase448 start 2026-10-16T03:20:41Z
+Build completed successfully (6 jobs).
+Build completed successfully (6 jobs).
+Build completed successfully (6 jobs).
+Build completed successfully (22 jobs).
+wall 4011s
+=== build FixedPhase448 exit 0 end 2026-10-16T04:27:32Z
+=== build Mod7All start 2026-10-16T04:27:32Z
+Build completed successfully (10 jobs).
+wall 0s
+=== build Mod7All exit 0 end 2026-10-16T04:27:32Z
+=== build Mod12All start 2026-10-16T04:27:32Z
+Build completed successfully (10 jobs).
+wall 1s
+=== build Mod12All exit 0 end 2026-10-16T04:27:33Z
+=== build Mod257Min start 2026-10-16T04:27:33Z
+Build completed successfully (38 jobs).
+wall 1582s
+=== build Mod257Min exit 0 end 2026-10-16T04:53:55Z
+=== axioms
+'LeanCheckedNetwork.FixedPhase12.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.FixedPhase16.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.FixedPhase40.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.FixedPhase448.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.Mod7All.adds_mod_7' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.Mod12All.adds_mod_12' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.Mod257Min.adds_mod_257' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.FaultFixed12.right_on_12753' depends on axioms: [propext, Classical.choice, Quot.sound]
+all eight theorems use only the standard axioms
+=== planted fault (must be rejected by the kernel)
+rejected by the kernel, as it should be:
+expected_fail/FaultFixed12Row.lean:18:2: error: (kernel) application type mismatch
+=== done 2026-10-16T04:53:58Z status 0
+=== axioms
+'LeanCheckedNetwork.FixedPhase12.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.FixedPhase16.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.FixedPhase40.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.FixedPhase448.adds_mod_113' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.Mod7All.adds_mod_7' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.Mod12All.adds_mod_12' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.Mod257Min.adds_mod_257' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.FaultFixed12.right_on_12753' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.H64Step2000.right_on_12766' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.H64Step4000.right_on_12767' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.H64Step6000.right_on_12766' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.H64Step8000.right_on_12767' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.H64Step10000.right_on_12767' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanCheckedNetwork.H64Step12000.right_on_12769' depends on axioms: [propext, Classical.choice, Quot.sound]
+all fourteen theorems use only the standard axioms
+=== planted fault (must be rejected by the kernel)
+rejected by the kernel, as it should be:
+expected_fail/FaultFixed12Row.lean:18:2: error: (kernel) application type mismatch
+=== replay with leanchecker, 2 at a time
+replayed 197 of 197 modules
+=== done 2026-10-16T07:46:46Z status 0

@@ -1,0 +1,377 @@
+{
+ "config": {
+  "p": 97,
+  "H": 128,
+  "seed": 1,
+  "frac": 0.5,
+  "wd": 3.0,
+  "steps": 20000,
+  "lr": 0.01,
+  "chunks": 16,
+  "namespace": "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000"
+ },
+ "stages": {
+  "train": {
+   "exit": 0,
+   "log": "train.log"
+  },
+  "circle": {
+   "exit": 0,
+   "stdout": "circle-only network: wrong on 0 of 9409, ties 0, largest weight 129"
+  },
+  "gen": {
+   "modules": [
+    "LeanCheckedNetwork.Network",
+    "LeanCheckedNetwork.Fast",
+    "LeanCheckedNetwork.WrongSet",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Weights",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Table",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows00",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows01",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows02",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows03",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows04",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows05",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows06",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows07",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows08",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows09",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows10",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows11",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows12",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows13",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows14",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows15",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.AllInputs",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Weights",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Table",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows00",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows01",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows02",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows03",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows04",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows05",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows06",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows07",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows08",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows09",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows10",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows11",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows12",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows13",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows14",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows15",
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.AllInputs"
+   ],
+   "main_theorems": {
+    "trained": [
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.answer_iff_not_wrong",
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.adds_mod_97"
+    ],
+    "circle_only": [
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.answer_iff_not_wrong",
+     "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.adds_mod_97"
+    ]
+   }
+  },
+  "build": {
+   "exit": 0,
+   "completed": true,
+   "warnings": 0,
+   "sorry_warnings": 0,
+   "errors": []
+  },
+  "replay": {
+   "ok": 41,
+   "of": 41,
+   "modules": {
+    "LeanCheckedNetwork.Network": {
+     "exit": 0,
+     "seconds": 6.0
+    },
+    "LeanCheckedNetwork.WrongSet": {
+     "exit": 0,
+     "seconds": 6.0
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Weights": {
+     "exit": 0,
+     "seconds": 6.0
+    },
+    "LeanCheckedNetwork.Fast": {
+     "exit": 0,
+     "seconds": 6.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Table": {
+     "exit": 0,
+     "seconds": 7.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows01": {
+     "exit": 0,
+     "seconds": 48.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows02": {
+     "exit": 0,
+     "seconds": 49.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows03": {
+     "exit": 0,
+     "seconds": 45.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows00": {
+     "exit": 0,
+     "seconds": 58.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows04": {
+     "exit": 0,
+     "seconds": 43.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows05": {
+     "exit": 0,
+     "seconds": 42.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows06": {
+     "exit": 0,
+     "seconds": 42.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows07": {
+     "exit": 0,
+     "seconds": 41.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows08": {
+     "exit": 0,
+     "seconds": 44.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows09": {
+     "exit": 0,
+     "seconds": 45.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows10": {
+     "exit": 0,
+     "seconds": 44.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows11": {
+     "exit": 0,
+     "seconds": 44.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows13": {
+     "exit": 0,
+     "seconds": 44.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows12": {
+     "exit": 0,
+     "seconds": 47.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows14": {
+     "exit": 0,
+     "seconds": 44.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.AllInputs": {
+     "exit": 0,
+     "seconds": 4.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Weights": {
+     "exit": 0,
+     "seconds": 6.0
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Table": {
+     "exit": 0,
+     "seconds": 6.5
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.Rows15": {
+     "exit": 0,
+     "seconds": 47.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows01": {
+     "exit": 0,
+     "seconds": 47.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows03": {
+     "exit": 0,
+     "seconds": 45.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows00": {
+     "exit": 0,
+     "seconds": 52.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows02": {
+     "exit": 0,
+     "seconds": 49.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows04": {
+     "exit": 0,
+     "seconds": 49.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows05": {
+     "exit": 0,
+     "seconds": 51.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows07": {
+     "exit": 0,
+     "seconds": 52.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows06": {
+     "exit": 0,
+     "seconds": 53.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows09": {
+     "exit": 0,
+     "seconds": 44.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows08": {
+     "exit": 0,
+     "seconds": 47.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows11": {
+     "exit": 0,
+     "seconds": 45.1
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows10": {
+     "exit": 0,
+     "seconds": 49.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows13": {
+     "exit": 0,
+     "seconds": 46.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows12": {
+     "exit": 0,
+     "seconds": 48.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.AllInputs": {
+     "exit": 0,
+     "seconds": 2.0
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows14": {
+     "exit": 0,
+     "seconds": 48.6
+    },
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.Rows15": {
+     "exit": 0,
+     "seconds": 46.1
+    }
+   }
+  },
+  "axioms": {
+   "lines": [
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.answer_iff_not_wrong' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.adds_mod_97' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.answer_iff_not_wrong' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.adds_mod_97' depends on axioms: [propext, Classical.choice, Quot.sound]"
+   ],
+   "parsed": {
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.answer_iff_not_wrong": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.adds_mod_97": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.answer_iff_not_wrong": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ],
+    "LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.adds_mod_97": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   "standard": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ]
+  },
+  "scan": {
+   "hits": []
+  }
+ },
+ "seconds": {
+  "train": 342.5,
+  "circle": 0.2,
+  "numpy": 0.5,
+  "gen": 0.0,
+  "build": 398.7,
+  "replay": 392.6,
+  "axioms": 0.5,
+  "total": 1135.0
+ },
+ "ok": true,
+ "failures": [],
+ "repo_commit": null,
+ "lean_version": "Lean (version 4.35.0-rc2, x86_64-unknown-linux-gnu, commit 11acb17ec6b07a8f9e9173e6845197929540936b, Release)",
+ "lean_toolchain": "leanprover/lean4:v4.35.0-rc2",
+ "host": {
+  "cpus": 20,
+  "argv": [
+   "/root/lcn/sweep/run_one.py",
+   "97",
+   "128",
+   "1",
+   "0.5",
+   "3.0",
+   "20000",
+   "/tmp/work/P97_H128_S1_F0p5_WD3_ST20000",
+   "--repo",
+   "/root/lcn",
+   "--jobs",
+   "4",
+   "--build-jobs",
+   "4"
+  ]
+ },
+ "networks": {
+  "trained": {
+   "wrong_count": 0,
+   "ties": 0,
+   "smallest_winning_gap": 24808504,
+   "largest_weight": 127,
+   "w2_in_fast_range": true,
+   "max_hidden_sum": 2385538,
+   "fast_digit_bound_ok": true,
+   "wrong_pairs": [],
+   "wrong_pairs_truncated": false
+  },
+  "circle_only": {
+   "wrong_count": 0,
+   "ties": 0,
+   "smallest_winning_gap": 26860922,
+   "largest_weight": 127,
+   "w2_in_fast_range": true,
+   "max_hidden_sum": 2031843,
+   "fast_digit_bound_ok": true,
+   "wrong_pairs": [],
+   "wrong_pairs_truncated": false,
+   "as_written_by_circle_only_py": {
+    "wrong_count": 0,
+    "ties": 0,
+    "smallest_winning_gap": 27956084,
+    "largest_weight": 129,
+    "w2_in_fast_range": false,
+    "max_hidden_sum": 2092507,
+    "fast_digit_bound_ok": true
+   },
+   "rescaled": true,
+   "rescale_factor": 0.9861171798385115,
+   "note": "circle_only.py's tables have an entry outside the fast evaluator's range, so all three tables were multiplied by the factor before rounding; the kernel-checked circle-only network is this rescaled one, not the one circle_only.py wrote"
+  }
+ },
+ "kernel": {
+  "trained": {
+   "status": "pass",
+   "statement": "right on all 9409 pairs (LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.Trained.adds_mod_97)",
+   "wrong_count": 0,
+   "how": "lake build + leanchecker replay of every module + #print axioms"
+  },
+  "circle_only": {
+   "status": "pass",
+   "statement": "right on all 9409 pairs (LeanCheckedNetwork.Sweep.P97_H128_S1_F0p5_WD3_ST20000.CircleOnly.adds_mod_97)",
+   "wrong_count": 0,
+   "how": "lake build + leanchecker replay of every module + #print axioms"
+  }
+ }
+}

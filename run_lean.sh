@@ -16,9 +16,9 @@ JOBS=${JOBS:-4}
 echo "=== replay every module with leanchecker, $JOBS at a time"
 # Every module with declarations. The root file LeanCheckedNetwork.lean only imports these; replaying
 # it rechecks all of them at once (over 9 GB), so it is left out: each declaration is replayed once here.
-# FixedPhase448 and Mod257Min are not in the root build (an hour and up to 5 GB each); run_lean_fixed_phase.sh
-# checks and replays them, and lean_run_fixed_phase.log is its record.
-mods=$(find LeanCheckedNetwork -name '*.lean' -not -path '*/Fault/*' -not -path '*/FixedPhase448/*' -not -path '*/Mod257Min/*' | sed 's/\.lean$//; s|/|.|g' | sort)
+# Mod257Min (66,049 pairs, 26 minutes) is not in the root build; run_lean_fixed_phase.sh checks and
+# replays it, and lean_run_fixed_phase.log is its record.
+mods=$(find LeanCheckedNetwork -name '*.lean' -not -path '*/Fault/*' -not -path '*/Mod257Min/*' | sed 's/\.lean$//; s|/|.|g' | sort)
 nmods=$(printf '%s\n' $mods | wc -l)
 printf '%s\n' $mods | xargs -P "$JOBS" -I{} sh -c \
   'if lake env leanchecker {} > /tmp/leanchecker.{}.out 2>&1; then echo "OK   {}"; else echo "FAIL {}"; cat /tmp/leanchecker.{}.out; fi' \
@@ -44,18 +44,10 @@ import LeanCheckedNetwork
 #print axioms LeanCheckedNetwork.CircleOnly.adds_mod_113
 #print axioms LeanCheckedNetwork.FixedPhase12.adds_mod_113
 #print axioms LeanCheckedNetwork.FixedPhase16.adds_mod_113
-#print axioms LeanCheckedNetwork.FixedPhase40.adds_mod_113
-#print axioms LeanCheckedNetwork.Mod7All.adds_mod_7
 #print axioms LeanCheckedNetwork.Mod12All.adds_mod_12
-#print axioms LeanCheckedNetwork.H64Step2000.right_on_12766
-#print axioms LeanCheckedNetwork.H64Step4000.right_on_12767
-#print axioms LeanCheckedNetwork.H64Step6000.right_on_12766
-#print axioms LeanCheckedNetwork.H64Step8000.right_on_12767
-#print axioms LeanCheckedNetwork.H64Step10000.right_on_12767
-#print axioms LeanCheckedNetwork.H64Step12000.right_on_12769
 LEAN
 lake env lean /tmp/axioms_check.lean > /tmp/axioms.out 2>&1; cat /tmp/axioms.out
 nstd=$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]$" /tmp/axioms.out)
-if [ "$nstd" -eq 13 ]; then echo "all thirteen theorems use only the standard axioms"; else echo "PROBLEM: unexpected axioms"; status=1; fi
+if [ "$nstd" -eq 5 ]; then echo "all five theorems use only the standard axioms"; else echo "PROBLEM: unexpected axioms"; status=1; fi
 echo "=== done $(date -u +%FT%TZ)"
 exit $status

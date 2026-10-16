@@ -230,3 +230,7 @@ For comparison the first repository checked its two 128-neuron networks in 26 mi
     cd mathlib && lake exe cache get && ./verify2.sh    # build, leanchecker on all 11 modules, axioms, source scan
     cd instances && ./check_instance.sh P7Full 7 1 && ./check_fault.sh && ./check_last_fault.sh   # about 5 min, mostly the two 448-neuron Weights modules
     cd instances && ./check_instance.sh P113Nanda5 113 1 && ./check_instance.sh P113Full 113 1   # 20 min and about 6 hours
+
+Smaller networks of the same shape, a six-phase cycle in place of the eight-phase grid, the smallest
+sets of frequencies that survive 8-bit rounding at 113 and 257, a composite modulus, and a planted fault:
+`smallest-networks.md` (built by the other session of 2026-10-16, in `lean/LeanCheckedNetwork/` at the root).

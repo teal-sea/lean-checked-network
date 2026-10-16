@@ -246,7 +246,8 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-2)
     ap.add_argument("--chunks", type=int, default=0, help="row files per network (default: min(p, 16))")
     ap.add_argument("--jobs", type=int, default=2, help="leanchecker replays run at once (about 2 GB each)")
-    ap.add_argument("--build-jobs", type=int, default=0, help="lake build -j (default: lake's choice)")
+    ap.add_argument("--build-jobs", type=int, default=0,
+                    help="cap Lean's parallelism via LEAN_NUM_THREADS (lake has no -j); default: every visible core")
     args = ap.parse_args()
     p, H, seed, frac, wd, steps = args.p, args.H, args.seed, args.frac, args.wd, args.steps
     repo = Path(args.repo).resolve()
@@ -368,8 +369,12 @@ def main():
     result["stages"]["gen"] = {"modules": modules, "main_theorems": main_theorems}
 
     # 5. lake build
-    cmd = ["lake", "build", "LeanCheckedNetwork"] + ([f"-j{args.build_jobs}"] if args.build_jobs else [])
-    rc, log, dt = run(cmd, ldir, env=env, log=out / "build.log")
+    # Lake has no -j flag (Lake/CLI/Help.lean, v4.35.0-rc2); the Lean runtime sizes its task pool from
+    # LEAN_NUM_THREADS, else from every visible core (src/runtime/object.cpp). A Modal container
+    # requesting 4 cores still sees 20, so an uncapped build runs ~20 Lean processes at ~2 GB each.
+    cmd = ["lake", "build", "LeanCheckedNetwork"]
+    build_env = dict(env, LEAN_NUM_THREADS=str(args.build_jobs)) if args.build_jobs else env
+    rc, log, dt = run(cmd, ldir, env=build_env, log=out / "build.log")
     result["seconds"]["build"] = round(dt, 1)
     build_ok = rc == 0 and "Build completed successfully" in log
     sorry_warnings = log.count("declaration uses 'sorry'") + log.count("declaration uses `sorry`")

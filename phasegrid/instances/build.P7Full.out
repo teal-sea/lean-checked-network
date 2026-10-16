@@ -1,0 +1,8 @@
+✔ [2/8] Built PhaseGridInstances.Network (656ms)
+✔ [3/8] Built PhaseGridInstances.P7Full.Weights (899ms)
+✔ [4/8] Built PhaseGridInstances.Fast (1.2s)
+✔ [5/8] Built PhaseGridInstances.P7Full.Table (408ms)
+✔ [6/8] Built PhaseGridInstances.P7Full.Rows00 (855ms)
+✔ [7/8] Built PhaseGridInstances.P7Full.Rows01 (847ms)
+✔ [8/8] Built PhaseGridInstances.P7Full.AllInputs (326ms)
+Build completed successfully (8 jobs).

@@ -5,3 +5,9 @@ import LeanCheckedNetwork.FixedPhase16.AllInputs
 import LeanCheckedNetwork.FixedPhase40.AllInputs
 import LeanCheckedNetwork.Mod7All.AllInputs
 import LeanCheckedNetwork.Mod12All.AllInputs
+import LeanCheckedNetwork.H64Step2000.Count
+import LeanCheckedNetwork.H64Step4000.Count
+import LeanCheckedNetwork.H64Step6000.Count
+import LeanCheckedNetwork.H64Step8000.Count
+import LeanCheckedNetwork.H64Step10000.Count
+import LeanCheckedNetwork.H64Step12000.Count

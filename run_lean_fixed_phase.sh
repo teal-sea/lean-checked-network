@@ -5,9 +5,20 @@ set -u
 export PATH="/root/.elan/bin:$PATH"
 cd "$(dirname "$0")/lean"
 status=0
+STAGE=${STAGE:-all}
+if [ "$STAGE" != replay ]; then
 for name in FixedPhase12 FixedPhase16 FixedPhase40 FixedPhase448 Mod7All Mod12All Mod257Min; do
   echo "=== build $name start $(date -u +%FT%TZ)"
-  t0=$(date +%s); lake build LeanCheckedNetwork.$name.AllInputs > /tmp/build_$name.out 2>&1; b=$?; echo "wall $(( $(date +%s) - t0 ))s" >> /tmp/build_$name.out
+  t0=$(date +%s); b=0
+  if [ "$name" = FixedPhase448 ]; then
+    # Lake has no jobs flag and a 448-wide row file needs up to 5 GB, so build its row files one at a time.
+    : > /tmp/build_$name.out
+    for i in $(seq -f "%02g" 0 15); do lake build LeanCheckedNetwork.$name.Rows$i >> /tmp/build_$name.out 2>&1 || b=1; done
+    lake build LeanCheckedNetwork.$name.AllInputs >> /tmp/build_$name.out 2>&1 || b=1
+  else
+    lake build LeanCheckedNetwork.$name.AllInputs > /tmp/build_$name.out 2>&1 || b=1
+  fi
+  echo "wall $(( $(date +%s) - t0 ))s" >> /tmp/build_$name.out
   grep -E "✖|error|Build completed|warning|wall " /tmp/build_$name.out | tail -5
   echo "=== build $name exit $b end $(date -u +%FT%TZ)"
   [ $b -eq 0 ] || status=1
@@ -44,12 +55,15 @@ elif grep -q "(kernel)" /tmp/fault12.out; then
 else
   echo "PROBLEM: failed for a reason other than the kernel rejecting it:"; head -5 /tmp/fault12.out; status=1
 fi
-echo "=== replay with leanchecker, 4 at a time"
+fi
+if [ "$STAGE" != build ]; then
+echo "=== replay with leanchecker, 2 at a time"
 mods=$(find LeanCheckedNetwork/FixedPhase12 LeanCheckedNetwork/FixedPhase16 LeanCheckedNetwork/FixedPhase40 LeanCheckedNetwork/FixedPhase448 LeanCheckedNetwork/Mod7All LeanCheckedNetwork/Mod12All LeanCheckedNetwork/Mod257Min -name '*.lean' | sed 's/\.lean$//; s|/|.|g' | sort)
 mods="LeanCheckedNetwork.Network LeanCheckedNetwork.Fast LeanCheckedNetwork.Count LeanCheckedNetwork.Fault.Fixed12Weights LeanCheckedNetwork.Fault.Fixed12Table LeanCheckedNetwork.Fault.Fixed12Count $mods"
 nmods=$(printf '%s\n' $mods | wc -l)
-printf '%s\n' $mods | xargs -P 4 -I{} sh -c 'if lake env leanchecker {} > /tmp/lc.{}.out 2>&1; then echo "OK   {}"; else echo "FAIL {}"; cat /tmp/lc.{}.out; fi' > /tmp/replay.out
+printf '%s\n' $mods | xargs -P 2 -I{} sh -c 'if lake env leanchecker {} > /tmp/lc.{}.out 2>&1; then echo "OK   {}"; else echo "FAIL {}"; cat /tmp/lc.{}.out; fi' > /tmp/replay.out
 sort /tmp/replay.out | grep -c '^OK' | xargs -I{} echo "replayed {} of $nmods modules"
 grep '^FAIL' /tmp/replay.out && status=1
+fi
 echo "=== done $(date -u +%FT%TZ) status $status"
 exit $status

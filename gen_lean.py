@@ -1,14 +1,18 @@
 """Write a frozen network into the Lean package, with one theorem per row of the addition table.
 
-Usage: python3 gen_lean.py NETWORK.npz NAME CHUNKS
+Usage: python3 gen_lean.py NETWORK.npz NAME CHUNKS [norows]
   NAME   Lean namespace for this network, e.g. Trained or CircleOnly
   CHUNKS number of files the row theorems are split into (Lake checks files in parallel)
+  norows write only the weights and the table check, for a network that is not right on every pair;
+         gen_count.py then writes its count theorems
 """
 import sys
 from pathlib import Path
 import numpy as np
 
 src, name, chunks = sys.argv[1], sys.argv[2], int(sys.argv[3])
+rows = len(sys.argv) < 5 or sys.argv[4] != "norows"   # "norows": weights and table only, for a
+                                                       # network that is not right everywhere (see gen_count.py)
 net = np.load(src)
 p, H = int(net["p"]), int(net["H"])
 root = Path("lean/LeanCheckedNetwork") / name
@@ -70,6 +74,10 @@ theorem table_ok : tableOk W2 {H} = true := by decide +kernel
 
 end LeanCheckedNetwork.{name}
 """)
+
+if not rows:
+    print(f"wrote {root}: weights and table only, p={p}, H={H}")
+    sys.exit(0)
 
 # Row theorems, grouped into CHUNKS files that Lake checks in parallel. Each row: the kernel
 # runs the fast evaluator on every b (one `decide`), and `answer_eq_fastAnswer` turns that into

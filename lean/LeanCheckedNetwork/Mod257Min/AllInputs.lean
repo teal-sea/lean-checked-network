@@ -14,6 +14,22 @@ import LeanCheckedNetwork.Mod257Min.Rows12
 import LeanCheckedNetwork.Mod257Min.Rows13
 import LeanCheckedNetwork.Mod257Min.Rows14
 import LeanCheckedNetwork.Mod257Min.Rows15
+import LeanCheckedNetwork.Mod257Min.Rows16
+import LeanCheckedNetwork.Mod257Min.Rows17
+import LeanCheckedNetwork.Mod257Min.Rows18
+import LeanCheckedNetwork.Mod257Min.Rows19
+import LeanCheckedNetwork.Mod257Min.Rows20
+import LeanCheckedNetwork.Mod257Min.Rows21
+import LeanCheckedNetwork.Mod257Min.Rows22
+import LeanCheckedNetwork.Mod257Min.Rows23
+import LeanCheckedNetwork.Mod257Min.Rows24
+import LeanCheckedNetwork.Mod257Min.Rows25
+import LeanCheckedNetwork.Mod257Min.Rows26
+import LeanCheckedNetwork.Mod257Min.Rows27
+import LeanCheckedNetwork.Mod257Min.Rows28
+import LeanCheckedNetwork.Mod257Min.Rows29
+import LeanCheckedNetwork.Mod257Min.Rows30
+import LeanCheckedNetwork.Mod257Min.Rows31
 
 /-!
 # Mod257Min: right on every input

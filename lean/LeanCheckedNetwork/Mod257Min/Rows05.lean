@@ -1,6 +1,6 @@
 import LeanCheckedNetwork.Mod257Min.Table
 
-/-! Rows 81 to 96 of the addition table, checked by Lean's kernel for all 257 values of `b`. -/
+/-! Rows 41 to 48 of the addition table, checked by Lean's kernel for all 257 values of `b`. -/
 
 set_option Elab.async false
 
@@ -8,196 +8,100 @@ namespace LeanCheckedNetwork.Mod257Min
 
 open LeanCheckedNetwork
 
-theorem fast_81 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 81 b && fastAnswer E1 E2 W2 12 81 b == (81 + b) % 257) = true := by
+theorem fast_41 : ∀ b, b < 257 →
+    (fastOk E1 E2 12 41 b && fastAnswer E1 E2 W2 12 41 b == (41 + b) % 257) = true := by
   decide +kernel
 
-/-- Row 81 of the addition table: the network answers (81 + b) % 257 for every b. -/
-theorem row_81 : ∀ b, b < 257 → answer 81 b = (81 + b) % 257 := by
+/-- Row 41 of the addition table: the network answers (41 + b) % 257 for every b. -/
+theorem row_41 : ∀ b, b < 257 → answer 41 b = (41 + b) % 257 := by
   intro b hb
-  have h := fast_81 b hb
+  have h := fast_41 b hb
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 81 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 81 b table_ok h.1, h.2]
+  show LeanCheckedNetwork.answer E1 E2 W2 41 b = _
+  rw [answer_eq_fastAnswer E1 E2 W2 12 41 b table_ok h.1, h.2]
 
-theorem fast_82 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 82 b && fastAnswer E1 E2 W2 12 82 b == (82 + b) % 257) = true := by
+theorem fast_42 : ∀ b, b < 257 →
+    (fastOk E1 E2 12 42 b && fastAnswer E1 E2 W2 12 42 b == (42 + b) % 257) = true := by
   decide +kernel
 
-/-- Row 82 of the addition table: the network answers (82 + b) % 257 for every b. -/
-theorem row_82 : ∀ b, b < 257 → answer 82 b = (82 + b) % 257 := by
+/-- Row 42 of the addition table: the network answers (42 + b) % 257 for every b. -/
+theorem row_42 : ∀ b, b < 257 → answer 42 b = (42 + b) % 257 := by
   intro b hb
-  have h := fast_82 b hb
+  have h := fast_42 b hb
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 82 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 82 b table_ok h.1, h.2]
+  show LeanCheckedNetwork.answer E1 E2 W2 42 b = _
+  rw [answer_eq_fastAnswer E1 E2 W2 12 42 b table_ok h.1, h.2]
 
-theorem fast_83 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 83 b && fastAnswer E1 E2 W2 12 83 b == (83 + b) % 257) = true := by
+theorem fast_43 : ∀ b, b < 257 →
+    (fastOk E1 E2 12 43 b && fastAnswer E1 E2 W2 12 43 b == (43 + b) % 257) = true := by
   decide +kernel
 
-/-- Row 83 of the addition table: the network answers (83 + b) % 257 for every b. -/
-theorem row_83 : ∀ b, b < 257 → answer 83 b = (83 + b) % 257 := by
+/-- Row 43 of the addition table: the network answers (43 + b) % 257 for every b. -/
+theorem row_43 : ∀ b, b < 257 → answer 43 b = (43 + b) % 257 := by
   intro b hb
-  have h := fast_83 b hb
+  have h := fast_43 b hb
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 83 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 83 b table_ok h.1, h.2]
+  show LeanCheckedNetwork.answer E1 E2 W2 43 b = _
+  rw [answer_eq_fastAnswer E1 E2 W2 12 43 b table_ok h.1, h.2]
 
-theorem fast_84 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 84 b && fastAnswer E1 E2 W2 12 84 b == (84 + b) % 257) = true := by
+theorem fast_44 : ∀ b, b < 257 →
+    (fastOk E1 E2 12 44 b && fastAnswer E1 E2 W2 12 44 b == (44 + b) % 257) = true := by
   decide +kernel
 
-/-- Row 84 of the addition table: the network answers (84 + b) % 257 for every b. -/
-theorem row_84 : ∀ b, b < 257 → answer 84 b = (84 + b) % 257 := by
+/-- Row 44 of the addition table: the network answers (44 + b) % 257 for every b. -/
+theorem row_44 : ∀ b, b < 257 → answer 44 b = (44 + b) % 257 := by
   intro b hb
-  have h := fast_84 b hb
+  have h := fast_44 b hb
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 84 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 84 b table_ok h.1, h.2]
+  show LeanCheckedNetwork.answer E1 E2 W2 44 b = _
+  rw [answer_eq_fastAnswer E1 E2 W2 12 44 b table_ok h.1, h.2]
 
-theorem fast_85 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 85 b && fastAnswer E1 E2 W2 12 85 b == (85 + b) % 257) = true := by
+theorem fast_45 : ∀ b, b < 257 →
+    (fastOk E1 E2 12 45 b && fastAnswer E1 E2 W2 12 45 b == (45 + b) % 257) = true := by
   decide +kernel
 
-/-- Row 85 of the addition table: the network answers (85 + b) % 257 for every b. -/
-theorem row_85 : ∀ b, b < 257 → answer 85 b = (85 + b) % 257 := by
+/-- Row 45 of the addition table: the network answers (45 + b) % 257 for every b. -/
+theorem row_45 : ∀ b, b < 257 → answer 45 b = (45 + b) % 257 := by
   intro b hb
-  have h := fast_85 b hb
+  have h := fast_45 b hb
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 85 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 85 b table_ok h.1, h.2]
+  show LeanCheckedNetwork.answer E1 E2 W2 45 b = _
+  rw [answer_eq_fastAnswer E1 E2 W2 12 45 b table_ok h.1, h.2]
 
-theorem fast_86 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 86 b && fastAnswer E1 E2 W2 12 86 b == (86 + b) % 257) = true := by
+theorem fast_46 : ∀ b, b < 257 →
+    (fastOk E1 E2 12 46 b && fastAnswer E1 E2 W2 12 46 b == (46 + b) % 257) = true := by
   decide +kernel
 
-/-- Row 86 of the addition table: the network answers (86 + b) % 257 for every b. -/
-theorem row_86 : ∀ b, b < 257 → answer 86 b = (86 + b) % 257 := by
+/-- Row 46 of the addition table: the network answers (46 + b) % 257 for every b. -/
+theorem row_46 : ∀ b, b < 257 → answer 46 b = (46 + b) % 257 := by
   intro b hb
-  have h := fast_86 b hb
+  have h := fast_46 b hb
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 86 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 86 b table_ok h.1, h.2]
+  show LeanCheckedNetwork.answer E1 E2 W2 46 b = _
+  rw [answer_eq_fastAnswer E1 E2 W2 12 46 b table_ok h.1, h.2]
 
-theorem fast_87 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 87 b && fastAnswer E1 E2 W2 12 87 b == (87 + b) % 257) = true := by
+theorem fast_47 : ∀ b, b < 257 →
+    (fastOk E1 E2 12 47 b && fastAnswer E1 E2 W2 12 47 b == (47 + b) % 257) = true := by
   decide +kernel
 
-/-- Row 87 of the addition table: the network answers (87 + b) % 257 for every b. -/
-theorem row_87 : ∀ b, b < 257 → answer 87 b = (87 + b) % 257 := by
+/-- Row 47 of the addition table: the network answers (47 + b) % 257 for every b. -/
+theorem row_47 : ∀ b, b < 257 → answer 47 b = (47 + b) % 257 := by
   intro b hb
-  have h := fast_87 b hb
+  have h := fast_47 b hb
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 87 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 87 b table_ok h.1, h.2]
+  show LeanCheckedNetwork.answer E1 E2 W2 47 b = _
+  rw [answer_eq_fastAnswer E1 E2 W2 12 47 b table_ok h.1, h.2]
 
-theorem fast_88 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 88 b && fastAnswer E1 E2 W2 12 88 b == (88 + b) % 257) = true := by
+theorem fast_48 : ∀ b, b < 257 →
+    (fastOk E1 E2 12 48 b && fastAnswer E1 E2 W2 12 48 b == (48 + b) % 257) = true := by
   decide +kernel
 
-/-- Row 88 of the addition table: the network answers (88 + b) % 257 for every b. -/
-theorem row_88 : ∀ b, b < 257 → answer 88 b = (88 + b) % 257 := by
+/-- Row 48 of the addition table: the network answers (48 + b) % 257 for every b. -/
+theorem row_48 : ∀ b, b < 257 → answer 48 b = (48 + b) % 257 := by
   intro b hb
-  have h := fast_88 b hb
+  have h := fast_48 b hb
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 88 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 88 b table_ok h.1, h.2]
-
-theorem fast_89 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 89 b && fastAnswer E1 E2 W2 12 89 b == (89 + b) % 257) = true := by
-  decide +kernel
-
-/-- Row 89 of the addition table: the network answers (89 + b) % 257 for every b. -/
-theorem row_89 : ∀ b, b < 257 → answer 89 b = (89 + b) % 257 := by
-  intro b hb
-  have h := fast_89 b hb
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 89 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 89 b table_ok h.1, h.2]
-
-theorem fast_90 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 90 b && fastAnswer E1 E2 W2 12 90 b == (90 + b) % 257) = true := by
-  decide +kernel
-
-/-- Row 90 of the addition table: the network answers (90 + b) % 257 for every b. -/
-theorem row_90 : ∀ b, b < 257 → answer 90 b = (90 + b) % 257 := by
-  intro b hb
-  have h := fast_90 b hb
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 90 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 90 b table_ok h.1, h.2]
-
-theorem fast_91 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 91 b && fastAnswer E1 E2 W2 12 91 b == (91 + b) % 257) = true := by
-  decide +kernel
-
-/-- Row 91 of the addition table: the network answers (91 + b) % 257 for every b. -/
-theorem row_91 : ∀ b, b < 257 → answer 91 b = (91 + b) % 257 := by
-  intro b hb
-  have h := fast_91 b hb
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 91 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 91 b table_ok h.1, h.2]
-
-theorem fast_92 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 92 b && fastAnswer E1 E2 W2 12 92 b == (92 + b) % 257) = true := by
-  decide +kernel
-
-/-- Row 92 of the addition table: the network answers (92 + b) % 257 for every b. -/
-theorem row_92 : ∀ b, b < 257 → answer 92 b = (92 + b) % 257 := by
-  intro b hb
-  have h := fast_92 b hb
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 92 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 92 b table_ok h.1, h.2]
-
-theorem fast_93 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 93 b && fastAnswer E1 E2 W2 12 93 b == (93 + b) % 257) = true := by
-  decide +kernel
-
-/-- Row 93 of the addition table: the network answers (93 + b) % 257 for every b. -/
-theorem row_93 : ∀ b, b < 257 → answer 93 b = (93 + b) % 257 := by
-  intro b hb
-  have h := fast_93 b hb
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 93 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 93 b table_ok h.1, h.2]
-
-theorem fast_94 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 94 b && fastAnswer E1 E2 W2 12 94 b == (94 + b) % 257) = true := by
-  decide +kernel
-
-/-- Row 94 of the addition table: the network answers (94 + b) % 257 for every b. -/
-theorem row_94 : ∀ b, b < 257 → answer 94 b = (94 + b) % 257 := by
-  intro b hb
-  have h := fast_94 b hb
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 94 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 94 b table_ok h.1, h.2]
-
-theorem fast_95 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 95 b && fastAnswer E1 E2 W2 12 95 b == (95 + b) % 257) = true := by
-  decide +kernel
-
-/-- Row 95 of the addition table: the network answers (95 + b) % 257 for every b. -/
-theorem row_95 : ∀ b, b < 257 → answer 95 b = (95 + b) % 257 := by
-  intro b hb
-  have h := fast_95 b hb
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 95 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 95 b table_ok h.1, h.2]
-
-theorem fast_96 : ∀ b, b < 257 →
-    (fastOk E1 E2 12 96 b && fastAnswer E1 E2 W2 12 96 b == (96 + b) % 257) = true := by
-  decide +kernel
-
-/-- Row 96 of the addition table: the network answers (96 + b) % 257 for every b. -/
-theorem row_96 : ∀ b, b < 257 → answer 96 b = (96 + b) % 257 := by
-  intro b hb
-  have h := fast_96 b hb
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  show LeanCheckedNetwork.answer E1 E2 W2 96 b = _
-  rw [answer_eq_fastAnswer E1 E2 W2 12 96 b table_ok h.1, h.2]
+  show LeanCheckedNetwork.answer E1 E2 W2 48 b = _
+  rw [answer_eq_fastAnswer E1 E2 W2 12 48 b table_ok h.1, h.2]
 
 end LeanCheckedNetwork.Mod257Min

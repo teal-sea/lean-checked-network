@@ -3,8 +3,8 @@
 Parses each lean/LeanCheckedNetwork/<Name>/Weights.lean with its own small parser (not the
 generator), compares every entry with the .npz weights, evaluates the network from the parsed
 Lean weights on all p * p input pairs exactly as Network.lean defines it (highest score, first
-index on a tie), and checks the expected outcome: the trained and circle-only networks are right
-on every pair, the planted fault is wrong on 226 pairs.
+index on a tie), and checks the expected outcome: the trained, circle-only and fixed-phase networks
+are right on every pair, the planted fault is wrong on 226 pairs.
 
 Usage: python3 verify_weights.py      (exit code 0 only if every check passes)
 """
@@ -29,7 +29,14 @@ def answers(E1, E2, W2):
     return a, b, scores.argmax(1)       # argmax returns the first index on a tie, like Network.lean
 
 ok = True
-for name, npz, expect_wrong in [("Trained", "trained", 0), ("CircleOnly", "circle_only", 0), ("Fault", "fault", 226)]:
+for name, npz, expect_wrong in [("Trained", "trained", 0), ("CircleOnly", "circle_only", 0), ("Fault", "fault", 226),
+                                ("FixedPhase12", "fixed12", 0), ("FixedPhase16", "fixed16", 0),
+                                ("FixedPhase40", "fixed40", 0), ("FixedPhase448", "fixedall", 0),
+                                ("Mod7All", "mod7_all", 0), ("Mod12All", "mod12_all", 0),
+                                ("Mod257Min", "mod257_min", 0),
+                                ("H64Step2000", "p113_h64_step2000", 3), ("H64Step4000", "p113_h64_step4000", 2),
+                                ("H64Step6000", "p113_h64_step6000", 3), ("H64Step8000", "p113_h64_step8000", 2),
+                                ("H64Step10000", "p113_h64_step10000", 2), ("H64Step12000", "p113_h64_step12000", 0)]:
     src = Path(f"lean/LeanCheckedNetwork/{name}/Weights.lean").read_text()
     lean = {t: parse_table(src, t) for t in ["E1", "E2", "W2"]}
     net = np.load(f"network/{npz}.npz")

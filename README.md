@@ -42,6 +42,8 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | The circle explanation, with every error bounded exactly, proves the right answer for all 12,769 pairs (tightest pair keeps 1.7% of the margin) | derived (`mechanism.py`, `MECHANISM.md`) |
 | No single weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one weight change can shift the gap between two scores (at most 254 × 255² = 16,516,350) | derived |
 | Remove the circle waves, keep the rest: right on 50 of 12,769 pairs, fewer than the 113 that answering the same number every time would get | measured |
+| Networks built from the circle formula alone, no training (fixed phases on a cycle, so the unwanted waves cancel exactly), each right on every pair: 12 neurons on frequencies 39 and 45 with 8-bit weights, 16 and 40 neurons (Nanda et al.'s five key frequencies) with 8-bit weights, 448 neurons on every frequency with 5-bit weights; the same formula at moduli 7, 12 and 257 | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `FixedPhase40`, `FixedPhase448`, `Mod7All.adds_mod_7`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`). Construction, search, planted fault and numbers: `FIXED_PHASE.md` |
+| Counting instead of proving: the planted fault in the 12-neuron network is right on exactly 12,753 of 12,769 pairs; six checkpoints of the 64-neuron training run are right on exactly 12,766, 12,767, 12,766, 12,767, 12,767 and 12,769 pairs, a learning curve whose every point is a theorem | kernel-checked: `FaultFixed12.right_on_12753`, `H64Step2000.right_on_12766` … `H64Step12000.right_on_12769` (`lean/LeanCheckedNetwork/Count.lean`, `LEARNING_CURVE.md`) |
 | 114 of the 128 neurons are alive; each puts a median 97% of its weight energy into one circle frequency | measured |
 | In all 114 live neurons, the largest leftover piece is the wave at three times the neuron's frequency | measured |
 
@@ -138,6 +140,8 @@ python3 figure.py network/trained.npz figures/circle.svg
 | `run_lean.sh`, `lean_run.log` | the full check and its output |
 | `.github/workflows/check.yml` | runs all checks on every push |
 | `MECHANISM.md`, `AUDIT.md` | the circle proof in detail; the adversarial audit |
+| `FIXED_PHASE.md`, `make_fixed_phase.py`, `make_fixed_phase6.py`, `search_min.py`, `run_lean_fixed_phase.sh`, `lean_run_fixed_phase.log` | networks built from the circle formula with fixed phases, the search for the smallest, their kernel check and its output |
+| `lean/LeanCheckedNetwork/Count.lean`, `gen_count.py`, `make_curve.py`, `LEARNING_CURVE.md` | counting right answers with the kernel; the count theorems of a training run's checkpoints |
 | `rnn/`, `sweep/`, `prime_env/` | the three directories described above, each with its own README |
 | `phasegrid/` | the every-modulus theorem on Mathlib (`mathlib/`), the derivation's numerical check (`stage1/`), the kernel-checked instances in core Lean (`instances/`), logs |
 | `runs/` | training logs |

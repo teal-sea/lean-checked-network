@@ -1,0 +1,85 @@
+taskset loaded: 52 tasks; config {'task': {'judges': [], 'stops': {}, 'metrics': {}, 'rewards': {}, 'timeout_s': 600.0, 'axioms_mode': 'subset', 'work_root': '<workdir>/tests/work', 'keep_packages': False}, 'system_prompt': None, 'id': '', 'split': 'all', 'max_p': None, 'tasks_dir': None}
+task p7_h8_s0: p=7 H=8 theorem LeanCheckedNetwork.Net.adds_mod_7; prompt 7898 chars
+{
+ "reply": "i_bruteforce_p7.md",
+ "rewards": {
+  "kernel_accepts": {
+   "score": 1.0,
+   "weight": 1.0
+  }
+ },
+ "metrics": {
+  "guard_passed": 1.0,
+  "build_passed": 1.0,
+  "leanchecker_passed": 1.0,
+  "statement_passed": 1.0,
+  "axioms_passed": 1.0,
+  "grader_seconds": 2.56
+ },
+ "grader": {
+  "stage": "ok",
+  "reason": "kernel accepted; leanchecker replayed; statement matches; axioms standard",
+  "axioms": [
+   "propext"
+  ],
+  "timings": {
+   "build_s": 1.38,
+   "leanchecker_s": 0.9,
+   "check_s": 0.27,
+   "total_s": 2.56
+  }
+ }
+}
+{
+ "reply": "ii_sorry_p7.md",
+ "rewards": {
+  "kernel_accepts": {
+   "score": 0.0,
+   "weight": 1.0
+  }
+ },
+ "metrics": {
+  "guard_passed": 0.0,
+  "build_passed": 0.0,
+  "leanchecker_passed": 0.0,
+  "statement_passed": 0.0,
+  "axioms_passed": 0.0,
+  "grader_seconds": 0.0
+ },
+ "grader": {
+  "stage": "guard",
+  "reason": "forbidden token: sorry",
+  "axioms": [],
+  "timings": {
+   "total_s": 0.0
+  }
+ }
+}
+{
+ "reply": "v_wrong_statement_p7.md",
+ "rewards": {
+  "kernel_accepts": {
+   "score": 0.0,
+   "weight": 1.0
+  }
+ },
+ "metrics": {
+  "guard_passed": 1.0,
+  "build_passed": 1.0,
+  "leanchecker_passed": 1.0,
+  "statement_passed": 0.0,
+  "axioms_passed": 0.0,
+  "grader_seconds": 2.3
+ },
+ "grader": {
+  "stage": "check",
+  "reason": "the theorem LeanCheckedNetwork.Net.adds_mod_7 is missing or its statement is not the required one",
+  "axioms": [],
+  "timings": {
+   "build_s": 1.36,
+   "leanchecker_s": 0.64,
+   "check_s": 0.3,
+   "total_s": 2.3
+  }
+ }
+}

@@ -50,6 +50,13 @@ its planted-fault check was broken and the correction is recorded there. The cla
 attacked by three reviewing agents on 2026-10-15; what they found and what changed is in
 `AUDIT.md`.
 
+Two kernel soundness bugs in Lean 4 were fixed in point releases on 2026-07-22 (4.32.1) and
+2026-07-28 (4.32.2), and a later search by the Lean FRO and OpenAI found more (Thomas Hales,
+guest post on Terence Tao's blog, October 2026, read through secondary reports on 2026-10-16).
+The toolchain pinned here is later than those fixes, and every result above is replayed by a
+second checker (`leanchecker`) and, in the audit, by a third written independently (nanoda),
+which is the defence that post recommends.
+
 ## The network
 
 Two layers, following Gromov (2023). Inputs `a` and `b` each select a row of an embedding
@@ -131,7 +138,24 @@ python3 figure.py network/trained.npz figures/circle.svg
 | `run_lean.sh`, `lean_run.log` | the full check and its output |
 | `.github/workflows/check.yml` | runs all checks on every push |
 | `MECHANISM.md`, `AUDIT.md` | the circle proof in detail; the adversarial audit |
+| `rnn/`, `sweep/`, `prime_env/` | the three directories described above, each with its own README |
 | `runs/` | training logs |
+
+## Three things built on top of this, 2026-10-16
+
+Each lives in its own directory with its own README, tests and outputs; none changes the
+results above.
+
+| Directory | What it is | Status |
+| --- | --- | --- |
+| `rnn/` | A trained recurrent network (4 binary hidden units, integer weights) that adds two binary numbers bit by bit, with a Lean theorem that it is right on inputs of **every length**: the kernel checks the 5 reachable states under the 4 input pairs, then an induction on the input list does the rest. `RnnAdder.Trained.adds` states that the sum bits plus the final carry equal the sum of the two inputs, for every list of bit pairs. Axioms `[propext, Quot.sound]`, replayed by `leanchecker`, two planted faults rejected. A 16-unit companion network is checked the same way | kernel-checked here; built and replayed in about 10 s |
+| `sweep/` | A runner that trains any configuration (prime, width, seed, training fraction, weight decay, steps), freezes it, builds its circle-only reduction, and kernel-checks both: a network that is wrong gets the theorem "wrong on exactly these k pairs" (with the list proved duplicate-free and in range) instead of a failed build. Tested here at p = 7, 31 and 61, including a network wrong on 666 of 961 pairs and a negative control the kernel rejects. `modal_sweep.py` fans a 130-point grid out on Modal, one container per point, about $30 by its own estimate | runner tested here; the Modal app was written against Modal's docs and not run (no token in the container) |
+| `prime_env/` | A Prime Intellect environment (`verifiers` 0.4.0, the taskset interface) in which a model must prove in Lean that a given frozen network adds mod p; the reward is 1.0 only if the kernel accepts, `leanchecker` replays, the statement matches a `Spec` fixed before any submitted text is read, and the axioms are standard. 52 tasks at p from 5 to 23. Tested here: brute force passes; `sorry`, `native_decide`, `decide +native`, `set_option debug.skipKernelTC` with a false claim, a weakened statement under the required name, and a wrong network all score 0, with and without the text guard | grader tested here; no model rollout and no push to the Hub (no account in the container) |
+
+The grid in `sweep/grid.json` was chosen from the literature (Doshi, Das, He and Gromov 2024 is
+the only published fraction x weight-decay map for this architecture, at p = 97) so that it
+crosses the boundary where generalisation stops; nobody has published what integer rounding does
+to a grokked network, so every point is new data as well as a theorem.
 
 ## Prior work, and what is new here
 
@@ -148,10 +172,23 @@ python3 figure.py network/trained.npz figures/circle.svg
 - TorchLean (2026): a Lean framework for neural networks, with results including local
   robustness at given points, region-based controller safety and theorems about network
   classes; none of its results covers every input of a trained network's whole domain.
+- Gross, Kwa and Agrawal, `neural-net-coq-interp` (GitHub, 2023): a Coq-kernel-checked,
+  brute-force theorem that a trained one-layer attention-only transformer takes the maximum of
+  two numbers on every input, in 32-bit floats with a tolerance; the mechanistic version of the
+  proof for the same model is left unfinished in that repository, and the line of work then
+  moved to Python (the Compact Proofs paper above). Found on 2026-10-16; the sentence below is
+  narrowed accordingly.
+- Lan, Geyer, Chemla and Katzir (2022), *Minimum description length recurrent neural
+  networks*: a five-weight recurrent adder, found by evolutionary search rather than gradient
+  training, with a pen-and-paper induction proof that it adds numbers of every length. The
+  theorem in `rnn/` is the same shape of statement about a gradient-trained network, checked by
+  Lean's kernel.
 
-Searched (web, 2026-10-14 and 2026-10-15): we did not find a trained network with a Lean
-kernel-checked proof of correctness on every input, nor a kernel-checked proof that a
-network's circle mechanism alone suffices. The search was not exhaustive.
+Searched (web, 2026-10-14, 2026-10-15 and 2026-10-16): the one proof-assistant theorem
+about a trained network on its whole input domain that we found is the 2023 Coq brute-force
+result above (floats, with a tolerance). We did not find an exact one, nor one in Lean, nor a
+kernel-checked proof that a network's circle mechanism alone suffices, nor a kernel-checked
+theorem about a trained network over an infinite input domain. The search was not exhaustive.
 
 **Limits.** The network is small and the input space is finite (12,769 pairs), so the
 correctness theorem is a complete check of a finite table, not a general argument. The

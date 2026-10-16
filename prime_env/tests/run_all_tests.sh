@@ -28,4 +28,10 @@ run iv_b_skipKernelTC_noguard_p7 wrong_task/p7_h8_s0_WRONG subs/iv_skipKernelTC_
 run v_wrong_statement_p7       $T/p7_h8_s0  subs/v_wrong_statement_p7.md
 run v_b_renamed_p7             $T/p7_h8_s0  subs/v_b_renamed_p7.md
 run vi_wrong_network_p7        wrong_task/p7_h8_s0_WRONG subs/i_bruteforce_p7.md
+# Added in review, 2026-10-16: three ways the first grader gave 1.0 without a proof, now rejected.
+run ix_a_fake_spec_noimport_p7      $T/p7_h8_s0  subs/ix_a_fake_spec_noimport_p7.md
+run ix_a_b_fake_spec_noguard_p7     $T/p7_h8_s0  subs/ix_a_fake_spec_noimport_p7.md --no-guard
+run ix_b_eval_io_p7                 $T/p7_h8_s0  subs/ix_b_eval_io_overwrite_check_p7.md
+run ix_b_b_eval_io_noguard_p7       $T/p7_h8_s0  subs/ix_b_eval_io_overwrite_check_p7.md --no-guard
+run ix_c_namespace_shadow_p7        $T/p7_h8_s0  subs/ix_c_namespace_shadow_p7.md
 echo "=== done"

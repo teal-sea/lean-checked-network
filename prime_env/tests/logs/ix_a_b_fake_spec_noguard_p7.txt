@@ -1,0 +1,24 @@
+{
+ "reward": 0.0,
+ "stage": "check",
+ "reason": "the theorem LeanCheckedNetwork.Net.adds_mod_7 is missing or its statement is not the required one",
+ "axioms": [],
+ "timings": {
+  "build_s": 0.86,
+  "leanchecker_s": 0.49,
+  "check_s": 0.15,
+  "total_s": 1.51
+ },
+ "package_dir": null
+}
+--- build output ---
+info: lean-mod-add-proof: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+✔ [2/3] Built LeanCheckedNetwork.Network (412ms)
+✔ [3/3] Built LeanCheckedNetwork.Submission (333ms)
+Build completed successfully (3 jobs).
+--- leanchecker output ---
+(empty)
+--- check output ---
+Check.lean:1:0: error: object file '/home/user/lean-checked-network/prime_env/tests/work/pkg-a2505b92cf37/.lake/build/lib/lean/LeanCheckedNetwork/Weights.olean' of module LeanCheckedNetwork.Weights does not exist
+wall 1.6s

@@ -4,18 +4,18 @@
  "reason": "leanchecker rejected the module",
  "axioms": [],
  "timings": {
-  "build_s": 0.85,
-  "leanchecker_s": 0.48,
-  "total_s": 1.33
+  "build_s": 1.27,
+  "leanchecker_s": 0.59,
+  "total_s": 1.86
  },
- "package_dir": "/home/user/lean-checked-network/prime_env/tests/work/pkg-af6bdc544a09"
+ "package_dir": "/home/user/lean-checked-network/prime_env/tests/work/pkg-75fa026ec2df"
 }
 --- build output ---
 info: lean-mod-add-proof: no previous manifest, creating one from scratch
 info: toolchain not updated; already up-to-date
-✔ [2/4] Built LeanCheckedNetwork.Network (267ms)
-✔ [3/4] Built LeanCheckedNetwork.Weights (290ms)
-✔ [4/4] Built LeanCheckedNetwork.Submission (195ms)
+✔ [2/4] Built LeanCheckedNetwork.Network (353ms)
+✔ [3/4] Built LeanCheckedNetwork.Weights (526ms)
+✔ [4/4] Built LeanCheckedNetwork.Submission (287ms)
 Build completed successfully (4 jobs).
 --- leanchecker output ---
 leanchecker found a problem in LeanCheckedNetwork.Submission
@@ -43,4 +43,4 @@ but function has type
             ∀ (b : Nat),
               instLTNat.lt b 7 → Eq (LeanCheckedNetwork.Net.answer a b) (instHMod.hMod (instHAdd.hAdd a b) 7)))
       Bool.true
-wall 1.4s
+wall 2.0s

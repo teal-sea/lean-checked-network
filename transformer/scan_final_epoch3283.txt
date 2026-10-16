@@ -1,0 +1,5 @@
+# int_transformer.py on /tmp/claude-0/-home-user/769f2320-042c-524c-8fef-c98915f41418/scratchpad/wf3/transformer/final_epoch3283.npz, rows 113, 2026-10-16T16:11:55Z
+# q t f n m R delta E_bits min_margin_bits margin/(2E) wrong ties pairs_le_2E min_margin_real 2E_floor_real max_dev_vs_floatMq floatMq_wrong trained_wrong seconds
+8 32 32 16 5 24 2 169 181 3046 0 0 0 13.6991 0.00831 5.6e-08 0 0 70
+#   E = 397924633001112024158355694838727728004812080321536
+#   min margin 2424043408071089747308343319189947664112436374829284800 at pair (45, 37); norms {'X2': 116, 'Omax': [31368099, 32095956, 32212228, 33897964], 'Win': 3218, 'bin': 514221376, 'Wout': 9001, 'bout': 70818594816, 'U': 1944}; logit bits 186; float M_q min margin 13.6991, trained float min margin 13.6239; raw-vs-table checked on 64 pairs; kernel steps per pair {'expfix': 288, 'denominators': 17, 'pre': 17, 'unpack_relu': 1536, 'out': 530, 'unpack_argmax': 339, 'total': 2727, 'big_multiply_adds': 852}

@@ -52,7 +52,7 @@ jobs:
         run: ./run_lean.sh
 
   phasegrid:
-    name: Every-modulus theorem (Mathlib, from cache) and the p = 7 instance
+    name: Every-modulus theorem (Mathlib, from cache), the p = 7 instance, the last-pair faults
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -66,6 +66,10 @@ jobs:
           cd phasegrid/instances
           ./check_instance.sh P7Full 7 1
           ./check_fault.sh
+      - name: The last-pair faults at p = 7 and at p = 113 (448 neurons), rejected by the kernel and through addDecl, about 6 min
+        run: |
+          cd phasegrid/instances
+          ./check_last_fault.sh
       - name: Build the Mathlib project from the cache, replay every module, print axioms, scan sources
         run: |
           cd phasegrid/mathlib

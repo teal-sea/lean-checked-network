@@ -15,15 +15,20 @@ on:
           - cached-pair-pilot
           - cached-support-pilot
           - mathlib-bounds-pilot
+          - mathlib-row0-pilot
+      row0_with_hb:
+        description: Also compile/replay concrete hB and the unconditional ROW0 mq theorem
+        type: boolean
+        default: false
 
 concurrency:
-  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
+  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
   # false: a later push queues behind the running pilot instead of killing it (the evidence is the point)
   cancel-in-progress: false
 
 jobs:
   mathlib:
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.core_mode != 'cached-support-pilot' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot') }}
     name: Mathlib lane (ExpFix, Program, Logits, Compose, Raw), cache, replay, axioms
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -48,7 +53,7 @@ jobs:
           if-no-files-found: warn
 
   core:
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.core_mode != 'mathlib-bounds-pilot' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot') }}
     name: ${{ inputs.core_mode == 'cached-support-pilot' && 'CACHED SUPPORT PILOT (generic only; no frozen literals or pairs)' || 'CACHED PAIR PILOT (three pairs; row0 unproved)' }}
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 20 || 170 }}
@@ -98,7 +103,7 @@ jobs:
           if-no-files-found: warn
 
   bridge:
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.core_mode != 'cached-support-pilot' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot') }}
     name: Bridge (core program to the Mathlib program), needs the Mathlib lane
     needs: mathlib
     runs-on: ubuntu-latest
@@ -134,3 +139,54 @@ jobs:
             transformer/mathlib/bounds-out/
             transformer/mathlib/bounds.ci.out
           if-no-files-found: warn
+
+  row0:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-row0-pilot' && github.event.repository.private == false }}
+    name: Stable ROW0/113 (literal certificates, universal row, integer bridge, replay)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      ROW0_WITH_HB: ${{ inputs.row0_with_hb && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Tiny emission and fail-closed harness controls (no Lean evidence)
+        run: |
+          python3 -W error transformer/lean/test_cached.py
+          python3 -W error transformer/mathlib/test_row0.py
+          python3 -W error transformer/mathlib/test_row0_harness.py
+      - name: Install elan (stable v4.35.0 only)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib stable dependency cache
+        run: cd transformer/mathlib && lake exe cache get
+      - name: Stable ROW0/113 kernel gates (serial; never other rows)
+        timeout-minutes: 110
+        run: |
+          cd transformer/mathlib
+          args=()
+          if [ "$ROW0_WITH_HB" = 1 ]; then args+=(--with-hb); fi
+          ./row0.sh "${args[@]}" 2>&1 | tee row0.ci.out
+          exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-stable-ROW0-113-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/row0-out/
+            transformer/mathlib/row0.ci.out
+            transformer/lean/ci-out/cache-codegen/
+            transformer/mathlib/TransformerCore/
+            transformer/mathlib/TransformerBridge/Pointwise.lean
+            transformer/mathlib/TransformerBridge/Row0*.lean
+            transformer/mathlib/.lake/build/lib/lean/TransformerCore/Net/CachedPair0_*.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Pointwise.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Row0*.olean
+          if-no-files-found: error

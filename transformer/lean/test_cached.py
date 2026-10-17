@@ -1,5 +1,7 @@
 """Small emission/provenance regression only. No Lean evidence or model simulation."""
+import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import re
 import tempfile
@@ -43,6 +45,11 @@ with tempfile.TemporaryDirectory() as tmp:
     first = g.emit(root / "one", vectors, origins, heads=1, tokens=tokens, grows=3)
     second = g.emit(root / "two", vectors, origins, heads=1, tokens=tokens, grows=3)
     assert first == second
+    # Golden source bytes from immutable a8837d4 default emitter, tiny signed fixtures only.
+    golden = {rel: hashlib.sha256((root / "one" / rel).read_bytes()).hexdigest()
+              for rel in first["generated"]}
+    assert hashlib.sha256(json.dumps(golden, sort_keys=True).encode()).hexdigest() == (
+        "fb0ad6d7f672ee2e9fbf8082e3bfacb891d4ec1f91efced70eeda222b98fb8de")
     assert g.emit(root / "one", vectors, origins, heads=1, tokens=tokens, grows=3, check=True) == first
     for rel in first["generated"]:
         assert (root / "one" / rel).read_bytes() == (root / "two" / rel).read_bytes()
@@ -72,6 +79,16 @@ with tempfile.TemporaryDirectory() as tmp:
         text = (root / "one/Transformer/Net" / f"CachedPair{a}_{b}.lean").read_text()
         assert f"cached_pilot_{a}_{b} : fastCheck cfg tab bnd E2 {a} {b} = true" in text
         assert "cachedFastCheck_eq cfg tab frozenCache cache_eq" in text
+    # Row selection reuses exactly the same packings and preserves all default pilot bytes.
+    row = g.emit(root / "row", vectors, origins, heads=1, tokens=tokens, grows=3, row0=True)
+    assert row["pairs"] == tuple((0, b) for b in range(113))
+    row_pairs = [p for p in row["generated"] if "/CachedPair" in p]
+    assert row_pairs == [f"Transformer/Net/CachedPair0_{b}.lean" for b in range(113)]
+    for rel in first["generated"]:
+        if rel in row["generated"]:
+            assert (root / "one" / rel).read_bytes() == (root / "row" / rel).read_bytes()
+    assert g.emit(root / "row", vectors, origins, heads=1, tokens=tokens,
+                  grows=3, row0=True, check=True) == row
     # Alter one generated constructor literal, retaining its certificate statement.
     victim = root / "one/Transformer/Net/CachedUnits/TI0_0_000.lean"
     victim.write_text(victim.read_text().replace("def p_TI0_0_0 : Int := (.ofNat 0)",

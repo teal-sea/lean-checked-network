@@ -126,9 +126,13 @@ def chain(function, names):
         for n in names] + ["  rfl"])
 
 
-def emit(out, vectors, origins, heads=4, tokens=114, grows=512, check=False):
+def emit(out, vectors, origins, heads=4, tokens=114, grows=512, check=False, row0=False):
     """Deterministic emission. At most CHUNK independently decided vectors per unit."""
     net = out / "Transformer/Net"
+    if row0:
+        allowed_pairs = {f"CachedPair0_{b}.lean" for b in range(113)}
+        if {p.name for p in net.glob("CachedPair*.lean")} - allowed_pairs:
+            raise ValueError("ROW0 output contains an unrelated/duplicate-index pair file")
     unit_dir = net / "CachedUnits"
     if not check:
         unit_dir.mkdir(parents=True, exist_ok=True)
@@ -189,7 +193,8 @@ def emit(out, vectors, origins, heads=4, tokens=114, grows=512, check=False):
     modules.append("Transformer.Net.Cached")
     axioms.append("Transformer.Net.Cached.cache_eq")
 
-    for a, b in PAIRS:
+    pairs = tuple((0, b) for b in range(113)) if row0 else PAIRS
+    for a, b in pairs:
         text = header(["Transformer.Net.Cached"])
         text += f"theorem cached_value_{a}_{b} : cachedFastCheck cfg tab frozenCache bnd E2 {a} {b} = true := by\n  decide +kernel\n\n"
         text += f"theorem cached_pilot_{a}_{b} : fastCheck cfg tab bnd E2 {a} {b} = true := by\n"
@@ -201,7 +206,7 @@ def emit(out, vectors, origins, heads=4, tokens=114, grows=512, check=False):
 
     return {"modules": modules, "axioms": axioms, "generated": generated,
             "vector_count": len(vectors), "certificate_units": len(set(vector_units.values())),
-            "max_vectors_per_unit": CHUNK, "pairs": PAIRS}
+            "max_vectors_per_unit": CHUNK, "pairs": pairs}
 
 
 def main():
@@ -209,12 +214,13 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--source", type=Path, default=HERE)
     parser.add_argument("--manifest", type=Path, default=HERE / "cached-inputs.sha256")
+    parser.add_argument("--row0", action="store_true", help="exactly ROW0/113; no other row")
     parser.add_argument("--check", action="store_true",
                         help="regenerate in memory and compare every source byte and manifest, without writing")
     args = parser.parse_args()
     records = verify_inputs(args.source, args.manifest)
     vectors, origins = read_vectors(args.source)
-    result = emit(args.out, vectors, origins, check=args.check)
+    result = emit(args.out, vectors, origins, check=args.check, row0=args.row0)
     result.update({"base": str(BASE), "inputs": records,
                    "generator_sha256": digest(Path(__file__).read_bytes()),
                    "input_manifest_sha256": digest(args.manifest.read_bytes()),
@@ -236,7 +242,8 @@ def main():
         else:
             (evidence / name).write_text(contents)
     verb = "verified deterministic bytes for" if args.check else "emitted"
-    print(f"{verb} {result['vector_count']} kernel equalities in {result['certificate_units']} bounded units; three cached pilots only")
+    scope = "ROW0/113 only" if args.row0 else "three cached pilots only"
+    print(f"{verb} {result['vector_count']} kernel equalities in {result['certificate_units']} bounded units; {scope}")
 
 
 if __name__ == "__main__":

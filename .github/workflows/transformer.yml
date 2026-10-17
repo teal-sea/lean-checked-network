@@ -66,3 +66,30 @@ jobs:
             transformer/lean/ci-out/
             transformer/lean/ci-out-smoke.txt
           if-no-files-found: warn
+
+  bridge:
+    name: Bridge (core program to the Mathlib program), needs the Mathlib lane
+    needs: mathlib
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      LEAN_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan (toolchain comes from transformer/mathlib/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib cache
+        run: cd transformer/mathlib && lake exe cache get
+      - name: bridge.sh (sync check, build, source scan, axioms, replay)
+        timeout-minutes: 60
+        run: cd transformer/mathlib && ./bridge.sh 2>&1 | tee bridge.ci.out; exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-bridge
+          path: |
+            transformer/mathlib/bridge-out/
+            transformer/mathlib/bridge.ci.out
+          if-no-files-found: warn

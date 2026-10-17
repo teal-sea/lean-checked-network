@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Core-Lean smoke: build Transformer (Model, Fast, Equiv), then the generated data, Weights, Table (tables_ok) and
-# Rows00 (the first row only) as separately logged, separately timed gates. Never builds Net.AllInputs or the other 112 rows.
+# Core-Lean smoke: build Transformer (Model, Fast, Equiv), BoundsLib, ONE representative bounds slice (a head of TI0), then the
+# generated data, Weights, the remaining bound modules (one lake call each), Table (tables_ok assembled from them),
+# Rows00 (the first row only) and the G column sums, as separately logged, separately timed gates. Never builds Net.AllInputs or the other 112 rows.
 # Evidence survives a killed step: a resource line is streamed to the log every 3 s, every gate has its own timeout,
 # and a SIGTERM/SIGINT trap prints the process table, the cgroup OOM counters and the kernel log before exiting.
 set -u
@@ -50,16 +51,32 @@ gate() { # name, timeout seconds, command...; wall time and peak RSS in ci-out/N
 
 stop() { kill "$montid" 2>/dev/null; echo "=== done $(date -u +%FT%TZ), exit $status"; exit "$status"; }
 
+echo "=== data provenance: the generated data files are byte-identical to the manifest (Net/W.sha256)"
+(cd Transformer/Net && sha256sum -c W.sha256) > "$out/w-sha256.out" 2>&1 || { status=1; echo "W data differs from W.sha256"; }
+tail -n 3 "$out/w-sha256.out"
+
 gate build_core 600 lake build Transformer || { echo "core build failed, stopping"; stop; }
-data="Transformer.Net.W.TI0_0 Transformer.Net.W.TI0_1 Transformer.Net.W.TI0_2 Transformer.Net.W.TI0_3 Transformer.Net.W.TI1_0 Transformer.Net.W.TI1_1 Transformer.Net.W.TI1_2 Transformer.Net.W.TI1_3 Transformer.Net.W.TU0 Transformer.Net.W.TU1 Transformer.Net.W.Misc"
+gate build_lib 600 lake build Transformer.BoundsLib || { echo "BoundsLib failed, stopping"; stop; }
+# The representative slice: one head of TI0 (114 vectors of 512 entries, about 58,000 literals, a quarter of TI0 and a
+# ninth of the whole table). Its data is built first as its own gate so the bound checks are timed apart from the data.
+gate build_slice_data 900 lake build Transformer.Net.W.TI0_0 || { echo "slice data failed, stopping"; stop; }
+gate build_slice 900 lake build Transformer.Net.B.TI0_0 || { echo "bounds slice failed, stopping before the other bound modules"; stop; }
+data="Transformer.Net.W.TI0_1 Transformer.Net.W.TI0_2 Transformer.Net.W.TI0_3 Transformer.Net.W.TI1_0 Transformer.Net.W.TI1_1 Transformer.Net.W.TI1_2 Transformer.Net.W.TI1_3 Transformer.Net.W.TU0 Transformer.Net.W.TU1 Transformer.Net.W.Misc"
 # shellcheck disable=SC2086
 gate build_data 900 lake build $data || { echo "generated data failed, stopping"; stop; }
 gate build_weights 600 lake build Transformer.Net.Weights || { echo "Weights failed, stopping"; stop; }
-gate build_table 1200 lake build Transformer.Net.Table || { echo "tables_ok failed, stopping"; stop; }
+# The rest of the bounds modules, one lake call each (serial, so the peak memory is that of one module).
+for m in TI0_1 TI0_2 TI0_3 TI1_0 TI1_1 TI1_2 TI1_3 TU0 TU1 Misc G; do
+  gate "build_b_$m" 900 lake build "Transformer.Net.B.$m" || { echo "bounds module $m failed, stopping"; stop; }
+done
+gate build_table 600 lake build Transformer.Net.Table || { echo "tables_ok assembly failed, stopping"; stop; }
 gate build_row0 1200 lake build Transformer.Net.Rows00 || { echo "row 0 failed, stopping"; stop; }
+# G column sums: independent evidence, its failure does not hide the row-0 result above
+cols_ok=0
+if gate build_cols 900 lake build Transformer.Net.Cols; then cols_ok=1; fi
 
 echo "=== source scan (must be empty): sorry, native_decide, axiom, opaque, implemented_by, extern, skipKernelTC"
-./scan_sources.sh Transformer/Model.lean Transformer/Fast.lean Transformer/Equiv.lean Transformer/Net/Table.lean Transformer/Net/Rows00.lean Transformer.lean > "$out/scan.out" 2>&1; sc=$?
+./scan_sources.sh Transformer/Model.lean Transformer/Fast.lean Transformer/Equiv.lean Transformer/BoundsLib.lean Transformer/Net/Table.lean Transformer/Net/Cols.lean Transformer/Net/B/*.lean Transformer/Net/Rows00.lean Transformer.lean > "$out/scan.out" 2>&1; sc=$?
 cat "$out/scan.out"
 case $sc in 0) echo "none found" ;; 1) echo "forbidden construct found"; status=1 ;; *) echo "scan error $sc"; status=1 ;; esac
 cat > "$out/axioms.lean" <<'LEAN'
@@ -71,6 +88,18 @@ LEAN
 gate axioms 600 lake env lean "$out/axioms.lean"; cat "$out/axioms.out"
 n=$(grep -cE "^.[^ ]+. (does not depend on any axioms|depends on axioms: \[(propext|Classical\.choice|Quot\.sound)(, (propext|Classical\.choice|Quot\.sound))*\])$" "$out/axioms.out")
 echo "$n of 3 theorems on standard axioms or none"; [ "$n" -eq 3 ] || status=1
+if [ "$cols_ok" -eq 1 ]; then
+  cat > "$out/axioms_cols.lean" <<'LEAN'
+import Transformer.Net.Cols
+#print axioms Transformer.Net.colSums_ok
+#print axioms Transformer.Net.G_length
+LEAN
+  gate axioms_cols 600 lake env lean "$out/axioms_cols.lean"; cat "$out/axioms_cols.out"
+  n=$(grep -cE "^.[^ ]+. (does not depend on any axioms|depends on axioms: \[(propext|Classical\.choice|Quot\.sound)(, (propext|Classical\.choice|Quot\.sound))*\])$" "$out/axioms_cols.out")
+  echo "$n of 2 column-sum theorems on standard axioms or none"; [ "$n" -eq 2 ] || status=1
+else
+  status=1; echo "column sums did not build, no axiom check for them"
+fi
 echo "=== leanchecker replay of Equiv and Rows00, both gating"
 gate replay_equiv 600 lake env leanchecker Transformer.Equiv
 gate replay_row0 1200 lake env leanchecker Transformer.Net.Rows00 || echo "row0 replay failed (gating: exit stays nonzero)"

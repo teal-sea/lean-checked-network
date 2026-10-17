@@ -1,8 +1,8 @@
 name: transformer
 
 # The transformer lane: an independent Mathlib job (conditional composition theorem) and a core-Lean
-# smoke job (Model, Fast, Equiv, tables_ok, row 0 only). Neither builds the other 112 row files or
-# Net.AllInputs; that waits until the row-0 time and memory are measured. Outputs are uploaded even on failure.
+# smoke job (Model, Fast, Equiv, tables_ok split into per-vector bound checks, row 0 only). Neither builds the
+# other 112 row files or Net.AllInputs; that waits until the row-0 time and memory are measured. Outputs are uploaded even on failure.
 on:
   pull_request:
     paths: ["transformer/**", ".github/workflows/transformer.yml"]
@@ -39,9 +39,9 @@ jobs:
           if-no-files-found: warn
 
   core:
-    name: Core lane smoke (Model, Fast, Equiv, tables, row 0 only), time and memory
+    name: Core lane smoke (Model, Fast, Equiv, split table bounds, row 0 only), time and memory
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 170
     env:
       LEAN_NUM_THREADS: "2"
     steps:
@@ -53,10 +53,11 @@ jobs:
       - name: Cheap regressions first (generator emission, scan and gate checks)
         run: |
           python3 -m pip install numpy
-          python3 transformer/test_gen_emission.py
+          python3 -I transformer/test_gen_emission.py
+          python3 -I transformer/lean/mirror_bounds.py
           transformer/lean/test_harness.sh
       - name: smoke.sh (split gates, streamed resource monitor, per-gate timeouts)
-        timeout-minutes: 50
+        timeout-minutes: 150
         run: cd transformer/lean && ./smoke.sh 2>&1 | tee ci-out-smoke.txt; exit "${PIPESTATUS[0]}"
       - uses: actions/upload-artifact@v4
         if: always()

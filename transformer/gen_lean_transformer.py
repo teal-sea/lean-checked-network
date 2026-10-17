@@ -6,7 +6,8 @@ Usage: python3 transformer/gen_lean_transformer.py WEIGHTS.npz [--rows-per-file 
 
 The Lean model (Transformer/Model.lean) is the table program of DESIGN.md section 6 on lists of
 Int, with expFix as in int_transformer.py. This script writes the tables (Transformer/Weights.lean),
-the row files (Transformer/RowsNN.lean), Transformer/AllInputs.lean, and, with --fault, a copy of the
+the bounds layer (Transformer/Net/B/*.lean, Table.lean, Cols.lean; `--bounds-only` rewrites just that from the committed
+data files), the row files (Transformer/RowsNN.lean), Transformer/AllInputs.lean, and, with --fault, a copy of the
 tables with one raw weight changed (the tables are rebuilt from the changed raw weights) plus the
 expected_fail file.
 
@@ -293,18 +294,195 @@ end Transformer.{name}
     (root / "Weights.lean").write_text(body)
 
 
-def write_table(root, name):
-    (root / "Table.lean").write_text(f"""import Transformer.Fast
-import Transformer.{name}.Weights
+# ----------------------------------------------------------------------------------------------
+# the bounds layer: tables_ok as many small kernel checks plus an ordinary assembly proof
+#
+# `decide +kernel` on the whole of `tablesOk tab bnd` is one kernel declaration over about 630,000 literals and
+# its kernel caches grew to 15 GB (CI run 38995569877). Instead each table vector gets its own theorem
+# `ok_<vector> : vecOk n k <vector> = true := by decide +kernel` (modules Net/B/*.lean, one per data file), and
+# Net/Table.lean assembles `tables_ok` with `tablesOk_of` (Transformer/BoundsLib.lean) from the conjuncts of
+# `tablesOk`; the numbers 114, 512, 113 below are the ones `tablesOk` itself states in Fast.lean.
+
+NTOK, DI, DU = 114, 512, 113
+G_COL_BOUND = 8774 * 2025  # chosenBounds.G in mathlib/Transformer/Logits.lean: sum_i |G i k| <= ||Wout|| ||U||
+
+
+def refine_chain(pred, items):
+    """A flat tactic proof of `List.all [items] pred = true` from `ok_<item>` for every item (no deep nesting)."""
+    lines = [f"  refine all_cons_of ({pred}) {n} _ ok_{n} ?_" for n in items]
+    return "\n".join(lines + ["  exact all_nil_true _"])
+
+
+def b_header(name, imports):
+    imps = "\n".join(["import Transformer.BoundsLib"] + [f"import Transformer.{name}.{m}" for m in imports])
+    return f"""{imps}
+
+set_option maxRecDepth 100000
+set_option maxHeartbeats 4000000
 
 namespace Transformer.{name}
 
-/-- Every table has the right shape and its entries are within `bnd`: the one-time check the fast
-evaluator's proof needs. -/
-theorem tables_ok : tablesOk tab bnd = true := by decide +kernel
+"""
+
+
+def counts_of(tb):
+    """How many of each thing the tables hold (from the real tables, or from the committed sources)."""
+    return {"heads": len(tb["TI0"]), "ntok": len(tb["TI0"][0]), "nG": len(tb["G"]), "ncol": len(tb["G"][0])}
+
+
+def write_bounds(root, name, tb, shape=None):
+    """Net/B/*.lean (one module per data file, one theorem per vector) and Net/Cols.lean (G column sums).
+    `tb` needs kTI, kCI, kTU, kCU, kG and the table shapes; returns the list of B module names."""
+    sh = shape or counts_of(tb)
+    heads, ntok, nG, ncol = sh["heads"], sh["ntok"], sh["nG"], sh["ncol"]
+    kTI, kCI, kTU, kCU, kG = (int(tb[k]) for k in ("kTI", "kCI", "kTU", "kCU", "kG"))
+    b = root / "B"
+    b.mkdir(exist_ok=True)
+    mods = []
+
+    def vec_thms(prefix, count, n, k):
+        return "\n".join(f"theorem ok_{prefix}_{t} : vecOk {n} {k} {prefix}_{t} = true := by decide +kernel" for t in range(count))
+
+    def head_block(key, h, n, k):
+        pre = f"{key}_{h}"
+        names = [f"{pre}_{t}" for t in range(ntok)]
+        pred = f"vecOk {n} {k}"
+        return f"""{vec_thms(pre, ntok, n, k)}
+
+theorem ok_{pre} : ({pre}.length == {NTOK} && {pre}.all ({pred})) = true := by
+  refine and_intro' (by decide +kernel) ?_
+{refine_chain(pred, names)}
+"""
+
+    for key in ("TI0", "TI1"):
+        for h in range(heads):
+            m = f"{key}_{h}"
+            (b / f"{m}.lean").write_text(b_header(name, [f"W.{m}"]) + head_block(key, h, DI, kTI) + f"\nend Transformer.{name}\n")
+            mods.append(f"B.{m}")
+    for key in ("TU0", "TU1"):
+        body = "\n".join(head_block(key, h, DU, kTU) for h in range(heads))
+        (b / f"{key}.lean").write_text(b_header(name, [f"W.{key}"]) + body + f"\nend Transformer.{name}\n")
+        mods.append(f"B.{key}")
+    # TI2, TU2 (one vector per head), CI, CU
+    ti2 = [f"TI2_{h}" for h in range(heads)]
+    tu2 = [f"TU2_{h}" for h in range(heads)]
+    misc = f"""{vec_thms("TI2", heads, DI, kTI)}
+
+theorem ok_TI2 : TI2.all (vecOk {DI} {kTI}) = true := by
+{refine_chain(f"vecOk {DI} {kTI}", ti2)}
+
+{vec_thms("TU2", heads, DU, kTU)}
+
+theorem ok_TU2 : TU2.all (vecOk {DU} {kTU}) = true := by
+{refine_chain(f"vecOk {DU} {kTU}", tu2)}
+
+theorem ok_CI : vecOk {DI} {kCI} CI = true := by decide +kernel
+
+theorem ok_CU : vecOk {DU} {kCU} CU = true := by decide +kernel
+"""
+    (b / "Misc.lean").write_text(b_header(name, ["W.Misc"]) + misc + f"\nend Transformer.{name}\n")
+    mods.append("B.Misc")
+    grows = [f"G_{i}" for i in range(nG)]
+    gb = f"""{vec_thms("G", nG, DU, kG)}
+
+theorem ok_G : G.all (vecOk {DU} {kG}) = true := by
+{refine_chain(f"vecOk {DU} {kG}", grows)}
+"""
+    (b / "G.lean").write_text(b_header(name, ["W.Misc"]) + gb + f"\nend Transformer.{name}\n")
+    mods.append("B.G")
+
+    # column sums of G, one kernel check per column, each about 512 * (column + 1) steps
+    cols = "\n\n".join(f"theorem ok_col_{k} : colAbsSum G {k} ≤ {G_COL_BOUND} := by decide +kernel" for k in range(ncol))
+    cases = "\n".join(f"  | {k}, _ => exact ok_col_{k}" for k in range(ncol))
+    (root / "Cols.lean").write_text(f"""import Transformer.BoundsLib
+import Transformer.{name}.Weights
+
+set_option maxRecDepth 100000
+set_option maxHeartbeats 4000000
+
+/-!
+# Column sums of `G`
+
+The Mathlib-side `Tables.Bounded chosenBounds` needs, for every column `k`, `sum_i |G i k| <= 8774 * 2025 = {G_COL_BOUND}`
+(`chosenBounds.G` in `mathlib/Transformer/Logits.lean`); `tablesOk` gives only the per-entry bound, which times {nG} is too
+weak. `colAbsSum G k` adds the absolute values of entry `k` of every row. One kernel check per column.
+This is a statement about the core list table `tab.G`; its link to the Mathlib tables is not proved here.
+-/
+
+namespace Transformer.{name}
+
+{cols}
+
+theorem G_length : tab.G.length = {nG} := by decide +kernel
+
+theorem colSums_ok : ∀ k, k < {ncol} → colAbsSum tab.G k ≤ {G_COL_BOUND} := by
+  intro k hk
+  match k, hk with
+{cases}
+  | n + {ncol}, h => exact absurd h (by omega)
 
 end Transformer.{name}
 """)
+    return mods
+
+
+def write_table(root, name, tb=None, shape=None):
+    """Net/Table.lean: `tables_ok` from the pieces. The statement is unchanged: `tablesOk tab bnd = true`."""
+    sh = shape or counts_of(tb)
+    heads = sh["heads"]
+    imports = ["Transformer.BoundsLib", f"Transformer.{name}.Weights"] + [f"Transformer.{name}.{m}" for m in B_MODULES(heads)]
+    imp = "\n".join(f"import {i}" for i in imports)
+    parts = []
+
+    def per_head(tab_field, key, n, kfield):
+        pred = f"fun h => h.length == {NTOK} && h.all (vecOk {n} bnd.{kfield})"
+        items = [f"{key}_{h}" for h in range(heads)]
+        typed = pred.replace("fun h =>", "fun (h : List (List Int)) =>", 1)  # the binder type is explicit so nothing waits on unification
+        pre = "".join(f"  refine all_cons_of ({typed}) {m} _ ok_{m} ?_\n" for m in items)
+        return f"""theorem tab_{key}_len : (tab.{key}.length == {heads}) = true := by decide +kernel
+
+theorem tab_{key}_all : tab.{key}.all ({pred}) = true := by
+{pre}  exact all_nil_true _
+"""
+
+    for key, n, kf in (("TI0", DI, "kTI"), ("TI1", DI, "kTI")):
+        parts.append(per_head(key, key, n, kf))
+    parts.append(f"""theorem tab_TI2_len : (tab.TI2.length == {heads}) = true := by decide +kernel
+
+theorem tab_TI2_all : tab.TI2.all (vecOk {DI} bnd.kTI) = true := ok_TI2
+""")
+    for key, n, kf in (("TU0", DU, "kTU"), ("TU1", DU, "kTU")):
+        parts.append(per_head(key, key, n, kf))
+    parts.append(f"""theorem tab_TU2_len : (tab.TU2.length == {heads}) = true := by decide +kernel
+
+theorem tab_TU2_all : tab.TU2.all (vecOk {DU} bnd.kTU) = true := ok_TU2
+""")
+    (root / "Table.lean").write_text(f"""{imp}
+
+set_option maxRecDepth 100000
+
+namespace Transformer.{name}
+
+/-! `tables_ok` is `tablesOk tab bnd = true` exactly as before, but proved from one small kernel check per
+table vector (`B/*.lean`), glued by `tablesOk_of` (`Transformer/BoundsLib.lean`). The per-vector theorems state the
+bound as a numeral, `bnd` is a structure of the same numerals, and the unifier identifies them by unfolding `bnd`;
+nothing here evaluates a table. -/
+
+{chr(10).join(parts)}
+/-- Every table has the right shape and its entries are within `bnd`: the one-time check the fast
+evaluator's proof needs. -/
+theorem tables_ok : tablesOk tab bnd = true :=
+  tablesOk_of tab bnd tab_TI0_len tab_TI0_all tab_TI1_len tab_TI1_all tab_TI2_len tab_TI2_all
+    tab_TU0_len tab_TU0_all tab_TU1_len tab_TU1_all tab_TU2_len tab_TU2_all
+    ok_CI ok_CU ok_G
+
+end Transformer.{name}
+""")
+
+
+def B_MODULES(heads):
+    return ([f"B.TI0_{h}" for h in range(heads)] + [f"B.TI1_{h}" for h in range(heads)]
+            + ["B.TU0", "B.TU1", "B.Misc", "B.G"])
 
 
 def write_rows(root, name, rows_per_file):
@@ -369,9 +547,32 @@ end Transformer.{name}
     return len(files)
 
 
+def sources_shape(root, name):
+    """The table constants and shapes read back from the committed Net/Weights.lean and Net/W/*.lean (no numerics)."""
+    import re
+    wl = (root / "Weights.lean").read_text()
+    m = re.search(r"def bnd : Bnd := \{ kTI := (\d+), kCI := (\d+), kTU := (\d+), kCU := (\d+), kG := (\d+) \}", wl)
+    if not m:
+        raise SystemExit("Weights.lean: no `def bnd` line in the expected shape")
+    ks = dict(zip(("kTI", "kCI", "kTU", "kCU", "kG"), map(int, m.groups())))
+    w = root / "W"
+    count = lambda f, pre: len(re.findall(rf"^def {pre}_\d+ :", (w / f).read_text(), re.M))
+    ncol = len(re.findall(r"\(\.(?:ofNat|negSucc) \d+\)", re.search(r"^def G_0 : List Int := (.*)$", (w / "Misc.lean").read_text(), re.M).group(1)))
+    shape = {"heads": len(list(w.glob("TI0_*.lean"))), "ntok": count("TI0_0.lean", "TI0_0"),
+             "nG": count("Misc.lean", "G"), "ncol": ncol}
+    return ks, shape
+
+
+def write_manifest(root):
+    """sha256 of every generated data file, so a bounds-only regeneration can show the numeric data did not change."""
+    import hashlib
+    lines = [f"{hashlib.sha256(p.read_bytes()).hexdigest()}  W/{p.name}" for p in sorted((root / "W").glob("*.lean"))]
+    (root / "W.sha256").write_text("\n".join(lines) + "\n")
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("weights")
+    ap.add_argument("weights", nargs="?")
     ap.add_argument("--rows-per-file", type=int, default=1)
     ap.add_argument("--simulate", action="store_true")
     ap.add_argument("--sim-rows", type=int, default=P)
@@ -380,6 +581,9 @@ def main():
     ap.add_argument("--out", default=str(Path(__file__).resolve().parent / "lean"))
     ap.add_argument("--name", default="Net")
     ap.add_argument("--log", default=None)
+    ap.add_argument("--bounds-only", action="store_true",
+                    help="rewrite only Net/B/*, Net/Table.lean, Net/Cols.lean from the committed Net/Weights.lean and Net/W/*.lean "
+                         "(no weights file, no numerics; the data files are not touched)")
     args = ap.parse_args()
     out = open(args.log, "a") if args.log else None
 
@@ -388,6 +592,17 @@ def main():
         if out:
             print(s, file=out, flush=True)
 
+    root = Path(args.out) / "Transformer" / args.name
+    if args.bounds_only:
+        ks, shape = sources_shape(root, args.name)
+        tb = dict(ks)
+        mods = write_bounds(root, args.name, tb, shape)
+        write_table(root, args.name, shape=shape)
+        write_manifest(root)
+        log(f"bounds-only: {ks}, shape {shape}; wrote {len(mods)} B modules, Table.lean, Cols.lean under {root}")
+        return
+    if not args.weights:
+        ap.error("weights file required unless --bounds-only")
     W = it.load_weights(args.weights)
     Wq = it.quantise(W, Q)
     fault_note = ""
@@ -404,12 +619,13 @@ def main():
         ok = simulate(tb, K, Wq, T, args.sim_rows, log)
         if not ok:
             log("simulation found mismatches" + (" (expected for a fault)" if args.fault else ""))
-    root = Path(args.out) / "Transformer" / args.name
     root.mkdir(parents=True, exist_ok=True)
     write_weights(root, args.name, tb, K, Path(args.weights).name, fault_note)
-    write_table(root, args.name)
+    write_manifest(root)
+    mods = write_bounds(root, args.name, tb)
+    write_table(root, args.name, tb)
     nfiles = write_rows(root, args.name, args.rows_per_file)
-    log(f"wrote {root}: Weights, Table, {nfiles} row files, AllInputs")
+    log(f"wrote {root}: Weights, {len(mods)} B modules, Table, Cols, {nfiles} row files, AllInputs, W.sha256")
 
 
 if __name__ == "__main__":

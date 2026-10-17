@@ -15,7 +15,7 @@ Theorem C about the real-softmax model. This file proves that they are the same 
 * `hA_of_fastCheck`: if `fastCheck` passes at `(a, b)` and `tablesOk` holds, then on that pair the right
   logit of `intLogits` beats every other by more than `E2`, which is hypothesis `hA` of Theorem C.
 
-No axiom, no `sorry`, no computation outside the kernel.
+No added axiom, no unfinished proof, no computation outside the kernel.
 -/
 
 namespace TransformerBridge

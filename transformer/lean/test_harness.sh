@@ -18,7 +18,16 @@ check smoke-no-status-reset 0 "$(grep -c 's0=\$status\|status=\$s0' smoke.sh)"
 check verify-axioms-exit-gated 1 "$(grep -c 'arc=\$?' ../mathlib/verify.sh)"
 ../mathlib/sync_core.sh --check > /dev/null; check core-copy-in-sync 0 $?
 # the instrumented smoke must keep its evidence hooks: a signal trap, a streamed monitor, per-gate timeouts, split gates
-for pat in "trap 'on_signal TERM" "^mon 2>&1 | tee" "timeout -s TERM" "gate build_weights" "gate build_table" "gate build_row0"; do
+for pat in "trap 'on_signal TERM" "^mon 2>&1 | tee" "timeout -s TERM" "gate build_weights" "gate build_table" "gate build_row0" "gate build_slice " "gate build_cols" "build_b_" "sha256sum -c W.sha256"; do
   check "smoke-has:$pat" 1 "$(grep -c -- "$pat" smoke.sh | awk '{print ($1>0)}')"
 done
+# the order that makes the slice a gate: BoundsLib, then the slice, then the other bound modules, Table, and row 0 last
+lineof() { grep -n -- "$1" smoke.sh | head -1 | cut -d: -f1; }
+ordered=1; prev=0
+for pat in "gate build_lib" "gate build_slice " "gate build_data" 'gate "build_b_' "gate build_table" "gate build_row0"; do
+  n=$(lineof "$pat"); if [ -z "$n" ] || [ "$n" -le "$prev" ]; then ordered=0; fi; prev=${n:-0}
+done
+check smoke-slice-before-full-bounds-before-row0 1 "$ordered"
+# the Table assembly must not evaluate the tables: no `decide` over tablesOk itself, no simp/unfold of tab or bnd
+check table-no-monolithic-decide 0 "$(grep -c 'tablesOk tab bnd = true := by' Transformer/Net/Table.lean)"
 exit $fail

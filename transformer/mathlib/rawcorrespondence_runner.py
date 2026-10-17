@@ -26,7 +26,7 @@ def audit(label, imports, names):
                     ''.join('#print axioms ' + n + '\n' for n in names))
     (OUT / (label + '-axioms.expected.json')).write_text(json.dumps(names, indent=2) + '\n')
     # The fixed inventory records fit within this explicit pretty-printer width.
-    text = runner.run(label + '-axioms', ['lake', 'env', 'lean', '-Dpp.width=1000000', str(path)], 600)
+    text = runner.run(label + '-axioms', ['lake', 'env', 'lean', '-Dformat.width=1000000', str(path)], 600)
     count = runner.check_axioms(text, names)
     print(f'{label} exact declarations={count}/{len(names)} standard-axioms-only=YES', flush=True)
     return count

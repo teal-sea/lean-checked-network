@@ -32,7 +32,7 @@ class CorrespondenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp, patch.object(producer, 'OUT', Path(tmp)):
             def mocked_run(label, args, seconds):
                 self.assertEqual(label, 'mocked-axioms')
-                self.assertEqual(args, ['lake', 'env', 'lean', '-Dpp.width=1000000', str(Path(tmp) / 'mocked-axioms.lean')])
+                self.assertEqual(args, ['lake', 'env', 'lean', '-Dformat.width=1000000', str(Path(tmp) / 'mocked-axioms.lean')])
                 self.assertEqual(seconds, 600)
                 self.assertEqual(Path(args[-1]).read_text(), 'import Example\n#print axioms Example.first\n#print axioms Example.second\n')
                 self.assertEqual(json.loads((Path(tmp) / 'mocked-axioms.expected.json').read_text()), names)

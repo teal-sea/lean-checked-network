@@ -16,6 +16,7 @@ check() { # name expected actual
 check smoke-no-status-reset 0 "$(grep -c 's0=\$status\|status=\$s0' smoke.sh)"
 # shellcheck disable=SC2016
 check verify-axioms-exit-gated 1 "$(grep -c 'arc=\$?' ../mathlib/verify.sh)"
+../mathlib/sync_core.sh --check > /dev/null; check core-copy-in-sync 0 $?
 # the instrumented smoke must keep its evidence hooks: a signal trap, a streamed monitor, per-gate timeouts, split gates
 for pat in "trap 'on_signal TERM" "^mon 2>&1 | tee" "timeout -s TERM" "gate build_weights" "gate build_table" "gate build_row0"; do
   check "smoke-has:$pat" 1 "$(grep -c -- "$pat" smoke.sh | awk '{print ($1>0)}')"

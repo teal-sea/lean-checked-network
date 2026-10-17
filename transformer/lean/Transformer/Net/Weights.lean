@@ -1,3 +1,4 @@
+import Transformer.Fast
 import Transformer.Net.W.TI0_0
 import Transformer.Net.W.TI0_1
 import Transformer.Net.W.TI0_2
@@ -39,7 +40,8 @@ def cfg : Cfg := {
 /-- The largest absolute entry of each table (checked by `tables_ok`). -/
 def bnd : Bnd := { kTI := 26092444094, kCI := 5106312128, kTU := 10601584377, kCU := 122325928744832, kG := 35663 }
 
-def tab : Tab := { sc0 := sc0, sc1 := sc1, sc2 := sc2, TI0 := TI0, TI1 := TI1, TI2 := TI2,
+def tab : Tab := {
+  sc0 := sc0, sc1 := sc1, sc2 := sc2, TI0 := TI0, TI1 := TI1, TI2 := TI2,
   TU0 := TU0, TU1 := TU1, TU2 := TU2, CI := CI, CU := CU, G := G }
 
 /-- Twice the logit error bound E of DESIGN.md section 5 (Theorem B2), as an integer:

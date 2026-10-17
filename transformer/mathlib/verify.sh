@@ -7,7 +7,7 @@ set -u
 export PATH="$HOME/.elan/bin:$PATH"
 export LEAN_NUM_THREADS=${LEAN_NUM_THREADS:-1}
 LOCK=${LEAN_LOCK:-/tmp/lean.lock}
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 status=0
 run() { flock "$LOCK" "$@"; }
 echo "=== versions"; cat lean-toolchain; run lean --version; grep -A2 '"name": "mathlib"' lake-manifest.json | head -3; grep '"rev"' lake-manifest.json | head -1
@@ -30,7 +30,7 @@ for m in $mods; do
 done
 nok=$(grep -c '^OK' replay.out); echo "replayed $nok of 5 modules, end $(date -u +%FT%TZ)"; [ "$nok" -eq 5 ] || status=1
 echo "=== axioms"
-run lake env lean axioms_all.lean > axioms_all.out 2>&1; cat axioms_all.out
+run lake env lean axioms_all.lean > axioms_all.out 2>&1; arc=$?; cat axioms_all.out; echo "axioms lean exit $arc"; [ $arc -eq 0 ] || status=1
 nall=$(grep -cE "depends on axioms|does not depend on any axioms" axioms_all.out)
 nstd=$(grep -cE "depends on axioms: \[(propext, Classical.choice, Quot.sound|propext, Quot.sound|propext|Quot.sound|Classical.choice|propext, Classical.choice|Classical.choice, Quot.sound)\]$|does not depend on any axioms" axioms_all.out)
 nthm=$(grep -c "^#print axioms" axioms_all.lean)

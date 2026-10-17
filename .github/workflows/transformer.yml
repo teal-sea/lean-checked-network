@@ -49,6 +49,11 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Cheap regressions first (generator emission, scan and gate checks)
+        run: |
+          python3 -m pip install numpy
+          python3 transformer/test_gen_emission.py
+          transformer/lean/test_harness.sh
       - name: smoke.sh
         run: cd transformer/lean && ./smoke.sh 2>&1 | tee ci-out-smoke.txt; exit "${PIPESTATUS[0]}"
       - uses: actions/upload-artifact@v4

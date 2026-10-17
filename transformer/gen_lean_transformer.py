@@ -240,7 +240,9 @@ def CU : List Int := {vec(tb['CU'])}
 """
     (w / "Misc.lean").write_text(head + misc + f"\nend Transformer.{name}\n")
     mods.append("W.Misc")
-    imports = "\n".join(f"import Transformer.{name}.{m}" for m in mods)
+    # Bnd and Tab's fields come from Transformer.Fast, not Model: without this import `Bnd` is an auto-bound
+    # implicit and `{ kTI := .. }` fails with "expected type is not of the form (C ...)".
+    imports = "\n".join(["import Transformer.Fast"] + [f"import Transformer.{name}.{m}" for m in mods])
     body = f"""{imports}
 
 /-!
@@ -272,7 +274,8 @@ def cfg : Cfg := {{
 /-- The largest absolute entry of each table (checked by `tables_ok`). -/
 def bnd : Bnd := {{ kTI := {tb['kTI']}, kCI := {tb['kCI']}, kTU := {tb['kTU']}, kCU := {tb['kCU']}, kG := {tb['kG']} }}
 
-def tab : Tab := {{ sc0 := sc0, sc1 := sc1, sc2 := sc2, TI0 := TI0, TI1 := TI1, TI2 := TI2,
+def tab : Tab := {{
+  sc0 := sc0, sc1 := sc1, sc2 := sc2, TI0 := TI0, TI1 := TI1, TI2 := TI2,
   TU0 := TU0, TU1 := TU1, TU2 := TU2, CI := CI, CU := CU, G := G }}
 
 /-- Twice the logit error bound E of DESIGN.md section 5 (Theorem B2), as an integer:

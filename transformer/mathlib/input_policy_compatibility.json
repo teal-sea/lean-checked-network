@@ -1,0 +1,64 @@
+{
+  "additions": {
+    "RawCorrespondence-checkpoint.json": "e7c0bdd23813e02ad0b65990fc5c0ea844268f72ff1a0ab97248c4fc0383d9f5",
+    "TransformerBridge/RawCorrespondenceFixture.lean": "9b1ee56b7f96683e65a0759524357e4c9d30f38db14cb71d53f10e2ef7e7128e",
+    "TransformerBridge/RawCorrespondenceLinear.lean": "7b96564ce5b9f14a077ced4dd521e3d89550982ec574215e0b2b5b94a908625e",
+    "TransformerBridge/RawCorrespondenceSupport.lean": "ec2f7a844362c91d673000f81258a444866d0b3c0804654117148b77a4180148",
+    "input_checkpoint_a01a98c.json": "9500e397b883c6c53218a205990d12d7565cef4f98ed073949d78d6d09c3058a",
+    "input_compat.py": "8880bdaf0c342d50da5f772d7d1119f10a67fa9160844b0a18bf5e92aea700e3",
+    "input_policy_a01a98c.json": "973c59ef5ef51ab94a1d102a2daccf20f70c53a2b08591fb030ee492c05fdbd4",
+    "rawcorrespondence.sh": "c40666dd841e3f7a967677a89673144ea0879e642d5c3527ca40969ab76738f8",
+    "rawcorrespondence_generate.py": "831fc179355c449060a657d8264941ad0c822c8aa524d43d98fb30f2f1449dfb",
+    "rawcorrespondence_restore.py": "1fa0f4104dd42a4757ba5b9a621c63af0a6bdaf1187737c674af1fd5d30df3b9",
+    "rawcorrespondence_runner.py": "c2eb05f2ed372cd73a252a3bdd7828d0ce011187745e237d03d3ce98fd8f3f5b",
+    "test_input_compat.py": "fc22a74105c8dac71d6240aa177354f91c29cf5f7350b6e9a475217da1a4d3ac",
+    "test_rawcorrespondence.py": "44baf94dd74e2eede6182f8da81ad16ce0cb4e53733c19e17c27e8185c42827b"
+  },
+  "compiler": {
+    "compiler": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+    "compiler_binary_sha256": "bf8d54e4714cc4b03d3f6bb34c83b7202b87e49c8bfcbff6895c085bb90ceb38",
+    "lake_manifest_sha256": "229004e4b7a9cdd61b2f3193967c1a683c1d38aeff8072aed4a198e47d8c4424",
+    "namespace": "TransformerCore",
+    "toolchain_sha256": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c"
+  },
+  "deltas": {
+    "../../.github/workflows/transformer.yml": {
+      "current_sha256": "547712cc65cb281166161df715e99f10d0f970daf3e34c46ed2ae004ba2c7026",
+      "old_sha256": "a5c63f9764fd4b00bd5d61faa905b4e1c0b898317413ddae79a61516f1e53b0e"
+    },
+    "input_artifacts.py": {
+      "current_sha256": "b0f4dd214da41f7992bb99a40d60a2e730a010272100309b0922471ae56a863d",
+      "old_sha256": "d8c021aed6503255bda5bc941ffaee01ea6d7ee07e4712aa57dc25b4c6524905"
+    },
+    "input_runner.py": {
+      "current_sha256": "889a8522601aa5a7bada3073059964715366418dcd98f7e380e5fa34ed44e84b",
+      "old_sha256": "c528ce9204d304efd0f6192ab968aa549a5f7b9dbb61d5ecbd6b50681ba8d619"
+    },
+    "row0_checkpoint.json": {
+      "current_sha256": "cf95426a5844bd08f8ca5d53f575c7f3cdc09e5c72bc67a002027b90d111297a",
+      "old_sha256": "9500e397b883c6c53218a205990d12d7565cef4f98ed073949d78d6d09c3058a"
+    },
+    "test_input_coverage.py": {
+      "current_sha256": "ec2e169699852a79a639e301a2b040e488ce9e0578af5f46dab20526ac28b420",
+      "old_sha256": "e20fa173941ec77f6c1ff2febbc94d1b41e06f5d3ce452b6f09c94d95819ef1e"
+    },
+    "test_input_harness.py": {
+      "current_sha256": "a45d3bd50a59fe891b144ee01239f9b522ef6ba84a5b19599524be8743834efe",
+      "old_sha256": "62d34caac5f25193154cf6f22633d9f4a323cdba045738aa7bf1cfebc52ea1c4"
+    },
+    "test_rawpacked.py": {
+      "current_sha256": "56f725bb4940d093698cf39096d36e268d82c86fdda11267a29fc655b230a611",
+      "old_sha256": "29cda080464a34793e6aded0cb15d8b71d88544bcd1b14a57e0aac498b994871"
+    },
+    "test_row0_finalize.py": {
+      "current_sha256": "65efaf7073fdb6c208feb0ad7b1e6f4c7e097a6d61ca8e1c2c2a392ebb0843a7",
+      "old_sha256": "affd86276d6c675553876ac5027776dc785f406ba2e2140dc1e9449138c2892b"
+    }
+  },
+  "old_policy_sha256": "973c59ef5ef51ab94a1d102a2daccf20f70c53a2b08591fb030ee492c05fdbd4",
+  "runs": {
+    "row1": 39076009834,
+    "rows2_112": 39077248982
+  },
+  "source_sha": "a01a98c7be5b37fce861cb44224d2b099bb8c49a"
+}

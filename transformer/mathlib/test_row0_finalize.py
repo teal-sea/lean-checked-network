@@ -56,6 +56,10 @@ def source_controls(root):
 
 def workflow_controls():
     workflow = (Path(__file__).resolve().parents[2] / '.github/workflows/transformer.yml').read_text()
+    workflow = workflow[:workflow.index('  raw-correspondence-CI:\n')] + workflow[workflow.index('  row0-finalize:\n', workflow.index('  raw-correspondence-CI:\n')):]
+    workflow = workflow.replace('          - mathlib-raw-correspondence-CI\n', '')
+    workflow = workflow.replace("inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || ", '')
+    workflow = workflow.replace("inputs.core_mode != 'mathlib-raw-correspondence-CI' && ", '')
     assert not (Path(__file__).resolve().parents[2] / '.github/workflows/row0-finalize.yml').exists()
     assert '          - mathlib-row0-finalize' in workflow
     assert "inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize'" in workflow

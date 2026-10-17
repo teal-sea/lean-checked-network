@@ -82,6 +82,10 @@ class InputControls(unittest.TestCase):
     def test_workflow_inverse_and_policy(self):
         root = HERE.parents[1]
         workflow = (root / '.github/workflows/transformer.yml').read_text()
+        workflow = workflow[:workflow.index('  raw-correspondence-CI:\n')] + workflow[workflow.index('  row0-finalize:\n', workflow.index('  raw-correspondence-CI:\n')):]
+        workflow = workflow.replace('          - mathlib-raw-correspondence-CI\n', '')
+        workflow = workflow.replace("inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || ", '')
+        workflow = workflow.replace("inputs.core_mode != 'mathlib-raw-correspondence-CI' && ", '')
         inverse = workflow.split('\n  input-row1:\n', 1)[0].rstrip() + '\n'
         inverse = inverse.replace('          - mathlib-input-row1\n', '').replace('          - mathlib-input-grid\n', '').replace('          - mathlib-input-all\n', '')
         inverse = inverse.replace("inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || ", '')

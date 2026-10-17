@@ -11,6 +11,7 @@ import input_source as source
 import row0_finalize as f
 import row0_prefix
 import row0_runner as runner
+from input_compat import validate_row_policy
 from row0_receipt import sha, validate_codegen
 from row0_source import selected
 
@@ -99,8 +100,9 @@ def import_rows(lock_path, policy, identity, gate=False):
             f.archive_index(z)
             receipt = json.loads(z.read('input-out/ROW_ACCEPTED.json'))
             source.require(receipt['status'] == 'KERNEL_ACCEPTED' and receipt['row'] == a and
-                           receipt['compiler'] == identity and receipt['policy_sha256'] == sha(POLICY) and
+                           receipt['compiler'] == identity and
                            receipt['source_sha'] == item['source_sha'], 'row receipt identity mismatch')
+            validate_row_policy(z, receipt, item, HERE)
             source.coverage(receipt['pairs'], a)
             if gate:
                 measured = json.loads(z.read('input-out/throughput.json'))

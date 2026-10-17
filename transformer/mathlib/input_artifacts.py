@@ -8,6 +8,7 @@ import re
 import zipfile
 
 from input_source import coverage, require
+from input_compat import validate_row_policy
 from row0_receipt import sha
 
 HERE = Path(__file__).resolve().parent
@@ -54,9 +55,10 @@ def download(lock, dest, full=False):
             require(len(z.namelist()) == len(set(z.namelist())), 'duplicate ZIP path')
             receipt = json.loads(z.read('input-out/ROW_ACCEPTED.json'))
             require(receipt['status'] == 'KERNEL_ACCEPTED' and receipt['row'] == item['row'] and
-                    receipt['source_sha'] == item['source_sha'] and receipt['policy_sha256'] == sha(HERE / 'input_policy.json') and
+                    receipt['source_sha'] == item['source_sha'] and
                     receipt['all_input_coverage'] is False and receipt['fresh_compiled_replayed'] == 11,
                     'parent lock has no accepted complete row')
+            validate_row_policy(z, receipt, item, HERE)
             coverage(receipt['pairs'], item['row'])
             if not full:
                 measured = json.loads(z.read('input-out/throughput.json'))

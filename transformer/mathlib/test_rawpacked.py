@@ -157,6 +157,10 @@ class PackedFixtures(unittest.TestCase):
 
     def test_existing_workflow_modes_and_jobs_preserved(self):
         workflow = (data.ROOT / '.github/workflows/transformer.yml').read_text()
+        workflow = workflow[:workflow.index('  raw-correspondence-CI:\n')] + workflow[workflow.index('  row0-finalize:\n', workflow.index('  raw-correspondence-CI:\n')):]
+        workflow = workflow.replace('          - mathlib-raw-correspondence-CI\n', '')
+        workflow = workflow.replace("inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || ", '')
+        workflow = workflow.replace("inputs.core_mode != 'mathlib-raw-correspondence-CI' && ", '')
         workflow = workflow.split('\n  input-row1:\n', 1)[0].rstrip() + '\n'
         workflow = workflow.replace('          - mathlib-input-row1\n', '').replace('          - mathlib-input-grid\n', '').replace('          - mathlib-input-all\n', '')
         workflow = workflow.replace("inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || ", '')

@@ -140,7 +140,9 @@ class ExecutionControls(unittest.TestCase):
                 with patch.object(r, 'HERE', root), patch.object(r, 'POLICY', policy), \
                      patch.object(r.source, 'row_sources', return_value={module: text}), \
                      patch.object(r, 'validate_codegen', return_value={}), \
-                     patch.object(r, 'audit_names', return_value=['FAKE.name']):
+                     patch.object(r, 'audit_names', return_value=['FAKE.name']), \
+                     patch.object(r, 'validate_row_policy', side_effect=lambda z, receipt, item, here:
+                         r.source.require(receipt['policy_sha256'] == sha(policy), 'FAKE policy mismatch')):
                     # The full-lock coverage guard is exercised separately. Here shrink the
                     # requested row list through a gate but retain normal archive validation.
                     contents = json.loads(lock.read_text())

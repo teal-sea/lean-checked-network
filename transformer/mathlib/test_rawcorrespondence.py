@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""Tiny arithmetic/static controls and actual retained metadata mutations; no Lean/model evaluation."""
+import argparse
+import ast
+import hashlib
+import json
+from pathlib import Path
+import re
+import sys
+import unittest
+import zipfile
+
+import rawcorrespondence_generate as gen
+import rawcorrespondence_restore as cache
+
+METADATA = None
+PIN = json.loads(cache.PIN_PATH.read_text())
+
+
+class CorrespondenceTests(unittest.TestCase):
+    def test_actual_retained_schema(self):
+        self.assertIsNotNone(METADATA, 'actual metadata required; fake receipts cannot stand in')
+        records, source, compiler = cache.validate_metadata(METADATA, PIN)
+        self.assertEqual(len(records), 218)
+        self.assertEqual(len(source['sources']), 51)
+        self.assertEqual(len(compiler['binaries']), 3)
+
+    def test_actual_receipt_mutations_rejected(self):
+        mutations = []
+        rows = [json.loads(s) for s in METADATA['compiled.jsonl'].splitlines()]
+        for changed in [rows[:-1], rows + [rows[-1]], [{**rows[0], 'module': 'Transformer.Raw'}] + rows[1:]]:
+            mutations.append(('compiled.jsonl', '\n'.join(json.dumps(x) for x in changed)))
+        for field, value in [('scope', {'CI_components': 512}), ('modules', []), ('declarations', []),
+                             ('coefficients', {}), ('pins', {}), ('outputs', {})]:
+            obj = json.loads(METADATA['generation.json'])
+            obj[field] = value
+            mutations.append(('generation.json', json.dumps(obj)))
+        obj = json.loads(METADATA['generation.json'])
+        obj['pins']['transformer/mathlib/TransformerBridge/Bridge.lean'] = '0' * 64
+        mutations.append(('generation.json', json.dumps(obj)))
+        obj = json.loads(METADATA['generation.json']); obj['negative']['field'] = 'bin'
+        mutations.append(('generation.json', json.dumps(obj)))
+        obj = json.loads(METADATA['ACCEPTED.json']); obj['full_hT'] = 'PROVED'
+        mutations.append(('ACCEPTED.json', json.dumps(obj)))
+        obj = json.loads(METADATA['compiler.json']); obj['binaries']['lean']['sha256'] = '0' * 64
+        mutations.append(('compiler.json', json.dumps(obj)))
+        steps = [json.loads(s) for s in METADATA['steps.jsonl'].splitlines()]
+        first = next(i for i, s in enumerate(steps) if s['name'].startswith('build_'))
+        steps[first]['exit'] = 1
+        mutations.append(('steps.jsonl', '\n'.join(json.dumps(x) for x in steps)))
+        for filename, changed in mutations:
+            with self.subTest(filename=filename):
+                m = dict(METADATA); m[filename] = changed
+                with self.assertRaises(ValueError):
+                    cache.validate_metadata(m, PIN)
+
+    def test_affine_signed_fixture(self):
+        base = 1 << 208
+        pack = lambda xs: sum(x * base ** i for i, x in enumerate(xs))
+        matrix = [[-1, 2], [4, -3]]
+        o, b = [-4, 6], [-5, 7]
+        t = [sum(o[d] * matrix[d][i] for d in range(2)) + b[i] for i in range(2)]
+        self.assertEqual(t, [23, -19])
+        self.assertEqual(sum(o[d] * pack(matrix[d]) for d in range(2)) + pack(b), pack(t))
+        self.assertLess(2 * (2 * 6 * 4 + 7), base)
+        self.assertEqual(pack([base, 0]), pack([0, 1]))
+        self.assertNotEqual([base, 0], [0, 1])
+
+    def test_complete_defaults_domain(self):
+        # Enumerates indexing/routing only, never model arithmetic or tables.
+        slots = [(h, j, tk) for h in range(4) for j in range(3) for tk in range(114)]
+        defaults = [s for s in slots if s[1] == 2 and s[2] != 113]
+        active = [s for s in slots if s not in defaults]
+        self.assertEqual((len(slots), len(active), len(defaults)), (1368, 916, 452))
+        self.assertEqual(sum(tk == 113 and j < 2 for _, j, tk in active), 8)
+        text = (cache.HERE / 'TransformerBridge/RawCorrespondenceSupport.lean').read_text()
+        self.assertIn('theorem unused_slots', text)
+        for field in ('sc', 'TI', 'TU'):
+            self.assertIn(f'(W.rawTables S).{field} h 2 tk', text)
+        self.assertIn('(hG : T.G = R.G)', text)
+        for f in ('sc', 'TI', 'TU', 'CI', 'CU', 'G'):
+            self.assertRegex(text, rf'\(h{f} : T\.{f} = R\.{f}\)')
+
+    def test_source_inventory_and_production_gates(self):
+        for module, expected in [(gen.SUPPORT, gen.SUPPORT_NAMES), (gen.LINEAR, gen.LINEAR_NAMES), (gen.FIXTURE, gen.FIXTURE_NAMES)]:
+            text = (cache.HERE / (module.replace('.', '/') + '.lean')).read_text()
+            ns = re.findall(r'^namespace ([A-Za-z0-9_.]+)$', text, re.M)
+            found = [ns[0] + '.' + n for n in re.findall(r'^(?:def|theorem) (\w+)\b', text, re.M)]
+            self.assertEqual(found, expected)
+        modules, names = gen.inventory()
+        sources = gen.sources()  # Static proof text only: no numeric emitter/checkpoint invocation.
+        found = []
+        self.assertEqual(list(sources), modules)
+        for module, text in sources.items():
+            ns = re.findall(r'^namespace ([A-Za-z0-9_.]+)$', text, re.M)
+            self.assertEqual(ns, [gen.NS])
+            found += [ns[0] + '.' + n for n in re.findall(r'^(?:def|theorem) (\w+)\b', text, re.M)]
+        self.assertEqual(found, names)
+        self.assertEqual(len(names), len(set(names)))
+        self.assertEqual(len(names), 16)
+        self.assertIn(gen.OLD_PREFIX + '.RowsAll', sources[modules[0]])
+        self.assertIn('Fin 1', sources[modules[1]])
+        self.assertIn(gen.PREFIX + '.Representative', sources[modules[2]])
+        self.assertIn('pack weights.bin = pack frozenCI', sources[modules[2]])
+        self.assertIn('theorem CI_field', sources[modules[3]])
+        self.assertIn('(TransformerBridge.toTables TransformerCore.Net.tab).CI =', sources[modules[3]])
+        negative = gen.negative_source()
+        self.assertIn('bin := fun i => if i = 0 then weights.bin i + 1 else weights.bin i', sources[modules[4]])
+        self.assertIn('theorem changed_CI_ne', sources[modules[4]])
+        self.assertIn(gen.PREFIX + '.Control', negative)
+        self.assertIn('decide +kernel', negative)
+        self.assertNotIn('Win :=', negative)
+
+    def test_no_checkpoint_evaluation_and_cloud_guard(self):
+        for name in ('rawcorrespondence_generate.py', 'rawcorrespondence_restore.py', 'rawcorrespondence_runner.py'):
+            text = (cache.HERE / name).read_text(); ast.parse(text)
+            self.assertNotRegex(text, r'\bimport numpy\b|\bimport int_transformer\b|\bquantise\(|\bload_weights\(')
+        self.assertIn('cloud_only()', (cache.HERE / 'rawcorrespondence_generate.py').read_text())
+        self.assertIn('cloud_only()', (cache.HERE / 'rawcorrespondence_restore.py').read_text())
+        self.assertIn('cloud_only()', (cache.HERE / 'rawcorrespondence_runner.py').read_text())
+        self.assertNotIn('extractall', (cache.HERE / 'rawcorrespondence_restore.py').read_text().replace('Never extractall', 'Never expand'))
+
+    def test_current_source_compatibility(self):
+        from unittest.mock import patch
+        source = json.loads(METADATA['sources.json'])
+        cache.verify_current_sources(source)
+        original = Path.read_bytes
+        for suffix in ('test_rawpacked.py', 'Transformer/Raw.lean', 'rawpacked_generate.py'):
+            def changed(p, suffix=suffix):
+                data = original(p)
+                return data + b' ' if str(p).endswith(suffix) else data
+            with patch.object(Path, 'read_bytes', changed):
+                with self.assertRaises(ValueError): cache.verify_current_sources(source)
+        pin = json.loads(original(cache.PIN_PATH))
+        for mutation in ('extra', 'inverse', 'old', 'current'):
+            bad = json.loads(json.dumps(pin))
+            rule = bad['nonproof_source_compatibility']['transformer/mathlib/test_rawpacked.py']
+            if mutation == 'extra': bad['nonproof_source_compatibility']['other'] = rule
+            elif mutation == 'inverse': rule['inverse_projection'] += 'unknown'
+            elif mutation == 'old': rule['accepted_sha256'] = '0' * 64
+            else: rule['current_sha256'] = '0' * 64
+            def altered(p):
+                return json.dumps(bad).encode() if p == cache.PIN_PATH else original(p)
+            with patch.object(Path, 'read_text', lambda p, *a, **k: altered(p).decode()):
+                with self.assertRaises(ValueError): cache.verify_current_sources(source)
+
+    def test_workflow_exact_preservation(self):
+        path = cache.ROOT / '.github/workflows/transformer.yml'
+        text = path.read_text()
+        start = text.index('  raw-correspondence-CI:\n'); end = text.index('  row0-finalize:\n', start)
+        block = text[start:end]
+        self.assertIn('runs-on: ubuntu-latest', block)
+        self.assertIn('inputs.core_mode == \'mathlib-raw-correspondence-CI\'', block)
+        self.assertNotIn('pip install', block)
+        self.assertIn('12100029309', block)
+        self.assertEqual(text.count("inputs.core_mode != 'mathlib-raw-correspondence-CI'"), 3)
+        old = (text[:start] + text[end:]).replace('          - mathlib-raw-correspondence-CI\n', '')
+        old = old.replace("inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || ", '')
+        old = old.replace("inputs.core_mode != 'mathlib-raw-correspondence-CI' && ", '')
+        baseline = PIN['workflow_base_sha256']
+        self.assertRegex(baseline, r'^[0-9a-f]{64}$')
+        self.assertEqual(hashlib.sha256(old.encode()).hexdigest(), baseline)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--archive', type=Path)
+    group.add_argument('--metadata-dir', type=Path)
+    args = parser.parse_args()
+    if args.archive:
+        with zipfile.ZipFile(args.archive) as z:
+            METADATA = cache.read_metadata(z, PIN)
+    else:
+        METADATA = {}
+        for name, expected in PIN['metadata_sha256'].items():
+            data = (args.metadata_dir / Path(name).name).read_bytes()
+            cache.require(cache.digest(data) == expected, 'retained metadata digest mismatch')
+            METADATA[Path(name).name] = data.decode()
+    unittest.main(argv=[sys.argv[0]], verbosity=2)

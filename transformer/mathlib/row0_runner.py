@@ -13,7 +13,7 @@ import time
 
 import row0_prefix
 from row0_receipt import check_axioms, generator, sha, validate_codegen
-from row0_source import ANALYTIC, check_branches, selected
+from row0_source import ANALYTIC, BASE_AXIOMS, check_branches, selected
 import sync_core
 
 HERE = Path(__file__).resolve().parent
@@ -31,6 +31,18 @@ RUNNER_SOURCES = [
 # Exact warning headers observed in accepted stable4.35.0 bounds support logs.
 BASELINE_WARNINGS = ('TransformerCore/Equiv.lean:42:69: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:161:15: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:166:15: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:226:30: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:245:28: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:245:28: This simp argument is unused:', 'TransformerCore/Equiv.lean:255:28: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:280:68: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:281:36: This simp argument is unused:', 'TransformerCore/Equiv.lean:321:64: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:322:31: This simp argument is unused:', 'TransformerCore/Equiv.lean:330:15: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:335:17: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'TransformerCore/Equiv.lean:386:13: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead', 'Transformer/ExpFix.lean: imports `Mathlib` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file', 'TransformerBridge/Bridge.lean:41:79: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice', 'TransformerBridge/Bridge.lean:41:79: Unused tactic linter: `<;>` should be replaced with `;` or be removed.', 'TransformerBridge/Bridge.lean:48:23: this tactic is never executed', 'TransformerBridge/Bridge.lean:48:43: this tactic is never executed', 'TransformerBridge/Bridge.lean:48:23: Unused tactic linter: `(push_cast; ring)` does nothing.', 'TransformerBridge/Bridge.lean:48:43: Unused tactic linter: `simp` does nothing.', 'TransformerBridge/Bridge.lean:182:76: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice', 'TransformerBridge/Bridge.lean:182:76: Unused tactic linter: `<;>` should be replaced with `;` or be removed.', 'TransformerBridge/Bridge.lean:249:53: `if_false` has been deprecated: Use `ite_false` instead')
 BASELINE_SOURCES = {'TransformerCore/Equiv.lean': ('../lean/Transformer/Equiv.lean', 'fc4d563a67ed0c1a3a1f6f80f63ec377a8e2ba14af972e1b2848e29388ad46ec'), 'Transformer/ExpFix.lean': ('Transformer/ExpFix.lean', 'd35e25e7c19737b7475b8da5a8173727460aea4c302be0caa6101720d89dfd89'), 'TransformerBridge/Bridge.lean': ('TransformerBridge/Bridge.lean', '2d6d65c4b1bbfaacb2147055ca3be29ccee1250edb011df8589250d715103538')}
+
+# Exact headers captured from the successful Raw producer in run 39015147067.
+BASELINE_WARNINGS += (
+    "Transformer/Raw.lean:173:0: automatically included section variable(s) unused in theorem `Transformer.Weights.rsoftmax_eq`:",
+    "Transformer/Raw.lean:181:0: automatically included section variable(s) unused in theorem `Transformer.Weights.resid_dot`:",
+)
+BASELINE_SOURCES['Transformer/Raw.lean'] = (
+    'Transformer/Raw.lean', 'e664331db89a2da6c140dfa4771721eff4b8d6f677149d861b3c8dcfc717ef11')
+
+# Generic cache support and all seven edge fixtures; no frozen numeric declarations.
+CACHED_SUPPORT_NAMES = [n for n in BASE_AXIOMS if n.startswith('TransformerCore.')
+                        and not n.startswith('TransformerCore.Net.')]
 
 
 def inherited_warnings(text):
@@ -95,6 +107,9 @@ def scan(name, paths):
 
 
 def audit(label, imports, names):
+    if any(n.startswith('TransformerCore.CachedFixture.') for n in names) and \
+            'TransformerCore.CachedFixture' not in imports:
+        raise ValueError('fixture axiom audit requires explicit TransformerCore.CachedFixture import')
     if len(names) != len(set(names)):
         raise ValueError('duplicate audit selection')
     path = OUT / (label + '-axioms.lean')
@@ -152,6 +167,8 @@ def main(real=False):
         build_replay(module.replace('Transformer', 'TransformerCore', 1))
     for module in [*ANALYTIC, 'TransformerBridge.Bridge', 'TransformerBridge.Pointwise']:
         build_replay(module)
+    audit('cached-support', ['TransformerCore.Cached', 'TransformerCore.CachedFixture'],
+          CACHED_SUPPORT_NAMES)
     red = OUT / 'altered-packing.lean'
     red.write_text('import TransformerCore.Cached\n'
                    'example : TransformerCore.pkI [3, -2, 1] =\n'
@@ -187,7 +204,7 @@ def main(real=False):
     prefix_names = [n for n in selected(receipt) if n not in
                     ('TransformerBridge.row0_fastCheck', 'TransformerBridge.row0_integer_margin')
                     and '.cached_value_' not in n and '.cached_pilot_' not in n]
-    audit('prefix', ['TransformerCore.Net.Cached', 'TransformerCore.Net.Table', 'TransformerCore.Net.Cols',
+    audit('prefix', ['TransformerCore.CachedFixture', 'TransformerCore.Net.Cached', 'TransformerCore.Net.Table', 'TransformerCore.Net.Cols',
                      'TransformerBridge.Row0Compat', 'TransformerBridge.Pointwise'], prefix_names)
     prefix_modules = [*prefix, *ANALYTIC, 'TransformerBridge.Bridge',
                       'TransformerBridge.Pointwise', 'TransformerBridge.Row0Compat']
@@ -205,7 +222,7 @@ def main(real=False):
         build_replay(module)
     build_replay('TransformerBridge.Row0Checks')
     build_replay('TransformerBridge.Row0')
-    count = audit('row0', ['TransformerBridge.Row0', 'TransformerBridge.Pointwise'], selected(receipt))
+    count = audit('row0', ['TransformerCore.CachedFixture', 'TransformerBridge.Row0', 'TransformerBridge.Pointwise'], selected(receipt))
     provenance()
     if snapshot_sources() != immutable:
         raise ValueError('candidate source changed during ROW0 run')
@@ -232,7 +249,7 @@ def main(real=False):
             build_replay(module)
         audit('concrete-hb', ['TransformerBridge.FrozenBounds'], list(EXPECTED))
         build_replay('TransformerBridge.Row0Real')
-        count = audit('row0-real', ['TransformerBridge.Row0Real'], selected(receipt, real=True))
+        count = audit('row0-real', ['TransformerCore.CachedFixture', 'TransformerBridge.Row0Real'], selected(receipt, real=True))
         (OUT / 'MQ_ACCEPTED.json').write_text(json.dumps({'scope': 'ROW0/113 fused quantized mq',
                                                         'selected_axioms': count}, indent=2) + '\n')
         print('ROW0/113 MQ status=KERNEL_ACCEPTED concrete-hB=REPLAYED argmax=YES', flush=True)

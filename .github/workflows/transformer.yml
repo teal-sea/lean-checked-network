@@ -187,9 +187,8 @@ jobs:
             transformer/mathlib/TransformerCore/
             transformer/mathlib/TransformerBridge/Pointwise.lean
             transformer/mathlib/TransformerBridge/Row0*.lean
-            transformer/mathlib/.lake/build/lib/lean/TransformerCore/Net/CachedPair0_*.olean
-            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Pointwise.olean
-            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Row0*.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerCore/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/
           if-no-files-found: error
 
   raw-pilot:

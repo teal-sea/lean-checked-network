@@ -130,6 +130,14 @@ def exercise(failure='', real=False):
                 assert labels.index('prefix_saved') < first
                 assert labels.index('build_TransformerBridge.Row0Checks') > labels.index('replay_' + points[-1])
                 assert labels.index('build_TransformerBridge.Pointwise') < labels.index('codegen')
+                assert labels.index('cached-support-axioms') < labels.index('codegen')
+                support_audit = json.loads((runner.OUT / 'cached-support-axioms.expected.json').read_text())
+                assert len(support_audit) == 15
+                prefix_audit = json.loads((runner.OUT / 'prefix-axioms.expected.json').read_text())
+                assert len(prefix_audit) == 2398
+                for label in ['cached-support', 'prefix', 'row0', *(['row0-real'] if real else [])]:
+                    assert 'import TransformerCore.CachedFixture\n' in (
+                        runner.OUT / (label + '-axioms.lean')).read_text()
                 for n in support_names:
                     assert labels.index('replay_' + n.replace('Transformer', 'TransformerCore', 1)) < labels.index('codegen')
                 assert (runner.OUT / 'MQ_ACCEPTED.json').exists() == real
@@ -180,6 +188,19 @@ def command_boundary():
                 expect_failure(lambda: invoke(code, text, negative))
 
 
+def fixture_import_controls():
+    # Real audit policy must reject a missing explicit import before any producer runs.
+    with tempfile.TemporaryDirectory() as tmp, patch.object(runner, 'OUT', Path(tmp)):
+        name = 'TransformerCore.CachedFixture.empty'
+        with patch.object(runner, 'run') as producer:
+            expect_failure(lambda: runner.audit('missing-fixture', ['TransformerCore.Cached'], [name]))
+            producer.assert_not_called()
+        with patch.object(runner, 'run', return_value=f"'{name}' does not depend on any axioms\n"):
+            assert runner.audit('explicit-fixture', ['TransformerCore.CachedFixture'], [name]) == 1
+            assert (Path(tmp) / 'explicit-fixture-axioms.lean').read_text().startswith(
+                'import TransformerCore.CachedFixture\n')
+
+
 def prefix_controls():
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
@@ -210,7 +231,7 @@ def prefix_controls():
 
 if __name__ == '__main__':
     for failure in ('', 'initial-hash', 'missing-middle', 'build_TransformerCore.Cached',
-                    'replay_TransformerCore.CachedFixture', 'prefix-axioms', 'prefix-save',
+                    'replay_TransformerCore.CachedFixture', 'cached-support-axioms', 'prefix-axioms', 'prefix-save',
                     'build_TransformerCore.Net.CachedPair0_0', 'replay_TransformerCore.Net.CachedPair0_0',
                     'build_TransformerCore.Net.CachedPair0_56', 'replay_TransformerCore.Net.CachedPair0_56',
                     'build_TransformerBridge.Row0Checks', 'replay_TransformerBridge.Row0Checks',
@@ -218,8 +239,9 @@ if __name__ == '__main__':
         exercise(failure)
     exercise(real=True)
     exercise('build_TransformerBridge.FrozenBounds', real=True)
+    fixture_import_controls()
     command_boundary()
     prefix_controls()
-    print('ok: FAKE ROW0 harness, 19 runner paths plus command/prefix controls; support-first, '
+    print('ok: FAKE ROW0 harness, 20 runner paths plus command/prefix controls; support-first, '
           'first literal build+replay before remaining 112, exact audit, all replays, hB separation, '
           'trusted receipt/source/compiler/olean rejection. NO kernel acceptance evidence.')

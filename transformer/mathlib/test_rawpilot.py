@@ -14,6 +14,7 @@ import rawpilot_generate as gen
 import rawpilot_runner as runner
 from row0_receipt import check_axioms
 import sync_core
+import row0_runner as warning_policy
 
 
 class RawPilotFixtures(unittest.TestCase):
@@ -143,6 +144,49 @@ class RawPilotFixtures(unittest.TestCase):
                 control.write_text('-- FAKE altered control\n')
                 with self.assertRaises(ValueError):
                     data.validate_generated(out)
+
+    def test_exact_immutable_raw_warning_baseline(self):
+        headers = [
+            "Transformer/Raw.lean:173:0: automatically included section variable(s) unused in theorem `Transformer.Weights.rsoftmax_eq`:",
+            "Transformer/Raw.lean:181:0: automatically included section variable(s) unused in theorem `Transformer.Weights.resid_dot`:",
+        ]
+        original = (warning_policy.HERE / 'Transformer/Raw.lean').read_bytes()
+        pins = json.loads((warning_policy.HERE / 'RawPilot-pins.json').read_text())
+        self.assertEqual(data.sha(warning_policy.HERE / 'Transformer/Raw.lean'),
+                         pins['transformer/mathlib/Transformer/Raw.lean'])
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / 'Transformer/Raw.lean'
+            source.parent.mkdir()
+            source.write_bytes(original)
+            with patch.object(warning_policy, 'HERE', root):
+                for header in headers:
+                    accepted = warning_policy.inherited_warnings('warning: ' + header)
+                    self.assertEqual(len(accepted), 1)
+                    self.assertEqual(accepted[0]['baseline_sha256'],
+                                     pins['transformer/mathlib/Transformer/Raw.lean'])
+                    with self.assertRaises(ValueError):
+                        warning_policy.inherited_warnings('warning: ' + header + ' changed')
+                with self.assertRaises(ValueError):
+                    warning_policy.inherited_warnings('warning: Transformer/Raw.lean:1:0: new proof warning')
+                # The actual Raw runner still rejects nonzero producers even with allowed warnings.
+                def producer(args, **kwargs):
+                    kwargs['stdout'].write('\n'.join('warning: ' + h for h in headers))
+                    return subprocess.CompletedProcess(args, self.fake_exit)
+
+                with patch.object(runner, 'OUT', root), \
+                        patch.object(runner.subprocess, 'run', side_effect=producer), \
+                        redirect_stdout(io.StringIO()):
+                    self.fake_exit = 0
+                    runner.run('fake-exact-raw-baseline', ['fixture'])
+                    for code in (1, 2, 124, 137):
+                        self.fake_exit = code
+                        with self.assertRaises(ValueError):
+                            runner.run('fake-exact-raw-nonzero-' + str(code), ['fixture'])
+                source.write_bytes(original + b'\n')
+                for header in headers:
+                    with self.assertRaises(ValueError):
+                        warning_policy.inherited_warnings('warning: ' + header)
 
     def test_local_generation_guard(self):
         with patch.dict(gen.os.environ, {'GITHUB_ACTIONS': 'false'}, clear=False):

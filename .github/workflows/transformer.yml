@@ -17,19 +17,20 @@ on:
           - mathlib-bounds-pilot
           - mathlib-row0-pilot
           - mathlib-raw-pilot
+          - mathlib-raw-packed-pilot
       row0_with_hb:
         description: Also compile/replay concrete hB and the unconditional ROW0 mq theorem
         type: boolean
         default: false
 
 concurrency:
-  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
+  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-raw-packed-pilot' && '-mathlib-raw-packed' || inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
   # false: a later push queues behind the running pilot instead of killing it (the evidence is the point)
   cancel-in-progress: false
 
 jobs:
   mathlib:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: Mathlib lane (ExpFix, Program, Logits, Compose, Raw), cache, replay, axioms
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -54,7 +55,7 @@ jobs:
           if-no-files-found: warn
 
   core:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: ${{ inputs.core_mode == 'cached-support-pilot' && 'CACHED SUPPORT PILOT (generic only; no frozen literals or pairs)' || 'CACHED PAIR PILOT (three pairs; row0 unproved)' }}
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 20 || 170 }}
@@ -104,7 +105,7 @@ jobs:
           if-no-files-found: warn
 
   bridge:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: Bridge (core program to the Mathlib program), needs the Mathlib lane
     needs: mathlib
     runs-on: ubuntu-latest
@@ -252,6 +253,76 @@ jobs:
             transformer/mathlib/TransformerCore/
             transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPilotSupport.olean
             transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPilot/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bridge.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerCore/
+            transformer/mathlib/.lake/build/lib/lean/Transformer/
+          if-no-files-found: error
+
+  raw-packed-pilot:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-raw-packed-pilot' && github.event.repository.private == false }}
+    name: Raw packed q8 TI h0/j0/tk0 (all 512, bounded transport, compile and replay)
+    runs-on: ubuntu-latest
+    timeout-minutes: 125
+    permissions:
+      contents: read
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      LLVM_PARALLEL_COMPILE_JOBS: "1"
+      CMAKE_BUILD_PARALLEL_LEVEL: "1"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tiny packed serialization and fail-closed controls (no kernel evidence)
+        run: TMPDIR="$RUNNER_TEMP" python3 -B -W error transformer/mathlib/test_rawpacked.py
+      - name: Original scalar tiny regressions (no model evaluation)
+        run: TMPDIR="$RUNNER_TEMP" python3 -B -W error transformer/mathlib/test_rawpilot.py
+      - name: Canonical quantizer dependency (binary wheel only)
+        timeout-minutes: 2
+        run: |
+          TMPDIR="$RUNNER_TEMP" python3 -m pip install --only-binary=:all: numpy==2.2.6
+      - name: Install elan (stable v4.35.0 only)
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          export TMPDIR="$RUNNER_TEMP"
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$TMPDIR/rawpacked-elan-init.sh"
+          sh "$TMPDIR/rawpacked-elan-init.sh" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib dependency cache (no project artifact restore)
+        timeout-minutes: 8
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          export TMPDIR="$RUNNER_TEMP"
+          /usr/bin/time -v -o rawpacked-cache.time timeout -s TERM -k 10 420 lake exe cache get 2>&1 | tee rawpacked-cache.ci.out
+      - name: Generic gate then ONE full raw packed TI site (serial)
+        timeout-minutes: 112
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          ./rawpacked.sh 2>&1 | tee rawpacked.ci.out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-rawpacked-TI-h0-j0-tk0-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/rawpacked-out/
+            transformer/mathlib/rawpacked*.ci.out
+            transformer/mathlib/rawpacked*.time
+            transformer/mathlib/TransformerBridge/RawPacked*.lean
+            transformer/mathlib/TransformerBridge/RawPilotSupport.lean
+            transformer/mathlib/TransformerBridge/RawPacked/Generated/
+            transformer/mathlib/TransformerCore/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPacked*.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPilotSupport.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPacked/
             transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bridge.olean
             transformer/mathlib/.lake/build/lib/lean/TransformerCore/
             transformer/mathlib/.lake/build/lib/lean/Transformer/

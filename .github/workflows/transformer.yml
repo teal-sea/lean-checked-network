@@ -18,19 +18,20 @@ on:
           - mathlib-row0-pilot
           - mathlib-raw-pilot
           - mathlib-raw-packed-pilot
+          - mathlib-row0-finalize
       row0_with_hb:
         description: Also compile/replay concrete hB and the unconditional ROW0 mq theorem
         type: boolean
         default: false
 
 concurrency:
-  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-raw-packed-pilot' && '-mathlib-raw-packed' || inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
+  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || inputs.core_mode == 'mathlib-raw-packed-pilot' && '-mathlib-raw-packed' || inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
   # false: a later push queues behind the running pilot instead of killing it (the evidence is the point)
   cancel-in-progress: false
 
 jobs:
   mathlib:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: Mathlib lane (ExpFix, Program, Logits, Compose, Raw), cache, replay, axioms
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -55,7 +56,7 @@ jobs:
           if-no-files-found: warn
 
   core:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: ${{ inputs.core_mode == 'cached-support-pilot' && 'CACHED SUPPORT PILOT (generic only; no frozen literals or pairs)' || 'CACHED PAIR PILOT (three pairs; row0 unproved)' }}
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 20 || 170 }}
@@ -105,7 +106,7 @@ jobs:
           if-no-files-found: warn
 
   bridge:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: Bridge (core program to the Mathlib program), needs the Mathlib lane
     needs: mathlib
     runs-on: ubuntu-latest
@@ -326,4 +327,77 @@ jobs:
             transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bridge.olean
             transformer/mathlib/.lake/build/lib/lean/TransformerCore/
             transformer/mathlib/.lake/build/lib/lean/Transformer/
+          if-no-files-found: error
+
+  row0-finalize:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-row0-finalize' && github.event.repository.private == false }}
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      ROW0_WITH_HB: ${{ inputs.row0_with_hb && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Tiny controls (no kernel evidence)
+        run: |
+          mkdir -p "$RUNNER_TEMP/row0-finalizer"
+          export TMPDIR="$RUNNER_TEMP/row0-finalizer"
+          python3 -W error transformer/mathlib/test_row0.py
+          python3 -W error transformer/mathlib/test_row0_finalize.py
+      - name: Download exact retained public artifact (no extraction)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "${{ github.event.repository.private }}" = false
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12096712360" > "$RUNNER_TEMP/row0-finalizer/artifact.json"
+          curl --fail --location --retry 2 --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/artifacts/12096712360/zip" \
+            -o "$RUNNER_TEMP/row0-finalizer/checkpoint.zip"
+      - name: Install stable compiler
+        run: |
+          set -euo pipefail
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$RUNNER_TEMP/row0-finalizer/elan-init.sh"
+          sh "$RUNNER_TEMP/row0-finalizer/elan-init.sh" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib dependencies (one Lake process)
+        timeout-minutes: 9
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          timeout -s TERM -k 20 480 lake exe cache get
+      - name: Verified selected restore and fresh ROW0 assembly
+        timeout-minutes: 28
+        run: |
+          set -euo pipefail
+          export TMPDIR="$RUNNER_TEMP/row0-finalizer"
+          cd transformer/mathlib
+          args=()
+          if [ "$ROW0_WITH_HB" = 1 ]; then args+=(--with-hb); fi
+          timeout -s TERM -k 20 1600 python3 -W error row0_finalize.py \
+            --archive "$RUNNER_TEMP/row0-finalizer/checkpoint.zip" \
+            --artifact-metadata "$RUNNER_TEMP/row0-finalizer/artifact.json" \
+            "${args[@]}" 2>&1 | tee row0-finalize.ci.out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-ROW0-finalizer-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/row0-finalize-out/
+            transformer/mathlib/row0-finalize.ci.out
+            transformer/mathlib/row0_checkpoint.json
+            transformer/mathlib/row0_finalize.py
+            transformer/mathlib/TransformerBridge/Row0*.lean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Row0*.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bounds.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/FrozenBounds.olean
           if-no-files-found: error

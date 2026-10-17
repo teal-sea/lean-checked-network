@@ -38,6 +38,16 @@ def main():
                 [[0, b] for b in reversed(range(113))]):
         reject(lambda: r.coverage(bad))
     check_branches(r.HERE / 'TransformerBridge/Row0Checks.lean')
+    emitted = checks_source()
+    assert emitted.count('import TransformerCore.Net.CachedPair0_') == 113
+    assert 'import TransformerBridge.Row0Compat\n' in emitted
+    assert 'import Mathlib.' not in emitted
+    # Removing the model/instance closure recreates the original import defect.
+    with tempfile.TemporaryDirectory() as tmp:
+        broken = Path(tmp) / 'Row0Checks.lean'
+        broken.write_text(emitted.replace('import TransformerBridge.Row0Compat',
+                                          'import Mathlib.Tactic.FinCases'))
+        reject(lambda: check_branches(broken))
     # The analytic proof body is exactly the existing Compose body, specialized pointwise.
     compose = (r.HERE / 'Transformer/Compose.lean').read_text()
     proof = compose.split('theorem real_model_adds_mod_113\n', 1)[1]

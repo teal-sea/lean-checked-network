@@ -6,7 +6,7 @@ HERE = Path(__file__).resolve().parent
 
 def checks_source():
     text = '\n'.join(f'import TransformerCore.Net.CachedPair0_{b}' for b in range(113))
-    text += '\nimport Mathlib.Tactic.FinCases\n\nnamespace TransformerBridge\n\n'
+    text += '\nimport TransformerBridge.Row0Compat\n\nnamespace TransformerBridge\n\n'
     text += 'set_option maxRecDepth 100000\nset_option maxHeartbeats 4000000\n\n'
     text += ('theorem row0_fastCheck (b : Fin 113) :\n'
              '    TransformerCore.fastCheck TransformerCore.Net.cfg TransformerCore.Net.tab\n'

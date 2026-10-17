@@ -157,6 +157,10 @@ class PackedFixtures(unittest.TestCase):
 
     def test_existing_workflow_modes_and_jobs_preserved(self):
         workflow = (data.ROOT / '.github/workflows/transformer.yml').read_text()
+        workflow = workflow.split('\n  row0-finalize:\n', 1)[0].rstrip() + '\n'
+        workflow = workflow.replace('          - mathlib-row0-finalize\n', '')
+        workflow = workflow.replace("inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || ", '')
+        workflow = workflow.replace("inputs.core_mode != 'mathlib-row0-finalize' && ", '')
         # Only the new input, its concurrency suffix and exclusion from old broad jobs vary.
         restored = workflow[:workflow.index('\n  raw-packed-pilot:')]
         restored = restored.replace('          - mathlib-raw-packed-pilot\n', '')

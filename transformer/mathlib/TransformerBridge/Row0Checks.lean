@@ -111,7 +111,7 @@ import TransformerCore.Net.CachedPair0_109
 import TransformerCore.Net.CachedPair0_110
 import TransformerCore.Net.CachedPair0_111
 import TransformerCore.Net.CachedPair0_112
-import Mathlib.Tactic.FinCases
+import TransformerBridge.Row0Compat
 
 namespace TransformerBridge
 

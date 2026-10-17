@@ -12,6 +12,10 @@ from row0_receipt import sha
 from test_row0_harness import fixture_receipt
 
 
+# Genuine captured failure context from pinned source run 39016896391.
+CAPTURED_OUT = b'\xe2\x9a\xa0 [3/73] Replayed TransformerCore.Equiv\nwarning: TransformerCore/Equiv.lean:42:69: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:161:15: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:166:15: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:226:30: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:245:28: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:245:28: This simp argument is unused:\n  Int.ofNat_eq_coe\n\nHint: Omit it from the simp argument list.\n  [apply] simp only [Function.comp]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: TransformerCore/Equiv.lean:255:28: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:280:68: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:281:36: This simp argument is unused:\n  e\n\nHint: Omit it from the simp argument list.\n  [apply] simp [hlt, ih]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: TransformerCore/Equiv.lean:321:64: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:322:31: This simp argument is unused:\n  e\n\nHint: Omit it from the simp argument list.\n  [apply] simp [h]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: TransformerCore/Equiv.lean:330:15: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:335:17: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\nwarning: TransformerCore/Equiv.lean:386:13: `Int.ofNat_eq_coe` has been deprecated: Use `Int.ofNat_eq_natCast` instead\n\nHint: Replace the deprecated name:\n  Int.ofNat_eq_c\xcc\xb5o\xcc\xb5e\xcc\xb5n\xcc\xb2a\xcc\xb2t\xcc\xb2C\xcc\xb2a\xcc\xb2s\xcc\xb2t\xcc\xb2\n\xe2\x9c\x96 [921/921] Building TransformerBridge.Row0Checks (2.6s)\nwarning: TransformerBridge/Row0Checks.lean: imports `Mathlib.Tactic.FinCases` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file\ntrace: .> LEAN_PATH=/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/Cli/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/batteries/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/Qq/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/aesop/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/importGraph/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/plausible/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/packages/mathlib/.lake/build/lib/lean:/home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/build/lib/lean /home/runner/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/TransformerBridge/Row0Checks.lean -o /home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Row0Checks.olean -i /home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Row0Checks.ilean -c /home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/build/ir/TransformerBridge/Row0Checks.c --setup /home/runner/work/lean-checked-network/lean-checked-network/transformer/mathlib/.lake/build/ir/TransformerBridge/Row0Checks.setup.json --json\nerror: TransformerBridge/Row0Checks.lean:124:2: failed to synthesize\n  Fintype (Fin 113)\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.\nerror: TransformerBridge/Row0Checks.lean:125:10: maximum recursion depth has been reached\nuse `set_option maxRecDepth <num>` to increase limit\nuse `set_option diagnostics true` to get diagnostic information\nerror: TransformerBridge/Row0Checks.lean:126:2: No goals to be solved\nSome required targets logged failures:\n- TransformerBridge.Row0Checks\nerror: build failed\n'
+CAPTURED_TIME = b'Command exited with non-zero status 1\n\tCommand being timed: "timeout -s TERM -k 20 900 lake build TransformerBridge.Row0Checks"\n\tUser time (seconds): 2.77\n\tSystem time (seconds): 0.85\n\tPercent of CPU this job got: 105%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:03.44\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 2156208\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 13\n\tMinor (reclaiming a frame) page faults: 96906\n\tVoluntary context switches: 7028\n\tInvoluntary context switches: 120\n\tSwaps: 0\n\tFile system inputs: 1096\n\tFile system outputs: 1136\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n'
+
 def reject(fn):
     try:
         fn()
@@ -103,7 +107,7 @@ def step_controls():
     module = 'TransformerCore.Fake'
     steps = [{'name': 'build_' + module, 'command': ['lake', 'build', module], 'exit': 0},
              {'name': 'replay_' + module, 'command': ['lake', 'env', 'leanchecker', module], 'exit': 0},
-             {'name': 'build_TransformerBridge.Row0Checks', 'exit': 1}]
+             {'name': 'build_TransformerBridge.Row0Checks', 'command': ['lake', 'build', 'TransformerBridge.Row0Checks'], 'exit': 1}]
     encode = lambda: '\n'.join(json.dumps(x) for x in steps)
     f.verify_steps(encode(), [module])
     steps[1]['exit'] = 1
@@ -113,6 +117,47 @@ def step_controls():
     reject(lambda: f.verify_steps(encode(), [module]))
     steps.pop(1)
     reject(lambda: f.verify_steps(encode(), [module]))
+
+
+def history_controls(root):
+    module = 'TransformerCore.Fake'
+    good = [{'name': phase + module, 'command': cmd, 'exit': 0} for phase, cmd in
+            [('build_', ['lake', 'build', module]),
+             ('replay_', ['lake', 'env', 'leanchecker', module])]]
+    def run(steps=good, out=CAPTURED_OUT, timing=CAPTURED_TIME, omit='', accepted=False,
+            repin=False):
+        members = {f.DIAGNOSTIC_BASE + '.out': out, f.DIAGNOSTIC_BASE + '.time': timing}
+        pins = {f.DIAGNOSTIC_BASE + '.out': f.digest(CAPTURED_OUT),
+                f.DIAGNOSTIC_BASE + '.time': f.digest(CAPTURED_TIME)}
+        if repin:
+            pins = {n: f.digest(d) for n, d in members.items()}
+        path = root / 'history.zip'
+        with zipfile.ZipFile(path, 'w') as z:
+            for n, data in members.items():
+                if not n.endswith(omit) or not omit:
+                    z.writestr(n, data)
+            if accepted:
+                z.writestr('mathlib/row0-out/INTEGER_ACCEPTED.json', '{}')
+        metadata = {'mathlib/row0-out/steps.jsonl':
+                    '\n'.join(json.dumps(x) for x in steps).encode()}
+        with zipfile.ZipFile(path) as z:
+            return f.verify_history(z, metadata, {'metadata_sha256': pins}, [module])
+    assert run()['failed_wrapper_step'] == 'NOT_RECORDED_BY_OLD_RUNNER'
+    failed = {'name': 'build_TransformerBridge.Row0Checks',
+              'command': ['lake', 'build', 'TransformerBridge.Row0Checks'], 'exit': 1}
+    assert run(good + [failed])['failed_wrapper_step'] == 'RECORDED'
+    for change in ({'exit': 0}, {'exit': 2}, {'command': ['echo', 'fake']}):
+        reject(lambda: run(good + [{**failed, **change}]))
+    for suffix in ('.out', '.time'):
+        reject(lambda: run(omit=suffix))
+    reject(lambda: run(out=CAPTURED_OUT + b'tampered'))
+    reject(lambda: run(timing=CAPTURED_TIME.replace(b'Exit status: 1', b'Exit status: 0')))
+    reject(lambda: run(timing=CAPTURED_TIME.replace(b'Exit status: 1', b'Exit status: 0'), repin=True))
+    reject(lambda: run(out=b'no compiler failure', repin=True))
+    reject(lambda: run(accepted=True))
+    for i in range(2):
+        reject(lambda: run(good[:i] + good[i+1:]))
+        reject(lambda: run([{**r, 'exit': 1} if j == i else r for j, r in enumerate(good)]))
 
 
 def import_controls(root):
@@ -250,11 +295,13 @@ def restore_fixture(parent, fault=''):
     for module in module_names:
         steps += [{'name': 'build_' + module, 'command': ['lake', 'build', module], 'exit': 0},
                   {'name': 'replay_' + module, 'command': ['lake', 'env', 'leanchecker', module], 'exit': 0}]
-    steps.append({'name': 'build_TransformerBridge.Row0Checks', 'exit': 1})
+    steps.append({'name': 'build_TransformerBridge.Row0Checks', 'command': ['lake', 'build', 'TransformerBridge.Row0Checks'], 'exit': 1})
     names = [n for n in f.selected(generated) if n not in
              ('TransformerBridge.row0_fastCheck', 'TransformerBridge.row0_integer_margin')
              and '.cached_value_' not in n and '.cached_pilot_' not in n]
     metadata = {
+        f.DIAGNOSTIC_BASE + '.out': CAPTURED_OUT,
+        f.DIAGNOSTIC_BASE + '.time': CAPTURED_TIME,
         'mathlib/row0-out/prefix/receipt.json': json.dumps(record).encode(),
         'mathlib/row0-out/source-receipt.json': json.dumps({'source_commit': 'FAKE_OLD'}).encode(),
         'mathlib/row0-out/steps.jsonl': '\n'.join(json.dumps(x) for x in steps).encode(),
@@ -310,6 +357,7 @@ def main():
         source_controls(root)
         archive_controls(root)
         step_controls()
+        history_controls(root)
         import_controls(root)
         fresh_controls(root)
         for failure in ('', 'negative_altered_packing', 'TransformerBridge.Row0Checks',

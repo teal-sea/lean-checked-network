@@ -90,8 +90,37 @@ def verify_steps(text, modules):
             require(bool(found) and all(r.get('exit') == 0 and r.get('command') == command for r in found),
                     'old successful build/replay missing: ' + phase + module)
     failed = [r for r in steps if r.get('name') == 'build_TransformerBridge.Row0Checks']
-    require(bool(failed) and all(r.get('exit') == 1 for r in failed),
-            'original assembly failure not recorded')
+    require(all(r.get('exit') == 1 and r.get('command') ==
+                ['lake', 'build', 'TransformerBridge.Row0Checks'] for r in failed),
+            'inconsistent original assembly failure step')
+    return 'RECORDED' if failed else 'NOT_RECORDED_BY_OLD_RUNNER'
+
+
+DIAGNOSTIC_BASE = 'mathlib/row0-out/build_TransformerBridge.Row0Checks'
+
+
+def verify_history(archive, metadata, pin, modules):
+    """Metadata only: old runner could throw before saving the failed step."""
+    names = archive_index(archive)
+    require(not any(Path(n).name.endswith('_ACCEPTED.json') for n in names),
+            'old archive contains accepted verdict')
+    diagnostics = {suffix: read_checked(archive, DIAGNOSTIC_BASE + suffix,
+                   pin['metadata_sha256'][DIAGNOSTIC_BASE + suffix]).decode()
+                   for suffix in ('.out', '.time')}
+    out, timing = diagnostics['.out'], diagnostics['.time']
+    require(all(token in out for token in (
+        'error: TransformerBridge/Row0Checks.lean:', 'Fintype (Fin 113)',
+        'maximum recursion depth has been reached', 'No goals to be solved',
+        'error: build failed')), 'original assembly diagnostics missing')
+    require(re.findall(r'^Command exited with non-zero status (\d+)$', timing, re.M) == ['1']
+            and re.findall(r'^\s*Exit status: (\d+)$', timing, re.M) == ['1']
+            and 'lake build TransformerBridge.Row0Checks"' in timing,
+            'original assembly exit is not 1')
+    status = verify_steps(metadata['mathlib/row0-out/steps.jsonl'].decode(), modules)
+    return {'failed_wrapper_step': status, 'exit': 1,
+            'diagnostic_sha256': {DIAGNOSTIC_BASE + suffix:
+                pin['metadata_sha256'][DIAGNOSTIC_BASE + suffix] for suffix in diagnostics},
+            'old_accepted_verdict': False}
 
 
 def check_import_closure(modules):
@@ -167,7 +196,7 @@ def restore(archive_path, metadata_path, pin):
         verify_sources(record, pin['source_exceptions'])
         check_branches(HERE / 'TransformerBridge/Row0Checks.lean')
         check_import_closure(set(prefix + PAIRS))
-        verify_steps(metadata['mathlib/row0-out/steps.jsonl'].decode(), prefix + PAIRS)
+        historical_failure = verify_history(archive, metadata, pin, prefix + PAIRS)
         prefix_names = [n for n in selected(receipt) if n not in
                         ('TransformerBridge.row0_fastCheck', 'TransformerBridge.row0_integer_margin')
                         and '.cached_value_' not in n and '.cached_pilot_' not in n]
@@ -201,6 +230,7 @@ def restore(archive_path, metadata_path, pin):
         result = {'source_run': pin['source_run'], 'source_sha': pin['source_sha'],
                   'archive_sha256': pin['zip_sha256'], 'prefix_receipt_sha256': pin['prefix_receipt_sha256'],
                   'scope': 'RESTORED_PREVIOUS_COMPILED_REPLAYED; no fresh build claim',
+                  'historical_assembly_failure': historical_failure,
                   'objects': objects, 'restored_traces': traces, 'missing_traces': missing_traces,
                   'source_exceptions': pin['source_exceptions']}
         return result, receipt, record

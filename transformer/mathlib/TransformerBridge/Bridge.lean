@@ -131,6 +131,8 @@ theorem nth_headVec (e : ℕ × ℕ × ℕ) (v0 v1 v2 : List ℤ) (k : ℕ) :
       = (e.1 : ℤ) * nth 0 v0 k + ((e.2.1 : ℤ) * nth 0 v1 k + (e.2.2 : ℤ) * nth 0 v2 k) := by
   simp only [TransformerCore.headVec, nth_vadd, nth_smulN]
 
+theorem toNat_cast_eq_max (z : ℤ) : ((Int.toNat z : ℕ) : ℤ) = max 0 z := by omega
+
 theorem nth_map_toNat (L : List ℤ) (k : ℕ) : nth 0 (L.map Int.toNat) k = Int.toNat (nth 0 L k) := by
   induction L generalizing k with
   | nil => simp [nth]
@@ -198,7 +200,7 @@ theorem logits_nth_eq (hG : T.G.length = 512) (k : Fin 113) :
     rw [nth_lincombN _ _ _ 512 (le_of_eq hG), Finset.sum_range]
     apply Finset.sum_congr rfl
     intro i _
-    rw [nth_map_toNat, preAct_eq, Int.toNat_eq_max, Transformer.hid, max_comm]
+    rw [nth_map_toNat, preAct_eq, toNat_cast_eq_max, Transformer.hid]
     all_goals rfl
   unfold TransformerCore.logits
   simp only [e0, e1, e2, e3, dens, den, nth_vadd, nth_smulN, hlin, headU, nth_headVec, cfgOf_S2]
@@ -270,8 +272,7 @@ theorem hA_of_fastCheck (p : Transformer.ExpParams) (S : ℕ) (T : Tab) (bd : Bn
     (by omega) hkc
   rw [← logits_nth_eq p S T a b hG k, ← logits_nth_eq p S T a b hG (Transformer.ans a b), hc]
   unfold TransformerCore.margin at hmar
-  simp only [Int.sub_def] at hmar
-  simp only [gt_iff_lt] at hmar
+  simp only [Int.sub_def, gt_iff_lt] at hmar
   omega
 
 end TransformerBridge

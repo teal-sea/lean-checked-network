@@ -11,7 +11,7 @@ step() { # name, timeout seconds, command...
   echo "=== $name start $(date -u +%T)"
   timeout -s TERM -k 20 "$secs" "$@" > "$out/$name.out" 2>&1; local rc=$?
   echo "$name exit $rc: $(grep -E 'Build completed|error' "$out/$name.out" | head -3 | tr '\n' ' ')"
-  [ "$rc" -eq 0 ] || { status=1; grep -E "error" "$out/$name.out" | head -40; }
+  [ "$rc" -eq 0 ] || { status=1; cat "$out/$name.out"; }
   return "$rc"
 }
 ./sync_core.sh --check || status=1

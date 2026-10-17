@@ -30,4 +30,5 @@ done
 check smoke-slice-before-full-bounds-before-row0 1 "$ordered"
 # the Table assembly must not evaluate the tables: no `decide` over tablesOk itself, no simp/unfold of tab or bnd
 check table-no-monolithic-decide 0 "$(grep -c 'tablesOk tab bnd = true := by' Transformer/Net/Table.lean)"
+python3 test_pair_harness.py || fail=1
 exit $fail

@@ -485,6 +485,27 @@ def B_MODULES(heads):
             + ["B.TU0", "B.TU1", "B.Misc", "B.G"])
 
 
+# Independent modules keep each kernel timing attributable to one literal pair.
+PILOT_PAIRS = ((0, 0), (0, 112), (96, 73))
+
+
+def write_pairs(root, name):
+    for a, b in PILOT_PAIRS:
+        (root / f"Pair{a}_{b}.lean").write_text(f"""import Transformer.{name}.Weights
+
+/-! Fixed-pair kernel pilot only. Does not establish fast_0 or all-input acceptance. -/
+
+namespace Transformer.{name}
+
+open Transformer
+
+theorem pilot_{a}_{b} : fastCheck cfg tab bnd E2 {a} {b} = true := by
+  decide +kernel
+
+end Transformer.{name}
+""")
+
+
 def write_rows(root, name, rows_per_file):
     files = []
     starts = list(range(0, P, rows_per_file))
@@ -624,8 +645,9 @@ def main():
     write_manifest(root)
     mods = write_bounds(root, args.name, tb)
     write_table(root, args.name, tb)
+    write_pairs(root, args.name)
     nfiles = write_rows(root, args.name, args.rows_per_file)
-    log(f"wrote {root}: Weights, {len(mods)} B modules, Table, Cols, {nfiles} row files, AllInputs, W.sha256")
+    log(f"wrote {root}: Weights, {len(mods)} B modules, Table, Cols, three pair pilots, {nfiles} row files, AllInputs, W.sha256")
 
 
 if __name__ == "__main__":

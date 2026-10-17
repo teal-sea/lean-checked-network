@@ -94,9 +94,19 @@ def bounds_problems(root, mods, ks, ntok, nG, ncol, heads=4):
         want = f"theorem ok_G_{i} : vecOk 113 {ks['kG']} G_{i} = true := by decide +kernel"
         if want not in files["B.G"]:
             bad.append(f"missing: {want}")
+    for key, n, k in (("TI2", 512, ks["kTI"]), ("TU2", 113, ks["kTU"])):
+        for h in range(heads):
+            want = f"theorem ok_{key}_{h} : vecOk {n} {k} {key}_{h} = true := by decide +kernel"
+            if want not in files["B.Misc"]:
+                bad.append(f"missing: {want}")
     for want in (f"theorem ok_CI : vecOk 512 {ks['kCI']} CI", f"theorem ok_CU : vecOk 113 {ks['kCU']} CU"):
         if want not in files["B.Misc"]:
             bad.append(f"missing: {want}")
+    nvec = sum(len(re.findall(r"^theorem ok_\w+ : vecOk .* := by decide \+kernel$", text, re.M))
+               for text in files.values())
+    expected = 4 * heads * ntok + 2 * heads + 2 + nG
+    if nvec != expected:
+        bad.append(f"{nvec} per-vector certificates, expected {expected}")
     # no monolithic evaluation, no forbidden construct anywhere
     if re.search(r"tablesOk tab bnd = true := by", table):
         bad.append("Table.lean evaluates tablesOk directly")
@@ -121,6 +131,11 @@ victim = ROOT / "B" / "TI1_2.lean"
 victim.write_text(victim.read_text().replace("theorem ok_TI1_2_1 : vecOk 512 11 TI1_2_1 = true := by decide +kernel", ""))
 assert any("ok_TI1_2_1" in p for p in bounds_problems(ROOT, MODS, KS, 3, 5, 2)), "a missing vector theorem must be flagged"
 assert any("kTI" in p or "vecOk 512 99" in p or "missing" in p for p in bounds_problems(ROOT, MODS, {**KS, "kTI": 99}, 3, 5, 2))
+# red: the one-vector-per-head position-2 tables are also part of the 2346 certificates.
+ROOT2, MODS2 = emit_bounds()
+misc = ROOT2 / "B" / "Misc.lean"
+misc.write_text(misc.read_text().replace("theorem ok_TI2_1 : vecOk 512 11 TI2_1 = true := by decide +kernel", ""))
+assert any("ok_TI2_1" in p for p in bounds_problems(ROOT2, MODS2, KS, 3, 5, 2))
 # the committed sources are what the generator emits from them (regeneration is a no-op)
 import shutil  # noqa: E402
 lean_net = Path(__file__).resolve().parent / "lean" / "Transformer" / "Net"
@@ -138,5 +153,35 @@ if (lean_net / "Weights.lean").exists():
     for line in (lean_net / "W.sha256").read_text().splitlines():
         digest, rel = line.split("  ")
         assert hashlib.sha256((lean_net / rel).read_bytes()).hexdigest() == digest, f"{rel} differs from W.sha256"
-    print(f"ok: committed bounds layer = generator output ({shape}); W data matches W.sha256")
+    count = 4 * shape['heads'] * shape['ntok'] + 2 * shape['heads'] + 2 + shape['nG']
+    print(f"ok: committed bounds layer = generator output ({shape}); {count} per-vector certificates; W data matches W.sha256")
 print("ok: bounds layer emission is consistent; a missing vector theorem and a wrong bound are flagged")
+
+# Fixed-pair emission only: no numerical evaluation and no kernel invocation.
+PAIR_ROOT = Path(tempfile.mkdtemp())
+g.write_pairs(PAIR_ROOT, 'Net')
+EXPECTED_PAIRS = ((0, 0), (0, 112), (96, 73))
+assert g.PILOT_PAIRS == EXPECTED_PAIRS
+
+def pair_problems(root):
+    bad = []
+    if {p.name for p in root.glob('Pair*.lean')} != {f'Pair{a}_{b}.lean' for a, b in EXPECTED_PAIRS}:
+        bad.append('missing or extra pair module')
+    for a, b in EXPECTED_PAIRS:
+        path = root / f'Pair{a}_{b}.lean'
+        text = path.read_text() if path.exists() else ''
+        statement = f'theorem pilot_{a}_{b} : fastCheck cfg tab bnd E2 {a} {b} = true := by\n  decide +kernel'
+        if statement not in text or text.count('theorem ') != 1:
+            bad.append(f'changed theorem {a},{b}')
+        if text.splitlines()[:1] != ['import Transformer.Net.Weights']:
+            bad.append(f'changed data import {a},{b}')
+    return bad
+
+assert pair_problems(PAIR_ROOT) == []
+for a, b in EXPECTED_PAIRS:
+    path = f'Pair{a}_{b}.lean'
+    assert (PAIR_ROOT / path).read_bytes() == (lean_net / path).read_bytes(), path
+victim = PAIR_ROOT / 'Pair96_73.lean'
+victim.write_text(victim.read_text().replace('E2 96 73', 'E2 96 72'))
+assert pair_problems(PAIR_ROOT), 'changed literal pair must be rejected'
+print('ok: three exact fixed-pair kernel statements = generator output; changed literal rejected (emission only)')

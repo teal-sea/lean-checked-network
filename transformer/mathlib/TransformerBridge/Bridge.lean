@@ -138,9 +138,16 @@ theorem nth_map_toNat (L : List ℤ) (k : ℕ) : nth 0 (L.map Int.toNat) k = Int
   | nil => simp [nth]
   | cons x xs ih => cases k <;> simp [nth, ih]
 
+/-- Normalize the list coercion inserted when a natural list is read at integer type.
+The type on the inner lookup keeps the cast outside `nth`, including out-of-range entries. -/
+theorem nth_natCast (L : List ℕ) (k : ℕ) :
+    nth (0 : ℤ) (L.map (fun x : ℕ => (x : ℤ))) k = ((nth 0 L k : ℕ) : ℤ) :=
+  TransformerCore.nth_map (fun x : ℕ => (x : ℤ)) 0 L k
+
 /-- Entry `k` of `lincombN cs rs` is the sum over any `n` at least the number of rows. -/
 theorem nth_lincombN (cs : List ℕ) (rs : List (List ℤ)) (k n : ℕ) (hn : rs.length ≤ n) :
     nth 0 (lincombN cs rs) k = ∑ i ∈ Finset.range n, (nth 0 cs i : ℤ) * nth 0 (nth [] rs i) k := by
+  simp only [nth_natCast]
   induction cs generalizing rs n with
   | nil => simp [lincombN, nth]
   | cons c cs ih =>
@@ -200,7 +207,7 @@ theorem logits_nth_eq (hG : T.G.length = 512) (k : Fin 113) :
     rw [nth_lincombN _ _ _ 512 (le_of_eq hG), Finset.sum_range]
     apply Finset.sum_congr rfl
     intro i _
-    rw [nth_map_toNat, preAct_eq, toNat_cast_eq_max, Transformer.hid]
+    rw [nth_natCast, nth_map_toNat, preAct_eq, toNat_cast_eq_max, Transformer.hid]
     all_goals rfl
   unfold TransformerCore.logits
   simp only [e0, e1, e2, e3, dens, den, nth_vadd, nth_smulN, hlin, headU, nth_headVec, cfgOf_S2]
@@ -271,8 +278,9 @@ theorem hA_of_fastCheck (p : Transformer.ExpParams) (S : ℕ) (T : Tab) (bd : Bn
   have hle := le_maxExcept (TransformerCore.logits (cfgOf p S) T a b) ((a + b) % 113) k
     (by omega) hkc
   rw [← logits_nth_eq p S T a b hG k, ← logits_nth_eq p S T a b hG (Transformer.ans a b), hc]
-  unfold TransformerCore.margin at hmar
-  simp only [Int.sub_def, gt_iff_lt] at hmar
+  change (E2 : ℤ) <
+    nth 0 (TransformerCore.logits (cfgOf p S) T a b) ((a + b) % 113) -
+      maxExcept (TransformerCore.logits (cfgOf p S) T a b) ((a + b) % 113) at hmar
   omega
 
 end TransformerBridge

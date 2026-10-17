@@ -1,8 +1,7 @@
 name: transformer
 
-# The transformer lane: an independent Mathlib job (conditional composition theorem) and a core-Lean
-# smoke job (Model, Fast, Equiv, tables_ok split into per-vector bound checks, row 0 only). Neither builds the
-# other 112 row files or Net.AllInputs; that waits until the row-0 time and memory are measured. Outputs are uploaded even on failure.
+# Core is a PAIR PILOT: accepted bounds/Cols plus three fixed literal checks.
+# A green pilot leaves row0 and all-input acceptance unproved. Full-row remains an explicit smoke.sh mode.
 on:
   pull_request:
     paths: ["transformer/**", ".github/workflows/transformer.yml"]
@@ -39,11 +38,12 @@ jobs:
           if-no-files-found: warn
 
   core:
-    name: Core lane smoke (Model, Fast, Equiv, split table bounds, row 0 only), time and memory
+    name: PAIR PILOT (three literal pairs; row0 remains unproved), time and memory
     runs-on: ubuntu-latest
     timeout-minutes: 170
     env:
       LEAN_NUM_THREADS: "2"
+      CORE_MODE: pair-pilot
     steps:
       - uses: actions/checkout@v5
       - name: Install elan (toolchain comes from transformer/lean/lean-toolchain)
@@ -56,13 +56,13 @@ jobs:
           python3 transformer/test_gen_emission.py
           python3 transformer/lean/mirror_bounds.py
           transformer/lean/test_harness.sh
-      - name: smoke.sh (split gates, streamed resource monitor, per-gate timeouts)
+      - name: PAIR PILOT (300s per pair; Cols, axioms, replay; no row0)
         timeout-minutes: 150
         run: cd transformer/lean && ./smoke.sh 2>&1 | tee ci-out-smoke.txt; exit "${PIPESTATUS[0]}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: transformer-core-smoke
+          name: transformer-core-pair-pilot
           path: |
             transformer/lean/ci-out/
             transformer/lean/ci-out-smoke.txt

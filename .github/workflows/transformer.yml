@@ -53,8 +53,8 @@ jobs:
       - name: Cheap regressions first (generator emission, scan and gate checks)
         run: |
           python3 -m pip install numpy
-          python3 -I transformer/test_gen_emission.py
-          python3 -I transformer/lean/mirror_bounds.py
+          python3 transformer/test_gen_emission.py
+          python3 transformer/lean/mirror_bounds.py
           transformer/lean/test_harness.sh
       - name: smoke.sh (split gates, streamed resource monitor, per-gate timeouts)
         timeout-minutes: 150

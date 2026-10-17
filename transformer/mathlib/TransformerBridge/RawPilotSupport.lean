@@ -13,7 +13,9 @@ theorem sumN_eq (n : Nat) (f : Nat → Int) : sumN n f = ∑ i : Fin n, f i := b
   have h : sumN n f = ∑ i ∈ Finset.range n, f i := by
     induction n with
     | zero => simp [sumN]
-    | succ n ih => rw [sumN, Finset.sum_range_succ, ih]
+    | succ n ih =>
+      rw [sumN, Finset.sum_range_succ, ih]
+      rfl
   rw [h, Finset.sum_range]
 
 /-- Evaluate only the specified finite integer contraction. -/
@@ -25,7 +27,8 @@ theorem contract_eq {n : Nat} (f g : Fin n → Int) :
   rw [contract, sumN_eq]
   apply Finset.sum_congr rfl
   intro i _
-  rw [dif_pos i.isLt]
+  rw [dite_eq_left i.isLt]
+  rfl
 
 /-- Transport an independently certified value vector through the unchanged output projection. -/
 theorem ovec_of_vvec (W : Transformer.Weights) (h : Fin 4) (tk : Fin 114) (j : Fin 3)
@@ -42,7 +45,7 @@ theorem TI_of_ovec (W : Transformer.Weights) (S : Nat) (h : Fin 4) (tk : Fin 114
     (valid : ¬ (j = 2 ∧ tk ≠ 113)) (i : Fin 512) :
     (W.rawTables S).TI h j tk i = contract o (fun d => W.Win d i) := by
   change (if j = 2 ∧ tk ≠ 113 then 0 else ∑ d, W.ovec h tk j d * W.Win d i) = _
-  rw [if_neg valid, contract_eq]
+  rw [ite_eq_right valid, contract_eq]
   apply Finset.sum_congr rfl
   intro d _
   rw [ho]

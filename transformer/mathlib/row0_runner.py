@@ -80,18 +80,19 @@ def run(name, args, seconds=900, negative=False):
     elapsed = time.monotonic() - started
     text = (OUT / (name + '.out')).read_text()
     item = {'command': args, 'seconds': elapsed, 'exit': proc.returncode}
+    # Persist the actual producer exit before diagnostic classification can throw.
+    with (OUT / 'steps.jsonl').open('a') as trace:
+        trace.write(json.dumps({'name': name, **item}, sort_keys=True) + '\n')
+    if not negative and proc.returncode:
+        raise ValueError(f'{name} failed: {proc.returncode}\n{text}')
     warnings = inherited_warnings(text)
     item['inherited_warnings'] = warnings
     with (OUT / (name + '-warnings.json')).open('w') as receipt:
         json.dump(warnings, receipt, indent=2, sort_keys=True)
         receipt.write('\n')
-    with (OUT / 'steps.jsonl').open('a') as trace:
-        trace.write(json.dumps({'name': name, **item}, sort_keys=True) + '\n')
     if negative:
         if proc.returncode != 1 or 'decide' not in text or 'false' not in text:
             raise ValueError(f'negative kernel control failed: {name}: {proc.returncode}\n{text}')
-    elif proc.returncode:
-        raise ValueError(f'{name} failed: {proc.returncode}\n{text}')
     STEPS[name] = item
     print(f'{name} status=OK seconds={elapsed:.3f}', flush=True)
     return text

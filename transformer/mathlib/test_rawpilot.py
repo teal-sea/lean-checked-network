@@ -95,6 +95,35 @@ class RawPilotFixtures(unittest.TestCase):
             self.assertEqual(len(records), 10)
             self.assertEqual(records[0]['exit'], 1)
 
+    def test_both_runners_preserve_failure_diagnostics_and_strict_warnings(self):
+        diagnostics = 'error: FAKE actual compiler failure\nwarning: FAKE unknown warning\ntrailing diagnostic\n'
+        for owner in (runner, warning_policy):
+            with self.subTest(runner=owner.__name__), tempfile.TemporaryDirectory() as tmp, \
+                    patch.object(owner, 'OUT', Path(tmp)), redirect_stdout(io.StringIO()):
+                def fake_command(args, **kwargs):
+                    kwargs['stdout'].write(diagnostics)
+                    return subprocess.CompletedProcess(args, code)
+
+                with patch.object(owner.subprocess, 'run', side_effect=fake_command):
+                    code = 2
+                    with self.assertRaises(ValueError) as caught:
+                        owner.run('fake-error-and-warning', ['fixture'])
+                    self.assertIn('failed:', str(caught.exception))
+                    self.assertIn('2', str(caught.exception))
+                    self.assertIn(diagnostics, str(caught.exception))
+                    self.assertNotIn('unrecognized warning:', str(caught.exception))
+                    code = 0
+                    with self.assertRaisesRegex(ValueError, 'unrecognized warning:'):
+                        owner.run('fake-success-unknown-warning', ['fixture'])
+                    code = 1
+                    diagnostics = "decide evaluated to false\nwarning: FAKE unknown warning\n"
+                    with self.assertRaisesRegex(ValueError, 'unrecognized warning:'):
+                        owner.run('fake-negative-unknown-warning', ['fixture'], negative=True)
+                records = [json.loads(line) for line in (Path(tmp) / 'steps.jsonl').read_text().splitlines()]
+                self.assertEqual([r['exit'] for r in records], [2, 0, 1])
+                self.assertNotIn('fake-error-and-warning', owner.STEPS)
+            diagnostics = 'error: FAKE actual compiler failure\nwarning: FAKE unknown warning\ntrailing diagnostic\n'
+
     def test_tiny_receipt_rejects_missing_changed_extra_and_bad_control(self):
         # A single four-coefficient fixture, not a generated model or compiled Lean artifact.
         with tempfile.TemporaryDirectory() as tmp:

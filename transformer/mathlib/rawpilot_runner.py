@@ -35,13 +35,13 @@ def run(name, args, seconds=300, negative=False):
     # Persist the exit/status before any diagnostic validation can throw.
     with (OUT / 'steps.jsonl').open('a') as trace:
         trace.write(json.dumps({'name': name, **item}, sort_keys=True) + '\n')
+    if not negative and proc.returncode != 0:
+        raise ValueError(f'producer failed: {name}, exit {proc.returncode}\n{text}')
     warnings = inherited_warnings(text)
     (OUT / (name + '-warnings.json')).write_text(json.dumps(warnings, indent=2, sort_keys=True) + '\n')
     if negative:
         if proc.returncode != 1 or not re.search(r'decide[\s\S]*false', text):
             raise ValueError(f'changed production literal was not rejected by kernel decide: {name}\n{text}')
-    elif proc.returncode != 0:
-        raise ValueError(f'producer failed: {name}, exit {proc.returncode}\n{text}')
     STEPS[name] = item
     print(f'{name} status=OK seconds={item["seconds"]:.3f}', flush=True)
     return text

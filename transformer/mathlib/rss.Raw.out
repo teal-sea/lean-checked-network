@@ -1,0 +1,1 @@
+peak VmRSS of the lean process while building Transformer.Raw (poll of /proc/<pid>/status every 0.5 s, lake build wall 354 s): 2286064 kB (2232 MB)

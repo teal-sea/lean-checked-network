@@ -1,0 +1,26 @@
+# smoke test 1: 20 epochs, log every 5, checkpoint every 10 (runs dir in scratch)
+# start 2026-10-16T15:52:20Z pid 1012 seed 0 frac 0.5 train 6384 held-out 6385 lr 0.001 wd 1.0 budget 3.0 h fallback 2.0 h torch 2.14.1+cpu
+# epoch train_loss train_acc test_acc min_margin_all phase
+1 4.751369 0.0108 0.0085 -1.0925 fit
+5 4.716117 0.0122 0.0055 -1.0534 fit
+10 4.693033 0.0227 0.0038 -1.0402 fit
+15 4.668342 0.0285 0.0033 -1.2329 fit
+20 4.636806 0.0367 0.0019 -1.7056 fit
+
+# smoke test 2: margin-phase path forced with --stable-epochs 0 --margin-epochs 12
+# start 2026-10-16T15:52:50Z pid 1055 seed 0 frac 0.5 train 6384 held-out 6385 lr 0.001 wd 1.0 budget 3.0 h fallback 2.0 h torch 2.14.1+cpu
+# epoch train_loss train_acc test_acc min_margin_all phase
+# epoch 1: train and held-out accuracy 1.0 for 0 epochs; margin phase for 12 epochs, hinge target -0.3528 (median train gap), hinge weight 1.0
+1 4.751369 0.0108 0.0085 -1.0925 margin
+10 4.719381 0.0132 0.0070 -0.6165 margin
+13 4.712389 0.0144 0.0067 -0.6573 margin
+# stop at epoch 13: margin phase complete; 4 s; best min margin over all pairs -0.6165 at epoch 10 (runs/best.pt holds the best checkpoint that was right on every pair); fell_back False
+
+# smoke test 3: budget stop forced with --budget-hours 0.0005
+# start 2026-10-16T15:52:38Z pid 1035 seed 0 frac 0.5 train 6384 held-out 6385 lr 0.001 wd 1.0 budget 0.0005 h fallback 2.0 h torch 2.14.1+cpu
+# epoch train_loss train_acc test_acc min_margin_all phase
+1 4.751369 0.0108 0.0085 -1.0925 fit
+3 4.725111 0.0105 0.0083 -1.0376 fit
+# stop at epoch 3: budget of 0.0005 h reached; 2 s; best min margin over all pairs -0.9261 at epoch 2 (runs/best.pt holds the best checkpoint that was right on every pair); fell_back False
+
+# 30 epochs including startup: 7.66 s wall, torch.set_num_threads(2)

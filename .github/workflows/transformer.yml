@@ -1,0 +1,403 @@
+name: transformer
+
+# Core is a CACHED PAIR PILOT: certified reusable packings plus three fixed literal checks.
+# A green pilot leaves row0 and all-input acceptance unproved. Full-row remains an explicit smoke.sh mode.
+on:
+  pull_request:
+    paths: ["transformer/**", ".github/workflows/transformer.yml"]
+  workflow_dispatch:
+    inputs:
+      core_mode:
+        description: Core acceptance scope (support does not accept frozen inputs or pairs)
+        type: choice
+        default: cached-pair-pilot
+        options:
+          - cached-pair-pilot
+          - cached-support-pilot
+          - mathlib-bounds-pilot
+          - mathlib-row0-pilot
+          - mathlib-raw-pilot
+          - mathlib-raw-packed-pilot
+          - mathlib-row0-finalize
+      row0_with_hb:
+        description: Also compile/replay concrete hB and the unconditional ROW0 mq theorem
+        type: boolean
+        default: false
+
+concurrency:
+  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || inputs.core_mode == 'mathlib-raw-packed-pilot' && '-mathlib-raw-packed' || inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
+  # false: a later push queues behind the running pilot instead of killing it (the evidence is the point)
+  cancel-in-progress: false
+
+jobs:
+  mathlib:
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    name: Mathlib lane (ExpFix, Program, Logits, Compose, Raw), cache, replay, axioms
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      LEAN_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan (toolchain comes from transformer/mathlib/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib cache
+        run: cd transformer/mathlib && lake exe cache get
+      - name: verify.sh (build, source scan, leanchecker replay, axioms)
+        run: cd transformer/mathlib && ./verify.sh 2>&1 | tee verify.ci.out; exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-mathlib-verify
+          path: |
+            transformer/mathlib/*.out
+          if-no-files-found: warn
+
+  core:
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    name: ${{ inputs.core_mode == 'cached-support-pilot' && 'CACHED SUPPORT PILOT (generic only; no frozen literals or pairs)' || 'CACHED PAIR PILOT (three pairs; row0 unproved)' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 20 || 170 }}
+    env:
+      LEAN_NUM_THREADS: "2"
+      CORE_MODE: ${{ inputs.core_mode || 'cached-pair-pilot' }}
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan (toolchain comes from transformer/lean/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Support harness controls (fake commands; no kernel evidence)
+        if: env.CORE_MODE == 'cached-support-pilot'
+        run: python3 transformer/lean/test_pair_harness.py
+      - name: Cheap regressions first (generator emission, scan and gate checks)
+        if: env.CORE_MODE != 'cached-support-pilot'
+        run: |
+          python3 -m pip install numpy
+          python3 transformer/test_gen_emission.py
+          python3 transformer/lean/mirror_bounds.py
+          python3 transformer/lean/test_cached.py
+          transformer/lean/test_harness.sh
+      - name: Measured core gates (selected scope; axioms and replay)
+        timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 18 || 150 }}
+        run: cd transformer/lean && ./smoke.sh 2>&1 | tee ci-out-smoke.txt; exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-core-${{ inputs.core_mode || 'cached-pair-pilot' }}
+          retention-days: 7
+          path: |
+            transformer/lean/ci-out/
+            transformer/lean/ci-out-smoke.txt
+            transformer/lean/Transformer/Net/Cached.lean
+            transformer/lean/Transformer/Net/CachedUnits/
+            transformer/lean/Transformer/Net/CachedPair*.lean
+            transformer/lean/Transformer/Cached.lean
+            transformer/lean/Transformer/CachedFixture.lean
+            transformer/lean/cache-red.lean
+            transformer/lean/smoke.sh
+            transformer/lean/scan_sources.sh
+            transformer/lean/cached-inputs.sha256
+            transformer/lean/gen_cached.py
+          if-no-files-found: warn
+
+  bridge:
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    name: Bridge (core program to the Mathlib program), needs the Mathlib lane
+    needs: mathlib
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.core_mode == 'mathlib-bounds-pilot' && 30 || 75 }}
+    env:
+      LEAN_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan (toolchain comes from transformer/mathlib/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib cache
+        run: cd transformer/mathlib && lake exe cache get
+      - name: Bounds harness controls (fake commands; no kernel evidence)
+        if: inputs.core_mode == 'mathlib-bounds-pilot'
+        run: python3 transformer/mathlib/test_bounds_harness.py
+      - name: bridge.sh (sync check, build, source scan, axioms, replay)
+        if: inputs.core_mode != 'mathlib-bounds-pilot'
+        timeout-minutes: 60
+        run: cd transformer/mathlib && ./bridge.sh 2>&1 | tee bridge.ci.out; exit "${PIPESTATUS[0]}"
+      - name: Frozen Mathlib bounds (stable source sync, Bridge, bounds, audit, negative, replay)
+        if: inputs.core_mode == 'mathlib-bounds-pilot'
+        timeout-minutes: 28
+        run: cd transformer/mathlib && ./bounds.sh 2>&1 | tee bounds.ci.out; exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-bridge
+          path: |
+            transformer/mathlib/bridge-out/
+            transformer/mathlib/bridge.ci.out
+            transformer/mathlib/bounds-out/
+            transformer/mathlib/bounds.ci.out
+          if-no-files-found: warn
+
+  row0:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-row0-pilot' && github.event.repository.private == false }}
+    name: Stable ROW0/113 (literal certificates, universal row, integer bridge, replay)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      ROW0_WITH_HB: ${{ inputs.row0_with_hb && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Tiny emission and fail-closed harness controls (no Lean evidence)
+        run: |
+          python3 -W error transformer/lean/test_cached.py
+          python3 -W error transformer/mathlib/test_row0.py
+          python3 -W error transformer/mathlib/test_row0_harness.py
+      - name: Install elan (stable v4.35.0 only)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib stable dependency cache
+        run: cd transformer/mathlib && lake exe cache get
+      - name: Stable ROW0/113 kernel gates (serial; never other rows)
+        timeout-minutes: 110
+        run: |
+          cd transformer/mathlib
+          args=()
+          if [ "$ROW0_WITH_HB" = 1 ]; then args+=(--with-hb); fi
+          ./row0.sh "${args[@]}" 2>&1 | tee row0.ci.out
+          exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-stable-ROW0-113-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/row0-out/
+            transformer/mathlib/row0.ci.out
+            transformer/lean/ci-out/cache-codegen/
+            transformer/mathlib/TransformerCore/
+            transformer/mathlib/TransformerBridge/Pointwise.lean
+            transformer/mathlib/TransformerBridge/Row0*.lean
+            transformer/mathlib/.lake/build/lib/lean/TransformerCore/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/
+          if-no-files-found: error
+
+  raw-pilot:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-raw-pilot' && github.event.repository.private == false }}
+    name: Raw q8 TI site h0/j0/tk0 (512 components, staged kernel certificates, replay)
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    permissions:
+      contents: read
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      LLVM_PARALLEL_COMPILE_JOBS: "1"
+      CMAKE_BUILD_PARALLEL_LEVEL: "1"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tiny raw-pilot fixture controls (no Lean or model evaluation)
+        run: TMPDIR="$RUNNER_TEMP" python3 -W error transformer/mathlib/test_rawpilot.py
+      - name: Canonical quantizer dependency (binary wheel only)
+        timeout-minutes: 2
+        run: |
+          TMPDIR="$RUNNER_TEMP" python3 -m pip install --only-binary=:all: numpy==2.2.6
+      - name: Install elan (stable v4.35.0 pin)
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          export TMPDIR="$RUNNER_TEMP"
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$TMPDIR/rawpilot-elan-init.sh"
+          sh "$TMPDIR/rawpilot-elan-init.sh" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib stable dependency cache (bounded, no project artifact restore)
+        timeout-minutes: 8
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          export TMPDIR="$RUNNER_TEMP"
+          /usr/bin/time -v -o rawpilot-cache.time timeout -s TERM -k 10 420 lake exe cache get 2>&1 | tee rawpilot-cache.ci.out
+      - name: Full raw TI production site (serial, measured, compile and replay)
+        timeout-minutes: 61
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          ./rawpilot.sh 2>&1 | tee rawpilot.ci.out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-rawpilot-TI-h0-j0-tk0-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/rawpilot-out/
+            transformer/mathlib/rawpilot*.ci.out
+            transformer/mathlib/rawpilot*.time
+            transformer/mathlib/TransformerBridge/RawPilotSupport.lean
+            transformer/mathlib/TransformerBridge/RawPilot/Generated/
+            transformer/mathlib/TransformerCore/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPilotSupport.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPilot/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bridge.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerCore/
+            transformer/mathlib/.lake/build/lib/lean/Transformer/
+          if-no-files-found: error
+
+  raw-packed-pilot:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-raw-packed-pilot' && github.event.repository.private == false }}
+    name: Raw packed q8 TI h0/j0/tk0 (all 512, bounded transport, compile and replay)
+    runs-on: ubuntu-latest
+    timeout-minutes: 125
+    permissions:
+      contents: read
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      LLVM_PARALLEL_COMPILE_JOBS: "1"
+      CMAKE_BUILD_PARALLEL_LEVEL: "1"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tiny packed serialization and fail-closed controls (no kernel evidence)
+        run: TMPDIR="$RUNNER_TEMP" python3 -B -W error transformer/mathlib/test_rawpacked.py
+      - name: Original scalar tiny regressions (no model evaluation)
+        run: TMPDIR="$RUNNER_TEMP" python3 -B -W error transformer/mathlib/test_rawpilot.py
+      - name: Canonical quantizer dependency (binary wheel only)
+        timeout-minutes: 2
+        run: |
+          TMPDIR="$RUNNER_TEMP" python3 -m pip install --only-binary=:all: numpy==2.2.6
+      - name: Install elan (stable v4.35.0 only)
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          export TMPDIR="$RUNNER_TEMP"
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$TMPDIR/rawpacked-elan-init.sh"
+          sh "$TMPDIR/rawpacked-elan-init.sh" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib dependency cache (no project artifact restore)
+        timeout-minutes: 8
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          export TMPDIR="$RUNNER_TEMP"
+          /usr/bin/time -v -o rawpacked-cache.time timeout -s TERM -k 10 420 lake exe cache get 2>&1 | tee rawpacked-cache.ci.out
+      - name: Generic gate then ONE full raw packed TI site (serial)
+        timeout-minutes: 112
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          ./rawpacked.sh 2>&1 | tee rawpacked.ci.out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-rawpacked-TI-h0-j0-tk0-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/rawpacked-out/
+            transformer/mathlib/rawpacked*.ci.out
+            transformer/mathlib/rawpacked*.time
+            transformer/mathlib/TransformerBridge/RawPacked*.lean
+            transformer/mathlib/TransformerBridge/RawPilotSupport.lean
+            transformer/mathlib/TransformerBridge/RawPacked/Generated/
+            transformer/mathlib/TransformerCore/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPacked*.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPilotSupport.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawPacked/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bridge.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerCore/
+            transformer/mathlib/.lake/build/lib/lean/Transformer/
+          if-no-files-found: error
+
+  row0-finalize:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-row0-finalize' && github.event.repository.private == false }}
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      ROW0_WITH_HB: ${{ inputs.row0_with_hb && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Tiny controls (no kernel evidence)
+        run: |
+          mkdir -p "$RUNNER_TEMP/row0-finalizer"
+          export TMPDIR="$RUNNER_TEMP/row0-finalizer"
+          python3 -W error transformer/mathlib/test_row0.py
+          python3 -W error transformer/mathlib/test_row0_finalize.py
+      - name: Download exact retained public artifact (no extraction)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "${{ github.event.repository.private }}" = false
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12096712360" > "$RUNNER_TEMP/row0-finalizer/artifact.json"
+          curl --fail --location --retry 2 --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/artifacts/12096712360/zip" \
+            -o "$RUNNER_TEMP/row0-finalizer/checkpoint.zip"
+      - name: Install stable compiler
+        run: |
+          set -euo pipefail
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$RUNNER_TEMP/row0-finalizer/elan-init.sh"
+          sh "$RUNNER_TEMP/row0-finalizer/elan-init.sh" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib dependencies (one Lake process)
+        timeout-minutes: 9
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          timeout -s TERM -k 20 480 lake exe cache get
+      - name: Verified selected restore and fresh ROW0 assembly
+        timeout-minutes: 28
+        run: |
+          set -euo pipefail
+          export TMPDIR="$RUNNER_TEMP/row0-finalizer"
+          cd transformer/mathlib
+          args=()
+          if [ "$ROW0_WITH_HB" = 1 ]; then args+=(--with-hb); fi
+          timeout -s TERM -k 20 1600 python3 -W error row0_finalize.py \
+            --archive "$RUNNER_TEMP/row0-finalizer/checkpoint.zip" \
+            --artifact-metadata "$RUNNER_TEMP/row0-finalizer/artifact.json" \
+            "${args[@]}" 2>&1 | tee row0-finalize.ci.out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-ROW0-finalizer-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/row0-finalize-out/
+            transformer/mathlib/row0-finalize.ci.out
+            transformer/mathlib/row0_checkpoint.json
+            transformer/mathlib/row0_finalize.py
+            transformer/mathlib/TransformerBridge/Row0*.lean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Row0*.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bounds.olean
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/FrozenBounds.olean
+          if-no-files-found: error

@@ -1,0 +1,17 @@
+⚠ [9047/9053] Replayed Transformer.ExpFix
+warning: Transformer/ExpFix.lean: imports `Mathlib` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+⚠ [9051/9053] Replayed Transformer.Raw
+warning: Transformer/Raw.lean:173:0: automatically included section variable(s) unused in theorem `Transformer.Weights.rsoftmax_eq`:
+  hS
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hS in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+warning: Transformer/Raw.lean:181:0: automatically included section variable(s) unused in theorem `Transformer.Weights.resid_dot`:
+  hS
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hS in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+✔ [9052/9053] Built Transformer (7.7s)
+Build completed successfully (9053 jobs).

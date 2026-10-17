@@ -1,0 +1,23 @@
+== families: u+4v for the eight unwanted (u, v), and the cycle sum of cos(theta + (u+4v) 2 pi j/6)
+  (u,v)=( 1,-1) m= -3 m%6=3 max|cycle sum|=5.70e-15
+  (u,v)=( 3, 1) m=  7 m%6=1 max|cycle sum|=6.66e-15
+  (u,v)=(-1, 1) m=  3 m%6=3 max|cycle sum|=3.93e-15
+  (u,v)=( 1, 3) m= 13 m%6=1 max|cycle sum|=1.30e-14
+  (u,v)=( 2, 2) m= 10 m%6=4 max|cycle sum|=1.14e-14
+  (u,v)=( 0,-2) m= -8 m%6=4 max|cycle sum|=8.33e-15
+  (u,v)=( 2, 0) m=  2 m%6=2 max|cycle sum|=3.77e-15
+  (u,v)=( 1, 1) m=  5 m%6=5 max|cycle sum|=6.55e-15
+  control m=6: max|cycle sum|=6.00e+00 (6 cos theta, should not vanish)
+== one sextet: sum_j cos(tc+5phi_j)(cos(ta+phi_j)+cos(tb+4phi_j))^2 - 3 cos(ta+tb-tc) at 20000 random angle triples
+  max|sextet - 3 cos(ta+tb-tc)| = 2.24e-14
+  fitted coefficient (least squares of sextet on cos(ta+tb-tc)): 3.000000000000
+== per modulus: exact cancellation on the real network, gap, bound B = 24|S|/g, integer checks
+p | S | |S| | neurons | max|realscore - 3 wave| | g(S) | B=24|S|/g | M=ceil(B) (wrong,ties,margin) | M=ceil(B)-1 (wrong,ties,margin) | smallest M with 0 wrong 0 ties (scan 1..40) | M=127 (wrong,ties,margin,max|w|)
+7 | all | 3 | 18 | 3.75e-14 | 3.5 | 20.5714 | M=21: (0, 0, 94228) | M=20: (0, 0, 81132) | 1 | (0, 0, 21256784, 127)
+12 | all | 5 | 30 | 6.16e-14 | 5 | 24 | M=25: (0, 0, 220705) | M=24: (0, 0, 207360) | 2 | (0, 0, 30374049, 127)
+113 | all | 56 | 336 | 2.76e-12 | 56.5 | 23.7876 | M=24: (0, 0, 2325624) | M=23: (0, 0, 2003608) | 1 | (0, 0, 345206636, 127)
+113 | [39, 45] | 2 | 12 | 5.29e-13 | 0.187468 | 256.043 | M=257: (0, 0, 8987644) | M=256: (0, 0, 8995696) | 14 | (0, 0, 1021168, 127)
+113 | [14, 35, 41, 42, 52] | 5 | 30 | 9.94e-13 | 2.41018 | 49.7889 | M=50: (0, 0, 868856) | M=49: (0, 0, 809776) | 3 | (0, 0, 14547572, 127)
+257 | all | 128 | 768 | 1.17e-11 | 128.5 | 23.9066 | M=24: (0, 0, 5287052) | M=23: (0, 0, 4549824) | 1 | (0, 0, 785539904, 127)
+257 | [114, 125] | 2 | 12 | 1.81e-12 | 0.0829989 | 578.321 | M=579: (0, 0, 45199620) | M=578: (0, 0, 45765996) | 32 | (0, 0, 375872, 127)
+note: M=ceil(B) is the smallest integer with 24|S| < M g; 'smallest M' is the first M in 1..40 with no wrong answer and no tie (None: none in 1..40).

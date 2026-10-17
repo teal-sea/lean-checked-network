@@ -1,0 +1,10 @@
+root build start 2026-10-16T16:19:54Z
+⚠ [9048/9060] Replayed PhaseGrid.ListLemmas
+warning: PhaseGrid/ListLemmas.lean: imports `Mathlib` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+⚠ [9049/9060] Replayed PhaseGrid.Trig
+warning: PhaseGrid/Trig.lean: imports `Mathlib` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+⚠ [9050/9060] Replayed PhaseGrid.Defs
+warning: PhaseGrid/Defs.lean: imports `Mathlib` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+✔ [9059/9060] Built PhaseGrid (7.5s)
+Build completed successfully (9060 jobs).
+root build exit 0 end 2026-10-16T16:20:12Z

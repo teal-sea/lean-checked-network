@@ -9,3 +9,4 @@ import PhaseGrid.P7FullTables
 import PhaseGrid.Close
 import PhaseGrid.P7Link
 import PhaseGrid.Open
+import PhaseGrid.Cycle

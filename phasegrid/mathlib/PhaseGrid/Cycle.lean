@@ -4,7 +4,7 @@ import PhaseGrid.Close
 /-!
 # The six-phase cycle network adds mod p
 
-`FIXED_PHASE.md` builds its 12-neuron networks from six neurons per frequency `k`, with phases
+`smallest-networks.md` builds its 12-neuron networks from six neurons per frequency `k`, with phases
 `φ₁ = 2πj/6` and `φ₂ = 4φ₁` for `j = 0, …, 5` (`make_fixed_phase6.py`). This file proves the
 derivation it states and does not prove.
 
@@ -430,7 +430,7 @@ theorem adds_mod_p_cycle_full (p : ℕ) (hp : 3 ≤ p) (M : ℕ) (hM : 25 ≤ M)
     rw [show (2 * m + 1 - 1) / 2 = m by omega]
     exact adds_mod_p_cycle_full_odd m (by omega) M (by omega)
 
-/-- The two moduli of `FIXED_PHASE.md`'s 12-neuron networks, with all frequencies: `p = 113`
+/-- The two moduli of `smallest-networks.md`'s 12-neuron networks, with all frequencies: `p = 113`
 (`S = 1..56`, 336 neurons) and `p = 257` (`S = 1..128`, 768 neurons), every `M ≥ 24`. -/
 theorem adds_mod_113_cycle_full (M : ℕ) (hM : 24 ≤ M) :
     ∀ a, a < 113 → ∀ b, b < 113 → answerC 113 (List.range' 1 56) M a b = (a + b) % 113 :=

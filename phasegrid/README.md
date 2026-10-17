@@ -150,9 +150,9 @@ the general theorem; stated in words in `Open.lean`, since those tables are not 
 proof is the brute-force kernel check of stage 3. (2) `fullSetWorksAtTwo` (`def … : Prop`): the loose
 bound, M = 2 suffices for the full set at every odd p, measured at five moduli, not proved.
 
-## Stage 2, continued: the six-phase cycle of `FIXED_PHASE.md`, proved (2026-10-16)
+## Stage 2, continued: the six-phase cycle of `smallest-networks.md`, proved (2026-10-16)
 
-`FIXED_PHASE.md` builds its 12-neuron networks (`FixedPhase12` at p = 113, `Mod257Min` at p = 257)
+`smallest-networks.md` builds its 12-neuron networks (`FixedPhase12` at p = 113, `Mod257Min` at p = 257)
 from six neurons per frequency with phases `phi1 = 2 pi j/6`, `phi2 = 4 phi1`, `j = 0..5`
 (`make_fixed_phase6.py`), states the cancellation and the bound `M > 24|S|/g(S)` for that
 construction, and marks them derived. `mathlib/PhaseGrid/Cycle.lean` proves them, on the lemmas of
@@ -180,9 +180,9 @@ differs from `3 sum_{k in S} cos(2 pi k (a + b - c)/p)` by at most 3.75e-14 (p =
 | 257 | all (1..128) | 768 | 128.5 | 23.91 | 24: 0, 0, 5,287,052 | 23: 0, 0, 4,549,824 | 1 | 0, 0, 785,539,904 |
 | 257 | {114, 125} (`Mod257Min`) | 12 | 0.0829989 | 578.32 | 579: 0, 0, 45,199,620 | 578: 0, 0, 45,765,996 | 32 | 0, 0, 375,872 |
 
-The margins at M = 127 for {39, 45} and {114, 125} are the ones `FIXED_PHASE.md` reports for
+The margins at M = 127 for {39, 45} and {114, 125} are the ones `smallest-networks.md` reports for
 `FixedPhase12` (1,021,168) and `Mod257Min` (375,872). The bound suffices in every case and is loose
-by the same order as for the grid: the two 12-neuron networks of `FIXED_PHASE.md` run at M = 127,
+by the same order as for the grid: the two 12-neuron networks of `smallest-networks.md` run at M = 127,
 which is **below** the bound (257 and 579), so the theorem below does not cover them at that scale;
 it covers the same frequency sets from M = 257 and M = 579 on (see "Open").
 
@@ -227,7 +227,7 @@ at a wrong one; the integer margin is therefore at least `3gM³ − 72|S|M² = 3
 hypothesis `24|S| < Mg` is the same as for the eight-neuron grid, and the threshold for the full
 frequency set is the same `M ≥ 25` (`M ≥ 24` at odd p): the grid has 8 neurons per frequency, error
 `48M²` and wanted coefficient 4, the cycle 6 neurons, error `36M²` and coefficient 3, and both ratios
-are 12. `FIXED_PHASE.md`'s "`M > 24|S|/g(S)` is enough" and "`M = 25` covers every `p ≥ 3`" are
+are 12. `smallest-networks.md`'s "`M > 24|S|/g(S)` is enough" and "`M = 25` covers every `p ≥ 3`" are
 proved as stated; its "at most about `6M²` per neuron" is exactly `6M²`.
 
 **Cost** (`logs/cycle_build.log`, `logs/cycle_profile.log`): `lake build PhaseGrid.Cycle` reported
@@ -244,7 +244,7 @@ and it also needs the gap: `g({39, 45}) = 0.187468` at p = 113 is a statement ab
 + cos(2π · 45 s/113)` at all 112 nonzero shifts, which the package has no certified bound for.
 (2) Even with both, the theorem would not cover those networks at M = 127: the bound needs M ≥ 257
 for {39, 45} and M ≥ 579 for {114, 125} (table above). The kernel check of their 12,769 and 66,049
-pairs in `FIXED_PHASE.md` remains their proof; a bound sharp enough for M = 127 is open. (3) The
+pairs in `smallest-networks.md` remains their proof; a bound sharp enough for M = 127 is open. (3) The
 measured thresholds (M = 14 and M = 32 for the two sets, M = 1 for the full set at odd p) are not proved.
 
 ## Stage 3: explicit networks, kernel-checked, core Lean only
@@ -320,7 +320,7 @@ For comparison the first repository checked its two 128-neuron networks in 26 mi
   `leanchecker` with standard axioms; the planted fault rejected; `PhaseGridInstances.P113Full.adds_mod_113` (all 56 frequencies, M = 25, 448 neurons), replayed by `leanchecker` (21 of 21 modules) with standard axioms; and the 504 entries of the p = 7 tables decided as `t1 a n = v` lookups and the table equalities `ofFn_t1` and so on by `decide` inside `P7Link.lean`.
 - **Measured** (Python): the stage 1 table; the looseness of the bound; the p = 1009 cases. For the cycle: the
   table in the cycle section (`cycle_check.py`), including that M = 127 is below the proved bound for both
-  12-neuron networks of `FIXED_PHASE.md`.
+  12-neuron networks of `smallest-networks.md`.
 - **Derived** (pen and paper, then proved in Lean): the nine-wave expansion and its grid cancellation;
   the `6M²` per-neuron bound and `M > 24|S|/g`.
 - **Open**: the three statements in `Open.lean`; the link between the p = 113 tables and the theorem.

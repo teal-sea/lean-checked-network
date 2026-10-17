@@ -52,7 +52,7 @@ exit 0
 ''',
             'lean': '#!/bin/bash\necho fixture-version\n',
             'sha256sum': '#!/bin/bash\nexit 0\n',
-            'scan_sources.sh': '#!/bin/bash\nexit 0\n',
+            'scan_sources.sh': '#!/bin/bash\nif [ "$FAIL_COMMAND" = "./scan_sources.sh" ]; then exit 42; fi\nexit 0\n',
             'python3': '''#!/bin/bash
 if [ -n "$FAIL_COMMAND" ] && [[ "$*" == *"$FAIL_COMMAND" ]]; then exit 42; fi
 mkdir -p ci-out/cache-codegen
@@ -191,3 +191,53 @@ assert ':goal-end' in logs['build_cached.out']
 assert logs['build_cached.out'] in output
 assert 'final unfiltered goal line' in output
 print('ok: FAILURE DIAGNOSTIC HARNESS (fake commands): full multiline/long goal retained and exposed; producer exit 42 preserved')
+
+
+def support_accepted(result):
+    rc, gates, status = result
+    assert rc == 0 and status.startswith('CACHED SUPPORT PILOT accepted; generic correspondence'), result
+    assert 'frozen literals, cached pairs, row0 and all-input acceptance unproved' in status
+    # An exact trace prevents this short oracle from drifting into frozen data,
+    # code generation, bounds, certificates, pairs or rows.
+    assert gates == [
+        '-s TERM -k 20 120 lake build Transformer',
+        '-s TERM -k 20 120 lake build Transformer.Cached',
+        '-s TERM -k 20 180 lake env leanchecker Transformer.Cached',
+        '-s TERM -k 20 60 lake build Transformer.CachedFixture',
+        '-s TERM -k 20 180 lake env leanchecker Transformer.CachedFixture',
+        '-s TERM -k 20 60 lake env lean cache-red.lean',
+        '-s TERM -k 20 30 ./scan_sources.sh Transformer/Model.lean Transformer/Fast.lean Transformer/Equiv.lean Transformer/Cached.lean Transformer/CachedFixture.lean cache-red.lean',
+        '-s TERM -k 20 120 lake env lean ci-out/axioms.lean',
+        '-s TERM -k 20 180 lake env leanchecker Transformer.Equiv',
+    ], gates
+
+
+support_accepted(run(mode='cached-support-pilot'))
+for failure in ['build Transformer', 'build Transformer.Cached',
+                'leanchecker Transformer.Cached', 'build Transformer.CachedFixture',
+                'leanchecker Transformer.CachedFixture', 'env lean cache-red.lean',
+                './scan_sources.sh', 'env lean ci-out/axioms.lean',
+                'leanchecker Transformer.Equiv']:
+    assert_failed(run(mode='cached-support-pilot', fail=failure), failure)
+# Successful negative control, mismatched audit count, hidden producer failure and
+# a forbidden data launch must all be caught by the same acceptance boundary.
+for broken in [SOURCE.replace('cache-red.lean', 'cache-red-accepted.lean'),
+               SOURCE.replace('expected=0', 'expected=1'),
+               SOURCE.replace('gate replay_equiv 180',
+                              'gate unexpected_data 60 lake build Transformer.Net.W.TI0_0 || stop\n  gate replay_equiv 180')]:
+    try:
+        support_accepted(run(broken, mode='cached-support-pilot'))
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError('broken support harness accepted')
+swallowed = SOURCE.replace('gate build_cached 120 lake build Transformer.Cached || stop',
+                           'gate build_cached 120 lake build Transformer.Cached || true')
+try:
+    assert_failed(run(swallowed, mode='cached-support-pilot', fail='build Transformer.Cached'),
+                  'build Transformer.Cached')
+except AssertionError:
+    pass
+else:
+    raise AssertionError('swallowed support failure accepted')
+print('ok: SUPPORT HARNESS UNIT TESTS (fake commands): exact short gate trace, no data/codegen/pairs/rows, negative/audit/failure controls')

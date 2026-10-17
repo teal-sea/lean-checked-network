@@ -75,11 +75,24 @@ theorem nth_pkI_map₂ (vs : List (List (List Int))) (h i : Nat) :
   rw [hh]
   exact nth_pkI_map _ _
 
+/-- A complete head lookup, including both missing-head and missing-token defaults. -/
+theorem cachedHeadPk_map (e : Nat × Nat × Nat)
+    (v0 v1 : List (List (List Int))) (v2 : List (List Int)) (h a b : Nat) :
+    cachedHeadPk e
+      (nth 0 (nth [] (v0.map (List.map pkI)) h) a)
+      (nth 0 (nth [] (v1.map (List.map pkI)) h) b)
+      (nth 0 (v2.map pkI) h) =
+    headPk e (nth [] (nth [] v0 h) a) (nth [] (nth [] v1 h) b) (nth [] v2 h) := by
+  rw [nth_pkI_map₂, nth_pkI_map₂, nth_pkI_map]
+  rfl
+
 /-- Purely symbolic correspondence: no bounds, token range, or nonempty-list premises. -/
 theorem cachedFastCheck_pack (K : Cfg) (T : Tab) (bd : Bnd) (E2 a b : Nat) :
     cachedFastCheck K T (packTab T) bd E2 a b = fastCheck K T bd E2 a b := by
-  simp only [cachedFastCheck, fastCheck, packTab, nth_pkI_map₂, nth_pkI_map,
-    cachedHeadPk, headPk]
+  -- Normalize each head before exposing the Boolean expression. Keep the original
+  -- evaluator folded so definitional equality checks the remaining arithmetic.
+  simp only [cachedFastCheck, packTab, cachedHeadPk_map]
+  rfl
 
 /-- Every cache is accepted only through an equality to the original signed packing. -/
 theorem cachedFastCheck_eq (K : Cfg) (T : Tab) (C : PackedTab)

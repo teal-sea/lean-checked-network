@@ -6,6 +6,14 @@ on:
   pull_request:
     paths: ["transformer/**", ".github/workflows/transformer.yml"]
   workflow_dispatch:
+    inputs:
+      core_mode:
+        description: Core acceptance scope (support does not accept frozen inputs or pairs)
+        type: choice
+        default: cached-pair-pilot
+        options:
+          - cached-pair-pilot
+          - cached-support-pilot
 
 concurrency:
   group: transformer-${{ github.ref }}
@@ -14,6 +22,7 @@ concurrency:
 
 jobs:
   mathlib:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.core_mode != 'cached-support-pilot' }}
     name: Mathlib lane (ExpFix, Program, Logits, Compose, Raw), cache, replay, axioms
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -38,12 +47,12 @@ jobs:
           if-no-files-found: warn
 
   core:
-    name: CACHED PAIR PILOT (three pairs; row0 unproved), certificates, time and memory
+    name: ${{ inputs.core_mode == 'cached-support-pilot' && 'CACHED SUPPORT PILOT (generic only; no frozen literals or pairs)' || 'CACHED PAIR PILOT (three pairs; row0 unproved)' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 170
+    timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 20 || 170 }}
     env:
       LEAN_NUM_THREADS: "2"
-      CORE_MODE: cached-pair-pilot
+      CORE_MODE: ${{ inputs.core_mode || 'cached-pair-pilot' }}
       OMP_NUM_THREADS: "1"
       OPENBLAS_NUM_THREADS: "1"
     steps:
@@ -52,20 +61,24 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Support harness controls (fake commands; no kernel evidence)
+        if: env.CORE_MODE == 'cached-support-pilot'
+        run: python3 transformer/lean/test_pair_harness.py
       - name: Cheap regressions first (generator emission, scan and gate checks)
+        if: env.CORE_MODE != 'cached-support-pilot'
         run: |
           python3 -m pip install numpy
           python3 transformer/test_gen_emission.py
           python3 transformer/lean/mirror_bounds.py
           python3 transformer/lean/test_cached.py
           transformer/lean/test_harness.sh
-      - name: CACHED PAIR PILOT (serial certificates, 300s per pair; axioms, replay; no row0)
-        timeout-minutes: 150
+      - name: Measured core gates (selected scope; axioms and replay)
+        timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 18 || 150 }}
         run: cd transformer/lean && ./smoke.sh 2>&1 | tee ci-out-smoke.txt; exit "${PIPESTATUS[0]}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: transformer-core-cached-pair-pilot
+          name: transformer-core-${{ inputs.core_mode || 'cached-pair-pilot' }}
           retention-days: 7
           path: |
             transformer/lean/ci-out/
@@ -75,11 +88,15 @@ jobs:
             transformer/lean/Transformer/Net/CachedPair*.lean
             transformer/lean/Transformer/Cached.lean
             transformer/lean/Transformer/CachedFixture.lean
+            transformer/lean/cache-red.lean
+            transformer/lean/smoke.sh
+            transformer/lean/scan_sources.sh
             transformer/lean/cached-inputs.sha256
             transformer/lean/gen_cached.py
           if-no-files-found: warn
 
   bridge:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.core_mode != 'cached-support-pilot' }}
     name: Bridge (core program to the Mathlib program), needs the Mathlib lane
     needs: mathlib
     runs-on: ubuntu-latest

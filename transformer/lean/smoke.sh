@@ -6,10 +6,11 @@ export PATH="$HOME/.elan/bin:$PATH"
 export LEAN_NUM_THREADS=${LEAN_NUM_THREADS:-2}
 case "$LEAN_NUM_THREADS" in 1|2) ;; *) echo "LEAN_NUM_THREADS must be 1 or 2"; exit 2 ;; esac
 mode=${CORE_MODE:-pair-pilot}
-case "$mode" in pair-pilot|cached-pair-pilot|full-row) ;; *) echo "unknown CORE_MODE: $mode"; exit 2 ;; esac
+case "$mode" in pair-pilot|cached-pair-pilot|cached-support-pilot|full-row) ;; *) echo "unknown CORE_MODE: $mode"; exit 2 ;; esac
 cd "$(dirname "$0")" || exit 1
 out=ci-out; mkdir -p "$out"
 status=0
+printf 'source_sha=%s\nrun_id=%s\ncore_mode=%s\nlean_threads=%s\n' "${GITHUB_SHA:-local-fixture}" "${GITHUB_RUN_ID:-local-fixture}" "$mode" "$LEAN_NUM_THREADS" > "$out/SOURCE.txt"
 printf '%s\n' "mode=$mode; running; row0 remains unproved; all-input acceptance unproved" > "$out/STATUS.txt"
 
 mon() { # one line per sample: time, MemAvailable MB, swap used MB, cgroup oom_kill count, top two processes by RSS
@@ -38,7 +39,7 @@ trap 'on_signal INT 130' INT
 trap 'on_signal HUP 129' HUP
 
 echo "=== versions"; cat lean-toolchain; lean --version; nproc; free -m | head -2
-echo "=== monitor: cgroup memory.max $(cat /sys/fs/cgroup/memory.max 2>&1), data $(du -sk Transformer/Net/W | cut -f1) KB"
+echo "=== monitor: cgroup memory.max $(cat /sys/fs/cgroup/memory.max 2>&1)"
 
 gate() { # name, timeout seconds, command...; wall time and peak RSS in ci-out/NAME.time, all output in ci-out/NAME.out and streamed
   local name=$1 secs=$2; shift 2
@@ -60,6 +61,40 @@ stop() {
     echo "mode=$mode; FAILED; row0/all-input acceptance not established by this run" > "$out/STATUS.txt"
   fi
   kill "$montid" 2>/dev/null; echo "=== done $(date -u +%FT%TZ), exit $status"; exit "$status"; }
+
+# This early exit is a support-only acceptance boundary: no frozen inputs,
+# code generation, table/bounds modules, pairs or rows are reached in this mode.
+if [ "$mode" = cached-support-pilot ]; then
+  gate build_core 120 lake build Transformer || stop
+  gate build_cached 120 lake build Transformer.Cached || stop
+  gate replay_cached 180 lake env leanchecker Transformer.Cached || stop
+  gate build_cached_fixture 60 lake build Transformer.CachedFixture || stop
+  gate replay_cached_fixture 180 lake env leanchecker Transformer.CachedFixture || stop
+  /usr/bin/time -v -o "$out/cache_red.time" timeout -s TERM -k 20 60 lake env lean cache-red.lean > "$out/cache_red.out" 2>&1
+  red_rc=$?
+  if [ "$red_rc" -ne 1 ] || ! grep -q 'decide' "$out/cache_red.out"; then
+    status=1; echo "altered packed-literal red control failed (exit $red_rc)"; stop
+  fi
+  echo 'Altered packed-literal kernel red control rejected as expected'
+  gate support_scan 30 ./scan_sources.sh Transformer/Model.lean Transformer/Fast.lean Transformer/Equiv.lean Transformer/Cached.lean Transformer/CachedFixture.lean cache-red.lean || stop
+  echo 'import Transformer.CachedFixture' > "$out/axioms.lean"
+  expected=0
+  for theorem in fastCheck_correct cachedHeadPk_map cachedFastCheck_pack cachedFastCheck_eq PackedTab.eq_of_fields packed_cons_of nth_pkI_map nth_pkI_map₂; do
+    echo "#print axioms Transformer.$theorem" >> "$out/axioms.lean"
+    expected=$((expected + 1))
+  done
+  for theorem in empty negative signed default_inner default_outer empty_vector arbitrary_indices; do
+    echo "#print axioms Transformer.CachedFixture.$theorem" >> "$out/axioms.lean"
+    expected=$((expected + 1))
+  done
+  gate axioms 120 lake env lean "$out/axioms.lean" || stop
+  n=$(grep -cE "^.[^ ]+. (does not depend on any axioms|depends on axioms: \[(propext|Classical\.choice|Quot\.sound)(, (propext|Classical\.choice|Quot\.sound))*\])$" "$out/axioms.out")
+  echo "$n of $expected theorems on standard axioms or none"
+  [ "$n" -eq "$expected" ] || { status=1; stop; }
+  gate replay_equiv 180 lake env leanchecker Transformer.Equiv || stop
+  echo 'CACHED SUPPORT PILOT accepted; generic correspondence and edge fixtures only; frozen literals, cached pairs, row0 and all-input acceptance unproved by this run' | tee "$out/STATUS.txt"
+  stop
+fi
 
 echo "=== data provenance: the generated data files are byte-identical to the manifest (Net/W.sha256)"
 (cd Transformer/Net && sha256sum -c W.sha256) > "$out/w-sha256.out" 2>&1 || { status=1; echo "W data differs from W.sha256"; stop; }
@@ -160,7 +195,7 @@ cat >> "$out/axioms.lean" <<'LEAN'
 LEAN
 expected=4
 if [ "$mode" = cached-pair-pilot ]; then
-  for theorem in Transformer.cachedFastCheck_pack Transformer.cachedFastCheck_eq Transformer.PackedTab.eq_of_fields Transformer.packed_cons_of Transformer.nth_pkI_map Transformer.nth_pkI_map₂; do
+  for theorem in Transformer.cachedHeadPk_map Transformer.cachedFastCheck_pack Transformer.cachedFastCheck_eq Transformer.PackedTab.eq_of_fields Transformer.packed_cons_of Transformer.nth_pkI_map Transformer.nth_pkI_map₂; do
     echo "#print axioms $theorem" >> "$out/axioms.lean"
     expected=$((expected + 1))
   done

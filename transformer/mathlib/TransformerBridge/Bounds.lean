@@ -37,7 +37,7 @@ theorem colAbsSum_eq_sum_range (G : List (List ℤ)) (k : ℕ) :
   induction G with
   | nil => simp [colAbsSum]
   | cons r rs ih =>
-    simp [colAbsSum, List.length_cons, Finset.sum_range_succ', nth, ih, natAbs_cast]
+    simp [colAbsSum, List.length_cons, Finset.sum_range_succ', nth, ih, add_comm]
 
 /-- Exact Fin-indexed column-sum transfer; no per-entry relaxation is used. -/
 theorem sum_fin_eq_colAbsSum (G : List (List ℤ)) (n : ℕ) (hlen : G.length = n) (k : ℕ) :

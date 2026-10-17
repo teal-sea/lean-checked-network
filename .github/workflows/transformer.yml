@@ -1,6 +1,6 @@
 name: transformer
 
-# Core is a PAIR PILOT: accepted bounds/Cols plus three fixed literal checks.
+# Core is a CACHED PAIR PILOT: certified reusable packings plus three fixed literal checks.
 # A green pilot leaves row0 and all-input acceptance unproved. Full-row remains an explicit smoke.sh mode.
 on:
   pull_request:
@@ -38,12 +38,14 @@ jobs:
           if-no-files-found: warn
 
   core:
-    name: PAIR PILOT (three literal pairs; row0 remains unproved), time and memory
+    name: CACHED PAIR PILOT (three pairs; row0 unproved), certificates, time and memory
     runs-on: ubuntu-latest
     timeout-minutes: 170
     env:
       LEAN_NUM_THREADS: "2"
-      CORE_MODE: pair-pilot
+      CORE_MODE: cached-pair-pilot
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
     steps:
       - uses: actions/checkout@v5
       - name: Install elan (toolchain comes from transformer/lean/lean-toolchain)
@@ -55,17 +57,25 @@ jobs:
           python3 -m pip install numpy
           python3 transformer/test_gen_emission.py
           python3 transformer/lean/mirror_bounds.py
+          python3 transformer/lean/test_cached.py
           transformer/lean/test_harness.sh
-      - name: PAIR PILOT (300s per pair; Cols, axioms, replay; no row0)
+      - name: CACHED PAIR PILOT (serial certificates, 300s per pair; axioms, replay; no row0)
         timeout-minutes: 150
         run: cd transformer/lean && ./smoke.sh 2>&1 | tee ci-out-smoke.txt; exit "${PIPESTATUS[0]}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: transformer-core-pair-pilot
+          name: transformer-core-cached-pair-pilot
           path: |
             transformer/lean/ci-out/
             transformer/lean/ci-out-smoke.txt
+            transformer/lean/Transformer/Net/Cached.lean
+            transformer/lean/Transformer/Net/CachedUnits/
+            transformer/lean/Transformer/Net/CachedPair*.lean
+            transformer/lean/Transformer/Cached.lean
+            transformer/lean/Transformer/CachedFixture.lean
+            transformer/lean/cached-inputs.sha256
+            transformer/lean/gen_cached.py
           if-no-files-found: warn
 
   bridge:

@@ -6,6 +6,10 @@ __pycache__/
 !lean_run.log
 !runs/*.log
 **/.lake/
+# Reproducible cache literals/certificates: emitted in CI and preserved as artifacts.
+transformer/lean/Transformer/Net/Cached.lean
+transformer/lean/Transformer/Net/CachedPair*.lean
+transformer/lean/Transformer/Net/CachedUnits/
 **/.venv/
 prime_env/tests/work/
 prime_env/tests/tmp_tasks/

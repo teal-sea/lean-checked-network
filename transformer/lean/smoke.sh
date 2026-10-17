@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Measured core gates. Default pair-pilot stops before row0; full-row retains the row0 route.
+# Measured core gates. Pair modes stop before row0; full-row retains the row0 route.
 # Pilot acceptance is only three literal checks, never fast_0 or all-input acceptance.
 set -u
 export PATH="$HOME/.elan/bin:$PATH"
 export LEAN_NUM_THREADS=${LEAN_NUM_THREADS:-2}
 case "$LEAN_NUM_THREADS" in 1|2) ;; *) echo "LEAN_NUM_THREADS must be 1 or 2"; exit 2 ;; esac
 mode=${CORE_MODE:-pair-pilot}
-case "$mode" in pair-pilot|full-row) ;; *) echo "unknown CORE_MODE: $mode"; exit 2 ;; esac
+case "$mode" in pair-pilot|cached-pair-pilot|full-row) ;; *) echo "unknown CORE_MODE: $mode"; exit 2 ;; esac
 cd "$(dirname "$0")" || exit 1
 out=ci-out; mkdir -p "$out"
 status=0
@@ -61,14 +61,36 @@ echo "=== data provenance: the generated data files are byte-identical to the ma
 tail -n 3 "$out/w-sha256.out"
 
 gate build_core 600 lake build Transformer || { echo "core build failed, stopping"; stop; }
+if [ "$mode" = cached-pair-pilot ]; then
+  # Fail on symbolic support/edge fixtures before the expensive frozen-table work.
+  gate build_cached 600 lake build Transformer.Cached || stop
+  gate replay_cached 600 lake env leanchecker Transformer.Cached || stop
+  gate build_cached_fixture 300 lake build Transformer.CachedFixture || stop
+  gate replay_cached_fixture 300 lake env leanchecker Transformer.CachedFixture || stop
+  # A changed packed literal must fail, with a decide diagnostic rather than a crash/timeout.
+  /usr/bin/time -v -o "$out/cache_red.time" timeout -s TERM -k 20 60 lake env lean cache-red.lean > "$out/cache_red.out" 2>&1
+  red_rc=$?
+  if [ "$red_rc" -ne 1 ] || ! grep -q 'decide' "$out/cache_red.out"; then
+    status=1; echo "altered packed-literal red control failed (exit $red_rc)"; stop
+  fi
+  echo 'Altered packed-literal kernel red control rejected as expected'
+  gate cache_codegen 300 python3 gen_cached.py --out . || stop
+  gate cache_codegen_repro 300 python3 gen_cached.py --out . --check || stop
+fi
 gate build_lib 600 lake build Transformer.BoundsLib || { echo "BoundsLib failed, stopping"; stop; }
 # The representative slice: one head of TI0 (114 vectors of 512 entries, about 58,000 literals, a quarter of TI0 and a
 # ninth of the whole table). Its data is built first as its own gate so the bound checks are timed apart from the data.
 gate build_slice_data 900 lake build Transformer.Net.W.TI0_0 || { echo "slice data failed, stopping"; stop; }
 gate build_slice 900 lake build Transformer.Net.B.TI0_0 || { echo "bounds slice failed, stopping before the other bound modules"; stop; }
 data="Transformer.Net.W.TI0_1 Transformer.Net.W.TI0_2 Transformer.Net.W.TI0_3 Transformer.Net.W.TI1_0 Transformer.Net.W.TI1_1 Transformer.Net.W.TI1_2 Transformer.Net.W.TI1_3 Transformer.Net.W.TU0 Transformer.Net.W.TU1 Transformer.Net.W.Misc"
+if [ "$mode" = cached-pair-pilot ]; then
+  for module in $data; do
+    gate "build_data_${module##*.}" 900 lake build "$module" || stop
+  done
+else
 # shellcheck disable=SC2086
 gate build_data 900 lake build $data || { echo "generated data failed, stopping"; stop; }
+fi
 gate build_weights 600 lake build Transformer.Net.Weights || { echo "Weights failed, stopping"; stop; }
 # The rest of the bounds modules, one lake call each (serial, so the peak memory is that of one module).
 for m in TI0_1 TI0_2 TI0_3 TI1_0 TI1_1 TI1_2 TI1_3 TU0 TU1 Misc G; do
@@ -77,7 +99,17 @@ done
 gate build_table 600 lake build Transformer.Net.Table || { echo "tables_ok assembly failed, stopping"; stop; }
 # Independent column evidence runs before any pair or full row.
 gate build_cols 900 lake build Transformer.Net.Cols || stop
-if [ "$mode" = pair-pilot ]; then
+if [ "$mode" = cached-pair-pilot ]; then
+  # Dependency order is generated explicitly. Separate serial calls preserve unit time/RSS.
+  while IFS= read -r module; do
+    unit=${module#Transformer.Net.}
+    gate "build_cache_$unit" 600 lake build "$module" || stop
+    gate "replay_cache_$unit" 600 lake env leanchecker "$module" || stop
+  done < "$out/cache-codegen/modules.txt"
+  for pair in 0_0 0_112 96_73; do
+    gate "build_cached_pair_$pair" 300 lake build "Transformer.Net.CachedPair$pair" || stop
+  done
+elif [ "$mode" = pair-pilot ]; then
   for pair in 0_0 0_112 96_73; do
     gate "build_pair_$pair" 300 lake build "Transformer.Net.Pair$pair" || stop
   done
@@ -89,13 +121,26 @@ echo "=== source scan (must be empty): forbidden trust constructs"
 ./scan_sources.sh Transformer/Model.lean Transformer/Fast.lean Transformer/Equiv.lean Transformer/BoundsLib.lean Transformer/Net/Table.lean Transformer/Net/Cols.lean Transformer/Net/B/*.lean Transformer/Net/Pair*.lean Transformer/Net/Rows00.lean Transformer.lean > "$out/scan.out" 2>&1
 sc=$?; cat "$out/scan.out"
 [ "$sc" -eq 0 ] || { status=1; stop; }
+if [ "$mode" = cached-pair-pilot ]; then
+  # Do not let a generated source escape the trust scan, including pair proof files.
+  cache_sources=()
+  while IFS= read -r source; do cache_sources+=("$source"); done < "$out/cache-codegen/sources.txt"
+  ./scan_sources.sh Transformer/Cached.lean Transformer/CachedFixture.lean cache-red.lean "${cache_sources[@]}" > "$out/cache-scan.out" 2>&1
+  sc=$?; cat "$out/cache-scan.out"
+  [ "$sc" -eq 0 ] || { status=1; stop; }
+fi
 
 cat > "$out/axioms.lean" <<'LEAN'
 import Transformer.Equiv
 import Transformer.Net.Table
 import Transformer.Net.Cols
 LEAN
-if [ "$mode" = pair-pilot ]; then
+if [ "$mode" = cached-pair-pilot ]; then
+  echo 'import Transformer.CachedFixture' >> "$out/axioms.lean"
+  for pair in 0_0 0_112 96_73; do
+    echo "import Transformer.Net.CachedPair$pair" >> "$out/axioms.lean"
+  done
+elif [ "$mode" = pair-pilot ]; then
   for pair in 0_0 0_112 96_73; do
     echo "import Transformer.Net.Pair$pair" >> "$out/axioms.lean"
   done
@@ -109,7 +154,21 @@ cat >> "$out/axioms.lean" <<'LEAN'
 #print axioms Transformer.Net.G_length
 LEAN
 expected=4
-if [ "$mode" = pair-pilot ]; then
+if [ "$mode" = cached-pair-pilot ]; then
+  for theorem in Transformer.cachedFastCheck_pack Transformer.cachedFastCheck_eq Transformer.PackedTab.eq_of_fields Transformer.packed_cons_of Transformer.nth_pkI_map Transformer.nth_pkI_map₂; do
+    echo "#print axioms $theorem" >> "$out/axioms.lean"
+    expected=$((expected + 1))
+  done
+  for theorem in empty negative signed default_inner default_outer empty_vector arbitrary_indices; do
+    echo "#print axioms Transformer.CachedFixture.$theorem" >> "$out/axioms.lean"
+    expected=$((expected + 1))
+  done
+  # Every literal certificate and every ordinary assembly equality, plus the pilots.
+  while IFS= read -r theorem; do
+    echo "#print axioms $theorem" >> "$out/axioms.lean"
+    expected=$((expected + 1))
+  done < "$out/cache-codegen/axioms.txt"
+elif [ "$mode" = pair-pilot ]; then
   for pair in 0_0 0_112 96_73; do
     echo "#print axioms Transformer.Net.pilot_$pair" >> "$out/axioms.lean"
   done
@@ -119,14 +178,23 @@ else
   expected=5
 fi
 gate axioms 600 lake env lean "$out/axioms.lean" || stop
-cat "$out/axioms.out"
+if [ "$mode" = cached-pair-pilot ]; then
+  tail -n 12 "$out/axioms.out"
+else
+  cat "$out/axioms.out"
+fi
 n=$(grep -cE "^.[^ ]+. (does not depend on any axioms|depends on axioms: \[(propext|Classical\.choice|Quot\.sound)(, (propext|Classical\.choice|Quot\.sound))*\])$" "$out/axioms.out")
 echo "$n of $expected theorems on standard axioms or none"
 [ "$n" -eq "$expected" ] || { status=1; stop; }
 gate replay_equiv 600 lake env leanchecker Transformer.Equiv || stop
 gate replay_table 600 lake env leanchecker Transformer.Net.Table || stop
 gate replay_cols 900 lake env leanchecker Transformer.Net.Cols || stop
-if [ "$mode" = pair-pilot ]; then
+if [ "$mode" = cached-pair-pilot ]; then
+  for pair in 0_0 0_112 96_73; do
+    gate "replay_cached_pair_$pair" 300 lake env leanchecker "Transformer.Net.CachedPair$pair" || stop
+  done
+  echo 'CACHED PAIR PILOT accepted; row0 remains unproved; all-input acceptance unproved' | tee "$out/STATUS.txt"
+elif [ "$mode" = pair-pilot ]; then
   for pair in 0_0 0_112 96_73; do
     gate "replay_pair_$pair" 300 lake env leanchecker "Transformer.Net.Pair$pair" || stop
   done

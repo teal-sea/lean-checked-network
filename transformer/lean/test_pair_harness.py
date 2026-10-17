@@ -36,7 +36,8 @@ shift 5
 "$@"
 ''',
             'lake': r'''#!/bin/bash
-if [ -n "$FAIL_COMMAND" ] && [[ "$*" == *"$FAIL_COMMAND"* ]]; then exit 42; fi
+if [ -n "$FAIL_COMMAND" ] && [[ "$*" == *"$FAIL_COMMAND" ]]; then exit 42; fi
+if [ "$*" = 'env lean cache-red.lean' ]; then echo "error: decide rejected altered literal"; exit 1; fi
 if [ "$1 $2" = 'env lean' ]; then
   while read -r line; do
     case "$line" in '#print axioms '*) printf "'%s' does not depend on any axioms\n" "${line#\#print axioms }" ;; esac
@@ -47,6 +48,13 @@ exit 0
             'lean': '#!/bin/bash\necho fixture-version\n',
             'sha256sum': '#!/bin/bash\nexit 0\n',
             'scan_sources.sh': '#!/bin/bash\nexit 0\n',
+            'python3': '''#!/bin/bash
+if [ -n "$FAIL_COMMAND" ] && [[ "$*" == *"$FAIL_COMMAND" ]]; then exit 42; fi
+mkdir -p ci-out/cache-codegen
+printf '%s\n' Transformer.Net.CachedUnits.Fixture_000 Transformer.Net.CachedUnits.Fixture Transformer.Net.Cached > ci-out/cache-codegen/modules.txt
+printf '%s\n' Transformer/Net/Cached.lean > ci-out/cache-codegen/sources.txt
+printf '%s\n' Transformer.Net.Cached.eq_fixture Transformer.Net.Cached.cache_eq > ci-out/cache-codegen/axioms.txt
+''',
         }
         for name, text in scripts.items():
             path = (root if name == 'scan_sources.sh' else bin_dir) / name
@@ -114,3 +122,52 @@ except AssertionError:
 else:
     raise AssertionError('swallowed pair exit accepted')
 print('ok: HARNESS UNIT TESTS (fake commands, no Lean evidence): pair budgets/order, replay, failure propagation, full-row mode, red controls')
+
+
+def cached_accepted(result):
+    rc, gates, status = result
+    assert rc == 0 and 'CACHED PAIR PILOT accepted; row0 remains unproved' in status, result
+    assert not any('Rows' in g or 'AllInputs' in g or 'Net.Pair' in g for g in gates)
+    for target in ('Transformer.Cached', 'Transformer.CachedFixture',
+                   'Transformer.Net.CachedUnits.Fixture_000', 'Transformer.Net.CachedUnits.Fixture',
+                   'Transformer.Net.Cached'):
+        assert any(g.endswith('lake build ' + target) for g in gates), target
+        assert any(g.endswith('lake env leanchecker ' + target) for g in gates), target
+    assert [g for g in gates if 'lake build Transformer.Net.CachedPair' in g] == [
+        f'-s TERM -k 20 300 lake build Transformer.Net.CachedPair{p}' for p in PAIRS]
+    assert [g for g in gates if 'leanchecker Transformer.Net.CachedPair' in g] == [
+        f'-s TERM -k 20 300 lake env leanchecker Transformer.Net.CachedPair{p}' for p in PAIRS]
+    assert gates.index('-s TERM -k 20 600 lake env leanchecker Transformer.Net.Cached') < gates.index(
+        '-s TERM -k 20 300 lake build Transformer.Net.CachedPair0_0')
+    assert any('lake env lean cache-red.lean' in g for g in gates)
+    assert any('python3 gen_cached.py --out .' in g for g in gates)
+    assert any(g.endswith('python3 gen_cached.py --out . --check') for g in gates)
+
+
+cached_accepted(run(mode='cached-pair-pilot'))
+for failure in ['build Transformer.Cached', 'leanchecker Transformer.Cached',
+                'build Transformer.CachedFixture', 'leanchecker Transformer.CachedFixture',
+                'gen_cached.py --out .', 'gen_cached.py --out . --check',
+                'build Transformer.Net.CachedUnits.Fixture_000',
+                'leanchecker Transformer.Net.CachedUnits.Fixture_000',
+                'build Transformer.Net.CachedUnits.Fixture',
+                'leanchecker Transformer.Net.CachedUnits.Fixture',
+                'build Transformer.Net.Cached', 'leanchecker Transformer.Net.Cached'] + [
+                f'build Transformer.Net.CachedPair{p}' for p in PAIRS] + [
+                f'leanchecker Transformer.Net.CachedPair{p}' for p in PAIRS] + [
+                'env lean ci-out/axioms.lean']:
+    assert_failed(run(mode='cached-pair-pilot', fail=failure), failure)
+# Expected rejection must never admit success, timeout, or a failed proof runner.
+assert_failed(run(SOURCE.replace('cache-red.lean', 'cache-red-accepted.lean'),
+                  mode='cached-pair-pilot'), 'env lean cache-red-accepted.lean')
+assert_failed(run(mode='cached-pair-pilot', fail='env lean cache-red.lean'),
+              'env lean cache-red.lean')
+for broken in [SOURCE.replace('gate "replay_cache_$unit" 600 lake env leanchecker "$module" || stop', ':'),
+               SOURCE.replace('for pair in 0_0 0_112 96_73', 'for pair in 0_0 96_73')]:
+    try:
+        cached_accepted(run(broken, mode='cached-pair-pilot'))
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError('broken cached harness accepted')
+print('ok: CACHED HARNESS UNIT TESTS (fake commands): support/certificate replay before three cached pairs; no direct pair/row launches; failure propagation')

@@ -14,7 +14,7 @@ theorem pack_zero (f : Fin 0 → Int) : pack f = 0 := by
 
 theorem pack_succ {n : Nat} (f : Fin (n + 1) → Int) :
     pack f = f 0 + (B : Int) * pack (fun i => f i.succ) := by
-  simp only [pack, List.ofFn_succ, pkI, Int.add_def, Int.mul_def]
+  simp only [pack, List.ofFn_succ, pkI, Int.add_def, Int.mul_def, Int.ofNat_eq_natCast]
 
 theorem pack_add {n : Nat} (f g : Fin n → Int) :
     pack (fun i => f i + g i) = pack f + pack g := by

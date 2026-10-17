@@ -1,0 +1,61 @@
+name: transformer
+
+# The transformer lane: an independent Mathlib job (conditional composition theorem) and a core-Lean
+# smoke job (Model, Fast, Equiv, tables_ok, row 0 only). Neither builds the other 112 row files or
+# Net.AllInputs; that waits until the row-0 time and memory are measured. Outputs are uploaded even on failure.
+on:
+  pull_request:
+    paths: ["transformer/**", ".github/workflows/transformer.yml"]
+  workflow_dispatch:
+
+concurrency:
+  group: transformer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mathlib:
+    name: Mathlib lane (ExpFix, Program, Logits, Compose, Raw), cache, replay, axioms
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      LEAN_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan (toolchain comes from transformer/mathlib/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib cache
+        run: cd transformer/mathlib && lake exe cache get
+      - name: verify.sh (build, source scan, leanchecker replay, axioms)
+        run: cd transformer/mathlib && ./verify.sh 2>&1 | tee verify.ci.out; exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-mathlib-verify
+          path: |
+            transformer/mathlib/*.out
+          if-no-files-found: warn
+
+  core:
+    name: Core lane smoke (Model, Fast, Equiv, tables, row 0 only), time and memory
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      LEAN_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan (toolchain comes from transformer/lean/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: smoke.sh
+        run: cd transformer/lean && ./smoke.sh 2>&1 | tee ci-out-smoke.txt; exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-core-smoke
+          path: |
+            transformer/lean/ci-out/
+            transformer/lean/ci-out-smoke.txt
+          if-no-files-found: warn

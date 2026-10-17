@@ -18,6 +18,50 @@ PIN = json.loads(cache.PIN_PATH.read_text())
 
 
 class CorrespondenceTests(unittest.TestCase):
+    def test_mocked_audit_producer_strict_boundary(self):
+        """Mocked output only: checks producer invocation, never executes Lean."""
+        import tempfile
+        from unittest.mock import patch
+        import rawcorrespondence_runner as producer
+        names = ['Example.first', 'Example.second']
+        record = lambda n: "'" + n + "' depends on axioms: [propext, Classical.choice, Quot.sound]\n"
+        good = ''.join(map(record, names))
+        wrapped = "'TransformerBridge.RawCorrespondence.Canonical.representative_affine' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n"
+        with self.assertRaises(ValueError):
+            producer.runner.check_axioms(wrapped, ['TransformerBridge.RawCorrespondence.Canonical.representative_affine'])
+        with tempfile.TemporaryDirectory() as tmp, patch.object(producer, 'OUT', Path(tmp)):
+            def mocked_run(label, args, seconds):
+                self.assertEqual(label, 'mocked-axioms')
+                self.assertEqual(args, ['lake', 'env', 'lean', '-Dpp.width=1000000', str(Path(tmp) / 'mocked-axioms.lean')])
+                self.assertEqual(seconds, 600)
+                self.assertEqual(Path(args[-1]).read_text(), 'import Example\n#print axioms Example.first\n#print axioms Example.second\n')
+                self.assertEqual(json.loads((Path(tmp) / 'mocked-axioms.expected.json').read_text()), names)
+                return good
+            with patch.object(producer.runner, 'run', side_effect=mocked_run):
+                self.assertEqual(producer.audit('mocked', ['Example'], names), 2)
+            bad_outputs = {
+                'unknown axiom': good.replace('propext', 'sorryAx'),
+                'missing': record(names[0]),
+                'duplicate': record(names[0]) * 2,
+                'reordered': ''.join(map(record, reversed(names))),
+                'extra': good + record('Example.extra'),
+                'malformed': good.replace('depends on axioms:', 'axioms:'),
+                'truncated': good[:-2],
+                'wrapped': wrapped,
+                'warning': 'warning: mocked diagnostic\n' + good,
+            }
+            for label, output in bad_outputs.items():
+                with self.subTest(label=label), patch.object(producer.runner, 'run', return_value=output):
+                    with self.assertRaises(ValueError):
+                        producer.audit('mocked', ['Example'], names)
+            with patch.object(producer.runner, 'run', side_effect=ValueError('producer failed: mocked-axioms, exit 1')):
+                with self.assertRaisesRegex(ValueError, 'exit 1'):
+                    producer.audit('mocked', ['Example'], names)
+            with patch.object(producer.runner, 'run') as run:
+                with self.assertRaisesRegex(ValueError, 'duplicate requested'):
+                    producer.audit('mocked', ['Example'], names + names)
+                run.assert_not_called()
+
     def test_actual_retained_schema(self):
         self.assertIsNotNone(METADATA, 'actual metadata required; fake receipts cannot stand in')
         records, source, compiler = cache.validate_metadata(METADATA, PIN)

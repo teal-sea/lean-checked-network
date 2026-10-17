@@ -16,6 +16,22 @@ import rawcorrespondence_restore as cache
 OUT = HERE / 'rawcorrespondence-out'
 
 
+
+def audit(label, imports, names):
+    """Produce single-line Lean records; retain the frozen strict acceptance boundary."""
+    if len(names) != len(set(names)):
+        raise ValueError('duplicate requested raw-correspondence audit declaration')
+    path = OUT / (label + '-axioms.lean')
+    path.write_text(''.join('import ' + m + '\n' for m in imports) +
+                    ''.join('#print axioms ' + n + '\n' for n in names))
+    (OUT / (label + '-axioms.expected.json')).write_text(json.dumps(names, indent=2) + '\n')
+    # The fixed inventory records fit within this explicit pretty-printer width.
+    text = runner.run(label + '-axioms', ['lake', 'env', 'lean', '-Dpp.width=1000000', str(path)], 600)
+    count = runner.check_axioms(text, names)
+    print(f'{label} exact declarations={count}/{len(names)} standard-axioms-only=YES', flush=True)
+    return count
+
+
 def snapshot():
     paths = ['rawcorrespondence_runner.py', 'rawcorrespondence_restore.py',
              'rawcorrespondence_generate.py', 'RawCorrespondence-checkpoint.json',
@@ -79,7 +95,7 @@ def main(archive, api):
     check_declarations(gen.FIXTURE, 'TransformerBridge.RawCorrespondenceFixture', gen.FIXTURE_NAMES)
     runner.run('support-scan', ['../lean/scan_sources.sh', *(m.replace('.', '/') + '.lean' for m in support)], 60)
     fresh = [fresh_compile(m) for m in support]
-    support_count = runner.audit('new-support', [gen.FIXTURE, gen.LINEAR], [*gen.SUPPORT_NAMES, *gen.LINEAR_NAMES, *gen.FIXTURE_NAMES])
+    support_count = audit('new-support', [gen.FIXTURE, gen.LINEAR], [*gen.SUPPORT_NAMES, *gen.LINEAR_NAMES, *gen.FIXTURE_NAMES])
     # Only after symbolic support and its signed affine fixture pass: proof source emission.
     runner.run('generate-CI-proof', ['python3', '-B', '-W', 'error', 'rawcorrespondence_generate.py'], 60)
     runner.run('generate-CI-proof-check', ['python3', '-B', '-W', 'error', 'rawcorrespondence_generate.py', '--check'], 60)
@@ -92,10 +108,10 @@ def main(archive, api):
         fresh.append(fresh_compile(module))
         # Width-one actual learned affine certificate is the gate before width512.
         if module.endswith('.Representative'):
-            runner.audit('representative', [module], [gen.NS + '.representative_affine'])
+            audit('representative', [module], [gen.NS + '.representative_affine'])
     all_names = [*SCALAR_NAMES, *PACKED_NAMES, *old_inventory()[1], *gen.SUPPORT_NAMES, *gen.LINEAR_NAMES, *gen.FIXTURE_NAMES, *names]
     cache.require(len(all_names) == 2645, 'wrong complete CI exact audit count')
-    count = runner.audit('complete-CI', [OLD_PREFIX + '.Site', gen.PREFIX + '.Control', gen.FIXTURE, gen.LINEAR], all_names)
+    count = audit('complete-CI', [OLD_PREFIX + '.Site', gen.PREFIX + '.Control', gen.FIXTURE, gen.LINEAR], all_names)
     runner.run('negative-actual-bin-change', ['lake', 'env', 'lean', str(OUT / 'changed-bin.lean')], 900, negative=True)
     gen.validate(HERE, OUT)
     cache.require(snapshot() == immutable, 'candidate source changed')

@@ -1,0 +1,8 @@
+⚠ [9048/9055] Replayed PhaseGrid.Trig
+warning: PhaseGrid/Trig.lean: imports `Mathlib` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+⚠ [9049/9055] Replayed PhaseGrid.Defs
+warning: PhaseGrid/Defs.lean: imports `Mathlib` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+⚠ [9050/9055] Replayed PhaseGrid.ListLemmas
+warning: PhaseGrid/ListLemmas.lean: imports `Mathlib` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+✔ [9055/9055] Built PhaseGrid.Cycle (339s)
+Build completed successfully (9055 jobs).

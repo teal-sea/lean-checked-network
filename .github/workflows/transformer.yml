@@ -10,7 +10,8 @@ on:
 
 concurrency:
   group: transformer-${{ github.ref }}
-  cancel-in-progress: true
+  # false: a later push queues behind the running pilot instead of killing it (the evidence is the point)
+  cancel-in-progress: false
 
 jobs:
   mathlib:
@@ -40,7 +41,7 @@ jobs:
   core:
     name: Core lane smoke (Model, Fast, Equiv, tables, row 0 only), time and memory
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 60
     env:
       LEAN_NUM_THREADS: "2"
     steps:
@@ -54,7 +55,8 @@ jobs:
           python3 -m pip install numpy
           python3 transformer/test_gen_emission.py
           transformer/lean/test_harness.sh
-      - name: smoke.sh
+      - name: smoke.sh (split gates, streamed resource monitor, per-gate timeouts)
+        timeout-minutes: 50
         run: cd transformer/lean && ./smoke.sh 2>&1 | tee ci-out-smoke.txt; exit "${PIPESTATUS[0]}"
       - uses: actions/upload-artifact@v4
         if: always()

@@ -17,9 +17,11 @@ ALLOWED.update('Transformer.Net.B.' + x for x in
                ('TI0_0', 'TI0_1', 'TI0_2', 'TI0_3', 'TI1_0', 'TI1_1', 'TI1_2', 'TI1_3', 'TU0', 'TU1', 'Misc', 'G'))
 
 
-def inventory(bounds=False, support=False, row0=False, cached_support=False):
+def inventory(bounds=False, support=False, row0=False, cached_support=False, raw_pilot=False):
     allowed = set(ALLOWED)
     extra_seeds = ()
+    if raw_pilot:
+        extra_seeds = ("Transformer.Net.Weights",)
     if row0:
         from row0_receipt import validate_codegen
         receipt = validate_codegen(BASE)
@@ -65,11 +67,12 @@ def main():
     modes.add_argument('--support-only', action='store_true')
     modes.add_argument('--row0', action='store_true', help='closed stable ROW0/113 mirror; requires checked row generation')
     modes.add_argument('--cached-support-only', action='store_true')
+    modes.add_argument('--raw-pilot', action='store_true', help='unchanged frozen tab closure only; no bounds, caches or pairs')
     parser.add_argument('--check', action='store_true')
     parser.add_argument('--inventory', action='store_true', help='hash only; do not emit mirrors')
     parser.add_argument('--manifest', type=Path)
     args = parser.parse_args()
-    rows = inventory(args.bounds, args.support_only, args.row0, args.cached_support_only)
+    rows = inventory(args.bounds, args.support_only, args.row0, args.cached_support_only, args.raw_pilot)
     manifest = []
     for module, src, dst, data, target in rows:
         dest = HERE / dst
@@ -85,7 +88,7 @@ def main():
                                    hashlib.sha256(data).hexdigest(), hashlib.sha256(target).hexdigest())))
     if args.manifest:
         args.manifest.write_text('\n'.join(manifest) + '\n')
-    print(f'sync status=OK modules={len(rows)} mode={"row0" if args.row0 else "cached-support" if args.cached_support_only else "bounds" if args.bounds else "support" if args.support_only else "program"}')
+    print(f'sync status=OK modules={len(rows)} mode={"raw-pilot" if args.raw_pilot else "row0" if args.row0 else "cached-support" if args.cached_support_only else "bounds" if args.bounds else "support" if args.support_only else "program"}')
 
 
 if __name__ == '__main__':

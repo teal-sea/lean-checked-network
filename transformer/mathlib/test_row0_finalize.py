@@ -62,6 +62,11 @@ def workflow_controls():
     for job in ('mathlib', 'core', 'bridge'):
         route = workflow.split('  ' + job + ':\n', 1)[1].splitlines()[0]
         assert "inputs.core_mode != 'mathlib-row0-finalize'" in route
+    workflow = workflow.split('\n  input-row1:\n', 1)[0].rstrip() + '\n'
+    workflow = workflow.replace('          - mathlib-input-row1\n', '').replace('          - mathlib-input-grid\n', '').replace('          - mathlib-input-all\n', '')
+    workflow = workflow.replace("inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || ", '')
+    workflow = workflow.replace("inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && ", '')
+    workflow = workflow.replace("      input_artifact_lock:\n        description: Parent-adjudicated JSON lock (row1 for grid; rows1..112 for all assembly)\n        type: string\n        default: ''\n", '')
     restored = workflow.split('\n  row0-finalize:\n', 1)[0].rstrip() + '\n'
     restored = restored.replace('          - mathlib-row0-finalize\n', '')
     restored = restored.replace("inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || ", '')

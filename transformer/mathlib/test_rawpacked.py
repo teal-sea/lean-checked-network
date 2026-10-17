@@ -157,6 +157,11 @@ class PackedFixtures(unittest.TestCase):
 
     def test_existing_workflow_modes_and_jobs_preserved(self):
         workflow = (data.ROOT / '.github/workflows/transformer.yml').read_text()
+        workflow = workflow.split('\n  input-row1:\n', 1)[0].rstrip() + '\n'
+        workflow = workflow.replace('          - mathlib-input-row1\n', '').replace('          - mathlib-input-grid\n', '').replace('          - mathlib-input-all\n', '')
+        workflow = workflow.replace("inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || ", '')
+        workflow = workflow.replace("inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && ", '')
+        workflow = workflow.replace("      input_artifact_lock:\n        description: Parent-adjudicated JSON lock (row1 for grid; rows1..112 for all assembly)\n        type: string\n        default: ''\n", '')
         workflow = workflow.split('\n  row0-finalize:\n', 1)[0].rstrip() + '\n'
         workflow = workflow.replace('          - mathlib-row0-finalize\n', '')
         workflow = workflow.replace("inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || ", '')

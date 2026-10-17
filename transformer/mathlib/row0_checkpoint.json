@@ -1922,7 +1922,7 @@
   "snapshot_base": "6de0c0cc873cad78287f9bbe86d65a51265f15cf",
   "source_exceptions": {
     "../../.github/workflows/transformer.yml": {
-      "candidate_sha256": "2bbb247b10304fc72c0e6d31cbd673a791f29d9e3f8362b211658f9eeb8d9be0",
+      "candidate_sha256": "a5c63f9764fd4b00bd5d61faa905b4e1c0b898317413ddae79a61516f1e53b0e",
       "old_sha256": "7dbae4d1c5b9f785e8b4aab4e118a4a8351f0323867d1c12b7bde375602a3101",
       "reason": "Non-mathematical registered workflow: preserves existing packed/scalar/Core/row0 jobs and adds isolated public-only manual finalizer routing; no retained theorem source"
     },

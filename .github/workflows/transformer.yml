@@ -14,9 +14,10 @@ on:
         options:
           - cached-pair-pilot
           - cached-support-pilot
+          - mathlib-bounds-pilot
 
 concurrency:
-  group: transformer-${{ github.ref }}
+  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
   # false: a later push queues behind the running pilot instead of killing it (the evidence is the point)
   cancel-in-progress: false
 
@@ -47,6 +48,7 @@ jobs:
           if-no-files-found: warn
 
   core:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.core_mode != 'mathlib-bounds-pilot' }}
     name: ${{ inputs.core_mode == 'cached-support-pilot' && 'CACHED SUPPORT PILOT (generic only; no frozen literals or pairs)' || 'CACHED PAIR PILOT (three pairs; row0 unproved)' }}
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 20 || 170 }}
@@ -100,7 +102,7 @@ jobs:
     name: Bridge (core program to the Mathlib program), needs the Mathlib lane
     needs: mathlib
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: ${{ inputs.core_mode == 'mathlib-bounds-pilot' && 30 || 75 }}
     env:
       LEAN_NUM_THREADS: "2"
     steps:
@@ -111,9 +113,17 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Mathlib cache
         run: cd transformer/mathlib && lake exe cache get
+      - name: Bounds harness controls (fake commands; no kernel evidence)
+        if: inputs.core_mode == 'mathlib-bounds-pilot'
+        run: python3 transformer/mathlib/test_bounds_harness.py
       - name: bridge.sh (sync check, build, source scan, axioms, replay)
+        if: inputs.core_mode != 'mathlib-bounds-pilot'
         timeout-minutes: 60
         run: cd transformer/mathlib && ./bridge.sh 2>&1 | tee bridge.ci.out; exit "${PIPESTATUS[0]}"
+      - name: Frozen Mathlib bounds (stable source sync, Bridge, bounds, audit, negative, replay)
+        if: inputs.core_mode == 'mathlib-bounds-pilot'
+        timeout-minutes: 28
+        run: cd transformer/mathlib && ./bounds.sh 2>&1 | tee bounds.ci.out; exit "${PIPESTATUS[0]}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -121,4 +131,6 @@ jobs:
           path: |
             transformer/mathlib/bridge-out/
             transformer/mathlib/bridge.ci.out
+            transformer/mathlib/bounds-out/
+            transformer/mathlib/bounds.ci.out
           if-no-files-found: warn

@@ -8,7 +8,7 @@ SOURCE = Path(__file__).with_name('smoke.sh').read_text()
 PAIRS = ['0_0', '0_112', '96_73']
 
 
-def run(source=SOURCE, mode='pair-pilot', fail='', threads='2'):
+def run(source=SOURCE, mode='pair-pilot', fail='', threads='2', diagnostics=False):
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
         bin_dir = root / 'bin'
@@ -36,7 +36,12 @@ shift 5
 "$@"
 ''',
             'lake': r'''#!/bin/bash
-if [ -n "$FAIL_COMMAND" ] && [[ "$*" == *"$FAIL_COMMAND" ]]; then exit 42; fi
+if [ -n "$FAIL_COMMAND" ] && [[ "$*" == *"$FAIL_COMMAND" ]]; then
+  echo 'error: fixture producer failure'
+  printf '  goal-context:%0600d:goal-end\n' 0
+  echo '  final unfiltered goal line'
+  exit 42
+fi
 if [ "$*" = 'env lean cache-red.lean' ]; then echo "error: decide rejected altered literal"; exit 1; fi
 if [ "$1 $2" = 'env lean' ]; then
   while read -r line; do
@@ -66,6 +71,9 @@ printf '%s\n' Transformer.Net.Cached.eq_fixture Transformer.Net.Cached.cache_eq 
                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=20)
         gates = trace.read_text().splitlines() if trace.exists() else []
         status = (root / 'ci-out/STATUS.txt').read_text() if (root / 'ci-out/STATUS.txt').exists() else ''
+        if diagnostics:
+            logs = {p.name: p.read_text() for p in (root / 'ci-out').glob('*.out')}
+            return result.returncode, gates, status, result.stdout, logs
         return result.returncode, gates, status
 
 
@@ -171,3 +179,15 @@ for broken in [SOURCE.replace('gate "replay_cache_$unit" 600 lake env leanchecke
     else:
         raise AssertionError('broken cached harness accepted')
 print('ok: CACHED HARNESS UNIT TESTS (fake commands): support/certificate replay before three cached pairs; no direct pair/row launches; failure propagation')
+
+# Diagnostic regression: filtered headers alone lose multiline proof goals. The complete
+# retained producer log must also appear in Actions, and producer exit 42 must survive.
+diagnostic = run(mode='cached-pair-pilot', fail='build Transformer.Cached', diagnostics=True)
+assert_failed(diagnostic[:3], 'build Transformer.Cached')
+output, logs = diagnostic[3:]
+assert 'build_cached exit 42;' in output
+assert 'goal-context:' in logs['build_cached.out']
+assert ':goal-end' in logs['build_cached.out']
+assert logs['build_cached.out'] in output
+assert 'final unfiltered goal line' in output
+print('ok: FAILURE DIAGNOSTIC HARNESS (fake commands): full multiline/long goal retained and exposed; producer exit 42 preserved')

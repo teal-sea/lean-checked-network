@@ -78,7 +78,7 @@ theorem nth_pkI_map₂ (vs : List (List (List Int))) (h i : Nat) :
 /-- Purely symbolic correspondence: no bounds, token range, or nonempty-list premises. -/
 theorem cachedFastCheck_pack (K : Cfg) (T : Tab) (bd : Bnd) (E2 a b : Nat) :
     cachedFastCheck K T (packTab T) bd E2 a b = fastCheck K T bd E2 a b := by
-  simp only [cachedFastCheck, packTab, nth_pkI_map₂, nth_pkI_map,
+  simp only [cachedFastCheck, fastCheck, packTab, nth_pkI_map₂, nth_pkI_map,
     cachedHeadPk, headPk]
 
 /-- Every cache is accepted only through an equality to the original signed packing. -/

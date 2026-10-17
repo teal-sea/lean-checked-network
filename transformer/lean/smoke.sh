@@ -46,7 +46,12 @@ gate() { # name, timeout seconds, command...; wall time and peak RSS in ci-out/N
   /usr/bin/time -v -o "$out/$name.time" timeout -s TERM -k 20 "$secs" "$@" 2>&1 | tee "$out/$name.out" | grep -E --line-buffered "^(✔|✖|error|warning|trace|Build)" | cut -c1-240
   local rc=${PIPESTATUS[0]}
   echo "$name exit $rc; wall $(grep 'Elapsed' "$out/$name.time" 2>/dev/null | sed 's/.*): //'); max RSS KB $(grep 'Maximum resident' "$out/$name.time" 2>/dev/null | sed 's/.*: //')"
-  [ "$rc" -eq 0 ] || { status=1; dump "$name exit $rc"; }
+  [ "$rc" -eq 0 ] || {
+    status=1
+    echo "=== full failing output: $out/$name.out (retained without truncation)"
+    cat "$out/$name.out"
+    dump "$name exit $rc"
+  }
   return "$rc"
 }
 

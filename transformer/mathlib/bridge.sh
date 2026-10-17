@@ -18,8 +18,9 @@ step() { # name, timeout seconds, command...
 step build_core 1200 lake build TransformerCore || { echo "TransformerCore failed"; exit 1; }
 step build_bridge 2400 lake build TransformerBridge.Bridge || { echo "Bridge failed"; exit 1; }
 echo "=== source scan (must be empty)"
-grep -nE "sorry|native_decide|^\s*axiom |opaque |implemented_by|extern|skipKernelTC|decide \+native" \
-  TransformerCore/*.lean TransformerBridge/*.lean TransformerBridge.lean TransformerCore.lean && status=1 || echo "none found"
+../lean/scan_sources.sh TransformerCore/*.lean TransformerBridge/*.lean TransformerBridge.lean TransformerCore.lean > "$out/scan.out" 2>&1
+sc=$?; cat "$out/scan.out"
+if [ "$sc" -eq 0 ]; then echo "none found"; else status=1; fi
 cat > "$out/axioms.lean" <<'LEAN'
 import TransformerBridge.Bridge
 #print axioms TransformerCore.fastCheck_correct

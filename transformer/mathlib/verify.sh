@@ -20,7 +20,9 @@ for m in $mods; do
 done
 run lake build Transformer > build.Transformer.out 2>&1; rb=$?; [ $rb -eq 0 ] || status=1; echo "build root exit $rb : $(grep -E 'Build completed|error' build.Transformer.out | head -1)"
 echo "=== source scan (must be empty): sorry, native_decide, axiom, opaque, implemented_by, extern, skipKernelTC"
-grep -nE "sorry|native_decide|^\s*axiom |opaque |implemented_by|extern|skipKernelTC|decide \+native" Transformer/*.lean Transformer.lean && status=1 || echo "none found"
+../lean/scan_sources.sh Transformer/*.lean Transformer.lean > scan.out 2>&1
+sc=$?; cat scan.out; echo "source scan exit $sc"
+if [ "$sc" -eq 0 ]; then echo "none found"; else status=1; fi
 echo "=== leanchecker replay of every module with declarations (the root only imports), start $(date -u +%FT%TZ)"
 : > replay.out
 for m in $mods; do

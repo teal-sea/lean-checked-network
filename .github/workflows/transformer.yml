@@ -66,6 +66,7 @@ jobs:
         if: always()
         with:
           name: transformer-core-cached-pair-pilot
+          retention-days: 7
           path: |
             transformer/lean/ci-out/
             transformer/lean/ci-out-smoke.txt

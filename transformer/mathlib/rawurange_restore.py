@@ -22,6 +22,8 @@ def pin():
 
 
 def inverse_workflow(text):
+    from rawcufull_restore import inverse_workflow as cu_inverse
+    text = cu_inverse(text)
     rule = pin()['workflow_projection']
     require(digest(text.encode()) == rule['current_sha256'], 'unknown range workflow drift')
     for fragment in rule['insertions']:
@@ -34,6 +36,8 @@ def inverse_workflow(text):
 
 
 def project_current(path, data):
+    from rawcufull_restore import project_current as cu_project
+    data = cu_project(path, data)
     rule = pin()['nonproof_projections'].get(path)
     if rule is None: return data
     require(digest(data) == rule['current_sha256'], 'unknown range source drift: ' + path)

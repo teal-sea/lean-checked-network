@@ -20,6 +20,8 @@ def pin():return json.loads(PIN_PATH.read_text())
 
 
 def inverse_workflow(text):
+    from rawgpilot_restore import inverse_workflow as g_inverse
+    text=g_inverse(text)
     rule=pin()['workflow_projection'];require(digest(text.encode())==rule['current_sha256'],'unknown CU workflow drift')
     for fragment in rule['insertions']:
         require(text.count(fragment)==1,'CU inverse occurrence');text=text.replace(fragment,'',1)
@@ -28,6 +30,8 @@ def inverse_workflow(text):
 
 
 def project_current(path,data):
+    from rawgpilot_restore import project_current as g_project
+    data=g_project(path,data)
     rule=pin()['nonproof_projections'].get(path)
     if rule is None:return data
     require(digest(data)==rule['current_sha256'],'unknown CU source drift: '+path)

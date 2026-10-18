@@ -20,6 +20,15 @@ ARCHIVE_CASES=[]
 
 
 class CU(unittest.TestCase):
+    def test_update_support_statement_identity_non_kernel(self):
+        # Source identity and proof shape only; no local Lean/kernel evidence.
+        source=(c.HERE/'TransformerBridge/RawCUUpdate.lean').read_text()
+        start=source.index(' := by\n',source.index('theorem CU_bout_update'))+len(' := by\n')
+        self.assertEqual(c.digest(source[:start].encode()),'a6ecf3e936a4a985fcf04abf5efe1fa7475481047691e772d781ad01808a976f')
+        self.assertEqual(re.findall(r'^theorem (\w+)',source,re.M),['contract_update','CU_bout_update'])
+        self.assertIn('congrArg (fun input : Fin 128 → Int',source[start:])
+        self.assertNotRegex(source[start:],r'\b(simpa|sorry|admit|axiom|native_decide|unsafe|set_option)\b')
+
     def test_actual_packed_sync_manifest_inventory_non_kernel(self):
         # Authentic retained producer metadata only; no kernel or large archive I/O.
         steps=[json.loads(line) for line in BASE[0]['steps.jsonl'].splitlines()]

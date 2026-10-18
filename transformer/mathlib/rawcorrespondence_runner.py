@@ -17,17 +17,45 @@ OUT = HERE / 'rawcorrespondence-out'
 
 
 
+
+def check_correspondence_axioms(text, expected):
+    """Parse complete records; only comma separators may wrap as LF + one space.
+
+    No stripping, line dropping, or general whitespace normalization is allowed.
+    Only fully parsed records are serialized into the frozen strict validator.
+    """
+    if len(expected) != len(set(expected)):
+        raise ValueError('duplicate requested raw-correspondence audit declaration')
+    axiom = r'(?:propext|Classical\.choice|Quot\.sound)'
+    record = re.compile(
+        r"'([^'\r\n]+)' (does not depend on any axioms|depends on axioms: \["
+        + axiom + r'(?:(?:, |,\n )' + axiom + r')*\])(?:\n|\Z)')
+    offset, canonical = 0, []
+    while offset < len(text):
+        match = record.match(text, offset)
+        if match is None:
+            raise ValueError('unexpected/nonstandard correspondence axiom record at offset ' + str(offset))
+        body = match[2]
+        if body.startswith('depends on axioms: ['):
+            values = re.split(r', |,\n ', body[len('depends on axioms: ['):-1])
+            if len(values) != len(set(values)):
+                raise ValueError('duplicate correspondence axiom')
+            body = 'depends on axioms: [' + ', '.join(values) + ']'
+        canonical.append("'" + match[1] + "' " + body + '\n')
+        offset = match.end()
+    return runner.check_axioms(''.join(canonical), expected)
+
+
 def audit(label, imports, names):
-    """Produce single-line Lean records; retain the frozen strict acceptance boundary."""
+    """Audit complete Lean records through the local closed-grammar adapter."""
     if len(names) != len(set(names)):
         raise ValueError('duplicate requested raw-correspondence audit declaration')
     path = OUT / (label + '-axioms.lean')
     path.write_text(''.join('import ' + m + '\n' for m in imports) +
                     ''.join('#print axioms ' + n + '\n' for n in names))
     (OUT / (label + '-axioms.expected.json')).write_text(json.dumps(names, indent=2) + '\n')
-    # The fixed inventory records fit within this explicit pretty-printer width.
-    text = runner.run(label + '-axioms', ['lake', 'env', 'lean', '-Dformat.width=1000000', str(path)], 600)
-    count = runner.check_axioms(text, names)
+    text = runner.run(label + '-axioms', ['lake', 'env', 'lean', str(path)], 600)
+    count = check_correspondence_axioms(text, names)
     print(f'{label} exact declarations={count}/{len(names)} standard-axioms-only=YES', flush=True)
     return count
 

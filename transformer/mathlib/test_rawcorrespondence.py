@@ -17,6 +17,9 @@ METADATA = None
 PIN = json.loads(cache.PIN_PATH.read_text())
 
 
+# Actual archived diagnostic bytes; parser evidence only, never a kernel replay.
+ACTUAL_AUDIT_FIXTURES = [("'TransformerBridge.RawCorrespondence.affine_eq_of_packed' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.contract_scale' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.CI_of_affine' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.unused_slots' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.tables_eq' does not depend on any axioms\n'TransformerBridge.RawCorrespondence.contract_add_left' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.contract_compose' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.score_composed' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.vvec_split' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.output_composed' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.xhat_contract_split' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.TU_of_ovec' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.CU_of_contract' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondence.G_of_contract' depends on axioms: [propext, Classical.choice, Quot.sound]\n'TransformerBridge.RawCorrespondenceFixture.signed_affine' depends on axioms: [propext, Classical.choice, Quot.sound]\n", ['TransformerBridge.RawCorrespondence.affine_eq_of_packed', 'TransformerBridge.RawCorrespondence.contract_scale', 'TransformerBridge.RawCorrespondence.CI_of_affine', 'TransformerBridge.RawCorrespondence.unused_slots', 'TransformerBridge.RawCorrespondence.tables_eq', 'TransformerBridge.RawCorrespondence.contract_add_left', 'TransformerBridge.RawCorrespondence.contract_compose', 'TransformerBridge.RawCorrespondence.score_composed', 'TransformerBridge.RawCorrespondence.vvec_split', 'TransformerBridge.RawCorrespondence.output_composed', 'TransformerBridge.RawCorrespondence.xhat_contract_split', 'TransformerBridge.RawCorrespondence.TU_of_ovec', 'TransformerBridge.RawCorrespondence.CU_of_contract', 'TransformerBridge.RawCorrespondence.G_of_contract', 'TransformerBridge.RawCorrespondenceFixture.signed_affine'], '34295a26b1d63c9289a9c4c57b3d2d47281abb8e0d3da42169fd5eae8d4cfcaf'), ("'TransformerBridge.RawCorrespondence.Canonical.representative_affine' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n", ['TransformerBridge.RawCorrespondence.Canonical.representative_affine'], '96ab9b35921d41a580e2843c631e6ab0128770ddf8c2ab1139a94548a32d6a12')]
+
 class CorrespondenceTests(unittest.TestCase):
     def test_mocked_audit_producer_strict_boundary(self):
         """Mocked output only: checks producer invocation, never executes Lean."""
@@ -32,7 +35,7 @@ class CorrespondenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp, patch.object(producer, 'OUT', Path(tmp)):
             def mocked_run(label, args, seconds):
                 self.assertEqual(label, 'mocked-axioms')
-                self.assertEqual(args, ['lake', 'env', 'lean', '-Dformat.width=1000000', str(Path(tmp) / 'mocked-axioms.lean')])
+                self.assertEqual(args, ['lake', 'env', 'lean', str(Path(tmp) / 'mocked-axioms.lean')])
                 self.assertEqual(seconds, 600)
                 self.assertEqual(Path(args[-1]).read_text(), 'import Example\n#print axioms Example.first\n#print axioms Example.second\n')
                 self.assertEqual(json.loads((Path(tmp) / 'mocked-axioms.expected.json').read_text()), names)
@@ -47,13 +50,14 @@ class CorrespondenceTests(unittest.TestCase):
                 'extra': good + record('Example.extra'),
                 'malformed': good.replace('depends on axioms:', 'axioms:'),
                 'truncated': good[:-2],
-                'wrapped': wrapped,
                 'warning': 'warning: mocked diagnostic\n' + good,
             }
             for label, output in bad_outputs.items():
                 with self.subTest(label=label), patch.object(producer.runner, 'run', return_value=output):
                     with self.assertRaises(ValueError):
                         producer.audit('mocked', ['Example'], names)
+            with patch.object(producer.runner, 'run', return_value=wrapped):
+                self.assertEqual(producer.audit('wrapped', ['Example'], ['TransformerBridge.RawCorrespondence.Canonical.representative_affine']), 1)
             with patch.object(producer.runner, 'run', side_effect=ValueError('producer failed: mocked-axioms, exit 1')):
                 with self.assertRaisesRegex(ValueError, 'exit 1'):
                     producer.audit('mocked', ['Example'], names)
@@ -61,6 +65,47 @@ class CorrespondenceTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'duplicate requested'):
                     producer.audit('mocked', ['Example'], names + names)
                 run.assert_not_called()
+
+    def test_actual_diagnostics_closed_grammar_non_kernel(self):
+        """Archived outputs and mocked mutations test parsing only, not Lean."""
+        import rawcorrespondence_runner as producer
+        for text, expected, digest in ACTUAL_AUDIT_FIXTURES:
+            self.assertEqual(hashlib.sha256(text.encode()).hexdigest(), digest)
+            self.assertEqual(producer.check_correspondence_axioms(text, expected), len(expected))
+            mutations = [
+                '', text[:-2], text + "'incomplete' depends on axioms: [propext,\n ",
+                text.replace('propext', 'sorryAx'),
+                text.replace('propext', 'propext, unknown'),
+                text.replace('propext', 'propext,\n unknown'),
+                text.replace('propext', 'propext,\n warning: surprise\n '),
+                text.replace('propext', 'propext, propext'),
+                text.replace('propext', ''), text.replace(']', ',]'),
+                re.sub(r',(?: |\n )', lambda _: ',\t', text), re.sub(r',(?: |\n )', lambda _: ',\n\n ', text),
+                text.replace('depends on axioms:', 'axioms:'),
+                text + text, text + "'extra' does not depend on any axioms\n",
+            ]
+            for garbage in ('garbage', 'warning: diagnostic', 'error: diagnostic', ' ', '\n'):
+                mutations.extend([garbage + '\n' + text, text + garbage,
+                                  re.sub(r',(?: |\n )', lambda _: ',\n ' + garbage + '\n ', text, count=1)])
+            for i, bad in enumerate(mutations):
+                with self.subTest(digest=digest, mutation=i), self.assertRaises(ValueError):
+                    producer.check_correspondence_axioms(bad, expected)
+            for bad_names in (expected[:-1], expected + ['extra'], expected + expected,
+                              ['wrong'] + expected[1:]):
+                with self.assertRaises(ValueError):
+                    producer.check_correspondence_axioms(text, bad_names)
+        text, expected, _ = ACTUAL_AUDIT_FIXTURES[0]
+        with self.assertRaises(ValueError):
+            producer.check_correspondence_axioms(text, list(reversed(expected)))
+        records = ["'A' does not depend on any axioms\n",
+                   "'B' depends on axioms: [propext,\n Classical.choice, Quot.sound]\n"]
+        self.assertEqual(producer.check_correspondence_axioms(''.join(records), ['A', 'B']), 2)
+        for bad in (records[1] + records[0], records[0] * 2,
+                    records[0] + 'garbage\n' + records[1],
+                    records[0] + 'warning: diagnostic\n' + records[1],
+                    records[0].replace('any axioms', 'any axioms ') + records[1]):
+            with self.assertRaises(ValueError):
+                producer.check_correspondence_axioms(bad, ['A', 'B'])
 
     def test_actual_retained_schema(self):
         self.assertIsNotNone(METADATA, 'actual metadata required; fake receipts cannot stand in')

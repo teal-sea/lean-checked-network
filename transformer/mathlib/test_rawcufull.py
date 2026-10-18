@@ -20,6 +20,22 @@ ARCHIVE_CASES=[]
 
 
 class CU(unittest.TestCase):
+    def test_actual_packed_sync_manifest_inventory_non_kernel(self):
+        # Authentic retained producer metadata only; no kernel or large archive I/O.
+        steps=[json.loads(line) for line in BASE[0]['steps.jsonl'].splitlines()]
+        expected={'rawpacked-out/support-sync.tsv','rawpacked-out/frozen-sync.tsv'}
+        self.assertEqual(c.packed_sync_manifests(steps),expected)
+        for label in ('support-sync','frozen-sync'):
+            index=next(i for i,s in enumerate(steps) if s['name']==label)
+            bads=[steps[:index]+steps[index+1:],steps+[steps[index]]]
+            for field,value in (('exit',1),('command',['./sync_core.sh','--manifest','rawpacked-out/../foreign.tsv']),
+                                ('command',['./other.sh','--manifest',steps[index]['command'][-1]]),
+                                ('command',steps[index]['command']+['--check'])):
+                bad=copy.deepcopy(steps);bad[index][field]=value;bads.append(bad)
+            for bad in bads:
+                with self.subTest(label=label,bad=bad[index].get('command') if index<len(bad) else None),self.assertRaises(ValueError):
+                    c.packed_sync_manifests(bad)
+
     def test_actual_projected_multi_archive_seam_and_corruption_reds(self):
         from contextlib import ExitStack
         import io
@@ -47,7 +63,8 @@ class CU(unittest.TestCase):
                 bad=list(zs);bad[first]=View(original,{name:original.read(name)+b' corruption'})
                 with self.subTest(name=name),self.assertRaises(ValueError):c.validate_projected_union(bad,identities,c.pin()['objects'])
             for name in ('../unsafe','/absolute','rawurange-out/U-range-scan.time','TransformerBridge/Unknown.lean',
-                         '.lake/build/lib/lean/Unknown.olean','rawurange-out/unknown.time'):
+                         '.lake/build/lib/lean/Unknown.olean','rawurange-out/unknown.time','rawurange-out/support-sync.tsv',
+                         'rawurange-out/frozen-sync.tsv','rawpacked-out/foreign.tsv'):
                 bad=list(zs);bad[first]=View(original,extra=[name])
                 with self.subTest(name=name),self.assertRaises(ValueError):c.validate_projected_union(bad,identities,c.pin()['objects'])
             bad=list(zs);bad[first]=View(original,missing=['rawurange-out/U-range-scan.time'])

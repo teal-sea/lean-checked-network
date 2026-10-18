@@ -123,6 +123,19 @@ def selected_names():
     require(len(names)==len(set(names)),'duplicate selected declaration');return names
 
 
+def packed_sync_manifests(steps):
+    """Exact non-restored manifest outputs of the authenticated packed producers."""
+    expected={
+        'support-sync':['./sync_core.sh','--manifest','rawpacked-out/support-sync.tsv'],
+        'frozen-sync':['./sync_core.sh','--raw-pilot','--manifest','rawpacked-out/frozen-sync.tsv'],
+    }
+    for label,command in expected.items():
+        found=[step for step in steps if step['name']==label]
+        require(len(found)==1 and found[0]['command']==command and found[0]['exit']==0,
+                'packed sync manifest producer: '+label)
+    return {command[-1] for command in expected.values()}
+
+
 def validate_projected_union(archives, identities, records):
     """Canonical project destinations are shared; authenticated producer envelopes are not."""
     require(len(archives)==len(identities) and records==pin()['objects'],'projected union inventory')
@@ -158,6 +171,7 @@ def validate_projected_union(archives, identities, records):
         allowed={prefix+n for n in ('generation.json','compiled.jsonl','replayed.jsonl','steps.jsonl','throughput.json',accepted)}
         allowed.update((root+'-total.time',root+'.ci.out'))
         if root=='rawpacked':
+            allowed.update(packed_sync_manifests(steps))
             allowed.update(prefix+n for n in ('sources.json','compiler.json','accepted-oleans.json'))
             allowed.update(('rawpacked-cache.time','rawpacked-cache.ci.out'))
         elif root=='rawcorrespondence':allowed.update(prefix+n for n in ('provenance.json','restored-previous.json'))

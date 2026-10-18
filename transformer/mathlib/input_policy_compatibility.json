@@ -1,18 +1,24 @@
 {
   "additions": {
+    "RawCU-checkpoint.json": "ef7b43599ac73b30dacff7d788d1f50835f62365ef83e71aef2953f09fce3782",
     "RawCorrespondence-checkpoint.json": "e7c0bdd23813e02ad0b65990fc5c0ea844268f72ff1a0ab97248c4fc0383d9f5",
     "TransformerBridge/RawCorrespondenceFixture.lean": "9b1ee56b7f96683e65a0759524357e4c9d30f38db14cb71d53f10e2ef7e7128e",
     "TransformerBridge/RawCorrespondenceLinear.lean": "7b96564ce5b9f14a077ced4dd521e3d89550982ec574215e0b2b5b94a908625e",
     "TransformerBridge/RawCorrespondenceSupport.lean": "ec2f7a844362c91d673000f81258a444866d0b3c0804654117148b77a4180148",
     "input_checkpoint_a01a98c.json": "9500e397b883c6c53218a205990d12d7565cef4f98ed073949d78d6d09c3058a",
-    "input_compat.py": "8880bdaf0c342d50da5f772d7d1119f10a67fa9160844b0a18bf5e92aea700e3",
+    "input_compat.py": "e39149d1125a75d89599d13c8813e5c847362446a82e61c89d96e47a345e14d5",
     "input_policy_a01a98c.json": "973c59ef5ef51ab94a1d102a2daccf20f70c53a2b08591fb030ee492c05fdbd4",
     "rawcorrespondence.sh": "c40666dd841e3f7a967677a89673144ea0879e642d5c3527ca40969ab76738f8",
     "rawcorrespondence_generate.py": "b12054eabd04b91d18659c3ce77671a4b90a41e07d503e647b8553426d5a25f5",
-    "rawcorrespondence_restore.py": "1fa0f4104dd42a4757ba5b9a621c63af0a6bdaf1187737c674af1fd5d30df3b9",
+    "rawcorrespondence_restore.py": "67c54c7791fd379dfaf0ae2ffd1fcda72023a0689917d36e9da3c909bb4ab48b",
     "rawcorrespondence_runner.py": "b521e68947f34821874b02be5a1d7effcf68c0e8632e33b5a9eb9e528b4007e2",
+    "rawcu.sh": "e48819a96e789e85081dc1b84ac21d73d71e7bd9ee2311de9588523ff7d51ee1",
+    "rawcu_generate.py": "dda6e9cc4c12569e5ba3286f2103392b3b7220ce715bdb7b17d748ede1cc5288",
+    "rawcu_restore.py": "b86cf41e50dfc2d2bb80635bad5db83ede9aa0ca6333ce4981f88febfe0fdedf",
+    "rawcu_runner.py": "b09b55a263e219fd0bb69f9adee56421e1a5473fe311116fb6f644a31c229cad",
     "test_input_compat.py": "fc22a74105c8dac71d6240aa177354f91c29cf5f7350b6e9a475217da1a4d3ac",
-    "test_rawcorrespondence.py": "0bfaed7e9da422f1a407abce3eb1f1abe5a168600b051f2e87569c310856b8d1"
+    "test_rawcorrespondence.py": "72c173453067f848773fd8e27d596f404ce7a54b2ed2850f1cc9e1f882ff5bc5",
+    "test_rawcu.py": "62240b14b66f1ff5bb440c4028e79ddf5ef97cdfa820e5fb0eabd78142d2d625"
   },
   "compiler": {
     "compiler": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
@@ -23,7 +29,7 @@
   },
   "deltas": {
     "../../.github/workflows/transformer.yml": {
-      "current_sha256": "547712cc65cb281166161df715e99f10d0f970daf3e34c46ed2ae004ba2c7026",
+      "current_sha256": "c5f96916a7053635fc284180523d9f3516e973ef6ddbf8dc185cb6082afd7c7a",
       "old_sha256": "a5c63f9764fd4b00bd5d61faa905b4e1c0b898317413ddae79a61516f1e53b0e"
     },
     "input_artifacts.py": {
@@ -35,11 +41,11 @@
       "old_sha256": "c528ce9204d304efd0f6192ab968aa549a5f7b9dbb61d5ecbd6b50681ba8d619"
     },
     "row0_checkpoint.json": {
-      "current_sha256": "cf95426a5844bd08f8ca5d53f575c7f3cdc09e5c72bc67a002027b90d111297a",
+      "current_sha256": "5b5a4cba2cc28783e71aa873657094534652d2673486812ca29cbbb37929bd9c",
       "old_sha256": "9500e397b883c6c53218a205990d12d7565cef4f98ed073949d78d6d09c3058a"
     },
     "test_input_coverage.py": {
-      "current_sha256": "ec2e169699852a79a639e301a2b040e488ce9e0578af5f46dab20526ac28b420",
+      "current_sha256": "2f3d43f1bfba84b95cccb94cd8960578097a058889b95a5bed2fdd7dc412d819",
       "old_sha256": "e20fa173941ec77f6c1ff2febbc94d1b41e06f5d3ce452b6f09c94d95819ef1e"
     },
     "test_input_harness.py": {
@@ -47,11 +53,11 @@
       "old_sha256": "62d34caac5f25193154cf6f22633d9f4a323cdba045738aa7bf1cfebc52ea1c4"
     },
     "test_rawpacked.py": {
-      "current_sha256": "56f725bb4940d093698cf39096d36e268d82c86fdda11267a29fc655b230a611",
+      "current_sha256": "8bf197975735c72f1e2686926f19646fd222e55cb9a7defad4e8909bf7f23c9f",
       "old_sha256": "29cda080464a34793e6aded0cb15d8b71d88544bcd1b14a57e0aac498b994871"
     },
     "test_row0_finalize.py": {
-      "current_sha256": "65efaf7073fdb6c208feb0ad7b1e6f4c7e097a6d61ca8e1c2c2a392ebb0843a7",
+      "current_sha256": "75e88d7c16672b3fa166853762a5e2679c3a612a781bdb92f5c991f202c0d369",
       "old_sha256": "affd86276d6c675553876ac5027776dc785f406ba2e2140dc1e9449138c2892b"
     }
   },

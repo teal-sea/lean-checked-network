@@ -152,6 +152,8 @@ def verify_current_sources(source):
             continue
         if rel == path:
             data = (ROOT / rel).read_bytes()
+            from rawcu_restore import project_nonproof
+            data = project_nonproof(rel, data)
             require(digest(data) == rule['current_sha256'], 'unknown harness change')
             inverse = rule['inverse_projection'].encode()
             require(inverse and data.count(inverse) == 1 and

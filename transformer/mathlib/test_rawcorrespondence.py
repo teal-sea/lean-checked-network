@@ -252,6 +252,8 @@ class CorrespondenceTests(unittest.TestCase):
     def test_workflow_exact_preservation(self):
         path = cache.ROOT / '.github/workflows/transformer.yml'
         text = path.read_text()
+        from rawcu_restore import inverse_workflow
+        text = inverse_workflow(text)
         start = text.index('  raw-correspondence-CI:\n'); end = text.index('  row0-finalize:\n', start)
         block = text[start:end]
         self.assertIn('runs-on: ubuntu-latest', block)

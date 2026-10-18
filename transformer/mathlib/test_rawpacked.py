@@ -157,6 +157,8 @@ class PackedFixtures(unittest.TestCase):
 
     def test_existing_workflow_modes_and_jobs_preserved(self):
         workflow = (data.ROOT / '.github/workflows/transformer.yml').read_text()
+        from rawcu_restore import inverse_workflow
+        workflow = inverse_workflow(workflow)
         workflow = workflow[:workflow.index('  raw-correspondence-CI:\n')] + workflow[workflow.index('  row0-finalize:\n', workflow.index('  raw-correspondence-CI:\n')):]
         workflow = workflow.replace('          - mathlib-raw-correspondence-CI\n', '')
         workflow = workflow.replace("inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || ", '')

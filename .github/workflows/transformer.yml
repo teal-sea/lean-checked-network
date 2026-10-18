@@ -19,12 +19,21 @@ on:
           - mathlib-raw-pilot
           - mathlib-raw-packed-pilot
           - mathlib-row0-finalize
+          - mathlib-raw-u-range
           - mathlib-raw-u-boundary
           - mathlib-raw-cu-row0
           - mathlib-raw-correspondence-CI
           - mathlib-input-row1
           - mathlib-input-grid
           - mathlib-input-all
+      u_row_start:
+        description: Bounded U range start (1..126; first pilot 1)
+        type: string
+        default: '1'
+      u_row_count:
+        description: Bounded U count (1..4; first pilot 4)
+        type: string
+        default: '4'
       input_artifact_lock:
         description: Parent-adjudicated JSON lock (row1 for grid; rows1..112 for all assembly)
         type: string
@@ -35,13 +44,13 @@ on:
         default: false
 
 concurrency:
-  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-raw-u-boundary' && '-mathlib-raw-u-boundary' || inputs.core_mode == 'mathlib-raw-cu-row0' && '-mathlib-raw-cu-row0' || inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || inputs.core_mode == 'mathlib-raw-packed-pilot' && '-mathlib-raw-packed' || inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
+  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-raw-u-range' && '-mathlib-raw-u-range' || inputs.core_mode == 'mathlib-raw-u-boundary' && '-mathlib-raw-u-boundary' || inputs.core_mode == 'mathlib-raw-cu-row0' && '-mathlib-raw-cu-row0' || inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || inputs.core_mode == 'mathlib-raw-packed-pilot' && '-mathlib-raw-packed' || inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
   # false: a later push queues behind the running pilot instead of killing it (the evidence is the point)
   cancel-in-progress: false
 
 jobs:
   mathlib:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: Mathlib lane (ExpFix, Program, Logits, Compose, Raw), cache, replay, axioms
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -66,7 +75,7 @@ jobs:
           if-no-files-found: warn
 
   core:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: ${{ inputs.core_mode == 'cached-support-pilot' && 'CACHED SUPPORT PILOT (generic only; no frozen literals or pairs)' || 'CACHED PAIR PILOT (three pairs; row0 unproved)' }}
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 20 || 170 }}
@@ -116,7 +125,7 @@ jobs:
           if-no-files-found: warn
 
   bridge:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: Bridge (core program to the Mathlib program), needs the Mathlib lane
     needs: mathlib
     runs-on: ubuntu-latest
@@ -337,6 +346,88 @@ jobs:
             transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bridge.olean
             transformer/mathlib/.lake/build/lib/lean/TransformerCore/
             transformer/mathlib/.lake/build/lib/lean/Transformer/
+          if-no-files-found: error
+
+  raw-u-range:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-raw-u-range' && github.event.repository.private == false }}
+    name: Bounded learned-U range (first pilot rows1..4, CU and hT open)
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download exact packed, CI, row0 and row127 archives (no extraction)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "${{ github.event.repository.private }}" = false
+          mkdir -p "$RUNNER_TEMP/rawurange"
+          for artifact in 12100029309 12126011262 12126625308 12126766253; do
+            gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact" > "$RUNNER_TEMP/rawurange/$artifact.json"
+            curl --fail --location --retry 2 --silent --show-error \
+              -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact/zip" \
+              -o "$RUNNER_TEMP/rawurange/$artifact.zip"
+          done
+      - name: Actual metadata and mocked bounded-range controls (non-kernel)
+        run: |
+          TMPDIR="$RUNNER_TEMP/rawurange" python3 -B -W error transformer/mathlib/test_rawurange.py \
+            --packed-archive "$RUNNER_TEMP/rawurange/12100029309.zip" \
+            --ci-archive "$RUNNER_TEMP/rawurange/12126011262.zip" \
+            --row0-archive "$RUNNER_TEMP/rawurange/12126625308.zip" \
+            --row127-archive "$RUNNER_TEMP/rawurange/12126766253.zip"
+      - name: Install pinned stable compiler
+        run: |
+          set -euo pipefail
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$RUNNER_TEMP/rawurange/elan-init.sh"
+          sh "$RUNNER_TEMP/rawurange/elan-init.sh" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib dependencies only (serial Lake)
+        timeout-minutes: 9
+        run: |
+          cd transformer/mathlib
+          timeout -s TERM -k 20 480 lake exe cache get
+      - name: Restore union and compile replay audit actual U row range
+        timeout-minutes: 57
+        env:
+          U_ROW_START: ${{ inputs.u_row_start }}
+          U_ROW_COUNT: ${{ inputs.u_row_count }}
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          ./rawurange.sh --packed-archive "$RUNNER_TEMP/rawurange/12100029309.zip" \
+            --packed-api "$RUNNER_TEMP/rawurange/12100029309.json" \
+            --ci-archive "$RUNNER_TEMP/rawurange/12126011262.zip" \
+            --ci-api "$RUNNER_TEMP/rawurange/12126011262.json" \
+            --row0-archive "$RUNNER_TEMP/rawurange/12126625308.zip" \
+            --row0-api "$RUNNER_TEMP/rawurange/12126625308.json" \
+            --row127-archive "$RUNNER_TEMP/rawurange/12126766253.zip" \
+            --row127-api "$RUNNER_TEMP/rawurange/12126766253.json" \
+            --start "$U_ROW_START" --count "$U_ROW_COUNT" 2>&1 | tee rawurange.ci.out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-raw-u-range-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/rawurange-out/
+            transformer/mathlib/rawurange*.out
+            transformer/mathlib/rawurange*.time
+            transformer/mathlib/RawURange-checkpoint.json
+            transformer/mathlib/TransformerBridge/RawCorrespondence/URangeGenerated/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawCorrespondence/URangeGenerated/
           if-no-files-found: error
 
   raw-u-boundary:

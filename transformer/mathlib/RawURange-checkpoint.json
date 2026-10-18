@@ -1,0 +1,181 @@
+{
+  "boundary_checkpoint_sha256": "b9c1c96751c82a77eb9d534e1604e0424cc391239b89786a7534db84d389a2d1",
+  "compiler_binary_sha256": {
+    "lake": "8ba83c98f76562d03b8dbc33f1057151ba6cbb121679dde76b2260ccc90495e1",
+    "lean": "bf8d54e4714cc4b03d3f6bb34c83b7202b87e49c8bfcbff6895c085bb90ceb38",
+    "leanchecker": "12c38901cdbfab178f1bf6145dd30012e9a3b2c11ca695292a5884fa3cbaddb6"
+  },
+  "lake_manifest_sha256": "229004e4b7a9cdd61b2f3193967c1a683c1d38aeff8072aed4a198e47d8c4424",
+  "nonproof_projections": {
+    "transformer/mathlib/input_compat.py": {
+      "accepted_sha256": "604aed5b4e3c2a55515653b9dc012ac029d6c68a8a3eaf9ae652b5c061a20886",
+      "current_sha256": "da0f911ad8c39c871079a38c797ce4f6d40e9af7f88626e06d992ae8f6cedfa2",
+      "edits": [
+        {
+          "accepted": "ADDITIONS = {",
+          "current": "ADDITIONS = {'RawURange-checkpoint.json', 'rawurange_generate.py', 'rawurange_restore.py',\n    'rawurange_runner.py', 'rawurange.sh', 'test_rawurange.py', "
+        }
+      ]
+    },
+    "transformer/mathlib/rawuboundary_restore.py": {
+      "accepted_sha256": "908b5731d8e90650fd2fea67ad0471798228c36181a5a97ef63c375a0a93e452",
+      "current_sha256": "3165bebede30c535f108c39128fd9f815c01ed79edfea65060f7861970d2ab32",
+      "edits": [
+        {
+          "accepted": "    rule = pin()['workflow_projection']\n",
+          "current": "    from rawurange_restore import inverse_workflow as range_inverse\n    text = range_inverse(text)\n    rule = pin()['workflow_projection']\n"
+        },
+        {
+          "accepted": "    rule = pin()['nonproof_projections'].get(path)\n",
+          "current": "    from rawurange_restore import project_current as range_project\n    data = range_project(path, data)\n    rule = pin()['nonproof_projections'].get(path)\n"
+        }
+      ]
+    },
+    "transformer/mathlib/row0_checkpoint.json": {
+      "accepted_sha256": "602454ed0a570d1b50a2c2ff1721a03de8271a22e4f8e36a3f86f1f61c4f3d0c",
+      "current_sha256": "248a9ce698af90ddbadf3d65c30675627c701f6e63ac84081b69701b89ecd9c4",
+      "edits": [
+        {
+          "accepted": "721f5ab1359de5ae2b6ebd060767bfcb56a223470bfc6a49709142ad84230881",
+          "current": "e7d0ddaad3ae2a435b965b1efc348f5f97c41907382d38adc2cc5f025fe5c1fd"
+        }
+      ]
+    }
+  },
+  "packed_checkpoint_sha256": "e7c0bdd23813e02ad0b65990fc5c0ea844268f72ff1a0ab97248c4fc0383d9f5",
+  "permitted_range": {
+    "first": 1,
+    "last": 126,
+    "max_count": 4,
+    "pilot_count": 4,
+    "pilot_start": 1
+  },
+  "row0_checkpoint_sha256": "ef7b43599ac73b30dacff7d788d1f50835f62365ef83e71aef2953f09fce3782",
+  "row127": {
+    "api_sha256": "b3f07d50d05aebaafd52cafec5b3900ff06663abd96d2b8c914d64d6066e112e",
+    "artifact_id": 12126766253,
+    "candidate": {
+      "../../.github/workflows/transformer.yml": "721f5ab1359de5ae2b6ebd060767bfcb56a223470bfc6a49709142ad84230881",
+      "../lean/Transformer/Cached.lean": "73104f27049371bbf20dd3e2ad6645651ea1d25599a0b3250e8acc6f73c5ca5a",
+      "../lean/Transformer/CachedFixture.lean": "b22e9ed5e3ef3154db1d6e67969f47fda55c0e8c2e28298c5dd319a888d35c0e",
+      "../lean/cached-inputs.sha256": "aa2681837e9ef97436796bc5479b945be9c7900847a684e7eda439887a8c3805",
+      "../lean/gen_cached.py": "a64733f79ef204407ae0091490b786d6f505e479a0a09fbf3c3b7d102d30fb88",
+      "../lean/scan_sources.sh": "efcd11d5e69d5d7df0768d92e02332f93dd9effef7453fa830f4fd1758468628",
+      "RawCU-checkpoint.json": "ef7b43599ac73b30dacff7d788d1f50835f62365ef83e71aef2953f09fce3782",
+      "RawCorrespondence-checkpoint.json": "e7c0bdd23813e02ad0b65990fc5c0ea844268f72ff1a0ab97248c4fc0383d9f5",
+      "RawUBoundary-checkpoint.json": "b9c1c96751c82a77eb9d534e1604e0424cc391239b89786a7534db84d389a2d1",
+      "Transformer/Compose.lean": "f5d33239bf084838f0c99cce079883b9a620a23ec72a54b386bae6a7c7757890",
+      "Transformer/ExpFix.lean": "d35e25e7c19737b7475b8da5a8173727460aea4c302be0caa6101720d89dfd89",
+      "Transformer/Logits.lean": "7831947641303a00e34d4fb9092ca6912bb16d059444903e3936f8cee1b244ad",
+      "Transformer/Program.lean": "3569ed4d50cf2e16a4b58bccce76f466cb81dc2fb9effe5ec4ce7ca75b6b3c50",
+      "Transformer/Raw.lean": "e664331db89a2da6c140dfa4771721eff4b8d6f677149d861b3c8dcfc717ef11",
+      "TransformerBridge/Bounds.lean": "85dfec6c8aa6062144981581414f08c067623e4509fbf96ad228731a8ab0e380",
+      "TransformerBridge/Bridge.lean": "2d6d65c4b1bbfaacb2147055ca3be29ccee1250edb011df8589250d715103538",
+      "TransformerBridge/FrozenBounds.lean": "a11da6102049a91f5a828d2ddf4b8de66d701cd5d6c649f7fefd80d0642e6a81",
+      "TransformerBridge/Pointwise.lean": "369e0d394c0ffc98447d1fdf27b42d43fb70dd1bca40799101693335b34c2f88",
+      "TransformerBridge/RawCorrespondenceFixture.lean": "9b1ee56b7f96683e65a0759524357e4c9d30f38db14cb71d53f10e2ef7e7128e",
+      "TransformerBridge/RawCorrespondenceLinear.lean": "7b96564ce5b9f14a077ced4dd521e3d89550982ec574215e0b2b5b94a908625e",
+      "TransformerBridge/RawCorrespondenceSupport.lean": "ec2f7a844362c91d673000f81258a444866d0b3c0804654117148b77a4180148",
+      "TransformerBridge/RawPackedFixture.lean": "b01e30e1799a3e2ab045d70f39f2c8f4e6db9d620070bcb386520af6f7c04a00",
+      "TransformerBridge/RawPackedSupport.lean": "fdbeb0279af47df3abf8d63e66f7cec975c0c4d1f2ec6fa5103f6338b7b02caf",
+      "TransformerBridge/RawPilotSupport.lean": "7310c4bdfd2d17b1318472f731444cf2d8bcd24ccac8ec794ba9f902518e2ed7",
+      "TransformerBridge/Row0.lean": "dfd7d211e157fad7bad7c6e9e3debe3b36099a956873bae28eb083b3072cc317",
+      "TransformerBridge/Row0Checks.lean": "cb216a580574afa1dab6fd75b2fd9faf20ac8227a5307afb934640b1f22c94f6",
+      "TransformerBridge/Row0Compat.lean": "e116fa09c902687b0d5d63e7156e397823312fe5d4182e44e674b9a2d9b4cb7d",
+      "TransformerBridge/Row0Real.lean": "73203202e6301548665bc855f3d3742712d33cb895890769c650fe5fc7cd7f21",
+      "check_bounds_audit.py": "030e41d3e2a71c2c1e1febfc78fa178616546e79dacf84694144f04e86d8af44",
+      "check_expfix.py": "b87cc13ca080f1e1a5617679e05bf1b4031b830b2546db6311d4002ed2859a8a",
+      "input_artifacts.py": "b0f4dd214da41f7992bb99a40d60a2e730a010272100309b0922471ae56a863d",
+      "input_checkpoint_a01a98c.json": "9500e397b883c6c53218a205990d12d7565cef4f98ed073949d78d6d09c3058a",
+      "input_compat.py": "604aed5b4e3c2a55515653b9dc012ac029d6c68a8a3eaf9ae652b5c061a20886",
+      "input_policy_a01a98c.json": "973c59ef5ef51ab94a1d102a2daccf20f70c53a2b08591fb030ee492c05fdbd4",
+      "input_runner.py": "889a8522601aa5a7bada3073059964715366418dcd98f7e380e5fa34ed44e84b",
+      "input_source.py": "e64d6dc972e6aa850c79dfbd7b6628f2be42380a2045f3cc36bbed24c322ed5d",
+      "lake-manifest.json": "229004e4b7a9cdd61b2f3193967c1a683c1d38aeff8072aed4a198e47d8c4424",
+      "lakefile.toml": "cfadacc28a76453bc472a064642619a06b4c7e7c4901dac139d1bcd3f690fc43",
+      "lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+      "rawcorrespondence.sh": "c40666dd841e3f7a967677a89673144ea0879e642d5c3527ca40969ab76738f8",
+      "rawcorrespondence_generate.py": "b12054eabd04b91d18659c3ce77671a4b90a41e07d503e647b8553426d5a25f5",
+      "rawcorrespondence_restore.py": "67c54c7791fd379dfaf0ae2ffd1fcda72023a0689917d36e9da3c909bb4ab48b",
+      "rawcorrespondence_runner.py": "b521e68947f34821874b02be5a1d7effcf68c0e8632e33b5a9eb9e528b4007e2",
+      "rawcu.sh": "e48819a96e789e85081dc1b84ac21d73d71e7bd9ee2311de9588523ff7d51ee1",
+      "rawcu_generate.py": "dda6e9cc4c12569e5ba3286f2103392b3b7220ce715bdb7b17d748ede1cc5288",
+      "rawcu_restore.py": "6b1dac0a8e362e7c0c6ae981692317cdaa61094309d8ba5e102cb8cb97ec4c6a",
+      "rawcu_runner.py": "b09b55a263e219fd0bb69f9adee56421e1a5473fe311116fb6f644a31c229cad",
+      "rawpacked_data.py": "9a813476eca59299ef5c66340f7bafc621e57e784992fd96df93fefcdf967404",
+      "rawpacked_generate.py": "45ff31407c3e4defc3dc762dbfc226f4733b1407cb198a56e8ace31d8aa56973",
+      "rawpacked_runner.py": "66ceb15c35d0a764bef92be3cdf91b1145cf7828d5de884d9ef39ca561144e0c",
+      "rawpilot_data.py": "cff3450c10ce80b29bfa589e220f662e2ae26019b1337f30d7bd7dd4d4df7f4e",
+      "rawpilot_generate.py": "67f765af03978409359175eacd5d4224cc418ae08b9ea6b0c981516e5600d98a",
+      "rawpilot_runner.py": "152e6cedf2c24188320153db715c09c389f13176db9b9b19b5562005f2b4c9ac",
+      "rawuboundary.sh": "53e85bb3e82e3032868f41eb1245b7db5bf2452563f94d89410fa9f0b7b42158",
+      "rawuboundary_generate.py": "12dad133bb12355e1f4fdb73e2cddacdee8237dbfb9c40a3971f1a181eed854f",
+      "rawuboundary_restore.py": "908b5731d8e90650fd2fea67ad0471798228c36181a5a97ef63c375a0a93e452",
+      "rawuboundary_runner.py": "3a68f33cd5aff39c4b64d217a72e3ebb0e007918397f4cc2243f968ba3f55e47",
+      "row0_checkpoint.json": "602454ed0a570d1b50a2c2ff1721a03de8271a22e4f8e36a3f86f1f61c4f3d0c",
+      "row0_finalize.py": "391e1a791612193c33f63990ef55b6c8d9e115e438506875d357865887535b71",
+      "row0_prefix.py": "6495daeaf5855e035b8847f2bb07b9d66cc759b36412ef4dd5df90f7bcb8e441",
+      "row0_receipt.py": "5ecd2d39e6ffe321e7d77f631d3371666d0b316509111884e6bb9c02e96f8584",
+      "row0_runner.py": "752aab4521879d79aceccb21ab487f3262391f2771427117b600ff465940f083",
+      "row0_source.py": "f57fb233280839e3ba7225b943ee0ed295df066542cf3496fee104d477f40518",
+      "sync_core.py": "2bf27aeb31d595f3a10906a9ead720857f979007ff0db0e2171e1b7d3f0dfaef",
+      "test_bounds_harness.py": "c4f4f41900799eeda1229686f0a2a8a65034d232e4bcba0a35ee5b04b001202a",
+      "test_input_compat.py": "fc22a74105c8dac71d6240aa177354f91c29cf5f7350b6e9a475217da1a4d3ac",
+      "test_input_coverage.py": "2f3d43f1bfba84b95cccb94cd8960578097a058889b95a5bed2fdd7dc412d819",
+      "test_input_harness.py": "a45d3bd50a59fe891b144ee01239f9b522ef6ba84a5b19599524be8743834efe",
+      "test_rawcorrespondence.py": "72c173453067f848773fd8e27d596f404ce7a54b2ed2850f1cc9e1f882ff5bc5",
+      "test_rawcu.py": "62240b14b66f1ff5bb440c4028e79ddf5ef97cdfa820e5fb0eabd78142d2d625",
+      "test_rawpacked.py": "8bf197975735c72f1e2686926f19646fd222e55cb9a7defad4e8909bf7f23c9f",
+      "test_rawpilot.py": "98613e82ba9ab0a7e94e0f5ac5de132afb14f798b8fba4eb81e4765aade79311",
+      "test_rawuboundary.py": "f9a01928436c8de6c3fba49c2906d798d2f6d18e46739ebc3f1d9805190924aa",
+      "test_row0.py": "d738765947eb7b79ad75d8d994a50391031d87abed2754e1f10d1ece7b0ab0f0",
+      "test_row0_finalize.py": "75e88d7c16672b3fa166853762a5e2679c3a612a781bdb92f5c991f202c0d369",
+      "test_row0_harness.py": "cb5cc5974c8e76ec4cd3642f7252cda821e1389a291f9dabc9761cae12d2fb88"
+    },
+    "metadata_sha256": {
+      "rawuboundary-out/U_ROW127_ACCEPTED.json": "62a18937ad3f3c3940e45d7cdcf6fdede4b234c2d2600968bc2a1dee68dd3b0b",
+      "rawuboundary-out/changed-U127.lean": "743845700612e567c5d1c2cf3891ff4e180036ae86ed361921dc19ef83f27b48",
+      "rawuboundary-out/compiled.jsonl": "35e3a6d20af68cb87540ab59e42bfb870712d99566fb6f0473198240263a8624",
+      "rawuboundary-out/compiler-version.out": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a",
+      "rawuboundary-out/complete-U-row127-axioms.expected.json": "e9eb5504ab4324d317b6f2bf8707916ff0029872a89e129394f7f769de76c129",
+      "rawuboundary-out/complete-U-row127-axioms.out": "28ddc4321935d4f731ae89049ef4ed4ccaeacabfb48765a35b4c139bf48c357d",
+      "rawuboundary-out/control-axioms.expected.json": "c7389210b6cc262913249821f58ef69cfad429c80a82c113079f79fcdfb6e729",
+      "rawuboundary-out/control-axioms.out": "034cc80e70aff4b833ad7867dd46bcdcffc2d37e177847b46339049f0b6a8eb0",
+      "rawuboundary-out/generation.json": "0da12479ea9a43508e2101eea89d88b5b1cda43eb1fa14d5447450500eec599c",
+      "rawuboundary-out/negative-actual-U127-change.out": "c0bba185192bfe6ed61dc3b80676e279bc2d4181fc645697230365068bf128d2",
+      "rawuboundary-out/replayed.jsonl": "35e3a6d20af68cb87540ab59e42bfb870712d99566fb6f0473198240263a8624",
+      "rawuboundary-out/restored-union.json": "5689b979747cdf9cf3a4dc1ffcc83b805c6aefd78cfc50cf9afa55fc56bd325d",
+      "rawuboundary-out/row127-axioms.expected.json": "3e9f5b4df29834260beec451b8cf61ed697f82b23d4180265defc4262eef32e5",
+      "rawuboundary-out/row127-axioms.out": "9560e196e57be973d3b5ed21fbcaa365979a974e41e54f711fe29dc187bc6fa3",
+      "rawuboundary-out/steps.jsonl": "c84cc36e8fdf03698fcd92b1412cbacc878a272bc571a4a8ac9a6d343c3db05e",
+      "rawuboundary-out/throughput.json": "769e2647b25da0ccd5b5882006601c07ee661dd3944622adc73a4a2195e0fdb9"
+    },
+    "objects": [
+      {
+        "module": "TransformerBridge.RawCorrespondence.UBoundaryGenerated.URow127",
+        "olean_sha256": "458e3fd0c4609ab831d78d3ada48cad0dac90ef49269ff2d7e93c6a932941f64",
+        "source_sha256": "c49a76753ae59dcea40caf9fb4a3909dcef1f2ce622f79a231050689711621b4"
+      },
+      {
+        "module": "TransformerBridge.RawCorrespondence.UBoundaryGenerated.Control127",
+        "olean_sha256": "6a2b9b4c68e2912084b8d4eed5f04a2de286c393b416f2088c991d37c9f8f65b",
+        "source_sha256": "81704f759b2b3eedf0e03f6460feb54bc5b95ab447bf2504ad0af51117d9b5a5"
+      }
+    ],
+    "source_run": 39101401919,
+    "source_sha": "b37b4c5de8203aac7165417074750c7a5faa7d50",
+    "zip_sha256": "441d7aa4c51176c1a1c28ed4de251cc937b092d84f7401a9b1fa4e0689266fa0"
+  },
+  "toolchain_sha256": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+  "workflow_projection": {
+    "accepted_sha256": "721f5ab1359de5ae2b6ebd060767bfcb56a223470bfc6a49709142ad84230881",
+    "current_sha256": "e7d0ddaad3ae2a435b965b1efc348f5f97c41907382d38adc2cc5f025fe5c1fd",
+    "exclusion": "inputs.core_mode != 'mathlib-raw-u-range' && ",
+    "insertions": [
+      "  raw-u-range:\n    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-raw-u-range' && github.event.repository.private == false }}\n    name: Bounded learned-U range (first pilot rows1..4, CU and hT open)\n    permissions:\n      contents: read\n      actions: read\n    runs-on: ubuntu-latest\n    timeout-minutes: 75\n    env:\n      LEAN_NUM_THREADS: \"2\"\n      OMP_NUM_THREADS: \"1\"\n      OPENBLAS_NUM_THREADS: \"1\"\n      MKL_NUM_THREADS: \"1\"\n    steps:\n      - uses: actions/checkout@v5\n      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.12\"\n      - name: Download exact packed, CI, row0 and row127 archives (no extraction)\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: |\n          set -euo pipefail\n          test \"${{ github.event.repository.private }}\" = false\n          mkdir -p \"$RUNNER_TEMP/rawurange\"\n          for artifact in 12100029309 12126011262 12126625308 12126766253; do\n            gh api \"repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact\" > \"$RUNNER_TEMP/rawurange/$artifact.json\"\n            curl --fail --location --retry 2 --silent --show-error \\\n              -H \"Authorization: Bearer $GH_TOKEN\" -H \"Accept: application/vnd.github+json\" \\\n              \"$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact/zip\" \\\n              -o \"$RUNNER_TEMP/rawurange/$artifact.zip\"\n          done\n      - name: Actual metadata and mocked bounded-range controls (non-kernel)\n        run: |\n          TMPDIR=\"$RUNNER_TEMP/rawurange\" python3 -B -W error transformer/mathlib/test_rawurange.py \\\n            --packed-archive \"$RUNNER_TEMP/rawurange/12100029309.zip\" \\\n            --ci-archive \"$RUNNER_TEMP/rawurange/12126011262.zip\" \\\n            --row0-archive \"$RUNNER_TEMP/rawurange/12126625308.zip\" \\\n            --row127-archive \"$RUNNER_TEMP/rawurange/12126766253.zip\"\n      - name: Install pinned stable compiler\n        run: |\n          set -euo pipefail\n          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o \"$RUNNER_TEMP/rawurange/elan-init.sh\"\n          sh \"$RUNNER_TEMP/rawurange/elan-init.sh\" -y --default-toolchain none\n          echo \"$HOME/.elan/bin\" >> \"$GITHUB_PATH\"\n      - name: Mathlib dependencies only (serial Lake)\n        timeout-minutes: 9\n        run: |\n          cd transformer/mathlib\n          timeout -s TERM -k 20 480 lake exe cache get\n      - name: Restore union and compile replay audit actual U row range\n        timeout-minutes: 57\n        env:\n          U_ROW_START: ${{ inputs.u_row_start }}\n          U_ROW_COUNT: ${{ inputs.u_row_count }}\n        run: |\n          set -euo pipefail\n          cd transformer/mathlib\n          ./rawurange.sh --packed-archive \"$RUNNER_TEMP/rawurange/12100029309.zip\" \\\n            --packed-api \"$RUNNER_TEMP/rawurange/12100029309.json\" \\\n            --ci-archive \"$RUNNER_TEMP/rawurange/12126011262.zip\" \\\n            --ci-api \"$RUNNER_TEMP/rawurange/12126011262.json\" \\\n            --row0-archive \"$RUNNER_TEMP/rawurange/12126625308.zip\" \\\n            --row0-api \"$RUNNER_TEMP/rawurange/12126625308.json\" \\\n            --row127-archive \"$RUNNER_TEMP/rawurange/12126766253.zip\" \\\n            --row127-api \"$RUNNER_TEMP/rawurange/12126766253.json\" \\\n            --start \"$U_ROW_START\" --count \"$U_ROW_COUNT\" 2>&1 | tee rawurange.ci.out\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: transformer-raw-u-range-${{ github.run_id }}\n          retention-days: 7\n          include-hidden-files: true\n          path: |\n            transformer/mathlib/rawurange-out/\n            transformer/mathlib/rawurange*.out\n            transformer/mathlib/rawurange*.time\n            transformer/mathlib/RawURange-checkpoint.json\n            transformer/mathlib/TransformerBridge/RawCorrespondence/URangeGenerated/\n            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawCorrespondence/URangeGenerated/\n          if-no-files-found: error\n\n",
+      "          - mathlib-raw-u-range\n",
+      "inputs.core_mode == 'mathlib-raw-u-range' && '-mathlib-raw-u-range' || ",
+      "      u_row_start:\n        description: Bounded U range start (1..126; first pilot 1)\n        type: string\n        default: '1'\n      u_row_count:\n        description: Bounded U count (1..4; first pilot 4)\n        type: string\n        default: '4'\n"
+    ]
+  }
+}

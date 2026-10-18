@@ -23,6 +23,8 @@ def pin():
 
 def inverse_workflow(text):
     """New hash-bound layer back to the actual accepted row0 workflow bytes."""
+    from rawurange_restore import inverse_workflow as range_inverse
+    text = range_inverse(text)
     rule = pin()['workflow_projection']
     require(digest(text.encode()) == rule['current_sha256'], 'unknown boundary workflow drift')
     for fragment in rule['insertions']:
@@ -35,6 +37,8 @@ def inverse_workflow(text):
 
 
 def project_current(path, data):
+    from rawurange_restore import project_current as range_project
+    data = range_project(path, data)
     rule = pin()['nonproof_projections'].get(path)
     if rule is None:
         return data

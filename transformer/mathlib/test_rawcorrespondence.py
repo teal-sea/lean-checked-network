@@ -170,6 +170,22 @@ class CorrespondenceTests(unittest.TestCase):
         for f in ('sc', 'TI', 'TU', 'CI', 'CU', 'G'):
             self.assertRegex(text, rf'\(h{f} : T\.{f} = R\.{f}\)')
 
+    def test_control_helper_emission_non_kernel(self):
+        """Static emitted strings only; rfl acceptance still requires public Lean CI."""
+        baseline = {'TransformerBridge.RawCorrespondence.Generated.Parameters': 'da8759b32a54d46a05cf161be4f01ab46a7c620f230b3fdb9a7341b66deb31c0', 'TransformerBridge.RawCorrespondence.Generated.Representative': '0c96a65a37ebb7718554680bbb33abc225d6a5a6d76b422037fca7972567bc57', 'TransformerBridge.RawCorrespondence.Generated.PackedCI': 'e02359f33fa3dbefebd1e72aa3bfab29508c3caf0aa53702ff5ebefcee75182e', 'TransformerBridge.RawCorrespondence.Generated.CI': 'f5139ac9c6d7c68a51f4cb11af8c6c44444e18361a264e489a62e5d301bfd586', 'TransformerBridge.RawCorrespondence.Generated.Control': '467d2312d00ca734e054057149ca53369c1231e76a40c0dc589ec5735f8fa961'}
+        old = 'theorem changed_bin_zero : changedWeights.bin 0 = weights.bin 0 + 1 := by\n  simp only [changedWeights, if_pos rfl]\n'
+        fixed = 'theorem changed_bin_zero : changedWeights.bin 0 = weights.bin 0 + 1 := by\n  rfl\n'
+        emitted = gen.sources()
+        self.assertEqual(set(emitted), set(baseline))
+        for module, text in emitted.items():
+            with self.subTest(module=module):
+                if module.endswith('.Control'):
+                    self.assertEqual(text.count(fixed), 1)
+                    self.assertNotIn(old, text)
+                    text = text.replace(fixed, old)
+                self.assertEqual(hashlib.sha256(text.encode()).hexdigest(), baseline[module])
+        self.assertEqual(hashlib.sha256(gen.negative_source().encode()).hexdigest(), '9804f0a5b0a389a20df9d8bbb77e447df10d643d07a7453fe5aeb23c47b34129')
+
     def test_source_inventory_and_production_gates(self):
         for module, expected in [(gen.SUPPORT, gen.SUPPORT_NAMES), (gen.LINEAR, gen.LINEAR_NAMES), (gen.FIXTURE, gen.FIXTURE_NAMES)]:
             text = (cache.HERE / (module.replace('.', '/') + '.lean')).read_text()

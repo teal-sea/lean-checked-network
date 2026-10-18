@@ -92,7 +92,7 @@ def changedWeights : Transformer.Weights := { weights with
   bin := fun i => if i = 0 then weights.bin i + 1 else weights.bin i }
 
 theorem changed_bin_zero : changedWeights.bin 0 = weights.bin 0 + 1 := by
-  simp only [changedWeights, if_pos rfl]
+  rfl
 
 /-- This proves the real perturbation affects CI before the independent false decide control. -/
 theorem changed_CI_zero : (changedWeights.rawTables 256).CI 0 =

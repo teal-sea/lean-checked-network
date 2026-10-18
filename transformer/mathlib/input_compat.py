@@ -11,7 +11,8 @@ GRID_RUN = 39077248982
 DELTAS = {'../../.github/workflows/transformer.yml', 'row0_checkpoint.json',
           'test_rawpacked.py', 'test_row0_finalize.py', 'test_input_coverage.py',
           'test_input_harness.py', 'input_runner.py', 'input_artifacts.py'}
-ADDITIONS = {'RawCU-checkpoint.json', 'rawcu_generate.py', 'rawcu_restore.py',
+ADDITIONS = {'RawUBoundary-checkpoint.json', 'rawuboundary_generate.py',
+    'rawuboundary_restore.py', 'rawuboundary_runner.py', 'rawuboundary.sh', 'test_rawuboundary.py', 'RawCU-checkpoint.json', 'rawcu_generate.py', 'rawcu_restore.py',
     'rawcu_runner.py', 'rawcu.sh', 'test_rawcu.py', 'RawCorrespondence-checkpoint.json', 'rawcorrespondence_generate.py',
     'rawcorrespondence_restore.py', 'rawcorrespondence_runner.py', 'rawcorrespondence.sh',
     'test_rawcorrespondence.py', 'TransformerBridge/RawCorrespondenceSupport.lean',

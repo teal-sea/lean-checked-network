@@ -45,6 +45,8 @@ def project_nonproof(path, data):
 
 
 def inverse_workflow(text):
+    from rawuboundary_restore import inverse_workflow as boundary_inverse
+    text = boundary_inverse(text)
     rules = pin()['workflow_projection']
     require(digest(text.encode()) == rules['current_sha256'], 'unknown workflow drift')
     for fragment in rules['insertions']:

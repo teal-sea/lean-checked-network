@@ -123,6 +123,75 @@ def selected_names():
     require(len(names)==len(set(names)),'duplicate selected declaration');return names
 
 
+def validate_projected_union(archives, identities, records):
+    """Canonical project destinations are shared; authenticated producer envelopes are not."""
+    require(len(archives)==len(identities) and records==pin()['objects'],'projected union inventory')
+    expected=base_locks()+range_lock(); by_id={i['artifact_id']:i for i in expected}
+    ids=[i['artifact_id'] for i in identities]
+    require(len(set(ids))==len(ids),'duplicate artifact identity')
+    range_ids={i['artifact_id'] for i in range_lock()}
+    require(not (set(ids)&range_ids) or set(ids)&range_ids==range_ids,'missing/extra range artifacts')
+    canonical={}
+    for record in records:
+        stem=record['module'].replace('.','/')
+        canonical[stem+'.lean']=record['source_sha256']
+        canonical['.lake/build/lib/lean/'+stem+'.olean']=record['olean_sha256']
+    canonical.update(pin()['earlier_checkpoint_sha256'])
+    seen={}; scoped={}
+    for z,identity in zip(archives,identities):
+        aid=identity['artifact_id'];require(aid in by_id and identity==by_id[aid],'bad artifact/run identity')
+        require(stream_sha(z.filename)==identity['zip_sha256'],'projected archive ZIP identity')
+        paths=previous.base.old.archive_index(z)
+        if aid in range_ids:
+            prefix='rawurange-out/';root='rawurange';accepted='U_RANGE_ACCEPTED.json'
+            metadata=pin()['range_metadata'][str(identity['run'])]['hashes']
+        else:
+            index=next(n for n,i in enumerate(base_locks()) if i['artifact_id']==aid)
+            root=('rawpacked','rawcorrespondence','rawcu','rawuboundary')[index];prefix=root+'-out/'
+            accepted=('ACCEPTED.json','CI_ACCEPTED.json','U_ROW0_ACCEPTED.json','U_ROW127_ACCEPTED.json')[index]
+            metadata=(identity['metadata_sha256'] if index<2 else
+                (previous.boundary.pin()['row0']['metadata_sha256'] if index==2 else previous.pin()['row127']['metadata_sha256']))
+        for name,value in metadata.items():
+            require(name in paths and digest(z.read(name))==value,'scoped metadata identity: '+name)
+        steps=[json.loads(line) for line in z.read(prefix+'steps.jsonl').decode().splitlines()]
+        require(len({i['name'] for i in steps})==len(steps),'duplicate scoped producer')
+        allowed={prefix+n for n in ('generation.json','compiled.jsonl','replayed.jsonl','steps.jsonl','throughput.json',accepted)}
+        allowed.update((root+'-total.time',root+'.ci.out'))
+        if root=='rawpacked':
+            allowed.update(prefix+n for n in ('sources.json','compiler.json','accepted-oleans.json'))
+            allowed.update(('rawpacked-cache.time','rawpacked-cache.ci.out'))
+        elif root=='rawcorrespondence':allowed.update(prefix+n for n in ('provenance.json','restored-previous.json'))
+        else:allowed.add(prefix+'restored-union.json')
+        optional=set()
+        for step in steps:
+            command=step['command']
+            if root=='rawpacked' and len(command)==3 and command[:2]==['lake','build']:
+                module=command[2];require(module in {r['module'] for r in records},'unknown built project module')
+                stem='.lake/build/lib/lean/'+module.replace('.','/')
+                # Exact non-restored Lake build products for an already verified module.
+                optional.update(stem+suffix for suffix in ('.ilean','.trace','.olean.hash','.ilean.hash','.olean.private','.olean.server'))
+            label=step['name'];require(re.fullmatch(r'[A-Za-z0-9_.-]+',label)is not None,'unsafe producer label')
+            allowed.update(prefix+label+suffix for suffix in ('.out','.time','-warnings.json'))
+            if label.endswith('-axioms'):allowed.update(prefix+label+suffix for suffix in ('.lean','.expected.json'))
+            for arg in step['command']:
+                if isinstance(arg,str) and arg.endswith('.lean') and ('/'+prefix)in arg:
+                    allowed.add(prefix+Path(arg).name)
+                elif isinstance(arg,str) and arg.startswith(prefix) and arg.endswith('.lean'):allowed.add(arg)
+        # Producer shape is exact: no arbitrary outputs or disguised project paths.
+        actual_envelope=set()
+        for name in paths:
+            if name.endswith('/'):continue
+            if name in canonical:
+                value=digest(z.read(name));require(value==canonical[name],'canonical hash/overlap mismatch: '+name)
+                require(name not in seen or seen[name]==value,'canonical overlap mismatch: '+name);seen[name]=value
+            else:
+                require(name in allowed or name in optional,'unexpected project/envelope path: '+name)
+                actual_envelope.add(name)
+                scoped[(aid,identity.get('source_run',identity.get('run')),name)]=digest(z.read(name))
+        require(actual_envelope-optional==allowed,'missing/extra producer envelope: '+str(aid))
+    return {'canonical':seen,'scoped_envelopes':scoped}
+
+
 def restore(folder,binaries):
     cloud_only();folder=Path(folder);lock=pin();items=range_lock();identities=base_locks()+items
     require({n:sha(p) for n,p in binaries.items()}==lock['compiler_binary_sha256'] and sha(HERE/'lean-toolchain')==lock['toolchain_sha256'] and sha(HERE/'lake-manifest.json')==lock['lake_manifest_sha256'],'CU compiler/toolchain drift')
@@ -141,7 +210,7 @@ def restore(folder,binaries):
         fresh=[]
         for z,item in zip(archives[4:],items):fresh+=validate_range(read_range(z,item),item)
         records=base+fresh;require(records==lock['objects'] and len({r['module'] for r in records})==len(records),'CU closed object union')
-        previous.boundary.check_overlaps(archives);previous.base.verify_union_sources(archives,records)
+        validate_projected_union(archives,identities,records);previous.base.verify_union_sources(archives,records)
         for r in records:
             stem=r['module'].replace('.','/');rel=stem+'.lean';zs=[z for z in archives if rel in z.namelist()]
             if zs:previous.base.old.write_exact(HERE/rel,zs[0].read(rel))

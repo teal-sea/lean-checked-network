@@ -1,5 +1,5 @@
 {
-  "compatibility_sha256": "0b165f25c0aac755576926e54c3c8421e12c7aca07e8f2e5e8a3ad560a143811",
+  "compatibility_sha256": "5c05904e763ff6b6a674bdae61e4082779b64ed4f5dd382b3da4b9154f28d237",
   "row0": {
     "artifact_id": 12098570663,
     "objects": {
@@ -66,7 +66,7 @@
     "rawcu_runner.py": "b09b55a263e219fd0bb69f9adee56421e1a5473fe311116fb6f644a31c229cad",
     "rawcufull.sh": "a0f6a2a7b9bd3ba152b548b05738fac26dc3b8565bf8ab2ee4c756f2bfb2dbe5",
     "rawcufull_generate.py": "967ed937efcfe24eda06e8feecb244eebd7f31ead034731b0152120478d8c7bf",
-    "rawcufull_restore.py": "7781af51f8ea171112f0e86ff971fdba67d3835f38af847e9d0329b907e34a63",
+    "rawcufull_restore.py": "e5a854f9aa7e799984c07170c427819779e3993e5d27a19d40cb3613abf4fc1b",
     "rawcufull_runner.py": "0159189de47419aa84bd239b70b0b290966b3bab19d518db191263e5d50a5fbc",
     "rawpacked_data.py": "9a813476eca59299ef5c66340f7bafc621e57e784992fd96df93fefcdf967404",
     "rawpacked_generate.py": "45ff31407c3e4defc3dc762dbfc226f4733b1407cb198a56e8ace31d8aa56973",
@@ -95,7 +95,7 @@
     "test_input_harness.py": "a45d3bd50a59fe891b144ee01239f9b522ef6ba84a5b19599524be8743834efe",
     "test_rawcorrespondence.py": "72c173453067f848773fd8e27d596f404ce7a54b2ed2850f1cc9e1f882ff5bc5",
     "test_rawcu.py": "62240b14b66f1ff5bb440c4028e79ddf5ef97cdfa820e5fb0eabd78142d2d625",
-    "test_rawcufull.py": "5bd74b672814c8feda123bbfc611ad8615e470060b7638f3887988ba20f4f999",
+    "test_rawcufull.py": "25f57ef17115ec75c89dba87ca68cc3eb6fcb98620c3b1fd844024d0d5b67d76",
     "test_rawpacked.py": "8bf197975735c72f1e2686926f19646fd222e55cb9a7defad4e8909bf7f23c9f",
     "test_rawpilot.py": "98613e82ba9ab0a7e94e0f5ac5de132afb14f798b8fba4eb81e4765aade79311",
     "test_rawuboundary.py": "f9a01928436c8de6c3fba49c2906d798d2f6d18e46739ebc3f1d9805190924aa",

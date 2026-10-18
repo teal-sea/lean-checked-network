@@ -16,9 +16,50 @@ import rawcufull_runner as r
 
 RANGES=[]
 BASE=[]
+ARCHIVE_CASES=[]
 
 
 class CU(unittest.TestCase):
+    def test_actual_projected_multi_archive_seam_and_corruption_reds(self):
+        from contextlib import ExitStack
+        import io
+        class View:
+            # Test-only read view: original whole-ZIP authentication is separately checked.
+            def __init__(self,z,changed=None,extra=(),missing=()):
+                self.z=z;self.filename=z.filename;self.changed=changed or {};self.extra=extra;self.missing=set(missing)
+            def infolist(self):return [i for i in self.z.infolist() if i.filename not in self.missing]+[zipfile.ZipInfo(n)for n in self.extra]
+            def namelist(self):return [i.filename for i in self.infolist()]
+            def read(self,n):return self.changed.get(n,self.z.read(n))
+            def getinfo(self,n):return self.z.getinfo(n)
+        with ExitStack()as stack:
+            identities=[i for _,i in ARCHIVE_CASES]
+            zs=[stack.enter_context(zipfile.ZipFile(path))for path,_ in ARCHIVE_CASES]
+            # Historical operation is the actual RED, retained without weakening its old use.
+            with self.assertRaisesRegex(ValueError,'overlap mismatch: rawurange-out/U-range-scan.time'):
+                c.previous.boundary.check_overlaps(zs)
+            result=c.validate_projected_union(zs,identities,c.pin()['objects'])
+            self.assertGreater(len(result['scoped_envelopes']),1500)
+            ranges=c.range_lock();first=next(n for n,i in enumerate(identities)if i['artifact_id']==ranges[0]['artifact_id'])
+            original=zs[first];item=identities[first]
+            source=item['objects'][0]['module'].replace('.','/')+'.lean'
+            obj='.lake/build/lib/lean/'+item['objects'][0]['module'].replace('.','/')+'.olean'
+            for name in (source,obj,'RawURange-checkpoint.json','rawurange-out/generation.json'):
+                bad=list(zs);bad[first]=View(original,{name:original.read(name)+b' corruption'})
+                with self.subTest(name=name),self.assertRaises(ValueError):c.validate_projected_union(bad,identities,c.pin()['objects'])
+            for name in ('../unsafe','/absolute','rawurange-out/U-range-scan.time','TransformerBridge/Unknown.lean',
+                         '.lake/build/lib/lean/Unknown.olean','rawurange-out/unknown.time'):
+                bad=list(zs);bad[first]=View(original,extra=[name])
+                with self.subTest(name=name),self.assertRaises(ValueError):c.validate_projected_union(bad,identities,c.pin()['objects'])
+            bad=list(zs);bad[first]=View(original,missing=['rawurange-out/U-range-scan.time'])
+            with self.assertRaises(ValueError):c.validate_projected_union(bad,identities,c.pin()['objects'])
+            for field,value in (('run',0),('artifact_id',0),('source_sha','wrong')):
+                bad=copy.deepcopy(identities);bad[first][field]=value
+                with self.assertRaises(ValueError):c.validate_projected_union(zs,bad,c.pin()['objects'])
+            with self.assertRaises(ValueError):c.validate_projected_union(zs[:-1],identities[:-1],c.pin()['objects'])
+            with self.assertRaises(ValueError):c.validate_projected_union(zs+[original],identities+[item],c.pin()['objects'])
+            with patch.object(c,'stream_sha',return_value='bad'),self.assertRaises(ValueError):
+                c.validate_projected_union(zs,identities,c.pin()['objects'])
+
     def test_actual_all32_range_metadata_and_coverage(self):
         items=c.range_lock();self.assertEqual(len(items),32);self.assertEqual(len(c.pin()['objects']),294)
         self.assertEqual(len(c.selected_names()),3097)
@@ -129,6 +170,7 @@ if __name__=='__main__':
         if index==3:return args.fixture_root/('u-row127-'+str(item['source_run']))/'u-row127.zip'
         return args.fixture_root/('u-range-'+str(item['run']))/'u-range.zip'
     if args.archives:
+        ARCHIVE_CASES.append((path(locks[0],0),locks[0]))
         with zipfile.ZipFile(path(locks[0],0))as z:packed=c.previous.base.old.read_metadata(z,locks[0])
     else:
         packed={}
@@ -136,9 +178,9 @@ if __name__=='__main__':
             raw=(args.metadata_dir/Path(name).name).read_bytes();c.require(c.digest(raw)==value,'actual packed metadata');packed[Path(name).name]=raw.decode()
     BASE.append(packed)
     for index,reader in [(1,c.previous.base.read_ci),(2,c.previous.boundary.read_row0),(3,c.previous.read_row127)]:
-        f=path(locks[index],index);c.require(c.stream_sha(f)==locks[index]['zip_sha256'],'actual base ZIP')
+        f=path(locks[index],index);ARCHIVE_CASES.append((f,locks[index]));c.require(c.stream_sha(f)==locks[index]['zip_sha256'],'actual base ZIP')
         with zipfile.ZipFile(f)as z:BASE.append(reader(z))
     for item in items:
-        f=path(item);c.require(c.stream_sha(f)==item['zip_sha256'],'actual range ZIP')
+        f=path(item);ARCHIVE_CASES.append((f,item));c.require(c.stream_sha(f)==item['zip_sha256'],'actual range ZIP')
         with zipfile.ZipFile(f)as z:RANGES.append((item,c.read_range(z,item)))
     unittest.main(argv=[__file__],verbosity=2)

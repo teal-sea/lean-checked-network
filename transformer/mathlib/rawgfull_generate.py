@@ -53,7 +53,7 @@ def sources(items):
       f'theorem changed_wout : {ENDPOINT}.changedWeights.Wout 0 0 = weights.Wout 0 0 + 1 := {ENDPOINT}.changed_wout\n\n'
       f'theorem changed_G : ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 = (weights.rawTables 256).G 0 0 + weights.U 0 0 := {ENDPOINT}.changed_G\n\n'
       f'theorem changed_G_ne : ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 ≠ (TransformerBridge.toTables TransformerCore.Net.tab).G 0 0 := {ENDPOINT}.changed_G_ne\n')
-    negative=source([MODULES[1]],pre+f'example : ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 = (TransformerBridge.toTables TransformerCore.Net.tab).G 0 0 := by\n  rw [TransformerBridge.RawCorrespondence.G_of_contract]\n  decide +kernel\n')
+    negative=source([MODULES[1]],pre+f'example : ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 = (TransformerBridge.toTables TransformerCore.Net.tab).G 0 0 := by\n  change ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 = {ENDPOINT}.frozenG 0\n  rw [TransformerBridge.RawCorrespondence.G_of_contract]\n  decide +kernel\n')
     return dict(zip(MODULES,[assembly,control])),negative
 
 def emit(out,items,check=False):

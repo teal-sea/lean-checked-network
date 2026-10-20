@@ -9,6 +9,23 @@ import rawgfull_runner as runner
 PATHS={}
 ARCHIVES=None
 class Full(unittest.TestCase):
+    def test_negative_accepted_frozen_row_normalization_non_kernel(self):
+        # Symbolic emission only; new negative still requires actual kernel false rejection.
+        texts,negative=g.sources(c.range_lock())
+        expected='example : ('+g.ENDPOINT+'.changedWeights.rawTables 256).G 0 0 = (TransformerBridge.toTables TransformerCore.Net.tab).G 0 0 := by\n'
+        self.assertEqual(negative.count(expected),1)
+        normalization='  change ('+g.ENDPOINT+'.changedWeights.rawTables 256).G 0 0 = '+g.ENDPOINT+'.frozenG 0\n'
+        self.assertIn(expected+normalization,negative)
+        proof=negative.split(expected,1)[1].rsplit('\nend ',1)[0]
+        self.assertEqual(proof,normalization+'  rw [TransformerBridge.RawCorrespondence.G_of_contract]\n  decide +kernel\n')
+        self.assertNotRegex(negative,r'\b(False|sorry|admit|native_decide|unsafe|axiom|set_option)\b')
+        self.assertEqual({m:hashlib.sha256(s.encode()).hexdigest()for m,s in texts.items()},{'TransformerBridge.RawCorrespondence.GFullGenerated.Assembly': 'c53d807791512995de95b4a8411b099767e23bae59ea3a0ff3f9ae4bba1bc32c', 'TransformerBridge.RawCorrespondence.GFullGenerated.Control': '7ff17983cf069027eca60937534202c72dc170441433f5edc28ec7336fc6106f'})
+        import rawgpilot_generate as endpoint
+        accepted,_=endpoint.sources(0,0) # Toy bound only; no canonical coefficient access.
+        prefix,_=endpoint.identities(0)
+        self.assertIn('def frozenG (k : Fin 113) : Int := (TransformerBridge.toTables TransformerCore.Net.tab).G 0 k',accepted[prefix+'.Parameters'])
+        self.assertIn('weights.Wout i d + if i = 0 ∧ d = 0 then 1 else 0',accepted[prefix+'.Control'])
+
     def test_index_transport_goal_sensitive_cleanup_non_kernel(self):
         # Symbolic templates only: offset0 dsimp can close the goal by itself.
         texts,_=g.sources(c.range_lock())
@@ -40,7 +57,7 @@ class Full(unittest.TestCase):
         self.assertEqual(len(covered),len(set(covered)));self.assertEqual(len(covered),512)
         self.assertIn('theorem G_field : (TransformerBridge.toTables TransformerCore.Net.tab).G =\n    (TransformerBridge.RawPackedPilot.weights.rawTables 256).G'+' := by',body)
         self.assertEqual(hashlib.sha256(texts[g.MODULES[1]].encode()).hexdigest(),'7ff17983cf069027eca60937534202c72dc170441433f5edc28ec7336fc6106f')
-        self.assertEqual(hashlib.sha256(negative.encode()).hexdigest(),'0193e39a5196f63569e4d92167950db2e7cb066783ac1706d31220a4f0b111d0')
+        self.assertEqual(hashlib.sha256(negative.encode()).hexdigest(),'1e28fa80147e283bb0a066c4f999c22a3b3b832196227eb0cb8825f1c0f400dc')
         actual=[g.NS+'.'+n for n in re.findall(r'^theorem (\w+)',body,re.M)]
         self.assertEqual(actual,g.ASSEMBLY_NAMES)
         self.assertEqual(g.NAMES,g.ASSEMBLY_NAMES+g.CONTROL_NAMES)
@@ -150,7 +167,7 @@ class Full(unittest.TestCase):
                     with self.assertRaises(ValueError):runner.main(None)
                     self.assertFalse((out/'G_FIELD_ACCEPTED.json').exists())
                 else:
-                    runner.main(None);a=json.loads((out/'G_FIELD_ACCEPTED.json').read_text());self.assertTrue(a['scope']['G_field']);self.assertFalse(a['scope']['full_hT']);self.assertEqual(len(calls),2)
+                    runner.main(None);a=json.loads((out/'G_FIELD_ACCEPTED.json').read_text());self.assertTrue(a['scope']['G_field']);self.assertFalse(a['scope']['full_hT']);self.assertEqual(len(calls),2);self.assertEqual(a['generation']['negative_sha256'],hashlib.sha256(g.sources(c.range_lock())[1].encode()).hexdigest())
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--archives',type=Path);p.add_argument('--fixture-root',type=Path);a=p.parse_args();ARCHIVES=a.archives

@@ -8,23 +8,26 @@ import rawgfull_restore as c
 import rawgfull_runner as runner
 PATHS={}
 ARCHIVES=None
+ACCEPTED_NEGATIVE_ARCHIVE=None
 class Full(unittest.TestCase):
-    def test_negative_accepted_frozen_row_normalization_non_kernel(self):
-        # Symbolic emission only; new negative still requires actual kernel false rejection.
-        texts,negative=g.sources(c.range_lock())
-        expected='example : ('+g.ENDPOINT+'.changedWeights.rawTables 256).G 0 0 = (TransformerBridge.toTables TransformerCore.Net.tab).G 0 0 := by\n'
-        self.assertEqual(negative.count(expected),1)
-        normalization='  change ('+g.ENDPOINT+'.changedWeights.rawTables 256).G 0 0 = '+g.ENDPOINT+'.frozenG 0\n'
-        self.assertIn(expected+normalization,negative)
-        proof=negative.split(expected,1)[1].rsplit('\nend ',1)[0]
-        self.assertEqual(proof,normalization+'  rw [TransformerBridge.RawCorrespondence.G_of_contract]\n  decide +kernel\n')
-        self.assertNotRegex(negative,r'\b(False|sorry|admit|native_decide|unsafe|axiom|set_option)\b')
-        self.assertEqual({m:hashlib.sha256(s.encode()).hexdigest()for m,s in texts.items()},{'TransformerBridge.RawCorrespondence.GFullGenerated.Assembly': 'c53d807791512995de95b4a8411b099767e23bae59ea3a0ff3f9ae4bba1bc32c', 'TransformerBridge.RawCorrespondence.GFullGenerated.Control': '7ff17983cf069027eca60937534202c72dc170441433f5edc28ec7336fc6106f'})
+    def test_negative_exact_accepted_endpoint_source_non_kernel(self):
+        # Exact historical source identity only; successor rejection needs public kernel CI.
         import rawgpilot_generate as endpoint
-        accepted,_=endpoint.sources(0,0) # Toy bound only; no canonical coefficient access.
+        texts,negative=g.sources(c.range_lock());accepted,old_negative=endpoint.sources(0,0)
+        self.assertEqual(negative,old_negative)
+        self.assertEqual(hashlib.sha256(negative.encode()).hexdigest(),'5f63be4c7c38724c17e8dc85e92cf815f2ba20efb0af67923a20cdf309ae21d0')
+        self.assertEqual(re.findall(r'^import (\S+)$',negative,re.M),['TransformerBridge.RawCorrespondence.GPilotGenerated.Row000.Control'])
+        self.assertEqual(re.findall(r'^namespace (\S+)$',negative,re.M),['TransformerBridge.RawCorrespondence.GPilotCanonical.Row000'])
+        self.assertEqual(re.findall(r'^set_option (\S+) (\S+)$',negative,re.M),[('maxRecDepth','100000'),('maxHeartbeats','4000000')])
+        self.assertIn('example : (changedWeights.rawTables 256).G 0 0 = frozenG 0 := by\n  rw [G_of_contract]\n  decide +kernel\n',negative)
+        self.assertNotRegex(negative,r'\b(False|sorry|admit|native_decide|unsafe|axiom)\b')
+        self.assertEqual({m:hashlib.sha256(s.encode()).hexdigest()for m,s in texts.items()},{'TransformerBridge.RawCorrespondence.GFullGenerated.Assembly':'c53d807791512995de95b4a8411b099767e23bae59ea3a0ff3f9ae4bba1bc32c','TransformerBridge.RawCorrespondence.GFullGenerated.Control':'7ff17983cf069027eca60937534202c72dc170441433f5edc28ec7336fc6106f'})
         prefix,_=endpoint.identities(0)
         self.assertIn('def frozenG (k : Fin 113) : Int := (TransformerBridge.toTables TransformerCore.Net.tab).G 0 k',accepted[prefix+'.Parameters'])
         self.assertIn('weights.Wout i d + if i = 0 ∧ d = 0 then 1 else 0',accepted[prefix+'.Control'])
+        if ACCEPTED_NEGATIVE_ARCHIVE is not None:
+            with zipfile.ZipFile(ACCEPTED_NEGATIVE_ARCHIVE)as z:
+                self.assertEqual(negative.encode(),z.read('rawgpilot-out/changed-Wout.lean'))
 
     def test_index_transport_goal_sensitive_cleanup_non_kernel(self):
         # Symbolic templates only: offset0 dsimp can close the goal by itself.
@@ -57,7 +60,7 @@ class Full(unittest.TestCase):
         self.assertEqual(len(covered),len(set(covered)));self.assertEqual(len(covered),512)
         self.assertIn('theorem G_field : (TransformerBridge.toTables TransformerCore.Net.tab).G =\n    (TransformerBridge.RawPackedPilot.weights.rawTables 256).G'+' := by',body)
         self.assertEqual(hashlib.sha256(texts[g.MODULES[1]].encode()).hexdigest(),'7ff17983cf069027eca60937534202c72dc170441433f5edc28ec7336fc6106f')
-        self.assertEqual(hashlib.sha256(negative.encode()).hexdigest(),'1e28fa80147e283bb0a066c4f999c22a3b3b832196227eb0cb8825f1c0f400dc')
+        self.assertEqual(hashlib.sha256(negative.encode()).hexdigest(),'5f63be4c7c38724c17e8dc85e92cf815f2ba20efb0af67923a20cdf309ae21d0')
         actual=[g.NS+'.'+n for n in re.findall(r'^theorem (\w+)',body,re.M)]
         self.assertEqual(actual,g.ASSEMBLY_NAMES)
         self.assertEqual(g.NAMES,g.ASSEMBLY_NAMES+g.CONTROL_NAMES)
@@ -73,7 +76,7 @@ class Full(unittest.TestCase):
         for imp in ('Mathlib','Transformer.Raw','TransformerBridge.Bridge'):self.assertIn('import '+imp+'\n',body)
         self.assertIn('funext i\n  by_cases h128',body);self.assertIn('(TransformerBridge.RawPackedPilot.weights.rawTables 256).G',body)
         self.assertNotRegex(body,r'\b(sorry|admit|native_decide|unsafe|set_option|decide)\b')
-        self.assertIn(g.ENDPOINT+'.changedWeights.rawTables 256',negative);self.assertIn('decide +kernel',negative)
+        self.assertIn('namespace '+g.ENDPOINT+'\n',negative);self.assertIn('(changedWeights.rawTables 256).G 0 0 = frozenG 0',negative);self.assertIn('decide +kernel',negative)
         for bad in (items[:-1],items+[items[-1]],list(reversed(items))):
             with self.assertRaises(ValueError):g.row_inventory(bad)
         for key,value in (('run',1),('source_sha','wrong'),('G_rows',[1,3,4,5]),('objects',[])):
@@ -171,6 +174,7 @@ class Full(unittest.TestCase):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--archives',type=Path);p.add_argument('--fixture-root',type=Path);a=p.parse_args();ARCHIVES=a.archives
+    ACCEPTED_NEGATIVE_ARCHIVE=(ARCHIVES/'prior/12132623178.zip')if ARCHIVES else a.fixture_root/'g-pilot-39117822541/g-pilot.zip'
     for item in c.range_lock():
         path=(ARCHIVES/'ranges'/(str(item['artifact_id'])+'.zip'))if ARCHIVES else a.fixture_root/('g-range-'+str(item['run']))/'g-range.zip'
         c.require(c.stream_sha(path)==item['zip_sha256'],'actual G range ZIP identity');PATHS[item['artifact_id']]=path

@@ -53,7 +53,9 @@ def sources(items):
       f'theorem changed_wout : {ENDPOINT}.changedWeights.Wout 0 0 = weights.Wout 0 0 + 1 := {ENDPOINT}.changed_wout\n\n'
       f'theorem changed_G : ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 = (weights.rawTables 256).G 0 0 + weights.U 0 0 := {ENDPOINT}.changed_G\n\n'
       f'theorem changed_G_ne : ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 ≠ (TransformerBridge.toTables TransformerCore.Net.tab).G 0 0 := {ENDPOINT}.changed_G_ne\n')
-    negative=source([MODULES[1]],pre+f'example : ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 = (TransformerBridge.toTables TransformerCore.Net.tab).G 0 0 := by\n  change ({ENDPOINT}.changedWeights.rawTables 256).G 0 0 = {ENDPOINT}.frozenG 0\n  rw [TransformerBridge.RawCorrespondence.G_of_contract]\n  decide +kernel\n')
+    import rawgpilot_generate as endpoint
+    _,negative=endpoint.sources(0,0) # Historical negative is independent of the toy bound.
+    require(digest(negative.encode())=='5f63be4c7c38724c17e8dc85e92cf815f2ba20efb0af67923a20cdf309ae21d0','accepted row0 negative source drift')
     return dict(zip(MODULES,[assembly,control])),negative
 
 def emit(out,items,check=False):

@@ -1,5 +1,5 @@
 """Symbolic/source/authentic retained metadata only; NO new kernel verification."""
-import argparse,copy,json,re,tempfile,unittest,zipfile,os
+import argparse,copy,json,re,tempfile,unittest,zipfile,os,hashlib
 from pathlib import Path
 from unittest.mock import patch
 from contextlib import ExitStack
@@ -9,13 +9,37 @@ import rawgfull_runner as runner
 PATHS={}
 ARCHIVES=None
 class Full(unittest.TestCase):
+    def test_bounded_fin128_blocks_and_preserved_control_non_kernel(self):
+        # Real symbolic emission only; no local Lean or kernel verdict.
+        texts,negative=g.sources(c.range_lock());body=texts[g.MODULES[0]]
+        self.assertNotIn('fin_cases i',body,'old512-way recursion-prone case split remains')
+        offsets=(0,128,256,384)
+        self.assertEqual(re.findall(r'^theorem (G_block_\d{3}) \(j : Fin 128\)',body,re.M),[f'G_block_{offset:03d}'for offset in offsets])
+        self.assertEqual(body.count('  fin_cases j\n'),4)
+        rows=g.row_inventory(c.range_lock());covered=[]
+        for offset in offsets:
+            block=body.split(f'theorem G_block_{offset:03d} ',1)[1].split('\ntheorem ',1)[0]
+            refs=re.findall(r'^  · exact (\S+)$',block,re.M)
+            self.assertEqual(refs,[row['proof']for row in rows[offset:offset+128]])
+            self.assertIn(f'j.val + {offset}',block);covered+=refs
+        self.assertEqual(len(covered),len(set(covered)));self.assertEqual(len(covered),512)
+        self.assertIn('theorem G_field : (TransformerBridge.toTables TransformerCore.Net.tab).G =\n    (TransformerBridge.RawPackedPilot.weights.rawTables 256).G'+' := by',body)
+        self.assertEqual(hashlib.sha256(texts[g.MODULES[1]].encode()).hexdigest(),'7ff17983cf069027eca60937534202c72dc170441433f5edc28ec7336fc6106f')
+        self.assertEqual(hashlib.sha256(negative.encode()).hexdigest(),'0193e39a5196f63569e4d92167950db2e7cb066783ac1706d31220a4f0b111d0')
+        actual=[g.NS+'.'+n for n in re.findall(r'^theorem (\w+)',body,re.M)]
+        self.assertEqual(actual,g.ASSEMBLY_NAMES)
+        self.assertEqual(g.NAMES,g.ASSEMBLY_NAMES+g.CONTROL_NAMES)
+        self.assertEqual(len(g.NAMES)+8886,8894)
+        self.assertEqual(body.count('rw [hi] at h'),4)
+        self.assertNotRegex(body,r'\b(set_option|sorry|admit|native_decide|unsafe|axiom)\b')
+
     def test_symbolic_exact512_coverage_and_model_imports_non_kernel(self):
         items=c.range_lock();rows=g.row_inventory(items);self.assertEqual([r['row']for r in rows],list(range(512)))
         texts,negative=g.sources(items);self.assertEqual(list(texts),g.MODULES)
         body=texts[g.MODULES[0]];proofs=re.findall(r'^  · exact (\S+)$',body,re.M)
         self.assertEqual(proofs,[r['proof']for r in rows]);self.assertEqual(len(set(proofs)),512)
         for imp in ('Mathlib','Transformer.Raw','TransformerBridge.Bridge'):self.assertIn('import '+imp+'\n',body)
-        self.assertIn('funext i\n  fin_cases i',body);self.assertIn('(TransformerBridge.RawPackedPilot.weights.rawTables 256).G',body)
+        self.assertIn('funext i\n  by_cases h128',body);self.assertIn('(TransformerBridge.RawPackedPilot.weights.rawTables 256).G',body)
         self.assertNotRegex(body,r'\b(sorry|admit|native_decide|unsafe|set_option|decide)\b')
         self.assertIn(g.ENDPOINT+'.changedWeights.rawTables 256',negative);self.assertIn('decide +kernel',negative)
         for bad in (items[:-1],items+[items[-1]],list(reversed(items))):
@@ -87,7 +111,10 @@ class Full(unittest.TestCase):
                 s.enter_context(patch.object(c,'restore',return_value={'objects':[],'selected_names':[]}))
                 s.enter_context(patch.object(c.previous.previous.previous,'pin',return_value={'compiler_binary_sha256':compiler}))
                 s.enter_context(patch.object(runner.common,'check_declarations'))
-                s.enter_context(patch.object(runner.common,'audit',side_effect=lambda label,imports,names:len(names)))
+                def audit(label,imports,names):
+                    self.assertEqual(names,{'batch':g.ASSEMBLY_NAMES,'control':g.CONTROL_NAMES,'complete-G-field':g.NAMES}[label])
+                    return len(names)
+                s.enter_context(patch.object(runner.common,'audit',side_effect=audit))
                 def compile(module):
                     calls.append(module)
                     if failure and module.endswith('.'+failure):raise ValueError('FAKE compile/replay failure')

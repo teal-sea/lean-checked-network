@@ -8,7 +8,9 @@ PREFIX='TransformerBridge.RawCorrespondence.GFullGenerated'
 NS='TransformerBridge.RawCorrespondence.GFullCanonical'
 ENDPOINT='TransformerBridge.RawCorrespondence.GPilotCanonical.Row000'
 MODULES=[PREFIX+'.Assembly',PREFIX+'.Control']
-NAMES=[NS+'.G_field',NS+'.changed_wout',NS+'.changed_G',NS+'.changed_G_ne']
+ASSEMBLY_NAMES=[NS+f'.G_block_{offset:03d}'for offset in (0,128,256,384)]+[NS+'.G_field']
+CONTROL_NAMES=[NS+'.changed_wout',NS+'.changed_G',NS+'.changed_G_ne']
+NAMES=ASSEMBLY_NAMES+CONTROL_NAMES
 SCOPE={'G_rows':list(range(512)),'G_components':113,'G_field':False,'full_hT':False,'finalraw':False}
 
 def row_inventory(items):
@@ -28,8 +30,22 @@ def source(imports,body):
 
 def sources(items):
     rows=row_inventory(items)
-    body='theorem G_field : (TransformerBridge.toTables TransformerCore.Net.tab).G =\n    (TransformerBridge.RawPackedPilot.weights.rawTables 256).G := by\n  funext i\n  fin_cases i\n'
-    body+=''.join('  · exact '+r['proof']+'\n'for r in rows)
+    body=''
+    for offset in (0,128,256,384):
+        index=f'⟨j.val + {offset}, by omega⟩'
+        body+=f'theorem G_block_{offset:03d} (j : Fin 128) : (TransformerBridge.toTables TransformerCore.Net.tab).G {index} =\n    (TransformerBridge.RawPackedPilot.weights.rawTables 256).G {index} := by\n  fin_cases j\n'
+        body+=''.join('  · exact '+r['proof']+'\n'for r in rows[offset:offset+128])+'\n'
+    body+='theorem G_field : (TransformerBridge.toTables TransformerCore.Net.tab).G =\n    (TransformerBridge.RawPackedPilot.weights.rawTables 256).G := by\n  funext i\n'
+    def transport(offset,indent):
+        pad=' '*indent
+        return (pad+f'let j : Fin 128 := ⟨i.val - {offset}, by omega⟩\n'+
+            pad+f'have hi : (⟨j.val + {offset}, by omega⟩ : Fin 512) = i := by\n'+
+            pad+'  apply Fin.ext\n'+pad+'  dsimp [j]\n'+pad+'  omega\n'+
+            pad+f'have h := G_block_{offset:03d} j\n'+pad+'rw [hi] at h\n'+pad+'exact h\n')
+    body+='  by_cases h128 : i.val < 128\n  · '+transport(0,4).lstrip()
+    body+='  · by_cases h256 : i.val < 256\n    · '+transport(128,6).lstrip()
+    body+='    · by_cases h384 : i.val < 384\n      · '+transport(256,8).lstrip()
+    body+='      · '+transport(384,8).lstrip()
     assembly=source(['Mathlib','Transformer.Raw','TransformerBridge.Bridge']+list(dict.fromkeys(r['module']for r in rows)),body)
     pre='open TransformerBridge.RawPackedPilot\n\n'
     control=source([MODULES[0],'TransformerBridge.RawCorrespondence.GPilotGenerated.Row000.Control'],pre+

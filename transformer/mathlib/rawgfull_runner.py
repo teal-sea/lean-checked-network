@@ -19,7 +19,7 @@ def main(archives):
     cache.require('version 4.35.0' in version and 'commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc' in version,'G compiler version')
     prefix=Path(common.runner.run('compiler-prefix',['lake','env','lean','--print-prefix'],60).strip());binaries={t:(prefix/'bin'/t).resolve()for t in ('lean','lake','leanchecker')}
     restored=cache.restore(archives,binaries);(OUT/'restored-union.json').write_text(json.dumps(restored,indent=2,sort_keys=True)+'\n')
-    record=gen.emit(OUT,cache.range_lock());modules=gen.MODULES;row_names=gen.NAMES[:1];control_names=gen.NAMES[1:];fresh=[]
+    record=gen.emit(OUT,cache.range_lock());modules=gen.MODULES;row_names=gen.ASSEMBLY_NAMES;control_names=gen.CONTROL_NAMES;fresh=[]
     for module,expected,label in zip(modules,(row_names,control_names),('batch','control')):
         common.check_declarations(module,namespace,expected)
         common.runner.run(label+'-scan',['../lean/scan_sources.sh',module.replace('.','/')+'.lean'],60)

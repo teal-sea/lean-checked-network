@@ -12,6 +12,8 @@ stream_sha=previous.stream_sha
 PIN_PATH=HERE/'RawGRange-checkpoint.json'
 def pin():return json.loads(PIN_PATH.read_text())
 def inverse_workflow(text):
+    from rawgfull_restore import inverse_workflow as full_inverse
+    text=full_inverse(text)
     rule=pin()['workflow_projection'];require(digest(text.encode())==rule['current_sha256'],'unknown G range workflow drift')
     for fragment in rule['insertions']:
         require(text.count(fragment)==1,'G range inverse occurrence');text=text.replace(fragment,'',1)
@@ -19,6 +21,8 @@ def inverse_workflow(text):
     require(digest(text.encode())==rule['accepted_sha256'],'G range workflow accepted identity');return text
 
 def project_current(path,data):
+    from rawgfull_restore import project_current as full_project
+    data=full_project(path,data)
     rule=pin()['nonproof_projections'].get(path)
     if rule is None:return data
     require(digest(data)==rule['current_sha256'],'unknown G range source drift: '+path)

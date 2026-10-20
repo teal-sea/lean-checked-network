@@ -11,7 +11,7 @@ GRID_RUN = 39077248982
 DELTAS = {'../../.github/workflows/transformer.yml', 'row0_checkpoint.json',
           'test_rawpacked.py', 'test_row0_finalize.py', 'test_input_coverage.py',
           'test_input_harness.py', 'input_runner.py', 'input_artifacts.py'}
-ADDITIONS = {'RawGRange-checkpoint.json', 'rawgrange_generate.py', 'rawgrange_restore.py', 'rawgrange_runner.py', 'rawgrange.sh', 'test_rawgrange.py', 'RawGPilot-checkpoint.json', 'rawgpilot_generate.py', 'rawgpilot_restore.py', 'rawgpilot_runner.py', 'rawgpilot.sh', 'test_rawgpilot.py', 'RawCUFull-checkpoint.json', 'rawcufull_generate.py', 'rawcufull_restore.py',
+ADDITIONS = {'RawGFull-checkpoint.json', 'rawgfull_generate.py', 'rawgfull_restore.py', 'rawgfull_runner.py', 'rawgfull.sh', 'test_rawgfull.py', 'RawGRange-checkpoint.json', 'rawgrange_generate.py', 'rawgrange_restore.py', 'rawgrange_runner.py', 'rawgrange.sh', 'test_rawgrange.py', 'RawGPilot-checkpoint.json', 'rawgpilot_generate.py', 'rawgpilot_restore.py', 'rawgpilot_runner.py', 'rawgpilot.sh', 'test_rawgpilot.py', 'RawCUFull-checkpoint.json', 'rawcufull_generate.py', 'rawcufull_restore.py',
     'rawcufull_runner.py', 'rawcufull.sh', 'test_rawcufull.py', 'TransformerBridge/RawCUUpdate.lean', 'RawURange-checkpoint.json', 'rawurange_generate.py', 'rawurange_restore.py',
     'rawurange_runner.py', 'rawurange.sh', 'test_rawurange.py', 'RawUBoundary-checkpoint.json', 'rawuboundary_generate.py',
     'rawuboundary_restore.py', 'rawuboundary_runner.py', 'rawuboundary.sh', 'test_rawuboundary.py', 'RawCU-checkpoint.json', 'rawcu_generate.py', 'rawcu_restore.py',

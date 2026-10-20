@@ -1,5 +1,5 @@
 {
-  "compatibility_sha256": "fb890e07877c2113ad6aef4bcb0d91a29073760ee0d36294da8b95141c2915c2",
+  "compatibility_sha256": "9dc48654a758408f3fabd4d5a014500e44d43fd012d8d4d9b197e7f561275616",
   "row0": {
     "artifact_id": 12098570663,
     "objects": {
@@ -14,7 +14,7 @@
     "zip_sha256": "84c18a8e9dda6bae30a02a5e2ef0dac64a26b9df66dbcbb9148071bf8ed01d7e"
   },
   "sources": {
-    "../../.github/workflows/transformer.yml": "01e0809189647e028a1d1555e13d8bc3594c15ab926fb6bf29bc6e61a8fa91ee",
+    "../../.github/workflows/transformer.yml": "a4fda5a6cacd1e9df190e82e1bceaf9f41ff0f4be250464ec44d8cf7ca685001",
     "../lean/Transformer/Cached.lean": "73104f27049371bbf20dd3e2ad6645651ea1d25599a0b3250e8acc6f73c5ca5a",
     "../lean/Transformer/CachedFixture.lean": "b22e9ed5e3ef3154db1d6e67969f47fda55c0e8c2e28298c5dd319a888d35c0e",
     "../lean/cached-inputs.sha256": "aa2681837e9ef97436796bc5479b945be9c7900847a684e7eda439887a8c3805",
@@ -26,6 +26,7 @@
     "RawGFull-checkpoint.json": "bf9d61304d503b206b47fdd7baa27cac2d2cec6cd4bdf88aa271599975898f71",
     "RawGPilot-checkpoint.json": "3dffb4b2c213c323e3d8092dbd0d23c20fa1680bccda2610cbc6cac0e3ebd2a9",
     "RawGRange-checkpoint.json": "1384e68d67f1bcec4e2a4b51d03dc4bdc0fbc191cb6e1bfd92f56242fb9cdfa5",
+    "RawTUPilot-checkpoint.json": "62dec33b967bdcae502b1be6a9752defd75958ae23d97b46376b535d9be513bc",
     "RawUBoundary-checkpoint.json": "b9c1c96751c82a77eb9d534e1604e0424cc391239b89786a7534db84d389a2d1",
     "RawURange-checkpoint.json": "6be150d1fea8f3e058a44070fbfc196f98a229d9a0a2033f4158b1df6d29c026",
     "Transformer/Compose.lean": "f5d33239bf084838f0c99cce079883b9a620a23ec72a54b386bae6a7c7757890",
@@ -44,6 +45,7 @@
     "TransformerBridge/RawPackedFixture.lean": "b01e30e1799a3e2ab045d70f39f2c8f4e6db9d620070bcb386520af6f7c04a00",
     "TransformerBridge/RawPackedSupport.lean": "fdbeb0279af47df3abf8d63e66f7cec975c0c4d1f2ec6fa5103f6338b7b02caf",
     "TransformerBridge/RawPilotSupport.lean": "7310c4bdfd2d17b1318472f731444cf2d8bcd24ccac8ec794ba9f902518e2ed7",
+    "TransformerBridge/RawTUUpdate.lean": "066125810e57dd4b47a02df10d6ec44c79049d98cb3d68121721be7a4507eb91",
     "TransformerBridge/Row0.lean": "dfd7d211e157fad7bad7c6e9e3debe3b36099a956873bae28eb083b3072cc317",
     "TransformerBridge/Row0Checks.lean": "cb216a580574afa1dab6fd75b2fd9faf20ac8227a5307afb934640b1f22c94f6",
     "TransformerBridge/Row0Compat.lean": "e116fa09c902687b0d5d63e7156e397823312fe5d4182e44e674b9a2d9b4cb7d",
@@ -52,7 +54,7 @@
     "check_expfix.py": "b87cc13ca080f1e1a5617679e05bf1b4031b830b2546db6311d4002ed2859a8a",
     "input_artifacts.py": "b0f4dd214da41f7992bb99a40d60a2e730a010272100309b0922471ae56a863d",
     "input_checkpoint_a01a98c.json": "9500e397b883c6c53218a205990d12d7565cef4f98ed073949d78d6d09c3058a",
-    "input_compat.py": "81bf2a0f96076000390f23ff94be5698bdb58d0f10b8183b0fe08fec93d8088f",
+    "input_compat.py": "94e06fe2be0518e265da2f8be3559e963d3941e7f49adcccd504fd84f2795782",
     "input_policy_a01a98c.json": "973c59ef5ef51ab94a1d102a2daccf20f70c53a2b08591fb030ee492c05fdbd4",
     "input_runner.py": "889a8522601aa5a7bada3073059964715366418dcd98f7e380e5fa34ed44e84b",
     "input_source.py": "e64d6dc972e6aa850c79dfbd7b6628f2be42380a2045f3cc36bbed24c322ed5d",
@@ -73,7 +75,7 @@
     "rawcufull_runner.py": "0159189de47419aa84bd239b70b0b290966b3bab19d518db191263e5d50a5fbc",
     "rawgfull.sh": "029646e1ce05608f9ad4bfa768057ec1ccdbdcf88f11f7e66749e80ad26ae7a2",
     "rawgfull_generate.py": "9c37a70f23b78ad6931e538f7f07b44776821cf92690defecb1ec9312adc0395",
-    "rawgfull_restore.py": "1cb634ecdf7298309ce563e37596e9e8f3c9d9a1833088774db535beefd201a9",
+    "rawgfull_restore.py": "70a7ef5de36b46d61e800af0b1c1cb93852eca00b9329e29c8816ccf9c07574e",
     "rawgfull_runner.py": "553c6185eac3c36ffbbc110fba3d52f88025b965dda7349d18ef1fd6efd656d4",
     "rawgpilot.sh": "e8e144e0f37e407d65f7c675f77cd0f46e03c3944b361c65f6f4093189bbecb6",
     "rawgpilot_generate.py": "f560f27783a770fe9fd41f448877797d02f9de26f0c6960176c6f222ef51c89c",
@@ -89,6 +91,10 @@
     "rawpilot_data.py": "cff3450c10ce80b29bfa589e220f662e2ae26019b1337f30d7bd7dd4d4df7f4e",
     "rawpilot_generate.py": "67f765af03978409359175eacd5d4224cc418ae08b9ea6b0c981516e5600d98a",
     "rawpilot_runner.py": "152e6cedf2c24188320153db715c09c389f13176db9b9b19b5562005f2b4c9ac",
+    "rawtupilot.sh": "37592ec68a10bc1f1f83f6087ee4cd2d8273c70c1499784484789c2633ca8a06",
+    "rawtupilot_generate.py": "e2d50f0c6d431e6b31c36b6065ae009328a87b6898ee838f187eed4a986c8b8f",
+    "rawtupilot_restore.py": "fb248c25d90905b73b4ed0853df40c47a32bf75effafc291cc464f0e34fc6c73",
+    "rawtupilot_runner.py": "c1b6048019fa3bd365a67b8a857d48f2e80022d99e0314588211c34cd1d55e36",
     "rawuboundary.sh": "53e85bb3e82e3032868f41eb1245b7db5bf2452563f94d89410fa9f0b7b42158",
     "rawuboundary_generate.py": "12dad133bb12355e1f4fdb73e2cddacdee8237dbfb9c40a3971f1a181eed854f",
     "rawuboundary_restore.py": "3165bebede30c535f108c39128fd9f815c01ed79edfea65060f7861970d2ab32",
@@ -116,6 +122,7 @@
     "test_rawgrange.py": "cbdd86b70929ac21f16b398403fe223ab20a965a5f4e092ab3812a5b5e8d570e",
     "test_rawpacked.py": "8bf197975735c72f1e2686926f19646fd222e55cb9a7defad4e8909bf7f23c9f",
     "test_rawpilot.py": "98613e82ba9ab0a7e94e0f5ac5de132afb14f798b8fba4eb81e4765aade79311",
+    "test_rawtupilot.py": "9233a027462be1d5ef4af6283326709bf7b298892e9f7c3d97396ffd24ff5e68",
     "test_rawuboundary.py": "f9a01928436c8de6c3fba49c2906d798d2f6d18e46739ebc3f1d9805190924aa",
     "test_rawurange.py": "93001316a9847f2178d51d14dff367d0a928f8c6b563e3394cfe592b8c86cd95",
     "test_row0.py": "d738765947eb7b79ad75d8d994a50391031d87abed2754e1f10d1ece7b0ab0f0",

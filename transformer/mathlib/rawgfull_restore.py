@@ -13,6 +13,8 @@ stream_sha=previous.stream_sha
 PIN_PATH=HERE/'RawGFull-checkpoint.json'
 def pin():return json.loads(PIN_PATH.read_text())
 def inverse_workflow(text):
+    from rawtupilot_restore import inverse_workflow as tu_inverse
+    text=tu_inverse(text)
     rule=pin()['workflow_projection'];require(digest(text.encode())==rule['current_sha256'],'unknown full G workflow drift')
     for fragment in rule['insertions']:
         require(text.count(fragment)==1,'full G workflow inverse count');text=text.replace(fragment,'',1)
@@ -20,6 +22,8 @@ def inverse_workflow(text):
     require(digest(text.encode())==rule['accepted_sha256'],'full G workflow accepted identity');return text
 
 def project_current(path,data):
+    from rawtupilot_restore import project_current as tu_project
+    data=tu_project(path,data)
     rule=pin()['nonproof_projections'].get(path)
     if rule is None:return data
     require(digest(data)==rule['current_sha256'],'unknown full G source drift: '+path)

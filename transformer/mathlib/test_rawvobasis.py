@@ -100,8 +100,28 @@ class VO(unittest.TestCase):
             name=next(n for n in c.previous.previous.pin()['cu_files']if n.endswith('.olean'))
             with self.assertRaises(ValueError):c.previous.previous.read_cu(View(z,corrupt=name))
 
+    def check_complete_audit_non_kernel(self,imports,names,restored_modules,restored_names):
+        # Authentic retained inventories; no mocked compiler result is kernel evidence.
+        modules,inventory=g.inventory()
+        self.assertEqual(imports,restored_modules+[g.HELPER]+modules)
+        self.assertEqual(names,restored_names+g.HELPER_NAMES+[n for module in modules for n in inventory[module]])
+        self.assertEqual(len(imports),327)
+        self.assertEqual(len(names),3592)
+        self.assertEqual(len(set(names)),3592)
+
+    def test_complete_audit_inventory_rejects_missing_first_or_lost_names_non_kernel(self):
+        restored=c.pin();modules,inventory=g.inventory()
+        imports=[r['module']for r in restored['objects']]+[g.HELPER]+modules
+        names=restored['selected_names']+g.HELPER_NAMES+[n for module in modules for n in inventory[module]]
+        self.check_complete_audit_non_kernel(imports,names,[r['module']for r in restored['objects']],restored['selected_names'])
+        for bad_imports,bad_names in (([m for m in imports if m!=g.PREFIX+'.First'],names),(imports,[n for n in names if n not in inventory[g.PREFIX+'.First']]),(imports[::-1],names),(imports,names+names[-1:])):
+            with self.assertRaises(AssertionError):
+                self.check_complete_audit_non_kernel(bad_imports,bad_names,[r['module']for r in restored['objects']],restored['selected_names'])
+
     def test_mocked_support_first_and_negative_exit_gates_non_kernel(self):
         support=(c.HERE/'TransformerBridge/RawVOBasis.lean').read_text()
+        retained=c.pin();retained_modules=[r['module']for r in retained['objects']]
+        self.assertEqual(len(retained_modules),301);self.assertEqual(len(retained['selected_names']),3246)
         for failure in (None,'support','first','negative'):
             with self.subTest(failure=failure),tempfile.TemporaryDirectory()as tmp,ExitStack()as s:
                 here=Path(tmp);out=here/'out';calls=[]
@@ -112,11 +132,23 @@ class VO(unittest.TestCase):
                 s.enter_context(patch.dict(os.environ,{'GITHUB_REPOSITORY':'teal-sea/lean-checked-network','LEAN_NUM_THREADS':'2'}))
                 for target,name,value in ((runner,'HERE',here),(runner,'OUT',out),(g,'HERE',here),(runner.common,'HERE',here)):s.enter_context(patch.object(target,name,value))
                 s.enter_context(patch.object(runner,'cloud_only'));s.enter_context(patch.object(g,'cloud_only'));s.enter_context(patch.object(runner,'snapshot',return_value={}))
-                s.enter_context(patch.object(c,'restore',return_value={'objects':[],'selected_names':[]}));s.enter_context(patch.object(c.previous.previous.previous,'pin',return_value={'compiler_binary_sha256':compiler}))
+                # Fake file bytes only at I/O boundaries; exact retained module/name inventories.
+                restored_records=[]
+                for module in retained_modules:
+                    stem=module.replace('.','/');src=here/(stem+'.lean');obj=here/'.lake/build/lib/lean'/(stem+'.olean')
+                    src.parent.mkdir(parents=True,exist_ok=True);src.write_bytes(b'NON_KERNEL mock restored source')
+                    obj.parent.mkdir(parents=True,exist_ok=True);obj.write_bytes(b'NON_KERNEL mock restored object')
+                    restored_records.append({'module':module,'source_sha256':c.sha(src),'olean_sha256':c.sha(obj)})
+                s.enter_context(patch.object(c,'restore',return_value={'objects':restored_records,'selected_names':retained['selected_names']}));s.enter_context(patch.object(c.previous.previous.previous,'pin',return_value={'compiler_binary_sha256':compiler}))
                 def witness():
                     self.assertEqual(calls,[g.HELPER]);return {'values':{'tokenV':[1]*32,'positionV':[2]*32,'tokenO':[3]*128,'positionO':[4]*128},'l':0,'basis':'token','negative':{'field':'WO','coordinate':[0,0,0],'old':2,'new':3,'delta':1}}
                 s.enter_context(patch.object(g,'production_witness',side_effect=witness))
-                s.enter_context(patch.object(runner.common,'audit',side_effect=lambda label,imports,names:len(names)))
+                def audit(label,imports,names):
+                    if label=='complete-VO-basis':
+                        self.assertEqual(calls,[g.HELPER]+g.inventory()[0])
+                        self.check_complete_audit_non_kernel(imports,names,retained_modules,retained['selected_names'])
+                    return len(names)
+                s.enter_context(patch.object(runner.common,'audit',side_effect=audit))
                 def compile(module):
                     calls.append(module)
                     if (failure=='support'and module==g.HELPER)or(failure=='first'and module==g.PREFIX+'.First'):raise ValueError('FAKE support compile/replay failure')

@@ -36,7 +36,7 @@ def main(archives):
         'outputs':{m.replace('.','/')+'.lean':cache.digest(s.encode())for m,s in sources.items()},'support_source_sha256':sha(HERE/(gen.HELPER.replace('.','/')+'.lean')),'negative_sha256':cache.digest(negative.encode()),'kernel_verdict':'KERNEL_NOT_RUN'}
     gen.write_sources(OUT,{},negative,record)
     common.runner.run('negative-scan',['../lean/scan_sources.sh',str(OUT/'changed-WO.lean')],60)
-    imports=[r['module']for r in restored['objects']]+[gen.HELPER,gen.PREFIX+'.Control']
+    imports=[r['module']for r in restored['objects']]+[r['module']for r in fresh]
     count=common.audit('complete-VO-basis',imports,restored['selected_names']+names)
     common.runner.run('negative-actual-WO-change',['lake','env','lean',str(OUT/'changed-WO.lean')],900,negative=True)
     gen.write_sources(OUT,sources,negative,record,check=True)

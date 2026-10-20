@@ -15,10 +15,14 @@ class Full(unittest.TestCase):
         final=texts[g.MODULES[0]].split('theorem G_field :',1)[1]
         transports=re.findall(r'(?ms)^([ ]+)have hi : .*? := by\n(.*?)^\1have h := G_block_(\d{3}) j$',final)
         self.assertEqual([offset for _,_,offset in transports],['000','128','256','384'])
+        self.assertNotIn('<;>',final)
         for _,body,offset in transports:
             with self.subTest(offset=offset):
-                self.assertIn('dsimp [j] <;> omega',body)
-                self.assertNotRegex(body,r'dsimp \[j\]\n[ ]+omega')
+                tactics=[line.strip() for line in body.splitlines() if line.strip()]
+                expected=['apply Fin.ext','dsimp [j]']
+                if offset!='000':expected.append('omega')
+                self.assertEqual(tactics,expected)
+        self.assertEqual(len(re.findall(r'dsimp \[j\]\n[ ]+omega',final)),3)
 
     def test_bounded_fin128_blocks_and_preserved_control_non_kernel(self):
         # Real symbolic emission only; no local Lean or kernel verdict.

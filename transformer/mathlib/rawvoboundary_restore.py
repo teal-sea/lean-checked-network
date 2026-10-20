@@ -12,6 +12,8 @@ require=base.require;digest=base.digest;stream_sha=previous.stream_sha
 PIN_PATH=HERE/'RawVOBoundary-checkpoint.json'
 def pin():return json.loads(PIN_PATH.read_text())
 def inverse_workflow(text):
+    from rawvorange_restore import inverse_workflow as range_inverse
+    text=range_inverse(text)
     rule=pin()['workflow_projection'];require(digest(text.encode())==rule['current_sha256'],'unknown boundary workflow drift')
     for fragment in rule['insertions']:
         require(text.count(fragment)==1,'boundary inverse count');text=text.replace(fragment,'',1)
@@ -19,6 +21,8 @@ def inverse_workflow(text):
     require(digest(text.encode())==rule['accepted_sha256'],'boundary workflow inverse identity');return text
 
 def project_current(path,data):
+    from rawvorange_restore import project_current as range_project
+    data=range_project(path,data)
     rule=pin()['nonproof_projections'].get(path)
     if rule is None:return data
     require(digest(data)==rule['current_sha256'],'unknown boundary source drift: '+path)

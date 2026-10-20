@@ -11,6 +11,7 @@
     "RawURange-checkpoint.json": "6be150d1fea8f3e058a44070fbfc196f98a229d9a0a2033f4158b1df6d29c026",
     "RawVOBasis-checkpoint.json": "1e35674a1f3f47dfc873520739d8d29a3d6d06da773a5ae5d4599d185159c7d7",
     "RawVOBoundary-checkpoint.json": "cf4a615c8737c61062e7e1604eb66c7a062fb85fa0b073bf15889f41449976c9",
+    "RawVORange-checkpoint.json": "b8ff84d589033d750f514711ad6d8201483b4deae8eeb361f33dc13a60293aac",
     "TransformerBridge/RawCUUpdate.lean": "abc7742db56705f6aeb931fe49984f98e9e008b37b455cb14038131fdd9581c3",
     "TransformerBridge/RawCorrespondenceFixture.lean": "9b1ee56b7f96683e65a0759524357e4c9d30f38db14cb71d53f10e2ef7e7128e",
     "TransformerBridge/RawCorrespondenceLinear.lean": "7b96564ce5b9f14a077ced4dd521e3d89550982ec574215e0b2b5b94a908625e",
@@ -18,7 +19,7 @@
     "TransformerBridge/RawTUUpdate.lean": "066125810e57dd4b47a02df10d6ec44c79049d98cb3d68121721be7a4507eb91",
     "TransformerBridge/RawVOBasis.lean": "dfc1e8cc8986696b399af7aa400686c42967e3a64cb64bb6422b27b2cec47d93",
     "input_checkpoint_a01a98c.json": "9500e397b883c6c53218a205990d12d7565cef4f98ed073949d78d6d09c3058a",
-    "input_compat.py": "175544b51b9d00ffc92558118b50217f1bd5af0ceb01e86ef3c9cb7e3ba4f645",
+    "input_compat.py": "485e3870d6b4e1b6b384cfd391597438ed9105bf8591b5dfa1d06925dc6df45a",
     "input_policy_a01a98c.json": "973c59ef5ef51ab94a1d102a2daccf20f70c53a2b08591fb030ee492c05fdbd4",
     "rawcorrespondence.sh": "c40666dd841e3f7a967677a89673144ea0879e642d5c3527ca40969ab76738f8",
     "rawcorrespondence_generate.py": "b12054eabd04b91d18659c3ce77671a4b90a41e07d503e647b8553426d5a25f5",
@@ -62,8 +63,12 @@
     "rawvobasis_runner.py": "010883452a80e37a646e38e43e48b8b50e495fa12fcc7fc1b0a5b296618abb05",
     "rawvoboundary.sh": "c85fc1927024714582bca17ad282b7256a0bf0bb7b1fe787976b2383e161acd5",
     "rawvoboundary_generate.py": "8c108e9f551605dc1f490071234e0750d9e6423732052901c2c7bd925b630547",
-    "rawvoboundary_restore.py": "7b0c73b3f66c4f28b3b139e86453e3308d141191e897993a078c21d93d09ce4e",
+    "rawvoboundary_restore.py": "1cf5e8acd546b4e2685465f1801548dae5996115017c63c1dd190cb9d5878d21",
     "rawvoboundary_runner.py": "233c6e45873fd9952d9e2f71cf33708f08644d02a97d7105afc826ec697c3bd1",
+    "rawvorange.sh": "fb16785554ec0221ffbb9f824988b28e282abfc2db6ca16682e1708508755d59",
+    "rawvorange_generate.py": "4c395a071ecdd6c10b8a59096b77ca31d14a5c191a1c218bd6b642cbc786ac9b",
+    "rawvorange_restore.py": "59b04dd84cf46dbdfa4fbc17a415b94c78c90f48302c03434d36ae53736846f7",
+    "rawvorange_runner.py": "6df97b542a74147b2e664fe8cd496c67e7103194850f29a873531f88411baeb4",
     "test_input_compat.py": "fc22a74105c8dac71d6240aa177354f91c29cf5f7350b6e9a475217da1a4d3ac",
     "test_rawcorrespondence.py": "72c173453067f848773fd8e27d596f404ce7a54b2ed2850f1cc9e1f882ff5bc5",
     "test_rawcu.py": "62240b14b66f1ff5bb440c4028e79ddf5ef97cdfa820e5fb0eabd78142d2d625",
@@ -75,7 +80,8 @@
     "test_rawuboundary.py": "f9a01928436c8de6c3fba49c2906d798d2f6d18e46739ebc3f1d9805190924aa",
     "test_rawurange.py": "93001316a9847f2178d51d14dff367d0a928f8c6b563e3394cfe592b8c86cd95",
     "test_rawvobasis.py": "94840deff858c2866b4aea639c3b8e8fd71825e271ae137d45a07d6fa010e225",
-    "test_rawvoboundary.py": "421d3a0bd7fb6381644b2872d6323256daac0a388dc8910430f96c0960ebc80b"
+    "test_rawvoboundary.py": "421d3a0bd7fb6381644b2872d6323256daac0a388dc8910430f96c0960ebc80b",
+    "test_rawvorange.py": "96fc046b195394caff672ae4ab2e8500dcd502c96a4013b1a214584130d9721b"
   },
   "compiler": {
     "compiler": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
@@ -86,7 +92,7 @@
   },
   "deltas": {
     "../../.github/workflows/transformer.yml": {
-      "current_sha256": "8d39e1123064693d14cfe47ac39098287d91251e428361d9acbe6fadbd141067",
+      "current_sha256": "954f8dd516bfae577b36a726fba4d75ec173f8cfbe54d7883229213b5e4e1e8d",
       "old_sha256": "a5c63f9764fd4b00bd5d61faa905b4e1c0b898317413ddae79a61516f1e53b0e"
     },
     "input_artifacts.py": {

@@ -19,6 +19,7 @@ on:
           - mathlib-raw-pilot
           - mathlib-raw-packed-pilot
           - mathlib-row0-finalize
+          - mathlib-raw-vo-range
           - mathlib-raw-vo-boundary
           - mathlib-raw-vo-basis
           - mathlib-raw-tu-pilot
@@ -33,6 +34,24 @@ on:
           - mathlib-input-row1
           - mathlib-input-grid
           - mathlib-input-all
+      vo_head:
+        description: Bounded split-basis head (first gate 0)
+        type: choice
+        default: '0'
+        options: ['0', '1', '2', '3']
+      vo_kind:
+        description: Split basis kind (first gate token)
+        type: choice
+        default: token
+        options: [token, position]
+      vo_start:
+        description: Basis start (token 0..113 or position 0..2; accepted endpoints excluded)
+        type: string
+        default: '1'
+      vo_count:
+        description: Basis count (1..4, first gate 4)
+        type: string
+        default: '4'
       g_row_start:
         description: Bounded G start (1..510, first pilot 1)
         type: string
@@ -64,13 +83,13 @@ on:
         default: false
 
 concurrency:
-  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-raw-vo-boundary' && '-mathlib-raw-vo-boundary' || inputs.core_mode == 'mathlib-raw-vo-basis' && '-mathlib-raw-vo-basis' || inputs.core_mode == 'mathlib-raw-tu-pilot' && '-mathlib-raw-tu-pilot' || inputs.core_mode == 'mathlib-raw-g-full' && '-mathlib-raw-g-full' || inputs.core_mode == 'mathlib-raw-g-range' && '-mathlib-raw-g-range' || inputs.core_mode == 'mathlib-raw-g-pilot' && '-mathlib-raw-g-pilot' || inputs.core_mode == 'mathlib-raw-cu' && '-mathlib-raw-cu' || inputs.core_mode == 'mathlib-raw-u-range' && '-mathlib-raw-u-range' || inputs.core_mode == 'mathlib-raw-u-boundary' && '-mathlib-raw-u-boundary' || inputs.core_mode == 'mathlib-raw-cu-row0' && '-mathlib-raw-cu-row0' || inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || inputs.core_mode == 'mathlib-raw-packed-pilot' && '-mathlib-raw-packed' || inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
+  group: transformer-${{ github.ref }}${{ inputs.core_mode == 'mathlib-raw-vo-range' && '-mathlib-raw-vo-range' || inputs.core_mode == 'mathlib-raw-vo-boundary' && '-mathlib-raw-vo-boundary' || inputs.core_mode == 'mathlib-raw-vo-basis' && '-mathlib-raw-vo-basis' || inputs.core_mode == 'mathlib-raw-tu-pilot' && '-mathlib-raw-tu-pilot' || inputs.core_mode == 'mathlib-raw-g-full' && '-mathlib-raw-g-full' || inputs.core_mode == 'mathlib-raw-g-range' && '-mathlib-raw-g-range' || inputs.core_mode == 'mathlib-raw-g-pilot' && '-mathlib-raw-g-pilot' || inputs.core_mode == 'mathlib-raw-cu' && '-mathlib-raw-cu' || inputs.core_mode == 'mathlib-raw-u-range' && '-mathlib-raw-u-range' || inputs.core_mode == 'mathlib-raw-u-boundary' && '-mathlib-raw-u-boundary' || inputs.core_mode == 'mathlib-raw-cu-row0' && '-mathlib-raw-cu-row0' || inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || inputs.core_mode == 'mathlib-row0-finalize' && '-mathlib-row0-finalize' || inputs.core_mode == 'mathlib-raw-packed-pilot' && '-mathlib-raw-packed' || inputs.core_mode == 'mathlib-raw-pilot' && '-mathlib-raw' || inputs.core_mode == 'mathlib-row0-pilot' && '-mathlib-row0' || inputs.core_mode == 'mathlib-bounds-pilot' && '-mathlib-bounds' || '' }}
   # false: a later push queues behind the running pilot instead of killing it (the evidence is the point)
   cancel-in-progress: false
 
 jobs:
   mathlib:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-vo-boundary' && inputs.core_mode != 'mathlib-raw-vo-basis' && inputs.core_mode != 'mathlib-raw-tu-pilot' && inputs.core_mode != 'mathlib-raw-g-full' && inputs.core_mode != 'mathlib-raw-g-range' && inputs.core_mode != 'mathlib-raw-g-pilot' && inputs.core_mode != 'mathlib-raw-cu' && inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-vo-range' && inputs.core_mode != 'mathlib-raw-vo-boundary' && inputs.core_mode != 'mathlib-raw-vo-basis' && inputs.core_mode != 'mathlib-raw-tu-pilot' && inputs.core_mode != 'mathlib-raw-g-full' && inputs.core_mode != 'mathlib-raw-g-range' && inputs.core_mode != 'mathlib-raw-g-pilot' && inputs.core_mode != 'mathlib-raw-cu' && inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: Mathlib lane (ExpFix, Program, Logits, Compose, Raw), cache, replay, axioms
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -95,7 +114,7 @@ jobs:
           if-no-files-found: warn
 
   core:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-vo-boundary' && inputs.core_mode != 'mathlib-raw-vo-basis' && inputs.core_mode != 'mathlib-raw-tu-pilot' && inputs.core_mode != 'mathlib-raw-g-full' && inputs.core_mode != 'mathlib-raw-g-range' && inputs.core_mode != 'mathlib-raw-g-pilot' && inputs.core_mode != 'mathlib-raw-cu' && inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-vo-range' && inputs.core_mode != 'mathlib-raw-vo-boundary' && inputs.core_mode != 'mathlib-raw-vo-basis' && inputs.core_mode != 'mathlib-raw-tu-pilot' && inputs.core_mode != 'mathlib-raw-g-full' && inputs.core_mode != 'mathlib-raw-g-range' && inputs.core_mode != 'mathlib-raw-g-pilot' && inputs.core_mode != 'mathlib-raw-cu' && inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'mathlib-bounds-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: ${{ inputs.core_mode == 'cached-support-pilot' && 'CACHED SUPPORT PILOT (generic only; no frozen literals or pairs)' || 'CACHED PAIR PILOT (three pairs; row0 unproved)' }}
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.core_mode == 'cached-support-pilot' && 20 || 170 }}
@@ -145,7 +164,7 @@ jobs:
           if-no-files-found: warn
 
   bridge:
-    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-vo-boundary' && inputs.core_mode != 'mathlib-raw-vo-basis' && inputs.core_mode != 'mathlib-raw-tu-pilot' && inputs.core_mode != 'mathlib-raw-g-full' && inputs.core_mode != 'mathlib-raw-g-range' && inputs.core_mode != 'mathlib-raw-g-pilot' && inputs.core_mode != 'mathlib-raw-cu' && inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.core_mode != 'mathlib-raw-vo-range' && inputs.core_mode != 'mathlib-raw-vo-boundary' && inputs.core_mode != 'mathlib-raw-vo-basis' && inputs.core_mode != 'mathlib-raw-tu-pilot' && inputs.core_mode != 'mathlib-raw-g-full' && inputs.core_mode != 'mathlib-raw-g-range' && inputs.core_mode != 'mathlib-raw-g-pilot' && inputs.core_mode != 'mathlib-raw-cu' && inputs.core_mode != 'mathlib-raw-u-range' && inputs.core_mode != 'mathlib-raw-u-boundary' && inputs.core_mode != 'mathlib-raw-cu-row0' && inputs.core_mode != 'mathlib-raw-correspondence-CI' && inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && inputs.core_mode != 'mathlib-row0-finalize' && inputs.core_mode != 'cached-support-pilot' && inputs.core_mode != 'mathlib-row0-pilot' && inputs.core_mode != 'mathlib-raw-pilot' && inputs.core_mode != 'mathlib-raw-packed-pilot') }}
     name: Bridge (core program to the Mathlib program), needs the Mathlib lane
     needs: mathlib
     runs-on: ubuntu-latest
@@ -366,6 +385,82 @@ jobs:
             transformer/mathlib/.lake/build/lib/lean/TransformerBridge/Bridge.olean
             transformer/mathlib/.lake/build/lib/lean/TransformerCore/
             transformer/mathlib/.lake/build/lib/lean/Transformer/
+          if-no-files-found: error
+
+  raw-vo-range:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-raw-vo-range' && github.event.repository.private == false }}
+    name: Bounded shared split V/O basis (default h0 tokens1..4)
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      LEAN_NUM_THREADS: "2"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download exact40 accepted CU/VO/TU/boundary archives (no extraction)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "${{ github.event.repository.private }}" = false
+          mkdir -p "$RUNNER_TEMP/rawvorange"
+          for group in prior pilots boundary; do
+            if [ "$group" = boundary ]; then dest="$RUNNER_TEMP/rawvorange/boundary"; else dest="$RUNNER_TEMP/rawvorange/previous/$group"; fi
+            mkdir -p "$dest"
+            for artifact in $(python3 -B transformer/mathlib/rawvorange_restore.py --artifact-ids --group "$group"); do
+              gh api --method GET "repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact" > "$dest/$artifact.json"
+              curl --request GET --fail --location --retry 2 --silent --show-error \
+                -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+                "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact/zip" \
+                -o "$dest/$artifact.zip"
+            done
+          done
+      - name: Actual40 range dependency metadata controls (non-kernel)
+        run: |
+          TMPDIR="$RUNNER_TEMP/rawvorange" python3 -B -W error transformer/mathlib/test_rawvorange.py --archives "$RUNNER_TEMP/rawvorange"
+      - name: Install pinned stable compiler
+        run: |
+          set -euo pipefail
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$RUNNER_TEMP/rawvorange/elan-init.sh"
+          sh "$RUNNER_TEMP/rawvorange/elan-init.sh" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Mathlib dependencies only (serial Lake)
+        timeout-minutes: 9
+        run: |
+          cd transformer/mathlib
+          timeout -s TERM -k 20 480 lake exe cache get
+      - name: Restore362, first coordinates then scalar chunk16 shared-basis range
+        timeout-minutes: 57
+        env:
+          VO_HEAD: ${{ inputs.vo_head }}
+          VO_KIND: ${{ inputs.vo_kind }}
+          VO_START: ${{ inputs.vo_start }}
+          VO_COUNT: ${{ inputs.vo_count }}
+        run: |
+          set -euo pipefail
+          cd transformer/mathlib
+          ./rawvorange.sh --archives "$RUNNER_TEMP/rawvorange" --head "$VO_HEAD" --kind "$VO_KIND" --start "$VO_START" --count "$VO_COUNT" 2>&1 | tee rawvorange.ci.out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transformer-raw-vo-range-${{ github.run_id }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            transformer/mathlib/rawvorange-out/
+            transformer/mathlib/rawvorange*.out
+            transformer/mathlib/rawvorange*.time
+            transformer/mathlib/RawVORange-checkpoint.json
+            transformer/mathlib/TransformerBridge/RawCorrespondence/VORangeGenerated/
+            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawCorrespondence/VORangeGenerated/
           if-no-files-found: error
 
   raw-vo-boundary:

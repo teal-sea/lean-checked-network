@@ -40,7 +40,7 @@ def sources(items):
         pad=' '*indent
         return (pad+f'let j : Fin 128 := ⟨i.val - {offset}, by omega⟩\n'+
             pad+f'have hi : (⟨j.val + {offset}, by omega⟩ : Fin 512) = i := by\n'+
-            pad+'  apply Fin.ext\n'+pad+'  dsimp [j]\n'+pad+'  omega\n'+
+            pad+'  apply Fin.ext\n'+pad+'  dsimp [j] <;> omega\n'+
             pad+f'have h := G_block_{offset:03d} j\n'+pad+'rw [hi] at h\n'+pad+'exact h\n')
     body+='  by_cases h128 : i.val < 128\n  · '+transport(0,4).lstrip()
     body+='  · by_cases h256 : i.val < 256\n    · '+transport(128,6).lstrip()

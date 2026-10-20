@@ -9,6 +9,17 @@ import rawgfull_runner as runner
 PATHS={}
 ARCHIVES=None
 class Full(unittest.TestCase):
+    def test_index_transport_goal_sensitive_cleanup_non_kernel(self):
+        # Symbolic templates only: offset0 dsimp can close the goal by itself.
+        texts,_=g.sources(c.range_lock())
+        final=texts[g.MODULES[0]].split('theorem G_field :',1)[1]
+        transports=re.findall(r'(?ms)^([ ]+)have hi : .*? := by\n(.*?)^\1have h := G_block_(\d{3}) j$',final)
+        self.assertEqual([offset for _,_,offset in transports],['000','128','256','384'])
+        for _,body,offset in transports:
+            with self.subTest(offset=offset):
+                self.assertIn('dsimp [j] <;> omega',body)
+                self.assertNotRegex(body,r'dsimp \[j\]\n[ ]+omega')
+
     def test_bounded_fin128_blocks_and_preserved_control_non_kernel(self):
         # Real symbolic emission only; no local Lean or kernel verdict.
         texts,negative=g.sources(c.range_lock());body=texts[g.MODULES[0]]

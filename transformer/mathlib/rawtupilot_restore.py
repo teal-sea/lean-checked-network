@@ -11,6 +11,8 @@ stream_sha=previous.stream_sha
 PIN_PATH=HERE/'RawTUPilot-checkpoint.json'
 def pin():return json.loads(PIN_PATH.read_text())
 def inverse_workflow(text):
+    from rawvobasis_restore import inverse_workflow as vo_inverse
+    text=vo_inverse(text)
     rule=pin()['workflow_projection'];require(digest(text.encode())==rule['current_sha256'],'unknown TU workflow drift')
     for fragment in rule['insertions']:
         require(text.count(fragment)==1,'TU workflow inverse occurrence');text=text.replace(fragment,'',1)
@@ -18,6 +20,8 @@ def inverse_workflow(text):
     require(digest(text.encode())==rule['accepted_sha256'],'TU accepted workflow identity');return text
 
 def project_current(path,data):
+    from rawvobasis_restore import project_current as vo_project
+    data=vo_project(path,data)
     rule=pin()['nonproof_projections'].get(path)
     if rule is None:return data
     require(digest(data)==rule['current_sha256'],'unknown TU nonproof source drift: '+path)

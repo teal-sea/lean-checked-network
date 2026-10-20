@@ -10,6 +10,8 @@ stream_sha=previous.stream_sha
 PIN_PATH=HERE/'RawVOBasis-checkpoint.json'
 def pin():return json.loads(PIN_PATH.read_text())
 def inverse_workflow(text):
+    from rawvoboundary_restore import inverse_workflow as boundary_inverse
+    text=boundary_inverse(text)
     rule=pin()['workflow_projection'];require(digest(text.encode())==rule['current_sha256'],'unknown VO workflow drift')
     for fragment in rule['insertions']:
         require(text.count(fragment)==1,'VO inverse count');text=text.replace(fragment,'',1)
@@ -17,6 +19,8 @@ def inverse_workflow(text):
     require(digest(text.encode())==rule['accepted_sha256'],'VO accepted workflow identity');return text
 
 def project_current(path,data):
+    from rawvoboundary_restore import project_current as boundary_project
+    data=boundary_project(path,data)
     rule=pin()['nonproof_projections'].get(path)
     if rule is None:return data
     require(digest(data)==rule['current_sha256'],'unknown VO source drift: '+path)

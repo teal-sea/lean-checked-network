@@ -1,5 +1,8 @@
 # The exp bound and the logit perturbation lemma, on Mathlib
 
+> **2026-10-22.** Theorem C is now unconditional for the raw model: `TransformerBridge.FinalRaw.raw_model_adds_mod_113`.
+> See `../STATUS.md` and `KRONECKER.md`. The text below is the original 2026-10-16 description.
+
 Written 2026-10-16. This Lake project holds the Mathlib half of the chain described in
 `transformer/DESIGN.md` (the design lane's branch): Theorem B1 (the integer exponential `expFix` is
 within `delta` of `2^f exp(x / 2^t)`), Theorem B2 (two runs of the integer program whose attention

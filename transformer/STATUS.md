@@ -1,5 +1,38 @@
 # Transformer lane: status of the combined branch
 
+## Current (2026-10-22): the raw quantised model adds mod 113, unconditionally
+
+`TransformerBridge.FinalRaw.raw_model_adds_mod_113` is **proved**. It has no hypotheses. For every pair
+`(a, b)` of the 12,769 inputs, the real-softmax model built from the raw integer weights
+`RawPackedPilot.weights` at `S = 256` gives `(a + b) % 113` a strictly larger logit than every other
+class, and its first argmax is that answer. Axioms: `propext`, `Classical.choice`, `Quot.sound`.
+
+| Piece | Where | Status |
+| --- | --- | --- |
+| `hT`: `toTables Net.tab = weights.rawTables 256`, all six fields | `FinalRaw.tables_eq_raw` | **proved** |
+| `sc` (attention scores, 4 heads) | `RawCorrespondence.SCFullAssembly.SC_full` | **proved** |
+| `TI`, `TU` (4 heads, 916 slots each) | `Kronecker.TI_eq`, `Kronecker.TU_eq`; method in `mathlib/KRONECKER.md` | **proved** |
+| `CI`, `CU`, `G` | `CI_field`, `CU_field`, `G_field` | **proved** |
+| `hB`: `Tables.Bounded chosenBounds` | `frozen_tables_bounded` | **proved** |
+| `hA`: integer margin on all 12,769 pairs | `all_integer_margin` (run 39086455789) | **proved** |
+| Separately implemented checker | `nanoda_bin` 0.4.19 on an earlier, pre-rename assembly: 82,927 declarations, no type-checking errors, one axiom pretty-printer error; supporting evidence, not a re-check of the released objects | **measured** |
+
+How the result was checked: ordinary compilation, `leanchecker` replay, an exact ordered axiom audit,
+and 9 wrong-data controls, each rejected by the kernel as false. Each control has a twin with the data
+unchanged, and every twin passes.
+
+To re-check it, use the release asset `transformer-final-raw-evidence`. It carries every object and
+source in the theorem's project closure (2,141 modules), with provenance, and a `verify.sh`.
+
+The generated certificate modules (`RawPacked.Generated`, `RawCorrespondence.*`, `InputAll`) are not
+committed. CI and the project host emit them, and their exact sources are in the release bundle.
+
+The object is the quantised integer model. Nothing here is a claim about the floating-point checkpoint.
+
+The sections below are the dated history of the lane. They are kept unchanged except where marked.
+
+## History
+
 Two retained branches, merged unchanged onto main 3fdba53: `claude/transformer` (design, training,
 core-Lean model `lean/`) and `claude/transformer-mathlib` (`mathlib/`). Two toolchains, two Lake
 projects: `lean/` is Lean v4.35.0-rc2 with no Mathlib, `mathlib/` is v4.35.0 with Mathlib v4.35.0.
@@ -15,7 +48,7 @@ projects: `lean/` is Lean v4.35.0-rc2 with no Mathlib, `mathlib/` is v4.35.0 wit
 | `mathlib/`: exp bound, logit perturbation, raw-model identity | retained logs say built and replayed; job `mathlib` re-runs `verify.sh` from the Mathlib cache |
 | Core-to-Mathlib Bridge | **verified compile/replay and 4/4 standard-axiom audits** at a6e8a74 (job 117310375951), rechecked on c82d285 |
 | Cached evaluator / three cached pairs | **generic support failed** in run 39004259356 (core job 117315734130) on c82d285, before codegen or pair evaluation; current repair candidate pending CI |
-| Theorem C (`real_model_adds_mod_113`, `_raw`) | **conditional**, not unconditional |
+| Theorem C (`real_model_adds_mod_113`, `_raw`) | **conditional**, not unconditional. *Superseded 2026-10-22: `FinalRaw.raw_model_adds_mod_113` is unconditional, see the top.* |
 
 ## Table bounds, split (kernel-checked in run 38997742989)
 
@@ -39,6 +72,8 @@ for a list-based `T : Tab` read as Fin-indexed tables (`toTables`) and the core 
 CI job `bridge` verified core build, Bridge build, all four selected standard-axiom audits, and `leanchecker TransformerBridge.Bridge` at a6e8a74 (run 39003045335, job 117310375951). Mathlib and Bridge passed again on c82d285. The Bridge theorem source remains unchanged in the cached repair candidate.
 
 ## Unclosed obligations (Theorem C stays conditional on these)
+
+*Closed 2026-10-22: `hA`, `hB` and `hT` are all proved; see the top of this file.*
 
 - `hA` for the trained literals: needs `fastCheck` on all 12,769 pairs (`Net/AllInputs.lean`, not built) and the `Net` data inside
   the Mathlib project (copy of `lean/Transformer/Net` under the same rename), plus `cfg = cfgOf chosen 256` and `tab.G.length = 512` by `decide`.

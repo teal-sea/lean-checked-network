@@ -15,7 +15,7 @@ class, and its first argmax is that answer. Axioms: `propext`, `Classical.choice
 | `CI`, `CU`, `G` | `CI_field`, `CU_field`, `G_field` | **proved** |
 | `hB`: `Tables.Bounded chosenBounds` | `frozen_tables_bounded` | **proved** |
 | `hA`: integer margin on all 12,769 pairs | `all_integer_margin` (run 39086455789) | **proved** |
-| Separately implemented checker | `nanoda_bin` 0.4.19 on an earlier, pre-rename assembly: 82,927 declarations, no type-checking errors, one axiom pretty-printer error; supporting evidence, not a re-check of the released objects | **measured** |
+| Separately implemented checker | `nanoda_bin` 0.4.19 on the released objects (the 20 new modules match the release `MANIFEST.json`), axiom allowlist `propext`, `Classical.choice`, `Quot.sound` enforced as a hard error: 82,927 declarations, no type-checking errors, one axiom pretty-printer error | **kernel-checked twice** |
 
 How the result was checked: ordinary compilation, `leanchecker` replay, an exact ordered axiom audit,
 and 9 wrong-data controls, each rejected by the kernel as false. Each control has a twin with the data

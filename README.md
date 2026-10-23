@@ -2,6 +2,32 @@
 
 [![check](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml/badge.svg)](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml)
 
+## A trained transformer, checked from its weights
+
+A one-layer, four-head transformer adds modulo 113 correctly on all 12,769 input
+pairs. The model uses quantised integer weights at `S = 256` and exact real softmax.
+
+**In short**
+
+- **Every answer is proved.** The correct class has a strictly larger logit than every
+  other class, and first argmax returns it. The theorem
+  `TransformerBridge.FinalRaw.raw_model_adds_mod_113` has no hypotheses; its axioms
+  are `propext`, `Classical.choice`, and `Quot.sound`.
+- **Two kernels checked it.** Lean checked the proof; independently implemented
+  `nanoda_bin` 0.4.19 checked 82,927 declarations from the exact released objects,
+  with the axiom allowlist enforced and no type-checking errors. It also reported
+  one axiom pretty-printer error.
+- **Wrong data is rejected.** All 9 wrong-data controls were rejected, and
+  `verify.sh` caught all 11 tampering attacks.
+- **The limits are small and explicit.** This is a tiny model on a toy task, proved
+  by brute force over all inputs. It is the integer-rounded model, not the float
+  checkpoint.
+
+Read the [status](transformer/STATUS.md), the [Kronecker method note](transformer/mathlib/KRONECKER.md),
+and the [evidence release](https://github.com/teal-sea/lean-checked-network/releases/tag/transformer-final-raw-evidence).
+
+## Earlier MLP result
+
 A small neural network learned to add on a clock with 113 hours: given two numbers `a` and
 `b` from 0 to 112, it answers `(a + b) mod 113`. It was trained on half of the 12,769 possible
 pairs. This repository proves, with Lean's kernel, that it is right on every pair, and shows how

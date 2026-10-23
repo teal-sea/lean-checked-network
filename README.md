@@ -17,8 +17,10 @@ pairs. The model uses quantised integer weights at `S = 256` and exact real soft
   `nanoda_bin` 0.4.19 checked 82,927 declarations from the exact released objects,
   with the axiom allowlist enforced and no type-checking errors. It also reported
   one axiom pretty-printer error.
-- **Wrong data is rejected.** All 9 wrong-data controls were rejected, and
-  `verify.sh` caught all 11 tampering attacks.
+- **Tested wrong data is rejected.** All 9 certificate/table-identity controls were
+  rejected with passing unchanged twins, and `verify.sh` rejected all 11 tested
+  tampering attacks. These tests are not an exhaustive security proof or a claim
+  that every changed weight makes the network incorrect.
 - **The limits are small and explicit.** This is a tiny model on a toy task, proved
   by brute force over all inputs. It is the integer-rounded model, not the float
   checkpoint.

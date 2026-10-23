@@ -1,0 +1,33 @@
+{
+  "artifact_id": 12100029309,
+  "compiler_binary_sha256": {
+    "lake": "8ba83c98f76562d03b8dbc33f1057151ba6cbb121679dde76b2260ccc90495e1",
+    "lean": "bf8d54e4714cc4b03d3f6bb34c83b7202b87e49c8bfcbff6895c085bb90ceb38",
+    "leanchecker": "12c38901cdbfab178f1bf6145dd30012e9a3b2c11ca695292a5884fa3cbaddb6"
+  },
+  "metadata_sha256": {
+    "rawpacked-out/ACCEPTED.json": "34d6f83162e16bdb53712eb33a0660a2fd24e7313b0b9e81ca74869780a52a9f",
+    "rawpacked-out/accepted-oleans.json": "6fc8bd42e67a847514b3fcc04de44346e8353e6d67ec571a6a2cb0b8da6ca0c8",
+    "rawpacked-out/compiled.jsonl": "570b0517bdacf62d7e0361b31d47a51aff2dac94d3b711c23371bccaaef0b8ca",
+    "rawpacked-out/compiler.json": "bea04c471c88cee06ec2641b47af59537e4c967280ba6ad0654cbe96dd058e36",
+    "rawpacked-out/generation.json": "81f1be84525a2a67c175ecf4d056e73e97afcf1136d2777d22a2ee747bffd5d6",
+    "rawpacked-out/production-axioms.expected.json": "ac5cf4acbbdd807ad80670e02d968b7257eb6b609c0ba3cc9779dfb4cb04dc8b",
+    "rawpacked-out/production-axioms.out": "9a5f40c30ba413c43779e21ec47a87905fe7149632dfadd59c60d9bc818730bd",
+    "rawpacked-out/replayed.jsonl": "570b0517bdacf62d7e0361b31d47a51aff2dac94d3b711c23371bccaaef0b8ca",
+    "rawpacked-out/sources.json": "b4a20d9b8f37b7c99c831d426027c090dd7af0b2722a2a421b7e444120de053b",
+    "rawpacked-out/steps.jsonl": "ddbd04f16ce644441142cd1755fcdbb096d2175ca78c603359394fa0b53dbdfb",
+    "rawpacked-out/support-axioms.expected.json": "e04451054b9cbcb1c02b12810b1ff90ef591d2fbb852ff3e55aaf83cb96f1f21",
+    "rawpacked-out/support-axioms.out": "8af5f8f2183a1be68335fd24e01d98f84ceee8bfdc2e779bbcc09c0d9a5c7665"
+  },
+  "source_run": 39024654676,
+  "source_sha": "8ee51b4db03a0685f63e0f0d00c312d5f718147d",
+  "workflow_base_sha256": "a5c63f9764fd4b00bd5d61faa905b4e1c0b898317413ddae79a61516f1e53b0e",
+  "zip_sha256": "6a478098d193d0008f0616f8163b385112c9aa9c7993e71b4b0f7960e71d3736",
+  "nonproof_source_compatibility": {
+    "transformer/mathlib/test_rawpacked.py": {
+      "accepted_sha256": "cb07a4b7f390225845bcd772aa023a7da643812b5ad7ce4fbf8d564c2206e395",
+      "current_sha256": "56f725bb4940d093698cf39096d36e268d82c86fdda11267a29fc655b230a611",
+      "inverse_projection": "        workflow = workflow[:workflow.index('  raw-correspondence-CI:\\n')] + workflow[workflow.index('  row0-finalize:\\n', workflow.index('  raw-correspondence-CI:\\n')):]\n        workflow = workflow.replace('          - mathlib-raw-correspondence-CI\\n', '')\n        workflow = workflow.replace(\"inputs.core_mode == 'mathlib-raw-correspondence-CI' && '-mathlib-raw-correspondence-CI' || \", '')\n        workflow = workflow.replace(\"inputs.core_mode != 'mathlib-raw-correspondence-CI' && \", '')\n        workflow = workflow.split('\\n  input-row1:\\n', 1)[0].rstrip() + '\\n'\n        workflow = workflow.replace('          - mathlib-input-row1\\n', '').replace('          - mathlib-input-grid\\n', '').replace('          - mathlib-input-all\\n', '')\n        workflow = workflow.replace(\"inputs.core_mode == 'mathlib-input-grid' && '-mathlib-input-grid' || inputs.core_mode == 'mathlib-input-all' && '-mathlib-input-all' || inputs.core_mode == 'mathlib-input-row1' && '-mathlib-input-row1' || \", '')\n        workflow = workflow.replace(\"inputs.core_mode != 'mathlib-input-grid' && inputs.core_mode != 'mathlib-input-all' && inputs.core_mode != 'mathlib-input-row1' && \", '')\n        workflow = workflow.replace(\"      input_artifact_lock:\\n        description: Parent-adjudicated JSON lock (row1 for grid; rows1..112 for all assembly)\\n        type: string\\n        default: ''\\n\", '')\n"
+    }
+  }
+}

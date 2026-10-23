@@ -1,0 +1,5 @@
+OK   Transformer.ExpFix (10 s)
+OK   Transformer.Program (8 s)
+OK   Transformer.Logits (8 s)
+OK   Transformer.Compose (8 s)
+OK   Transformer.Raw (9 s)

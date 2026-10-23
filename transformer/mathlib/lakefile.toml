@@ -1,0 +1,18 @@
+name = "transformer"
+defaultTargets = ["Transformer"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.35.0"
+
+[[lean_lib]]
+name = "Transformer"
+
+# The core-Lean sources (../lean/Transformer/{Model,Fast,Equiv}.lean) renamed to TransformerCore by sync_core.sh,
+# and the bridge from their list-based program to the Fin-indexed Mathlib program (intLogits).
+[[lean_lib]]
+name = "TransformerCore"
+
+[[lean_lib]]
+name = "TransformerBridge"

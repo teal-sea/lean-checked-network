@@ -6,6 +6,10 @@ __pycache__/
 !lean_run.log
 !runs/*.log
 **/.lake/
+# Reproducible cache literals/certificates: emitted in CI and preserved as artifacts.
+transformer/lean/Transformer/Net/Cached.lean
+transformer/lean/Transformer/Net/CachedPair*.lean
+transformer/lean/Transformer/Net/CachedUnits/
 **/.venv/
 prime_env/tests/work/
 prime_env/tests/tmp_tasks/
@@ -14,3 +18,11 @@ sweep-results/
 phasegrid/instances/PhaseGridInstances/P7LastFault/
 phasegrid/instances/PhaseGridInstances/P113LastFault/
 phasegrid/instances/last_fault_build.*.out
+
+transformer/runs/ckpt_*.pt
+transformer/runs/ckpt_*.npz
+transformer/runs/launch.log
+!transformer/runs/train.log
+!transformer/smoke_test.log
+!transformer/scan_*.txt
+!transformer/logs/*.log

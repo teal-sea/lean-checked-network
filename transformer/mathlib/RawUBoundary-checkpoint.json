@@ -1,0 +1,170 @@
+{
+  "compiler_binary_sha256": {
+    "lake": "8ba83c98f76562d03b8dbc33f1057151ba6cbb121679dde76b2260ccc90495e1",
+    "lean": "bf8d54e4714cc4b03d3f6bb34c83b7202b87e49c8bfcbff6895c085bb90ceb38",
+    "leanchecker": "12c38901cdbfab178f1bf6145dd30012e9a3b2c11ca695292a5884fa3cbaddb6"
+  },
+  "lake_manifest_sha256": "229004e4b7a9cdd61b2f3193967c1a683c1d38aeff8072aed4a198e47d8c4424",
+  "nonproof_projections": {
+    "transformer/mathlib/input_compat.py": {
+      "accepted_sha256": "e39149d1125a75d89599d13c8813e5c847362446a82e61c89d96e47a345e14d5",
+      "current_sha256": "604aed5b4e3c2a55515653b9dc012ac029d6c68a8a3eaf9ae652b5c061a20886",
+      "edits": [
+        {
+          "accepted": "ADDITIONS = {",
+          "current": "ADDITIONS = {'RawUBoundary-checkpoint.json', 'rawuboundary_generate.py',\n    'rawuboundary_restore.py', 'rawuboundary_runner.py', 'rawuboundary.sh', 'test_rawuboundary.py', "
+        }
+      ]
+    },
+    "transformer/mathlib/rawcu_restore.py": {
+      "accepted_sha256": "b86cf41e50dfc2d2bb80635bad5db83ede9aa0ca6333ce4981f88febfe0fdedf",
+      "current_sha256": "6b1dac0a8e362e7c0c6ae981692317cdaa61094309d8ba5e102cb8cb97ec4c6a",
+      "edits": [
+        {
+          "accepted": "    rules = pin()['workflow_projection']\n",
+          "current": "    from rawuboundary_restore import inverse_workflow as boundary_inverse\n    text = boundary_inverse(text)\n    rules = pin()['workflow_projection']\n"
+        }
+      ]
+    },
+    "transformer/mathlib/row0_checkpoint.json": {
+      "accepted_sha256": "5b5a4cba2cc28783e71aa873657094534652d2673486812ca29cbbb37929bd9c",
+      "current_sha256": "602454ed0a570d1b50a2c2ff1721a03de8271a22e4f8e36a3f86f1f61c4f3d0c",
+      "edits": [
+        {
+          "accepted": "c5f96916a7053635fc284180523d9f3516e973ef6ddbf8dc185cb6082afd7c7a",
+          "current": "721f5ab1359de5ae2b6ebd060767bfcb56a223470bfc6a49709142ad84230881"
+        }
+      ]
+    }
+  },
+  "packed_checkpoint_sha256": "e7c0bdd23813e02ad0b65990fc5c0ea844268f72ff1a0ab97248c4fc0383d9f5",
+  "row0": {
+    "api_sha256": "88df975513be9fd6b2cc4690b2f5bfe722a0b960b060e89cf94ee6ec18c057f5",
+    "artifact_id": 12126625308,
+    "candidate": {
+      "../../.github/workflows/transformer.yml": "c5f96916a7053635fc284180523d9f3516e973ef6ddbf8dc185cb6082afd7c7a",
+      "../lean/Transformer/Cached.lean": "73104f27049371bbf20dd3e2ad6645651ea1d25599a0b3250e8acc6f73c5ca5a",
+      "../lean/Transformer/CachedFixture.lean": "b22e9ed5e3ef3154db1d6e67969f47fda55c0e8c2e28298c5dd319a888d35c0e",
+      "../lean/cached-inputs.sha256": "aa2681837e9ef97436796bc5479b945be9c7900847a684e7eda439887a8c3805",
+      "../lean/gen_cached.py": "a64733f79ef204407ae0091490b786d6f505e479a0a09fbf3c3b7d102d30fb88",
+      "../lean/scan_sources.sh": "efcd11d5e69d5d7df0768d92e02332f93dd9effef7453fa830f4fd1758468628",
+      "RawCU-checkpoint.json": "ef7b43599ac73b30dacff7d788d1f50835f62365ef83e71aef2953f09fce3782",
+      "RawCorrespondence-checkpoint.json": "e7c0bdd23813e02ad0b65990fc5c0ea844268f72ff1a0ab97248c4fc0383d9f5",
+      "Transformer/Compose.lean": "f5d33239bf084838f0c99cce079883b9a620a23ec72a54b386bae6a7c7757890",
+      "Transformer/ExpFix.lean": "d35e25e7c19737b7475b8da5a8173727460aea4c302be0caa6101720d89dfd89",
+      "Transformer/Logits.lean": "7831947641303a00e34d4fb9092ca6912bb16d059444903e3936f8cee1b244ad",
+      "Transformer/Program.lean": "3569ed4d50cf2e16a4b58bccce76f466cb81dc2fb9effe5ec4ce7ca75b6b3c50",
+      "Transformer/Raw.lean": "e664331db89a2da6c140dfa4771721eff4b8d6f677149d861b3c8dcfc717ef11",
+      "TransformerBridge/Bounds.lean": "85dfec6c8aa6062144981581414f08c067623e4509fbf96ad228731a8ab0e380",
+      "TransformerBridge/Bridge.lean": "2d6d65c4b1bbfaacb2147055ca3be29ccee1250edb011df8589250d715103538",
+      "TransformerBridge/FrozenBounds.lean": "a11da6102049a91f5a828d2ddf4b8de66d701cd5d6c649f7fefd80d0642e6a81",
+      "TransformerBridge/Pointwise.lean": "369e0d394c0ffc98447d1fdf27b42d43fb70dd1bca40799101693335b34c2f88",
+      "TransformerBridge/RawCorrespondenceFixture.lean": "9b1ee56b7f96683e65a0759524357e4c9d30f38db14cb71d53f10e2ef7e7128e",
+      "TransformerBridge/RawCorrespondenceLinear.lean": "7b96564ce5b9f14a077ced4dd521e3d89550982ec574215e0b2b5b94a908625e",
+      "TransformerBridge/RawCorrespondenceSupport.lean": "ec2f7a844362c91d673000f81258a444866d0b3c0804654117148b77a4180148",
+      "TransformerBridge/RawPackedFixture.lean": "b01e30e1799a3e2ab045d70f39f2c8f4e6db9d620070bcb386520af6f7c04a00",
+      "TransformerBridge/RawPackedSupport.lean": "fdbeb0279af47df3abf8d63e66f7cec975c0c4d1f2ec6fa5103f6338b7b02caf",
+      "TransformerBridge/RawPilotSupport.lean": "7310c4bdfd2d17b1318472f731444cf2d8bcd24ccac8ec794ba9f902518e2ed7",
+      "TransformerBridge/Row0.lean": "dfd7d211e157fad7bad7c6e9e3debe3b36099a956873bae28eb083b3072cc317",
+      "TransformerBridge/Row0Checks.lean": "cb216a580574afa1dab6fd75b2fd9faf20ac8227a5307afb934640b1f22c94f6",
+      "TransformerBridge/Row0Compat.lean": "e116fa09c902687b0d5d63e7156e397823312fe5d4182e44e674b9a2d9b4cb7d",
+      "TransformerBridge/Row0Real.lean": "73203202e6301548665bc855f3d3742712d33cb895890769c650fe5fc7cd7f21",
+      "check_bounds_audit.py": "030e41d3e2a71c2c1e1febfc78fa178616546e79dacf84694144f04e86d8af44",
+      "check_expfix.py": "b87cc13ca080f1e1a5617679e05bf1b4031b830b2546db6311d4002ed2859a8a",
+      "input_artifacts.py": "b0f4dd214da41f7992bb99a40d60a2e730a010272100309b0922471ae56a863d",
+      "input_checkpoint_a01a98c.json": "9500e397b883c6c53218a205990d12d7565cef4f98ed073949d78d6d09c3058a",
+      "input_compat.py": "e39149d1125a75d89599d13c8813e5c847362446a82e61c89d96e47a345e14d5",
+      "input_policy_a01a98c.json": "973c59ef5ef51ab94a1d102a2daccf20f70c53a2b08591fb030ee492c05fdbd4",
+      "input_runner.py": "889a8522601aa5a7bada3073059964715366418dcd98f7e380e5fa34ed44e84b",
+      "input_source.py": "e64d6dc972e6aa850c79dfbd7b6628f2be42380a2045f3cc36bbed24c322ed5d",
+      "lake-manifest.json": "229004e4b7a9cdd61b2f3193967c1a683c1d38aeff8072aed4a198e47d8c4424",
+      "lakefile.toml": "cfadacc28a76453bc472a064642619a06b4c7e7c4901dac139d1bcd3f690fc43",
+      "lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+      "rawcorrespondence.sh": "c40666dd841e3f7a967677a89673144ea0879e642d5c3527ca40969ab76738f8",
+      "rawcorrespondence_generate.py": "b12054eabd04b91d18659c3ce77671a4b90a41e07d503e647b8553426d5a25f5",
+      "rawcorrespondence_restore.py": "67c54c7791fd379dfaf0ae2ffd1fcda72023a0689917d36e9da3c909bb4ab48b",
+      "rawcorrespondence_runner.py": "b521e68947f34821874b02be5a1d7effcf68c0e8632e33b5a9eb9e528b4007e2",
+      "rawcu.sh": "e48819a96e789e85081dc1b84ac21d73d71e7bd9ee2311de9588523ff7d51ee1",
+      "rawcu_generate.py": "dda6e9cc4c12569e5ba3286f2103392b3b7220ce715bdb7b17d748ede1cc5288",
+      "rawcu_restore.py": "b86cf41e50dfc2d2bb80635bad5db83ede9aa0ca6333ce4981f88febfe0fdedf",
+      "rawcu_runner.py": "b09b55a263e219fd0bb69f9adee56421e1a5473fe311116fb6f644a31c229cad",
+      "rawpacked_data.py": "9a813476eca59299ef5c66340f7bafc621e57e784992fd96df93fefcdf967404",
+      "rawpacked_generate.py": "45ff31407c3e4defc3dc762dbfc226f4733b1407cb198a56e8ace31d8aa56973",
+      "rawpacked_runner.py": "66ceb15c35d0a764bef92be3cdf91b1145cf7828d5de884d9ef39ca561144e0c",
+      "rawpilot_data.py": "cff3450c10ce80b29bfa589e220f662e2ae26019b1337f30d7bd7dd4d4df7f4e",
+      "rawpilot_generate.py": "67f765af03978409359175eacd5d4224cc418ae08b9ea6b0c981516e5600d98a",
+      "rawpilot_runner.py": "152e6cedf2c24188320153db715c09c389f13176db9b9b19b5562005f2b4c9ac",
+      "row0_checkpoint.json": "5b5a4cba2cc28783e71aa873657094534652d2673486812ca29cbbb37929bd9c",
+      "row0_finalize.py": "391e1a791612193c33f63990ef55b6c8d9e115e438506875d357865887535b71",
+      "row0_prefix.py": "6495daeaf5855e035b8847f2bb07b9d66cc759b36412ef4dd5df90f7bcb8e441",
+      "row0_receipt.py": "5ecd2d39e6ffe321e7d77f631d3371666d0b316509111884e6bb9c02e96f8584",
+      "row0_runner.py": "752aab4521879d79aceccb21ab487f3262391f2771427117b600ff465940f083",
+      "row0_source.py": "f57fb233280839e3ba7225b943ee0ed295df066542cf3496fee104d477f40518",
+      "sync_core.py": "2bf27aeb31d595f3a10906a9ead720857f979007ff0db0e2171e1b7d3f0dfaef",
+      "test_bounds_harness.py": "c4f4f41900799eeda1229686f0a2a8a65034d232e4bcba0a35ee5b04b001202a",
+      "test_input_compat.py": "fc22a74105c8dac71d6240aa177354f91c29cf5f7350b6e9a475217da1a4d3ac",
+      "test_input_coverage.py": "2f3d43f1bfba84b95cccb94cd8960578097a058889b95a5bed2fdd7dc412d819",
+      "test_input_harness.py": "a45d3bd50a59fe891b144ee01239f9b522ef6ba84a5b19599524be8743834efe",
+      "test_rawcorrespondence.py": "72c173453067f848773fd8e27d596f404ce7a54b2ed2850f1cc9e1f882ff5bc5",
+      "test_rawcu.py": "62240b14b66f1ff5bb440c4028e79ddf5ef97cdfa820e5fb0eabd78142d2d625",
+      "test_rawpacked.py": "8bf197975735c72f1e2686926f19646fd222e55cb9a7defad4e8909bf7f23c9f",
+      "test_rawpilot.py": "98613e82ba9ab0a7e94e0f5ac5de132afb14f798b8fba4eb81e4765aade79311",
+      "test_row0.py": "d738765947eb7b79ad75d8d994a50391031d87abed2754e1f10d1ece7b0ab0f0",
+      "test_row0_finalize.py": "75e88d7c16672b3fa166853762a5e2679c3a612a781bdb92f5c991f202c0d369",
+      "test_row0_harness.py": "cb5cc5974c8e76ec4cd3642f7252cda821e1389a291f9dabc9761cae12d2fb88"
+    },
+    "metadata_sha256": {
+      "rawcu-out/U_ROW0_ACCEPTED.json": "f6e66bac5e9d196a9a2ccbfbdbb8deea8cf547bbcd1a0ecaf3b481b975ac8693",
+      "rawcu-out/changed-U.lean": "7c1dd8c38bc839caa182fcbace98d2e10ebd5393be80642de7c45d0a8a28a428",
+      "rawcu-out/compiled.jsonl": "68ab02c835fb049c99edddb0751cdfae5153c046eaa398c32557c2cbe58d862b",
+      "rawcu-out/compiler-version.out": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a",
+      "rawcu-out/complete-U-row0-axioms.expected.json": "f4489dc50c65fcfced6f041d6f60fc109909e422527a3c97f311d09e44fc2e63",
+      "rawcu-out/complete-U-row0-axioms.out": "78e87c8d2882b90d88018dafed8b85c80abca9bb91069ea340cdc31cedf83315",
+      "rawcu-out/control-axioms.expected.json": "ba67d94aeba2c6feae0f060b29438bc090d9c746df5ec866e0dc0ccaaa37bee4",
+      "rawcu-out/control-axioms.out": "5116a55496a1f5a0464cf58184ef824ebbe4c38d94469232be3b4580c32fadce",
+      "rawcu-out/generation.json": "9c793757b97cbf65d523d235d11d57bd02f839cb307123b78e79ab761886a6f5",
+      "rawcu-out/negative-actual-U-change.out": "f2ee36a7683c23de1dbc8d887249569cd894d3fb9a58ff96810a2b0dba4827af",
+      "rawcu-out/replayed.jsonl": "68ab02c835fb049c99edddb0751cdfae5153c046eaa398c32557c2cbe58d862b",
+      "rawcu-out/restored-union.json": "728c87c805fbd8b8ac74f995ed0e5e0faebf5030c1df597b2465a4ac4faa04ec",
+      "rawcu-out/row0-axioms.expected.json": "86b4783eeb06c5fa04ea123beda9309f7cccb74483ff7b8ff2d4040a445a4103",
+      "rawcu-out/row0-axioms.out": "84dbec3cf052c485d1ac4e832075b91bff5c9275a372e7280adf2fdca2a9275c",
+      "rawcu-out/steps.jsonl": "29649e9c032e8f34b9e96abaf5f164295d6cdae001e99bf31ad478b190afc548",
+      "rawcu-out/throughput.json": "7bd5b9f6bb87b0fb250e037dd99c6d5ac01e61e42c54373c0a1438d174250a49"
+    },
+    "objects": [
+      {
+        "module": "TransformerBridge.RawCorrespondence.CUGenerated.URow000",
+        "olean_sha256": "c122decc93e24408153224fa088b36ebe507aafac69ea8c72233d0d7f0e2b567",
+        "source_sha256": "87575b2e2937853073e81d925c0d2332962634452b0a73e4ec6f1a6652a31ee6"
+      },
+      {
+        "module": "TransformerBridge.RawCorrespondence.CUGenerated.Control",
+        "olean_sha256": "be82cf7c6b66697bde1327ab87c5aebaeb44e3ac699f3fef9cc17020fbea088e",
+        "source_sha256": "8654795b26a099839d4a1b8db2a6636f119ef88f5deee3c6eb0f62d16f475498"
+      }
+    ],
+    "source_run": 39100134012,
+    "source_sha": "4e93b42d807da223a3031c789a59ade21763cc5e",
+    "zip_sha256": "fd995fb749c01ce74475e26ff5342798ef85aed82ee4538ab248b80301949fba"
+  },
+  "row0_checkpoint_sha256": "ef7b43599ac73b30dacff7d788d1f50835f62365ef83e71aef2953f09fce3782",
+  "scope": {
+    "CU_field": false,
+    "U_components": 113,
+    "U_rows": [
+      127
+    ],
+    "full_hT": false
+  },
+  "toolchain_sha256": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+  "workflow_projection": {
+    "accepted_sha256": "c5f96916a7053635fc284180523d9f3516e973ef6ddbf8dc185cb6082afd7c7a",
+    "current_sha256": "721f5ab1359de5ae2b6ebd060767bfcb56a223470bfc6a49709142ad84230881",
+    "exclusion": "inputs.core_mode != 'mathlib-raw-u-boundary' && ",
+    "insertions": [
+      "  raw-u-boundary:\n    if: ${{ github.event_name == 'workflow_dispatch' && inputs.core_mode == 'mathlib-raw-u-boundary' && github.event.repository.private == false }}\n    name: Exact learned-U row127 boundary only (CU and hT open)\n    permissions:\n      contents: read\n      actions: read\n    runs-on: ubuntu-latest\n    timeout-minutes: 75\n    env:\n      LEAN_NUM_THREADS: \"2\"\n      OMP_NUM_THREADS: \"1\"\n      OPENBLAS_NUM_THREADS: \"1\"\n      MKL_NUM_THREADS: \"1\"\n    steps:\n      - uses: actions/checkout@v5\n      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.12\"\n      - name: Download exact packed, CI and row0 archives (no extraction)\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: |\n          set -euo pipefail\n          test \"${{ github.event.repository.private }}\" = false\n          mkdir -p \"$RUNNER_TEMP/rawuboundary\"\n          for artifact in 12100029309 12126011262 12126625308; do\n            gh api \"repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact\" > \"$RUNNER_TEMP/rawuboundary/$artifact.json\"\n            curl --fail --location --retry 2 --silent --show-error \\\n              -H \"Authorization: Bearer $GH_TOKEN\" -H \"Accept: application/vnd.github+json\" \\\n              \"$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact/zip\" \\\n              -o \"$RUNNER_TEMP/rawuboundary/$artifact.zip\"\n          done\n      - name: Actual metadata and mocked row0 controls (non-kernel)\n        run: |\n          TMPDIR=\"$RUNNER_TEMP/rawuboundary\" python3 -B -W error transformer/mathlib/test_rawuboundary.py \\\n            --packed-archive \"$RUNNER_TEMP/rawuboundary/12100029309.zip\" \\\n            --ci-archive \"$RUNNER_TEMP/rawuboundary/12126011262.zip\" \\\n            --row0-archive \"$RUNNER_TEMP/rawuboundary/12126625308.zip\"\n      - name: Install pinned stable compiler\n        run: |\n          set -euo pipefail\n          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o \"$RUNNER_TEMP/rawuboundary/elan-init.sh\"\n          sh \"$RUNNER_TEMP/rawuboundary/elan-init.sh\" -y --default-toolchain none\n          echo \"$HOME/.elan/bin\" >> \"$GITHUB_PATH\"\n      - name: Mathlib dependencies only (serial Lake)\n        timeout-minutes: 9\n        run: |\n          cd transformer/mathlib\n          timeout -s TERM -k 20 480 lake exe cache get\n      - name: Restore union and compile replay audit actual U row127\n        timeout-minutes: 57\n        run: |\n          set -euo pipefail\n          cd transformer/mathlib\n          ./rawuboundary.sh --packed-archive \"$RUNNER_TEMP/rawuboundary/12100029309.zip\" \\\n            --packed-api \"$RUNNER_TEMP/rawuboundary/12100029309.json\" \\\n            --ci-archive \"$RUNNER_TEMP/rawuboundary/12126011262.zip\" \\\n            --ci-api \"$RUNNER_TEMP/rawuboundary/12126011262.json\" \\\n            --row0-archive \"$RUNNER_TEMP/rawuboundary/12126625308.zip\" \\\n            --row0-api \"$RUNNER_TEMP/rawuboundary/12126625308.json\" 2>&1 | tee rawuboundary.ci.out\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: transformer-raw-u-boundary-${{ github.run_id }}\n          retention-days: 7\n          include-hidden-files: true\n          path: |\n            transformer/mathlib/rawuboundary-out/\n            transformer/mathlib/rawuboundary*.out\n            transformer/mathlib/rawuboundary*.time\n            transformer/mathlib/RawUBoundary-checkpoint.json\n            transformer/mathlib/TransformerBridge/RawCorrespondence/UBoundaryGenerated/\n            transformer/mathlib/.lake/build/lib/lean/TransformerBridge/RawCorrespondence/UBoundaryGenerated/\n          if-no-files-found: error\n\n",
+      "          - mathlib-raw-u-boundary\n",
+      "inputs.core_mode == 'mathlib-raw-u-boundary' && '-mathlib-raw-u-boundary' || "
+    ]
+  }
+}

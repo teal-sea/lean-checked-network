@@ -1,0 +1,165 @@
+{
+  "coefficients": {
+    "U": {
+      "canonical_flat_integer_json_sha256": "a2aaa051713568b29fb1e70b36c81a61a27aaf6c14a68f48be1b001085f16677",
+      "count": 14464,
+      "serialized_axes": [
+        1,
+        0
+      ],
+      "shape": [
+        128,
+        113
+      ],
+      "vectors": 113,
+      "width": 128
+    },
+    "WK": {
+      "canonical_flat_integer_json_sha256": "b8f53e6d4b146dbe2c620ccd96b7ecd5ae21c21fb55cd71f6d14befb962590f8",
+      "count": 16384,
+      "serialized_axes": [
+        0,
+        2,
+        1
+      ],
+      "shape": [
+        4,
+        128,
+        32
+      ],
+      "vectors": 128,
+      "width": 128
+    },
+    "WO": {
+      "canonical_flat_integer_json_sha256": "810a70323aeb2b39d743368ae01de3d90f6a37865137148cdec4fb19055af8b5",
+      "count": 16384,
+      "serialized_axes": [
+        0,
+        2,
+        1
+      ],
+      "shape": [
+        4,
+        32,
+        128
+      ],
+      "vectors": 512,
+      "width": 32
+    },
+    "WQ": {
+      "canonical_flat_integer_json_sha256": "0c064f3d3a3d740993b151499566af328f009e12ea8ee15789a21a470eb6cce0",
+      "count": 16384,
+      "serialized_axes": [
+        0,
+        2,
+        1
+      ],
+      "shape": [
+        4,
+        128,
+        32
+      ],
+      "vectors": 128,
+      "width": 128
+    },
+    "WV": {
+      "canonical_flat_integer_json_sha256": "055b806385bf1c3c10ca63b1f462eff3c57d0c9f9b21faf42a7e319098d2ed3b",
+      "count": 16384,
+      "serialized_axes": [
+        0,
+        2,
+        1
+      ],
+      "shape": [
+        4,
+        128,
+        32
+      ],
+      "vectors": 128,
+      "width": 128
+    },
+    "Win": {
+      "canonical_flat_integer_json_sha256": "907194697752e48294a4d2c5250a22e187c53f3aac73a48fca3f6dc3859429f3",
+      "count": 65536,
+      "serialized_axes": [
+        1,
+        0
+      ],
+      "shape": [
+        128,
+        512
+      ],
+      "vectors": 512,
+      "width": 128
+    },
+    "Wout": {
+      "canonical_flat_integer_json_sha256": "70cb52f72c084c4b4f2b1102069d5c9eb5b387d4f1621fff560132af4948517a",
+      "count": 65536,
+      "serialized_axes": [
+        0,
+        1
+      ],
+      "shape": [
+        512,
+        128
+      ],
+      "vectors": 512,
+      "width": 128
+    },
+    "bin": {
+      "canonical_flat_integer_json_sha256": "bca888bedf818a6bfbfe7db45895e638faa7d386640852cd9e682e3cdcf6ebcb",
+      "count": 512,
+      "serialized_axes": [
+        0
+      ],
+      "shape": [
+        512
+      ],
+      "vectors": 1,
+      "width": 512
+    },
+    "bout": {
+      "canonical_flat_integer_json_sha256": "03a6eddcf4ecb1326f231e5a8a50ab73842f294e26fc936c17ece2b71021d95e",
+      "count": 128,
+      "serialized_axes": [
+        0
+      ],
+      "shape": [
+        128
+      ],
+      "vectors": 1,
+      "width": 128
+    },
+    "pos": {
+      "canonical_flat_integer_json_sha256": "a8b27bfd13eb17f30e993138498c41c07ec28542029a7277273f139dcc341268",
+      "count": 384,
+      "serialized_axes": [
+        0,
+        1
+      ],
+      "shape": [
+        3,
+        128
+      ],
+      "vectors": 3,
+      "width": 128
+    },
+    "tok": {
+      "canonical_flat_integer_json_sha256": "8ebfc4a5b4fddcb264b9e50365b09d48c767e6dc49f523ce70641e3caa122f4a",
+      "count": 14592,
+      "serialized_axes": [
+        0,
+        1
+      ],
+      "shape": [
+        114,
+        128
+      ],
+      "vectors": 114,
+      "width": 128
+    }
+  },
+  "reference_archive_sha256": "2392b5ab4a97575dbf8516b5bac466b5a22d0da7985cf268ed22b9c8e249259b",
+  "reference_commit": "6de0c0cc873cad78287f9bbe86d65a51265f15cf",
+  "reference_run": 39017561355
+}

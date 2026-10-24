@@ -1,0 +1,8 @@
+{
+  "experiment": "final-artifact-validation",
+  "accepted_leaves": 34,
+  "controls_rejected": true,
+  "gate1": false,
+  "lean_run": false,
+  "status": "passed"
+}

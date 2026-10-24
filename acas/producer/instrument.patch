@@ -1,0 +1,102 @@
+diff --git a/complete_verifier/abcrown.py b/complete_verifier/abcrown.py
+index 9fe889a..c3a75c3 100644
+--- a/complete_verifier/abcrown.py
++++ b/complete_verifier/abcrown.py
+@@ -37,6 +37,9 @@ from cuts.cut_utils import terminate_mip_processes
+ from lp_test import compare_optimized_bounds_against_lp_bounds
+ 
+ 
++from w2_capture import install as w2_capture_install
++w2_capture_install()
++
+ class ABCROWN:
+     def __init__(self, args=None, **kwargs):
+         for k, v in kwargs.items():
+diff --git a/complete_verifier/input_split/batch_branch_and_bound.py b/complete_verifier/input_split/batch_branch_and_bound.py
+index bc91233..cb0de6b 100644
+--- a/complete_verifier/input_split/batch_branch_and_bound.py
++++ b/complete_verifier/input_split/batch_branch_and_bound.py
+@@ -119,6 +119,8 @@ def batch_verification_input_split(
+     else:
+         constraints = None
+ 
++    from w2_capture import emit
++    emit("pre_prune", x_L=x_L, x_U=x_U, lower=dm_lb, thresholds=thresholds, cs=cs, alphas=alphas, lA=lA, lbias=lbias, spec_sizes=spec_sizes)
+     # --- Filter out verified subdomains --- #
+     stats.timer.start('filtering')
+     # Since we have only bounded the domains and not clipped them, we only need to check thresholds
+diff --git a/complete_verifier/input_split/split.py b/complete_verifier/input_split/split.py
+index 1641df5..6fe3842 100644
+--- a/complete_verifier/input_split/split.py
++++ b/complete_verifier/input_split/split.py
+@@ -78,6 +78,7 @@ def input_split_parallel(
+                 # find dimensions that have a crossing at split_hint
+                 has_crossing = torch.logical_and(x_L_cp[indices, idx] < split_hint[idx], x_U_cp[indices, idx] > split_hint[idx])
+ 
++            w2_parent_L, w2_parent_U = x_L_cp.clone(), x_U_cp.clone()
+             x_L_cp_list, x_U_cp_list = [], []
+             for partition in range(split_partitions):
+                 x_L_cp_tmp = x_L_cp.clone()
+@@ -106,6 +107,8 @@ def input_split_parallel(
+ 
+             x_L_cp = torch.cat(x_L_cp_list)
+             x_U_cp = torch.cat(x_U_cp_list)
++            from w2_capture import emit
++            emit("binary_split", parent_L=w2_parent_L, parent_U=w2_parent_U, child_L=x_L_cp, child_U=x_U_cp, indices=idx, partitions=split_partitions)
+ 
+         remaining_depth -= min(input_dim, remaining_depth)
+ 
+@@ -114,6 +117,8 @@ def input_split_parallel(
+     new_x_L = x_L_cp.reshape(-1, *shape[1:])
+     new_x_U = x_U_cp.reshape(-1, *shape[1:])
+ 
++    from w2_capture import emit
++    emit("split", parent_L=x_L, parent_U=x_U, child_L=new_x_L, child_U=new_x_U, indices=i_idx, depth=split_depth, partitions=split_partitions)
+     return new_x_L, new_x_U, split_depth
+ 
+ def get_split_depth(current_domain_num, split_partitions=2):
+diff --git a/complete_verifier/w2_capture.py b/complete_verifier/w2_capture.py
+new file mode 100644
+index 0000000..d169558
+--- /dev/null
++++ b/complete_verifier/w2_capture.py
+@@ -0,0 +1,39 @@
++"""Opt-in bound/split event capture. Enable with W2_CAPTURE=/absolute/file.jsonl.
++Captures supersets of terminal evidence, before the verifier can prune boxes.
++Not a standalone coverage certificate: consumer must match bounds and split boxes.
++"""
++import os,json,time
++
++def emit(kind,**data):
++    path=os.environ.get('W2_CAPTURE')
++    if not path:return
++    def plain(x):
++        if hasattr(x,'detach'):return x.detach().cpu().tolist()
++        if isinstance(x,dict):return {str(k):plain(v) for k,v in x.items()}
++        if isinstance(x,(tuple,list)):return [plain(v) for v in x]
++        if isinstance(x,(str,int,float,bool)) or x is None:return x
++        return str(x)
++    with open(path,'a') as f:f.write(json.dumps({'event':kind,**plain(data)},separators=(',',':'))+'\n')
++
++def install():
++    if not os.environ.get('W2_CAPTURE'):return
++    from auto_LiRPA import BoundedModule
++    original=BoundedModule.compute_bounds
++    def wrapped(self,*args,**kwargs):
++        x=kwargs.get('x',args[0] if args else None);C=kwargs.get('C')
++        capture=x is not None and hasattr(x[0],'ptb') and C is not None and str(kwargs.get('method','')).lower()!='ibp'
++        old_A=kwargs.get('return_A',False)
++        if capture:
++            kwargs['return_A']=True
++            needed=dict(kwargs.get('needed_A_dict') or {})
++            needed.setdefault(self.output_name[0],set())
++            needed[self.output_name[0]]=set(needed[self.output_name[0]])|{self.input_name[0]}
++            kwargs['needed_A_dict']=needed
++        result=original(self,*args,**kwargs)
++        if capture:
++            relus=[n for n in self.nodes() if n.__class__.__name__=='BoundRelu']
++            emit('bound',method=kwargs.get('method'),x_L=x[0].ptb.x_L,x_U=x[0].ptb.x_U,C=C,lower=result[0],A=result[2] if len(result)>2 else None,
++                 relus=[{'name':r.name,'alpha':r.alpha,'alpha_indices':getattr(r,'alpha_indices',None),'lower':r.inputs[0].lower,'upper':r.inputs[0].upper} for r in relus])
++            if not old_A and len(result)>2:result=result[:2]
++        return result
++    BoundedModule.compute_bounds=wrapped

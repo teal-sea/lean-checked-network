@@ -41,6 +41,9 @@ Use the toolchain named in `lean/lean-toolchain`. A Linux user systemd session i
 by the resource wrapper. The package manifest pins TorchLean and its transitive Mathlib.
 No GPU, LibTorch installation, solver account or Gurobi solve is needed for checking.
 
+For the complete check, run `cd acas && ./recheck.sh`. It starts a persistent systemd
+unit and writes `work/recheck.log`. The individual stages are:
+
 ```sh
 cd acas
 python3 gen/fetch_inputs.py

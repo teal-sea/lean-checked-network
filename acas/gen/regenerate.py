@@ -41,7 +41,8 @@ def parameters(out):
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--check',action='store_true');ap.add_argument('--inputs',type=Path,default=A/'inputs');args=ap.parse_args()
- with tempfile.TemporaryDirectory(prefix='acas-regenerate-') as temp:
+ scratch=A/'work/regeneration';scratch.mkdir(parents=True,exist_ok=True)
+ with tempfile.TemporaryDirectory(prefix='acas-regenerate-',dir=scratch) as temp:
   root=Path(temp); out=root/'route-a-all';out.mkdir(); w2=root/'w2-producer/work';w2.mkdir(parents=True); step2=root/'step2';step2.mkdir()
   shutil.copy(A/'producer/certificate.json',w2/'cert-supported-crown-1_1-p1.json')
   shutil.copy(A/'producer/crownint-weight-mutation.json',w2/'crownint-weight-mutation.json')

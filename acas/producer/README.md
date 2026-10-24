@@ -28,18 +28,23 @@ are already normalized. The decimal property is parsed and retained exactly.
 Run from this directory. Use a Python environment separate from the lightweight checker.
 The recorded supported environment was Python 3.11.17, PyTorch 2.11.0+cpu,
 torchvision 0.26.0, ONNX 1.23.2 and NumPy 2.4.6 (measured installed versions).
-Install the pinned upstream verifier's remaining dependencies according to its environment
-file. CPU wheels are sufficient. Some upstream imports require `gurobipy`; this input-split
+The captured distribution versions are in `environment-record.json`; install CPU Torch
+wheels separately, then the remaining pinned packages from `requirements-cpu.txt`. Some upstream imports require `gurobipy`; this input-split
 CROWN configuration does not invoke a Gurobi solve and requires no paid solver account.
 
 ```sh
 python3 ../gen/fetch_inputs.py
+python3 -m venv .venv
+. .venv/bin/activate
+python3 -m pip install torch==2.11.0+cpu torchvision==0.26.0+cpu --index-url https://download.pytorch.org/whl/cpu
+python3 -m pip install -r requirements-cpu.txt
 git clone https://github.com/Verified-Intelligence/alpha-beta-CROWN.git abc
 git -C abc checkout b58d83ccb32469fc7ae9304fa1d33568ea76b00e
 git -C abc submodule update --init --recursive
 git -C abc apply ../instrument.patch
 python3 outward.py
 export OMP_NUM_THREADS=8 MKL_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8
+export PYTHONPATH="$PWD/abc/auto_LiRPA"
 export W2_CAPTURE="$PWD/events.jsonl"
 taskset -c 0-7 python3 abc/complete_verifier/abcrown.py --config cli-crown-outward.yaml
 python3 export_events.py events.jsonl certificate-new.json 1_1

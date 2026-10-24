@@ -2,6 +2,38 @@
 
 [![check](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml/badge.svg)](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml)
 
+![A 113 by 113 square, one cell per input pair (a, b). Each cell is shaded by the proved answer (a + b) mod 113: dark for 0, light for 112. The shade brightens from the top left to the anti-diagonal, snaps back to dark, and brightens again to the bottom right. Beside it: 12,769 input pairs, every cell proved by Lean's kernel, integer weights at S = 256, exact real softmax.](transformer/figures/all-pairs.svg)
+
+A one-layer, four-head transformer adds modulo 113 correctly on all 12,769 input
+pairs. The model uses quantised integer weights at `S = 256` and exact real softmax.
+
+**In short**
+
+- **Every answer is proved.** The correct class has a strictly larger logit than every
+  other class, and first argmax returns it. The theorem
+  `TransformerBridge.FinalRaw.raw_model_adds_mod_113` has no hypotheses; its axioms
+  are `propext`, `Classical.choice`, and `Quot.sound`.
+- **Two kernels checked it.** Lean checked the proof; independently implemented
+  `nanoda_bin` 0.4.19 checked 82,927 declarations from the exact released objects,
+  with the axiom allowlist enforced and no type-checking errors. It also reported
+  one axiom pretty-printer error.
+- **Tested wrong data is rejected.** All 9 certificate/table-identity controls were
+  rejected with passing unchanged twins, and `verify.sh` rejected all 11 tested
+  tampering attacks. These tests are not an exhaustive security proof or a claim
+  that every changed weight makes the network incorrect.
+- **The limits are small and explicit.** This is a tiny model on a toy task, proved
+  by brute force over all inputs. It is the integer-rounded model, not the float
+  checkpoint.
+
+Read the [status](transformer/STATUS.md), the [Kronecker method note](transformer/mathlib/KRONECKER.md),
+and the [evidence release](https://github.com/teal-sea/lean-checked-network/releases/tag/transformer-final-raw-evidence).
+
+## ACAS Xu certificate checking
+
+Lean checks an alpha-beta-CROWN certificate for the frozen exact-real ACAS Xu network 1_1, property 1, using TorchLean semantics; see the [ACAS evidence and limits](acas/README.md).
+
+## Earlier MLP result
+
 A small neural network learned to add on a clock with 113 hours: given two numbers `a` and
 `b` from 0 to 112, it answers `(a + b) mod 113`. It was trained on half of the 12,769 possible
 pairs. This repository proves, with Lean's kernel, that it is right on every pair, and shows how
@@ -243,10 +275,3 @@ step by step is exact arithmetic in Python, not yet in Lean.
 
 MIT (see `LICENSE`). To cite this work, use `CITATION.cff` (GitHub's "Cite this repository"
 button reads it).
-
-## ACAS Xu certificate checking
-
-The [ACAS certificate project](acas/) checks an exported alpha-beta-CROWN input-split
-certificate for the frozen ACAS Xu network 1_1, property 1, and connects it to a Lean
-real-arithmetic safety theorem. Its [status](acas/STATUS.md) records the release gates,
-measurements and limits.

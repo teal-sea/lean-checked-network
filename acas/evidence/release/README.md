@@ -25,5 +25,7 @@ The exported declaration stream and compiled objects are deliberately not commit
 
 `files.sha256.json` binds the archived evidence files. Adjacent release Python logs and
 `release-ci-initial-head.json` preserve the lightweight gates and initial published-head
-CI result. The final PR head's CI is recorded in the external release report to avoid
+CI result. `release-ci-verified-source-head.json` records all existing jobs passing on
+the later published head containing these same final Lean sources and generator refinements.
+The final PR head's CI is recorded in the external release report to avoid
 requiring a new commit solely to name its own hash.

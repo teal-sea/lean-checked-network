@@ -17,11 +17,10 @@ Its proposition, in [Spec.lean](lean/ACASChecked/Spec.lean), is:
   (network.model.forward x).getScalar 0 < threshold
 ```
 
-The mathematical constants are exact: `lo = (3/5, -1/2, -1/2, 9/20, -1/2)`,
+The exact constants (reported frozen [specification](lean/ACASChecked/Spec.lean)) are: `lo = (3/5, -1/2, -1/2, 9/20, -1/2)`,
 `hi = (679857769/1000000000, 1/2, 1/2, 1/2, -9/20)`, and
 `threshold = 3991125645861615/1000000000000000`. The box is closed and the output
-comparison is strict. Output index zero is `Y_0`. These are the frozen specification,
-not measurements or floating approximations.
+comparison is strict. Output index zero is `Y_0`. These constants define the frozen statement.
 
 An instrumented alpha-beta-CROWN run supplies a covering input split tree. An untrusted
 emitter supplies dyadic dual receipts. Lean checks their arithmetic and proves that

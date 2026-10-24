@@ -19,7 +19,8 @@ remaining input-affine form is minimized coordinatewise over the input box. Bias
 and input costs are checked as well. The resulting lower bound for `-Y_0`, plus the exact
 decimal threshold, must be strictly positive. Equality rejects.
 
-All grid constants are mathematical choices rather than measurements: `Q = 2^50`;
+The grid constants are reported definitions from [NodeNC](lean/ACASChecked/NodeNC.lean)
+and the emitter: `Q = 2^50`;
 parameters, duals and endpoints are integers divided by Q; receipt totals use `Q^3`.
 Every original parameter is checked to be exactly representable on this grid. Integer
 floor/ceiling bounds are outward, with a proved positive-divisor invariant.
@@ -49,7 +50,8 @@ not trust an asserted hash, prepacked integer or digit extraction.
 [the transformer packing method](../transformer/mathlib/KRONECKER.md).
 `MatrixSound` proves the generic matrix rule. `PackingBridge` proves the correspondence
 between the executable lists/Nat offsets and entrywise integer equality. The base and
-bounds are exact design constants: base `2^160`, weight/dual bound `2^60`, product bound
+bounds are reported definitions in [Block](lean/ACASChecked/Block.lean) and
+[PackingBridge](lean/ACASChecked/PackingBridge.lean): base `2^160`, weight/dual bound `2^60`, product bound
 `2^127`. The no-carry condition is checked in Lean. This is checking supplied products;
 it does not compute CROWN by decoding a packed convolution.
 

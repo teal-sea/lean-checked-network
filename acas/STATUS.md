@@ -14,16 +14,16 @@ No larger-model or deployment result is claimed.
 | Exact final axiom list | exactly propext, Classical.choice, Quot.sound (measured, 2026-10-24) | final build log, then `gen/audit.py` |
 | Source scan for admissions and unsafe evaluation | passed on all 1,091 new modules (measured, 2026-10-24) | `gen/audit.py` |
 | Clean-environment Lean kernel replay of every new module | all 1,091 passed (measured, 2026-10-24) | per-module state and logs |
-| nanoda on final theorem closure, hard standard-axiom allowlist | running; export succeeded (measured, 2026-10-24) | `gen/nanoda.py` |
+| nanoda on final theorem closure, hard standard-axiom allowlist | passed; Checked 59489 declarations with no typechecker errors, 1 pretty printer errors: [ (measured, 2026-10-24) | `gen/nanoda.py` |
 | Changed weight, corrupted dual, coverage gap, real unsafe weight | all four reject by proved Boolean false; compilation and replay pass (measured, 2026-10-24) | `ControlWeight`, `ControlDual`, `CoverageControl`, `UnsafeControl13` |
 | Byte-for-byte regeneration of every generated Lean file | passed: 1,055 generated files match (measured, 2026-10-24) | `gen/regenerate.py --check` |
 | Python tests | 26 passed (measured, 2026-10-24) | captured pytest output |
 | Independent exact Python receipt replay | all 34 passed; three stale/corrupt receipt controls rejected (measured, 2026-10-24) | `gen/independent.py` |
-| Existing repository CI | passed on initial published head 702695a (measured, 2026-10-24); final evidence head will be checked | existing workflows unchanged; captured check-runs response |
+| Existing repository CI | passed on initial published head 702695a (measured, 2026-10-24); final-head results are linked from the draft PR checks and recorded in the external release report | existing workflows unchanged; captured check-runs response |
 
-The ACAS proof is not added to CI. Historical full receipt build plus replay alone cost
-**6.2812 CPU-hours (derived sum of captured successful-run times)** on the project host,
-before the separate semantics proof and independent checker. The existing `check.yml`
+The ACAS proof is not added to CI. The release new-module compilation plus replay cost
+**11.7639 CPU-hours (derived sum of captured successful-run times)** on the project host,
+excluding dependency bootstrap, export and the independent checker. The existing `check.yml`
 Lean job has a **240-minute timeout (reported workflow setting)** and also checks other
 networks. A fresh hosted-runner ACAS build has not been shown to fit its limit. The
 standalone commands retain the complete gate instead of weakening CI's existing checks.
@@ -51,10 +51,16 @@ time sum)**, with **12,240,264 KiB peak RSS (measured)**. Its source compilation
 in **8.25 CPU seconds (derived)**. This interrupted extra check is retained in the run ledger;
 it is not a kernel rejection or an ACAS negative-control result. The documented default now
 replays every new ACAS module. Optional `--replay-dependencies` adds unchanged dependencies.
-Nanoda still must check the complete used declaration closure under the hard axiom allowlist.
+Nanoda checks the complete used declaration closure under the hard axiom allowlist, as recorded below.
 
 Leanexport completed in **107.10 seconds wall (measured)** and **106.84 CPU seconds
-(derived)**, with **8,938,116 KiB peak RSS (measured)**. The independent check remains pending.
+(derived)**, with **8,938,116 KiB peak RSS (measured)**. Nanoda completed in **8351.22 seconds wall (measured)** and **8331.88 CPU seconds (derived)**, with **3,815,352 KiB peak RSS (measured)**. Its exact success line is:
+
+```text
+Checked 59489 declarations with no typechecker errors, 1 pretty printer errors: [
+```
+
+The object manifest was unchanged across export and independent replay (measured SHA256 comparison).
 
 ## Recorded project gates
 
@@ -103,5 +109,4 @@ name is placed under `ACASChecked`.
 All new arithmetic is kernel reduction or ordinary proofs. A compiled Python/producer
 verdict is never promoted into a Lean theorem. The final nanoda gate exports only the
 named theorem and its declaration closure, permits exactly the standard axioms with hard
-errors, and records SHA256 of all .olean objects and their companions on the export search path. Its log must contain
-a successful `Checked N declarations` line before this gate can be marked passed.
+errors, and records SHA256 of all .olean objects and their companions on the export search path. Its successful declaration count is quoted above and preserved in the raw log.

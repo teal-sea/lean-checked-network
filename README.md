@@ -52,7 +52,7 @@ angles.
   explanation and explicit error bounds proves all 12,769 answers (in Python, not yet in Lean).
 - **The explanation is also a theorem for every clock, 2026-10-16.** Fix the phases of Gromov's analytic
   weights and the unwanted waves cancel exactly: a Lean proof on Mathlib that such a network adds mod p for
-  every modulus, with 5-bit weights, plus kernel-checked instances down to **12 neurons with 8-bit weights**
+  every modulus p >= 3; choosing scale M=25 gives weights in [-25,25], representable with 6 signed bits (5 magnitude bits plus sign), plus kernel-checked instances down to **12 neurons with 8-bit weights**
   at 113 and at 257 (`phasegrid/`).
 - **Training runs become theorems too, 2026-10-16.** A runner kernel-checks any configuration and states
   exactly where a network is wrong; a recurrent adder is proved for inputs of every length; and the six
@@ -75,13 +75,13 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | Claim | How established |
 | --- | --- |
 | The trained network answers `(a + b) mod 113` for all 12,769 pairs | kernel-checked: `LeanCheckedNetwork.Trained.adds_mod_113` |
-| Keep only one circle wave per neuron (each weight table keeps its own amplitude and phase at the neuron's frequency), rounded to whole numbers, drop everything else: still right on all 12,769 pairs, smallest margin 1,980,696 | kernel-checked: `LeanCheckedNetwork.CircleOnly.adds_mod_113` |
+| Keep only one circle wave per neuron (each weight table keeps its own amplitude and phase at the neuron's frequency), rounded to whole numbers, drop everything else: still right on all 12,769 pairs; minimum margin 1,980,696 measured separately | correctness kernel-checked: `LeanCheckedNetwork.CircleOnly.adds_mod_113` |
 | Both theorems re-checked by independent checkers: `leanchecker` replayed every module that contains a declaration (40 of 40 in `lean_run.log`), and nanoda, a separate type checker written in Rust, checked the three main theorems (2,569 declarations, in the audit) | kernel-checked twice (see `AUDIT.md`) |
 | Swapping the read-out rows of answers 0 and 1 (226 pairs then wrong) makes the same proof fail | kernel rejection: `lean/expected_fail/FaultRow.lean` |
 | The circle explanation, with every error bounded exactly, proves the right answer for all 12,769 pairs (tightest pair keeps 1.7% of the margin) | derived (`mechanism.py`, `MECHANISM.md`) |
 | No single weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one weight change can shift the gap between two scores (at most 254 × 255² = 16,516,350) | derived |
 | Remove the circle waves, keep the rest: right on 50 of 12,769 pairs, fewer than the 113 that answering the same number every time would get | measured |
-| Networks written from the circle formula with fixed phases, no training, right on every pair: 12 neurons at modulus 113 with 8-bit weights (frequencies 39 and 45, the first survivor of all 1,540 two-frequency sets), 16 neurons on the same frequencies, 40 neurons on every frequency at modulus 12, and 12 neurons at modulus 257 (66,049 pairs); the theorem for the same construction (it does not reach these networks at their scale) and its three larger instances are in `phasegrid/` | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`); `phasegrid/smallest-networks.md` |
+| Networks written from the circle formula with fixed phases, no training, right on every pair: 12 neurons at modulus 113 with 8-bit weights (frequencies 39 and 45, selected by a measured search over 1,540 two-frequency sets; the explicit network's correctness is kernel-checked), 16 neurons on the same frequencies, 40 neurons on every frequency at modulus 12, and 12 neurons at modulus 257 (66,049 pairs); the theorem for the same construction (it does not reach these networks at their scale) and its three larger instances are in `phasegrid/` | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`); `phasegrid/smallest-networks.md` |
 | A learning curve whose every point is a theorem: the six checkpoints of this repository's 64-neuron training run (`runs/p113_h64.log`, reproduced exactly by `train.py`) are wrong on exactly 3, 2, 3, 2, 2 and 0 pairs, each pair named; every wrong pair is a held-out pair; at every checkpoint the circle-only reduction is wrong on hundreds of pairs, even at step 12,000 where the network is right everywhere | kernel-checked through `sweep/run_one.py`: `answer_iff_not_wrong` with the wrong list proved exact, both networks per checkpoint, 41 of 41 modules replayed by `leanchecker` each, standard axioms (2026-10-16); `sweep/tests/learning-curve-2026-10-16.md` |
 | 114 of the 128 neurons are alive; each puts a median 97% of its weight energy into one circle frequency | measured |
 | In all 114 live neurons, the largest leftover piece is the wave at three times the neuron's frequency | measured |
@@ -94,9 +94,9 @@ attacked by three reviewing agents on 2026-10-15; what they found and what chang
 Two kernel soundness bugs in Lean 4 were fixed in point releases on 2026-07-22 (4.32.1) and
 2026-07-28 (4.32.2), and a later search by the Lean FRO and OpenAI found more (Thomas Hales,
 guest post on Terence Tao's blog, October 2026, read through secondary reports on 2026-10-16).
-The toolchain pinned here is later than those fixes, and every result above is replayed by a
-second checker (`leanchecker`) and, in the audit, by a third written independently (nanoda),
-which is the defence that post recommends.
+The toolchain pinned here is later than those fixes. The trained-MLP and circle-only theorems
+were replayed by leanchecker; nanoda checked the three main MLP theorems. Other projects list
+their own replay scope.
 
 ## The network
 
@@ -106,7 +106,7 @@ table `W2` (113 × 128) gives each candidate answer `c` a score. The answer is t
 score. Training: full batch, cross-entropy, Adam with decoupled weight decay 1.0, learning
 rate 0.01, 20,000 steps, seed 0, on a random half of the pairs. The weights were then frozen to
 whole numbers in [-127, 127] (each table scaled so its largest entry is 127, then rounded), the
-form a phone chip would run. **Every claim above is about these frozen whole-number weights**
+form a phone chip would run. **The trained-MLP claims concern these frozen weights; the circle-only model and other projects specify their own weights and semantics.**
 (the circle-only network's weights are whole numbers up to 130 in size).
 
 A 64-neuron version was also trained the same way. After freezing it got 2 or 3 pairs wrong at
@@ -120,14 +120,14 @@ arithmetic. The theorem `adds_mod_113` says its answer is `(a + b) % 113` for al
 
 Checking that definition directly is slow: Lean's kernel spends roughly the same time on every
 small arithmetic step, and each input needs about 14,500 multiply-adds. One row of 113 inputs
-took 4 to 10.5 minutes in two trial encodings, which extrapolates to roughly 7 to 20 CPU-hours
-per network (not run in full). `Fast.lean` computes the same answer with a few hundred
+took 4 to 10.5 minutes in two trial encodings (measured), giving a derived estimate of roughly
+7 to 20 CPU-hours per network (not run in full). `Fast.lean` computes the same answer with a few hundred
 large-number steps: it writes all 113 scores as the digits of one big number, so one
 multiplication updates every score at once. `answer_eq_fastAnswer` proves the fast route returns
 exactly the network's answer, under checks the kernel also performs for every input. With it,
-both networks checked in 26 minutes on a 4-core machine (37 minutes in the audit's clean
-rebuild, with one core busy), at about 2 GB per Lean process. `run_lean.sh` then replays every
-module with `leanchecker`, four at a time (about 20 more minutes).
+both networks checked in 26 minutes on a 4-core machine (measured build time; 37 minutes in
+the audit's clean rebuild, measured with one core busy), at about 2 GB RSS per Lean process (measured). `run_lean.sh` then replays every
+module with `leanchecker`, four at a time (about 20 more minutes of replay time, measured).
 
 ## How the circle explanation becomes a proof
 
@@ -151,8 +151,8 @@ python3 mechanism.py network/trained.npz     # the circle proof and its soundnes
 ./run_lean.sh                                # build, replay every module, planted fault, axioms: under 1.5 h on 4 cores
 ```
 
-Each command exits non-zero if any check fails. The same checks run on GitHub Actions for every
-push (`.github/workflows/check.yml`). Lean is pinned to 4.35.0-rc2, the version the audit's
+Each command exits non-zero if any check fails. GitHub Actions runs the listed MLP checks on pushes to main and on pull requests
+(`.github/workflows/check.yml`); ACAS has a separate reproduction gate, not CI. Lean is pinned to 4.35.0-rc2, the version the audit's
 independent checkers used.
 
 Rebuild from scratch:
@@ -177,7 +177,7 @@ python3 figure.py network/trained.npz figures/circle.svg
 | `train.py`, `circle_only.py`, `mechanism.py`, `figure.py`, `gen_lean.py` | training, the circle-only network, the circle proof, the figure, Lean generation |
 | `verify_weights.py` | checks, without Lean, that the Lean weight files are the networks in `network/` |
 | `run_lean.sh`, `lean_run.log` | the full check and its output |
-| `.github/workflows/check.yml` | runs all checks on every push |
+| `.github/workflows/check.yml` | runs the listed MLP checks on pushes to main and on pull requests; ACAS has a separate reproduction gate, not CI |
 | `MECHANISM.md`, `AUDIT.md` | the circle proof in detail; the adversarial audit |
 | `make_fixed_phase.py`, `make_fixed_phase6.py`, `search_min.py`, `run_lean_fixed_phase.sh`, `lean_run_fixed_phase.log` | the small fixed-phase networks: generators, the search for the smallest, their kernel check and its output; write-up in `phasegrid/smallest-networks.md` |
 | `rnn/`, `sweep/`, `prime_env/` | the three directories described above, each with its own README |
@@ -196,9 +196,9 @@ results above.
 | `prime_env/` | A Prime Intellect environment (`verifiers` 0.4.0, the taskset interface) in which a model must prove in Lean that a given frozen network adds mod p; the reward is 1.0 only if the kernel accepts, `leanchecker` replays, the statement matches a `Spec` fixed before any submitted text is read, and the axioms are standard. 52 tasks at p from 5 to 23. Tested here: brute force passes; `sorry`, `native_decide`, `decide +native`, `set_option debug.skipKernelTC` with a false claim, a weakened statement under the required name, and a wrong network all score 0, with and without the text guard. An adversarial review the same day found three ways the first grader gave 1.0 without a proof (a self-defined specification without importing the weights, namespace shadowing through the checker's own theorem name, and a build-time `#eval` that overwrote the checker file); all three are fixed and kept as regression tests. Grading still runs on the worker host with only a text guard between it and build-time code, so an OS sandbox is needed before untrusted rollouts | grader tested here; no model rollout and no push to the Hub (no account in the container) |
 
 The grid in `sweep/grid.json` was chosen from the literature (Doshi, Das, He and Gromov 2024 is
-the only published fraction x weight-decay map for this architecture, at p = 97) so that it
-crosses the boundary where generalisation stops; nobody has published what integer rounding does
-to a grokked network, so every point is new data as well as a theorem.
+a published fraction x weight-decay map for this architecture, at p = 97) so that it
+crosses the boundary where generalisation stops. The grid is intended to measure the effect of
+integer rounding; each successfully checked run supplies a theorem about that run.
 
 ## One theorem for every modulus: `phasegrid/`, 2026-10-16
 
@@ -209,7 +209,7 @@ exactly. `phasegrid/` proves, in Lean 4 on Mathlib, with the repository's own `a
 `Network.lean` copied verbatim: for every modulus p, every list of frequencies S whose wave sums have
 a positive gap g, and every scale M with 24|S| < Mg, the integer network with weights round(M cos ...)
 answers (a + b) mod p on every pair (`PhaseGrid.adds_mod_p`); and for every p ≥ 3, with all
-frequencies and any M ≥ 25, it adds mod p (`adds_mod_p_full`): 5-bit weights add on every clock.
+frequencies and any M ≥ 25, it adds mod p (`adds_mod_p_full`): choosing M=25 gives weights in [-25,25], representable with 6 signed bits (5 magnitude bits plus sign).
 A variant (`adds_mod_p_tables`) covers any integer tables within 1/2 of the analytic weights. 42
 theorems, every one on `[propext, Classical.choice, Quot.sound]` or a subset, every module replayed by
 `leanchecker`. Three concrete networks of that shape are also kernel-checked here by the
@@ -247,7 +247,7 @@ those two rest on their kernel checks alone (`phasegrid/README.md`).
   behaviour built from the mechanism, computed outside a proof assistant.
 - TorchLean (2026): a Lean framework for neural networks, with results including local
   robustness at given points, region-based controller safety and theorems about network
-  classes; none of its results covers every input of a trained network's whole domain.
+  classes. TorchLean supplies exact network semantics and existing verification rules; the specific results cited have their own stated scopes.
 - Gross, Kwa and Agrawal, `neural-net-coq-interp` (GitHub, 2023): a Coq-kernel-checked,
   brute-force theorem that a trained one-layer attention-only transformer takes the maximum of
   two numbers on every input, in 32-bit floats with a tolerance; the mechanistic version of the
@@ -260,15 +260,11 @@ those two rest on their kernel checks alone (`phasegrid/README.md`).
   theorem in `rnn/` is the same shape of statement about a gradient-trained network, checked by
   Lean's kernel.
 
-Searched (web, 2026-10-14, 2026-10-15 and 2026-10-16): the one proof-assistant theorem
-about a trained network on its whole input domain that we found is the 2023 Coq brute-force
-result above (floats, with a tolerance). We did not find an exact one, nor one in Lean, nor a
-kernel-checked proof that a network's circle mechanism alone suffices, nor a kernel-checked
-theorem about a trained network over an infinite input domain. The search was not exhaustive.
+In the non-exhaustive search on the listed October 14-16 dates (web, 2026-10-14,
+2026-10-15 and 2026-10-16), we found the cited 2023 Coq result (floats, with a tolerance).
 
-**Limits.** The network is small and the input space is finite (12,769 pairs), so the
-correctness theorem is a complete check of a finite table, not a general argument. The
-circle-only theorem is a kernel-checked ablation. The proof that follows the angle addition
+**Limits.** The trained-MLP correctness theorem enumerates its finite input domain
+(12,769 pairs). The circle-only theorem is a kernel-checked ablation. The proof that follows the angle addition
 step by step is exact arithmetic in Python, not yet in Lean.
 
 ## License and citation

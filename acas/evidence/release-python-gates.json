@@ -2,8 +2,8 @@
   "label": "measured",
   "regeneration": {
     "status": "pass",
-    "files": 1053,
-    "log": "regeneration-3.log"
+    "files": 1054,
+    "log": "regeneration-assembly.log"
   },
   "pytest": {
     "status": "pass",

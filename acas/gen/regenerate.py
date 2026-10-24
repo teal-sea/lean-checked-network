@@ -6,7 +6,7 @@ G=Path(__file__).resolve().parent; A=G.parent; L=A/'lean/ACASChecked'
 
 def generated(p):
  s=str(p)
- return (p.parts[0].startswith('N') and p.parts[0][1:].isdigit()) or p.parts[0] in ('Instances','ParamChunks') or p.stem in ('Net','Spec','Weights','CoverageData','AllLeaves','ControlDual','ControlWeight','UnsafeNode13','UnsafeControl13','CoverageControl') or p.stem.startswith('Parameters')
+ return (p.parts[0].startswith('N') and p.parts[0][1:].isdigit()) or p.parts[0] in ('Instances','ParamChunks') or p.stem in ('Net','Spec','Weights','CoverageData','AllLeaves','ControlDual','ControlWeight','UnsafeNode13','UnsafeControl13','CoverageControl','Final') or p.stem.startswith('Parameters')
 
 def rename(s):
  mods={str(p.relative_to(L).with_suffix('')).replace('/','.') for p in L.rglob('*.lean')}
@@ -42,6 +42,9 @@ def parameters(out):
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--check',action='store_true');ap.add_argument('--inputs',type=Path,default=A/'inputs');args=ap.parse_args()
  scratch=A/'work/regeneration';scratch.mkdir(parents=True,exist_ok=True)
+ pins=json.loads((G/'input-hashes.json').read_text())
+ for name,digest in pins['release_files'].items():
+  if hashlib.sha256((A/name).read_bytes()).hexdigest()!=digest:raise ValueError('wrong frozen input: '+name)
  with tempfile.TemporaryDirectory(prefix='acas-regenerate-',dir=scratch) as temp:
   root=Path(temp); out=root/'route-a-all';out.mkdir(); w2=root/'w2-producer/work';w2.mkdir(parents=True); step2=root/'step2';step2.mkdir()
   shutil.copy(A/'producer/certificate.json',w2/'cert-supported-crown-1_1-p1.json')
@@ -60,6 +63,8 @@ def main():
   for p in step2.rglob('*.lean'):
    dest=out/p.relative_to(step2);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy(p,dest)
   parameters(out)
+  from generate_final import render
+  (out/'Final.lean').write_text(render(json.loads((out/'leaves.json').read_text())))
   (out/'CoverageControl.lean').write_text((G/'templates/CoverageControl.lean').read_text())
   bad=[];files=[]
   for dest in sorted(L.rglob('*.lean')):

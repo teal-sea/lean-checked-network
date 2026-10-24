@@ -16,10 +16,10 @@ No larger-model or deployment result is claimed.
 | Clean-environment Lean kernel replay of every new module | running with the build | per-module state and logs |
 | nanoda on final theorem closure, hard standard-axiom allowlist | pending | `gen/nanoda.py` |
 | Changed weight, corrupted dual, coverage gap, real unsafe weight | pending on packaged bytes | `ControlWeight`, `ControlDual`, `CoverageControl`, `UnsafeControl13` |
-| Byte-for-byte regeneration of every generated Lean file | passed: 1,053 generated files match (measured, 2026-10-24) | `gen/regenerate.py --check` |
+| Byte-for-byte regeneration of every generated Lean file | passed: 1,054 generated files match (measured, 2026-10-24) | `gen/regenerate.py --check` |
 | Python tests | 26 passed (measured, 2026-10-24) | captured pytest output |
 | Independent exact Python receipt replay | all 34 passed; three stale/corrupt receipt controls rejected (measured, 2026-10-24) | `gen/independent.py` |
-| Existing repository CI | pending draft PR | existing workflows unchanged |
+| Existing repository CI | passed on initial published head 702695a (measured, 2026-10-24); final evidence head will be checked | existing workflows unchanged; captured check-runs response |
 
 The ACAS proof is not added to CI. Historical full receipt build plus replay alone cost
 **6.2812 CPU-hours (derived sum of captured successful-run times)** on the project host,
@@ -75,5 +75,5 @@ name is placed under `ACASChecked`.
 All new arithmetic is kernel reduction or ordinary proofs. A compiled Python/producer
 verdict is never promoted into a Lean theorem. The final nanoda gate exports only the
 named theorem and its declaration closure, permits exactly the standard axioms with hard
-errors, and records SHA256 of all objects on the export search path. Its log must contain
+errors, and records SHA256 of all .olean objects and their companions on the export search path. Its log must contain
 a successful `Checked N declarations` line before this gate can be marked passed.

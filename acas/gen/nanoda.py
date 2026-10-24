@@ -13,7 +13,7 @@ def main():
  from toolchain import toolchain_bin
  tool=toolchain_bin(out)
  roots=[L/'.lake/build/lib/lean',*sorted((L/'.lake/packages').glob('*/.lake/build/lib/lean')),tool.parent/'lib/lean'];lp=':'.join(map(str,roots))
- objects={str(p):sha(p) for root in roots for p in sorted(root.rglob('*.olean'))}
+ objects={str(p):sha(p) for root in roots for p in sorted(root.rglob('*.olean*'))}
  (out/'objects.json').write_text(json.dumps(objects,indent=2)+'\n')
  env=os.environ.copy();env.update(XDG_RUNTIME_DIR=f'/run/user/{os.getuid()}',DBUS_SESSION_BUS_ADDRESS=f'unix:path=/run/user/{os.getuid()}/bus')
  def run(stage,cmd,stdout,memory):

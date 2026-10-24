@@ -1,0 +1,10 @@
+name = "acas_checked"
+defaultTargets = ["ACASChecked.Final"]
+
+[[require]]
+name = "TorchLean"
+git = "https://github.com/lean-dojo/TorchLean"
+rev = "a207636b40f1076981994b4a28e272a9bdc71750"
+
+[[lean_lib]]
+name = "ACASChecked"

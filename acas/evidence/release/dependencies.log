@@ -1,0 +1,100 @@
+info: acas_checked: no previous manifest, creating one from scratch
+info: TorchLean: materializing new dependency
+info: TorchLean: fetching revision 'a207636b40f1076981994b4a28e272a9bdc71750' from https://github.com/lean-dojo/TorchLean
+info: TorchLean: checking out revision 'a207636b40f1076981994b4a28e272a9bdc71750'
+info: toolchain not updated; already up-to-date
+info: mathlib: materializing new dependency
+info: mathlib: fetching revision '56a005855ea17e0b0958f73ec801ae140b0a1679' from https://github.com/leanprover-community/mathlib4
+info: mathlib: checking out revision '56a005855ea17e0b0958f73ec801ae140b0a1679'
+info: doc-gen4: materializing new dependency
+info: doc-gen4: fetching revision '0e1ffe2e4ba5ecfdfaf15c65b8d3805dbb7134ae' from https://github.com/leanprover/doc-gen4
+info: doc-gen4: checking out revision '0e1ffe2e4ba5ecfdfaf15c65b8d3805dbb7134ae'
+info: floatlib: materializing new dependency
+info: floatlib: fetching revision '1f5771b3e36a98f17fcac2c6d76aaa024b36aa37' from https://github.com/lean-dojo/FloatLib
+info: floatlib: checking out revision '1f5771b3e36a98f17fcac2c6d76aaa024b36aa37'
+info: plausible: materializing new dependency
+info: plausible: fetching revision 'dfa4f38190d07c37e315953e08b90fe2d95b3c24' from https://github.com/leanprover-community/plausible
+info: plausible: checking out revision 'dfa4f38190d07c37e315953e08b90fe2d95b3c24'
+info: LeanSearchClient: materializing new dependency
+info: LeanSearchClient: fetching revision 'd6b4c7be5be75ec4917c873ac50c756dc1436372' from https://github.com/leanprover-community/LeanSearchClient
+info: LeanSearchClient: checking out revision 'd6b4c7be5be75ec4917c873ac50c756dc1436372'
+info: importGraph: materializing new dependency
+info: importGraph: fetching revision 'a41f0e9a4dea23188ea9cc1c41ac9f8bbafe0b93' from https://github.com/leanprover-community/import-graph
+info: importGraph: checking out revision 'a41f0e9a4dea23188ea9cc1c41ac9f8bbafe0b93'
+info: proofwidgets: materializing new dependency
+info: proofwidgets: fetching revision 'df72b022e558978a1c50264cfc4d7fec86fa8e04' from https://github.com/leanprover-community/ProofWidgets4
+info: proofwidgets: checking out revision 'df72b022e558978a1c50264cfc4d7fec86fa8e04'
+info: aesop: materializing new dependency
+info: aesop: fetching revision '4a174c490d8707121c4a9290800489f105d85e07' from https://github.com/leanprover-community/aesop
+info: aesop: checking out revision '4a174c490d8707121c4a9290800489f105d85e07'
+info: Qq: materializing new dependency
+info: Qq: fetching revision 'dce0ad79c486cb1fb504af04f953c3466b0c6db8' from https://github.com/leanprover-community/quote4
+info: Qq: checking out revision 'dce0ad79c486cb1fb504af04f953c3466b0c6db8'
+info: batteries: materializing new dependency
+info: batteries: fetching revision '66e469188fe07963e5cf666c7d4433f45b8131c5' from https://github.com/leanprover-community/batteries
+info: batteries: checking out revision '66e469188fe07963e5cf666c7d4433f45b8131c5'
+info: leansqlite: materializing new dependency
+info: leansqlite: fetching revision '4ed2f27ecf81792abc8ff848670ac4356d0c4794' from https://github.com/leanprover/leansqlite
+info: leansqlite: checking out revision '4ed2f27ecf81792abc8ff848670ac4356d0c4794'
+info: Cli: materializing new dependency
+info: Cli: fetching revision 'c24fe6078c630e89b489bffe59b3e20ac30d12c8' from https://github.com/leanprover/lean4-cli
+info: Cli: checking out revision 'c24fe6078c630e89b489bffe59b3e20ac30d12c8'
+info: UnicodeBasic: materializing new dependency
+info: UnicodeBasic: fetching revision '6e48acac3a91665fcdc4a20d50b7ce6b7b41711f' from https://github.com/fgdorais/lean4-unicode-basic
+info: UnicodeBasic: checking out revision '6e48acac3a91665fcdc4a20d50b7ce6b7b41711f'
+info: BibtexQuery: materializing new dependency
+info: BibtexQuery: fetching revision '876b844aa52183cbcc0d82fdd4d1fc349f0dac34' from https://github.com/dupuisf/BibtexQuery
+info: BibtexQuery: checking out revision '876b844aa52183cbcc0d82fdd4d1fc349f0dac34'
+info: MD4Lean: materializing new dependency
+info: MD4Lean: fetching revision '31907cc18f48a95384f99cee5582c00fb39e0f67' from https://github.com/acmepjz/md4lean
+info: MD4Lean: checking out revision '31907cc18f48a95384f99cee5582c00fb39e0f67'
+info: mathlib: running post-update hooks
+✔ [2/8] Built Cache.Cli (605ms)
+✔ [4/12] Built Cache.Lean (968ms)
+✔ [5/12] Built Cache.Env (578ms)
+✔ [6/12] Built Batteries.Tactic.OpenPrivate (1.7s)
+✔ [7/12] Built Cache.Infra (623ms)
+✔ [9/42] Built Cache.Location (737ms)
+✔ [10/42] Built Cache.Cli:c.o (524ms)
+✔ [11/42] Built Cache.Lean:c.o (289ms)
+✔ [12/42] Built Cache.IO (2.1s)
+✔ [13/42] Built Cache.Env:c.o (290ms)
+✔ [14/42] Built Cache.Infra:c.o (302ms)
+✔ [15/42] Built Cache.Location:c.o (401ms)
+✔ [16/42] Built Batteries.Tactic.OpenPrivate:c.o (1.7s)
+✔ [17/42] Built Cache.Hashing (1.1s)
+✔ [18/42] Built Cache.IO:c.o (2.4s)
+✔ [19/42] Built Cache.Hashing:c.o (899ms)
+✔ [20/42] Built Cache.Requests (2.6s)
+✔ [21/42] Built Cache.Marker (675ms)
+✔ [22/42] Built Cache.Marker:c.o (254ms)
+✔ [23/42] Built Cache.Upload.Curl (696ms)
+✔ [24/42] Built Cache.Upload.Rclone (777ms)
+✔ [25/42] Built Cache.Query (815ms)
+✔ [26/42] Built Cache.Upload.Curl:c.o (346ms)
+✔ [27/42] Built Cache.Requests:c.o (3.8s)
+✔ [28/42] Built Cache.Upload.Rclone:c.o (412ms)
+✔ [29/42] Built Cache.Query:c.o (445ms)
+✔ [30/42] Built Cache.Upload.Azure (671ms)
+✔ [31/42] Built Cache.Upload.S3 (844ms)
+✔ [32/42] Built Cache.Upload.Azure:c.o (265ms)
+✔ [33/42] Built Cache.Warning (849ms)
+✔ [34/42] Built Cache.Upload.S3:c.o (474ms)
+✔ [35/42] Built Cache.Warning:c.o (528ms)
+✔ [36/42] Built Cache.Upload.Defs (692ms)
+✔ [37/42] Built Cache.Upload.Defs:c.o (294ms)
+✔ [38/42] Built Cache.Upload (682ms)
+✔ [39/42] Built Cache.Upload:c.o (200ms)
+✔ [40/42] Built Cache.Main (1.5s)
+✔ [41/42] Built Cache.Main:c.o (1.6s)
+✔ [42/42] Built cache:exe (1.9s)
+Current branch: HEAD
+Using cache from origin: (some leanprover-community/mathlib4)
+Decompressing 9030 already-cached file(s) (1 already decompressed)
+No files to download
+Decompressed 9030 already-cached file(s)
+Completed successfully in 25102 ms!
+Current branch: HEAD
+Using cache from origin: (some leanprover-community/mathlib4)
+No files to download
+Already decompressed 9031 file(s)

@@ -1,0 +1,20 @@
+{
+  "label": "measured counts and peaks; derived timing sums",
+  "leaves": 34,
+  "modules": 952,
+  "phases": {
+    "compile": {
+      "successful_runs_measured": 952,
+      "cpu_s_derived": 11890.26,
+      "sum_wall_s_derived": 11956.494370222092,
+      "peak_rss_kib_measured": 4539804.0
+    },
+    "replay": {
+      "successful_runs_measured": 952,
+      "cpu_s_derived": 20872.29,
+      "sum_wall_s_derived": 21271.15412402153,
+      "peak_rss_kib_measured": 4333392.0
+    }
+  },
+  "span_s_derived": 8406.510457515717
+}

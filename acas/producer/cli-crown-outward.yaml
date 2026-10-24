@@ -1,0 +1,23 @@
+general:
+  device: cpu
+model:
+  onnx_path: ../inputs/ACASXU_run2a_1_1_batch_2000.onnx
+specification:
+  vnnlib_path: ../inputs/prop-1-outward.vnnlib
+solver:
+  batch_size: 64
+  bound_prop_method: crown
+  alpha-crown:
+    iteration: 10
+bab:
+  timeout: 60
+  branching:
+    method: naive
+    input_split:
+      enable: True
+      reorder_bab: False
+  clip_n_verify:
+    clip_input_domain:
+      enabled: False
+attack:
+  pgd_order: skip

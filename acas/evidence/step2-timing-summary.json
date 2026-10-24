@@ -1,0 +1,465 @@
+{
+  "compile": {
+    "successful_runs": 136,
+    "cpu_s": 4250.58,
+    "elapsed_run_sum_s": 4271.205709695816,
+    "peak_rss_kib": 9380784.0
+  },
+  "replay": {
+    "successful_runs": 137,
+    "cpu_s": 4485.66,
+    "elapsed_run_sum_s": 4560.572219133377,
+    "peak_rss_kib": 8786584.0
+  },
+  "failed_or_stopped": [
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 33.216851234436035,
+      "cpu_s": 16.439999999999998,
+      "log": "logs/PackingBridge-1792803202430718642.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.265132665634155,
+      "cpu_s": 8.49,
+      "log": "logs/PackingBridge-1792803250295861546.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.33972454071045,
+      "cpu_s": 8.64,
+      "log": "logs/PackingBridge-1792803300846942369.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.433907508850098,
+      "cpu_s": 8.73,
+      "log": "logs/PackingBridge-1792803317537356495.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.382415294647217,
+      "cpu_s": 8.78,
+      "log": "logs/PackingBridge-1792803351092550926.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.150990724563599,
+      "cpu_s": 8.59,
+      "log": "logs/PackingBridge-1792803368059251966.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.440223693847656,
+      "cpu_s": 8.94,
+      "log": "logs/PackingBridge-1792803390917076917.log"
+    },
+    {
+      "module": "RealRules",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.297828674316406,
+      "cpu_s": 8.45,
+      "log": "logs/RealRules-1792803443748817774.log"
+    },
+    {
+      "module": "Probe",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.2793989181518555,
+      "cpu_s": 7.220000000000001,
+      "log": "logs/Probe-1792803453897873540.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 9.08126163482666,
+      "cpu_s": 9.1,
+      "log": "logs/PackingBridge-1792803471649626339.log"
+    },
+    {
+      "module": "RealRules",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.3826425075531,
+      "cpu_s": 8.41,
+      "log": "logs/RealRules-1792803476370331895.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.979319334030151,
+      "cpu_s": 9.51,
+      "log": "logs/PackingBridge-1792803493356687618.log"
+    },
+    {
+      "module": "PackingBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.785568714141846,
+      "cpu_s": 9.49,
+      "log": "logs/PackingBridge-1792803572050003161.log"
+    },
+    {
+      "module": "Probe",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.4348766803741455,
+      "cpu_s": 7.36,
+      "log": "logs/Probe-1792803584467004822.log"
+    },
+    {
+      "module": "LocalReceipt",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.894718647003174,
+      "cpu_s": 7.99,
+      "log": "logs/LocalReceipt-1792803636759400357.log"
+    },
+    {
+      "module": "CoverageSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 10.867980480194092,
+      "cpu_s": 10.84,
+      "log": "logs/CoverageSound-1792803663311447816.log"
+    },
+    {
+      "module": "Probe",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.599538803100586,
+      "cpu_s": 8.45,
+      "log": "logs/Probe-1792803674978523975.log"
+    },
+    {
+      "module": "CoverageSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.39529275894165,
+      "cpu_s": 8.41,
+      "log": "logs/CoverageSound-1792803699860435479.log"
+    },
+    {
+      "module": "CoverageSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 9.212400197982788,
+      "cpu_s": 9.23,
+      "log": "logs/CoverageSound-1792803751400054753.log"
+    },
+    {
+      "module": "EndpointRules",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 10.419142723083496,
+      "cpu_s": 11.21,
+      "log": "logs/EndpointRules-1792803790517592586.log"
+    },
+    {
+      "module": "CoverageSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.6900811195373535,
+      "cpu_s": 7.65,
+      "log": "logs/CoverageSound-1792803799970745100.log"
+    },
+    {
+      "module": "CoverageSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.23837661743164,
+      "cpu_s": 8.16,
+      "log": "logs/CoverageSound-1792803849938552176.log"
+    },
+    {
+      "module": "EndpointRules",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 10.170411586761475,
+      "cpu_s": 10.83,
+      "log": "logs/EndpointRules-1792803851055150200.log"
+    },
+    {
+      "module": "Probe",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.682126522064209,
+      "cpu_s": 7.619999999999999,
+      "log": "logs/Probe-1792803903511227534.log"
+    },
+    {
+      "module": "BackwardLists",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.895019292831421,
+      "cpu_s": 7.93,
+      "log": "logs/BackwardLists-1792804077805103866.log"
+    },
+    {
+      "module": "BackwardLists",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.747912406921387,
+      "cpu_s": 7.88,
+      "log": "logs/BackwardLists-1792804107183591909.log"
+    },
+    {
+      "module": "ReceiptComposition",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 3.0123651027679443,
+      "cpu_s": 2.94,
+      "log": "logs/ReceiptComposition-1792804166376024487.log"
+    },
+    {
+      "module": "ReceiptComposition",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.783537864685059,
+      "cpu_s": 9.129999999999999,
+      "log": "logs/ReceiptComposition-1792804200004164234.log"
+    },
+    {
+      "module": "DualSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 0.3219025135040283,
+      "cpu_s": 0.28,
+      "log": "logs/DualSound-1792804224154280462.log"
+    },
+    {
+      "module": "DualSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 9.842268466949463,
+      "cpu_s": 9.93,
+      "log": "logs/DualSound-1792804269634438595.log"
+    },
+    {
+      "module": "MatrixLists",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.085909128189087,
+      "cpu_s": 8.030000000000001,
+      "log": "logs/MatrixLists-1792804332068726952.log"
+    },
+    {
+      "module": "GridNetwork",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 10.325862646102905,
+      "cpu_s": 10.280000000000001,
+      "log": "logs/GridNetwork-1792804417929068870.log"
+    },
+    {
+      "module": "RawReceipt",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.454838275909424,
+      "cpu_s": 8.55,
+      "log": "logs/RawReceipt-1792804577419081429.log"
+    },
+    {
+      "module": "RawReceipt",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 19.67084813117981,
+      "cpu_s": 22.64,
+      "log": "logs/RawReceipt-1792804607573224535.log"
+    },
+    {
+      "module": "RawColumns",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 0.3438715934753418,
+      "cpu_s": 0.29000000000000004,
+      "log": "logs/RawColumns-1792804637708636699.log"
+    },
+    {
+      "module": "SelectedWitness",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.849889516830444,
+      "cpu_s": 9.35,
+      "log": "logs/SelectedWitness-1792804745322728339.log"
+    },
+    {
+      "module": "FinalWitness",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.617708921432495,
+      "cpu_s": 8.75,
+      "log": "logs/FinalWitness-1792804763909891633.log"
+    },
+    {
+      "module": "SelectedWitness",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.458003997802734,
+      "cpu_s": 9.04,
+      "log": "logs/SelectedWitness-1792804776806383803.log"
+    },
+    {
+      "module": "FinalWitness",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.200954914093018,
+      "cpu_s": 8.379999999999999,
+      "log": "logs/FinalWitness-1792804793551095641.log"
+    },
+    {
+      "module": "FinalWitness",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.954955101013184,
+      "cpu_s": 8.17,
+      "log": "logs/FinalWitness-1792804822916493270.log"
+    },
+    {
+      "module": "RawLeafSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.264034509658813,
+      "cpu_s": 8.31,
+      "log": "logs/RawLeafSound-1792804885668167407.log"
+    },
+    {
+      "module": "SelectedWitness",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.641790390014648,
+      "cpu_s": 9.19,
+      "log": "logs/SelectedWitness-1792804940045691952.log"
+    },
+    {
+      "module": "GridEvaluation",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.034320592880249,
+      "cpu_s": 7.92,
+      "log": "logs/GridEvaluation-1792804953154993369.log"
+    },
+    {
+      "module": "RawLeafSound",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 8.353561639785767,
+      "cpu_s": 8.4,
+      "log": "logs/RawLeafSound-1792804976988320869.log"
+    },
+    {
+      "module": "TensorBridge",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 13.34467363357544,
+      "cpu_s": 11.95,
+      "log": "logs/TensorBridge-1792805178442823817.log"
+    },
+    {
+      "module": "Instances.Leaf38",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 117.13854146003723,
+      "cpu_s": 119.41000000000001,
+      "log": "logs/Instances.Leaf38-1792805091553575184.log"
+    },
+    {
+      "module": "Parameters2",
+      "phase": "compile",
+      "status": 143,
+      "wall_s": 159.41765475273132,
+      "cpu_s": null,
+      "log": "logs/Parameters2-1792805098494329724.log"
+    },
+    {
+      "module": "Parameters1",
+      "phase": "compile",
+      "status": 143,
+      "wall_s": 160.7007291316986,
+      "cpu_s": null,
+      "log": "logs/Parameters1-1792805098473883182.log"
+    },
+    {
+      "module": "Parameters4",
+      "phase": "compile",
+      "status": 255,
+      "wall_s": 84.82873511314392,
+      "cpu_s": null,
+      "log": "logs/Parameters4-1792805257969285012.log"
+    },
+    {
+      "module": "Parameters3",
+      "phase": "compile",
+      "status": 255,
+      "wall_s": 84.05499172210693,
+      "cpu_s": null,
+      "log": "logs/Parameters3-1792805259227886830.log"
+    },
+    {
+      "module": "SliceLists",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 7.581435918807983,
+      "cpu_s": 7.54,
+      "log": "logs/SliceLists-1792805407057053986.log"
+    },
+    {
+      "module": "CoverageInstance",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 10.349690675735474,
+      "cpu_s": 9.18,
+      "log": "logs/CoverageInstance-1792805755695506119.log"
+    },
+    {
+      "module": "FrozenAcceptance",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 9.385060548782349,
+      "cpu_s": 9.27,
+      "log": "logs/FrozenAcceptance-1792805873687741573.log"
+    },
+    {
+      "module": "CoverageInstance",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 11.295458793640137,
+      "cpu_s": 11.55,
+      "log": "logs/CoverageInstance-1792806021817801427.log"
+    },
+    {
+      "module": "Final",
+      "phase": "compile",
+      "status": 1,
+      "wall_s": 9.017309665679932,
+      "cpu_s": 9.61,
+      "log": "logs/Final-1792807301524488301.log"
+    }
+  ],
+  "module_count": 121,
+  "axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "derived_elapsed_span_s": 4321.42528963089,
+  "derived_launch_wait_concurrency_peak": 5,
+  "disk_free_bytes_measured": 119844163584
+}

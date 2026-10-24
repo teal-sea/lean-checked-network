@@ -243,3 +243,10 @@ step by step is exact arithmetic in Python, not yet in Lean.
 
 MIT (see `LICENSE`). To cite this work, use `CITATION.cff` (GitHub's "Cite this repository"
 button reads it).
+
+## ACAS Xu certificate checking
+
+The [ACAS certificate project](acas/) checks an exported alpha-beta-CROWN input-split
+certificate for the frozen ACAS Xu network 1_1, property 1, and connects it to a Lean
+real-arithmetic safety theorem. Its [status](acas/STATUS.md) records the release gates,
+measurements and limits.

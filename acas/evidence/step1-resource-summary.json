@@ -1,0 +1,17 @@
+{
+  "labels": {
+    "recorded_cpu_seconds": "measured sum of recorded completed runs, includes Python",
+    "elapsed_host_capacity_upper_cpu_hours": "derived conservative bound, all available CPUs for entire session"
+  },
+  "recorded_cpu_seconds": 4640.526737749,
+  "recorded_cpu_hours": 1.2890352049302778,
+  "untimed_initial_bootstraps": true,
+  "conservative_start_utc": "2026-10-23T16:38:00+00:00",
+  "end_utc": "2026-10-23T17:31:34.556522+00:00",
+  "available_cpus_measured": 32,
+  "elapsed_host_capacity_upper_cpu_hours": 28.57383575111111,
+  "lean_budget_cpu_hours_reported": 48,
+  "all_final_proof_audits_pass": true,
+  "no_active_lean_pilots": true,
+  "operational_deviations": "Initial bootstrap not in dedicated MemoryMax cgroups; brief five-process overlap of two short diagnostics with three jobs. See REPORT.md."
+}

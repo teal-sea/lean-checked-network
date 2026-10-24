@@ -1,0 +1,81 @@
+{
+  "new_compile": {
+    "successful_runs_measured": 1091,
+    "cpu_seconds_derived": 16117.26,
+    "sum_wall_seconds_derived": 16183.807801961899,
+    "max_rss_kib_measured": 9594708.0
+  },
+  "new_replay": {
+    "successful_runs_measured": 1091,
+    "cpu_seconds_derived": 26232.83,
+    "sum_wall_seconds_derived": 26703.03359222412,
+    "max_rss_kib_measured": 8985360.0
+  },
+  "dependency_compile": {
+    "successful_runs_measured": 793,
+    "cpu_seconds_derived": 2828.92,
+    "sum_wall_seconds_derived": 2594.332704305649,
+    "max_rss_kib_measured": 2174248.0
+  },
+  "dependency_replay": {
+    "successful_runs_measured": 569,
+    "cpu_seconds_derived": 8686.28,
+    "sum_wall_seconds_derived": 8671.607995986938,
+    "max_rss_kib_measured": 5279284.0
+  },
+  "build_replay_elapsed_span_seconds_derived": 14407.25777721405,
+  "failed_proof_runs": [
+    {
+      "module": "FloatLib.Floats.ExecFloat.Backends.Word.Full.Subtraction.Proof",
+      "phase": "replay",
+      "status": 143,
+      "started_unix": 1792820697.0716856,
+      "wall_s": 2338.6050102710724,
+      "source_sha256": "6a789d9002c8505b2952569a267f029e4eb23ed543d8e1d73d7ee177631cbda3",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--quiet",
+        "--wait",
+        "--pipe",
+        "--slice=certcheck.slice",
+        "--unit=acas-2-1792820697071681081",
+        "-pMemoryMax=16G",
+        "-pCPUAffinity=4-5",
+        "-pWorkingDirectory=/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean",
+        "/usr/bin/env",
+        "LEAN_PATH=/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/BibtexQuery/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/Cli/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/MD4Lean/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/Qq/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/TorchLean/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/UnicodeBasic/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/aesop/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/batteries/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/doc-gen4/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/floatlib/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/importGraph/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/leansqlite/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/mathlib/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/plausible/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/lcn-finish-20261017/ovh/toolchain/lean-4.35.0-linux/lib/lean",
+        "LEAN_NUM_THREADS=2",
+        "OMP_NUM_THREADS=2",
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/Users/thomas/.hermes/artifacts/cert-checker/release/logs/FloatLib.Floats.ExecFloat.Backends.Word.Full.Subtraction.Proof-replay-1792820697071604964.time",
+        "taskset",
+        "-c",
+        "4-5",
+        "/usr/bin/env",
+        "-i",
+        "PATH=/Users/thomas/.hermes/artifacts/lcn-finish-20261017/ovh/toolchain/lean-4.35.0-linux/bin:/usr/bin:/bin",
+        "HOME=/Users/thomas/.hermes/artifacts/cert-checker/release/scratch",
+        "TMPDIR=/Users/thomas/.hermes/artifacts/cert-checker/release/scratch",
+        "LEAN_PATH=/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/BibtexQuery/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/Cli/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/MD4Lean/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/Qq/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/TorchLean/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/UnicodeBasic/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/aesop/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/batteries/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/doc-gen4/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/floatlib/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/importGraph/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/leansqlite/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/mathlib/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/plausible/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/cert-checker/release/clean/acas/lean/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/thomas/.hermes/artifacts/lcn-finish-20261017/ovh/toolchain/lean-4.35.0-linux/lib/lean",
+        "LEAN_NUM_THREADS=2",
+        "/Users/thomas/.hermes/artifacts/lcn-finish-20261017/ovh/toolchain/lean-4.35.0-linux/bin/leanchecker",
+        "-v",
+        "FloatLib.Floats.ExecFloat.Backends.Word.Full.Subtraction.Proof"
+      ],
+      "log": "/Users/thomas/.hermes/artifacts/cert-checker/release/logs/FloatLib.Floats.ExecFloat.Backends.Word.Full.Subtraction.Proof-replay-1792820697071604964.log",
+      "time": "/Users/thomas/.hermes/artifacts/cert-checker/release/logs/FloatLib.Floats.ExecFloat.Backends.Word.Full.Subtraction.Proof-replay-1792820697071604964.time",
+      "label": "measured",
+      "olean_sha256": "ff45a1871116e933f7f95d884c0972b11e2417b1fb64b4f33c9155bd3977a58c",
+      "user_s": 2299.14,
+      "sys_s": 25.51,
+      "rss_kib": 12240264.0
+    }
+  ],
+  "updated_utc_measured": "2026-10-24T09:33:55.553156+00:00",
+  "source_modules_measured": 1091,
+  "complete_modules_measured": 1091,
+  "replayed_modules_measured": 1091
+}

@@ -1,0 +1,99 @@
+pass with listed edits
+
+1. [NOTE] Frozen statement is correct; no change to Spec.lean or Net.lean requested.
+   Spec.lean:4-12 states the CLOSED componentwise box, in X_0,...,X_4 order:
+   lo=(3/5,-1/2,-1/2,9/20,-1/2),
+   hi=(679857769/1000000000,1/2,1/2,1/2,-9/20).
+   Independent complete S-expression parsing of prop_1.vnnlib found exactly ten input bounds
+   and Y_0 >= 3.991125645861615. Its safety complement is precisely the stated strict inequality
+   against 3991125645861615/1000000000000000, interpreted in Real, not a floating threshold.
+   Output getScalar 0 is Y_0. No boundary, coordinate, normalization or comparison weakening found.
+   Inspected TorchLean CROWNQuery.lean:208-217, Module/Core.lean:53-60,
+   Layers/Linear.lean:45-61, Core/Tensor/Linalg.lean:74-80 and Layers/Activation.lean:76-87,346-348:
+   model casts the exact rational parameters to reals, composes forward left-to-right, computes
+   W*x+b and pointwise max(x,0), and ignores alpha. Its special ReLU zero branch equals ordinary
+   max on Real/Rat. Tensor arrays are row-major. This is the intended plain dense/ReLU network.
+   TorchLean HEAD independently read as a207636b40f1076981994b4a28e272a9bdc71750;
+   git status showed no changes to the inspected network/module/linear/activation source paths.
+
+2. [NOTE] Import independently verified, exceeding the requested spot-check; no parameter edits.
+   Used ONNX 1.23.2's protobuf decoder and checker.check_model, NOT importer.decode.
+   Converted raw little-endian float32 words through struct.unpack and Fraction.from_float;
+   binary32-to-Python-binary64 conversion is exact. Independently parsed Net.lean Rat literals.
+   All 13000 weights and all 305 biases agree exactly, with zero mismatches across seven layers.
+   This includes every one of layer0's 250 weights and 50 biases, not just 50 sampled entries.
+   ONNX [in,out] shapes are [5,50], five [50,50], [50,5]; Lean stores their single transpose:
+   Lean w_k[j,i] = ONNX W_k[i,j]. Examples from layer0:
+   W[0,0]=14497179/268435456; W[1,0]=-684437/262144;
+   W[4,49]=-8655299/33554432; b[0]=15275991/67108864; b[49]=5902795/33554432.
+   Independently inspected every node/input/output/attribute: IR3/opset8, identity Sub,
+   Flatten(axis=1), six MatMul/Add/ReLU blocks, final MatMul/Add; no output transform.
+   input_AvgImg has shape [1,1,1,5] and five exact zeros. Flatten preserves coordinate order.
+   Legacy initializer graph inputs are fixed parameters here, not universally quantified overrides.
+   Independent exact forward evaluation reproduced all 100 outputs on the 20 distinct in-box
+   inputs; Agreement.lean's input/expected literals also match agreement.json exactly.
+   Scratch importer regeneration reproduced Net.lean, Spec.lean, Agreement.lean, agreement.json
+   and manifest.json byte-for-byte; all 11 importer tests independently reran successfully.
+   The restricted regex property reader and protobuf reader are not general-purpose validators;
+   their limitations do not change this result because main validates the exact frozen hashes.
+
+3. [NOTE] Rounding.lean's 20 local lemmas have the correct mathematical statements.
+   Positive-divisor signed Euclidean floor/ceil, real enclosure, outward sum/four-corner product,
+   stable ReLU, global alpha lower line, crossing-zero upper secant and intersection are sound.
+   The secant requires l<0<u and l<=x<=u; the lower line requires 0<=alpha<=1.
+   PROFILE.md correctly forbids midpoint sign decisions, uncorrected rounded slopes, unchecked
+   intersections and zero/negative divisors. integer_rounding proves executable grid enclosure;
+   down/up gap bounds concern the real specification, not yet an executable whole-checker theorem.
+
+3.1 [SHOULD-FIX] Complete the backward CROWN invariant before the bespoke Step 1b implementation.
+   PROFILE.md:35-38 encloses coefficients/bias but never explicitly relates each relaxed affine
+   form to the target quantity. Add: throughout the leaf box, lowerForm(x)<=target(x)<=upperForm(x);
+   coefficient/bias intervals enclose those exact RELAXED forms, not an alleged affine expression
+   equal to a nonlinear network. State the sign-sensitive substitution rule explicitly:
+   for q>=0 multiply lower/upper ReLU lines in the same order; for q<=0 reverse them.
+   For an uncertain-sign coefficient enclosure, derive a sound positive/negative decomposition
+   or interval bound; never select one line from a representative coefficient's sign.
+   Add/prove the corresponding local signed-substitution rule before claiming bespoke CROWN
+   soundness, and test negative and crossing-zero objective coefficients through a ReLU.
+   Existing four-corner multiplication alone does not establish this relational invariant.
+   Whole-loop induction, target-bound ordering and tree coverage remain later proof obligations;
+   they are not missing Step 0 global proofs. Step 1a can reuse TorchLean's proved transfers.
+
+4. [NOTE] FORMAT-v0.md's substantive safety rules are suitable for Step 1.
+   Reduced positive-denominator rationals and omitted-block alpha=0 are acceptable choices;
+   arbitrary legal alpha need not match the producer. Exact root containment, inherited boxes,
+   strictly interior shared CLOSED cuts and exactly-once full traversal establish the right
+   coverage premises. Rejecting unsupported features, malformed trees, unproved tightening,
+   inconsistent dependencies and equality at the final threshold is correct. No choice forces
+   an unsound checker; strict interior cuts merely disallow redundant/degenerate partitions.
+
+4.1 [SHOULD-FIX] Resolve the remaining schema/profile choices before writing a converter.
+   FORMAT-v0.md:37-46 is not yet unambiguous: block boundaries, zero-based indices, required-key
+   expansion, forward versus backward targets and upper-objective convention are unspecified.
+   Add a versioned pilot algorithm-profile table: affine layers 0..6, associated ReLUs 0..5,
+   legal targets/sides and consumed keys, dense block dimensions/order, dependency order,
+   and whether upper uses direct or negated-lower objectives. Define missing WHOLE block as
+   all zeros, then require exactly one value per key after expansion; reject partial/extra blocks.
+   Give the forward Query.check profile its single slope vector per ReLU rather than pretending
+   target-specific backward alpha arrays translate automatically. Freeze each pilot's profile.
+   Specify array position as node identity (or require serialized id==position), the concrete
+   serialization, and integer grammar 0|-?[1-9][0-9]*, excluding +0/-0/whitespace/exponents;
+   rational examples on the wire are ["0","1"], etc., not JSON numeric scalars.
+   Optional proposals may remain unsupported/rejected in a pilot. These are interoperability
+   edits, not permission to accept unchecked hints or alter the frozen theorem.
+
+5. [NOTE] No open BLOCKER to Step 1 after the listed contract clarifications.
+   Approval covers bounded pilots in PLAN.md only, not full safety, release or deployment claims.
+   Independently reran sha256sum -c SHA256SUMS: all 21 entries pass. Source hashes are
+   ONNX 843f7110bf5a8b7f0eeb9b1c548d9d558db9099328b392423d5a7444a0656dd4 and
+   VNNLIB 7a9a9930711817c6cc39940f5c1d0f8c51f2ed82f38e203c4b5de03c19bd4ced.
+   Existing validation.json and final module logs/time files report six successful Lean modules,
+   20 local lemma axiom audits, the bridge, four arithmetic fixtures and 20 true agreement results.
+   Their listed axiom closures contain only the standard allowed axioms. Earlier development
+   compile/hash failures remain visible in codex.out; they are not the final validation outcome.
+   No new Lean/kernel/nanoda execution was performed for this review; compilation/axiom results
+   are inspected recorded evidence, not an independently reproduced build or safety proof.
+   One initial ONNX import probe failed from inherited Python-path contamination; isolated -I
+   execution succeeded. Review executions: 11/11 importer tests, 100/100 exact output comparisons,
+   13305/13305 parameter comparisons, zero mathematical mismatches. Only this review was written
+   in the artifact tree; importer-generated files are confined to the authorized scratch copy.

@@ -1,0 +1,15 @@
+{
+  "leaves": 34,
+  "all_positive": true,
+  "total_q": 3732,
+  "average_q": 109.76470588235294,
+  "min_margin": 0.00013212427357898825,
+  "total_receipt_ops": 38011841,
+  "total_ops": 188015141,
+  "audit_seconds": 14.509525331988698,
+  "average_receipt_ops": 1117995.3235294118,
+  "average_ops": 5529857.088235294,
+  "gate1_limit": 845452.2,
+  "gate1": false,
+  "ratio_old_to_new": 1.5288861656093962
+}

@@ -1,0 +1,96 @@
+[
+  {
+    "experiment": "Net",
+    "status": "pass",
+    "label": "measured",
+    "timestamp": "2026-10-23T16:31:15.473319+00:00",
+    "user_seconds": 63.03,
+    "system_seconds": 2.71,
+    "max_rss_kib": 4540380,
+    "axiom_outputs": []
+  },
+  {
+    "experiment": "Spec",
+    "status": "pass",
+    "label": "measured",
+    "timestamp": "2026-10-23T16:31:15.473319+00:00",
+    "user_seconds": 2.6,
+    "system_seconds": 1.41,
+    "max_rss_kib": 3785144,
+    "axiom_outputs": []
+  },
+  {
+    "experiment": "Rounding",
+    "status": "pass",
+    "label": "measured",
+    "timestamp": "2026-10-23T16:31:15.473319+00:00",
+    "user_seconds": 6.3,
+    "system_seconds": 2.82,
+    "max_rss_kib": 6789376,
+    "axiom_outputs": [
+      "'Profile.floorDiv_bounds' depends on axioms: [propext]",
+      "'Profile.ceilDiv_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.scale_pos' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.down_le' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.le_up' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.down_gap' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.up_gap' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.floorDiv_real' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.ceilDiv_real' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.relu_interval' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.relu_inactive' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.relu_active' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.integer_rounding' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.mul_between' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.product_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.rounded_sum' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.rounded_product' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.relu_lower' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.relu_secant' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.intersection' depends on axioms: [propext, Classical.choice, Quot.sound]"
+    ]
+  },
+  {
+    "experiment": "Bridge",
+    "status": "pass",
+    "label": "measured",
+    "timestamp": "2026-10-23T16:31:15.473319+00:00",
+    "user_seconds": 2.99,
+    "system_seconds": 1.53,
+    "max_rss_kib": 3795900,
+    "axiom_outputs": [
+      "'Frozen.evalQ_real' depends on axioms: [propext, Classical.choice, Quot.sound]"
+    ]
+  },
+  {
+    "experiment": "ArithmeticExamples",
+    "status": "pass",
+    "label": "measured",
+    "timestamp": "2026-10-23T16:31:15.473319+00:00",
+    "user_seconds": 4.53,
+    "system_seconds": 2.74,
+    "max_rss_kib": 6746912,
+    "axiom_outputs": [
+      "'Profile.crossing_zero_fixture' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'Profile.strict_threshold_fixture' depends on axioms: [propext, Classical.choice, Quot.sound]"
+    ]
+  },
+  {
+    "experiment": "Agreement",
+    "status": "pass",
+    "label": "measured",
+    "timestamp": "2026-10-23T16:31:15.473319+00:00",
+    "user_seconds": 7.01,
+    "system_seconds": 1.53,
+    "max_rss_kib": 3813180,
+    "axiom_outputs": []
+  },
+  {
+    "experiment": "importer-controls",
+    "label": "measured",
+    "status": "pass",
+    "tests": 11,
+    "log": "importer-tests.log",
+    "timestamp": "2026-10-23T16:31:15.473319+00:00"
+  }
+]

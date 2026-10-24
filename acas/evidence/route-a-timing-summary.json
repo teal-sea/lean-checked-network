@@ -1,0 +1,181 @@
+{
+  "label": "measured",
+  "data": [
+    {
+      "name": "datanc0",
+      "cpu_s": 16.330000000000002,
+      "rss_KiB": 1887940.0,
+      "exit": 0.0
+    },
+    {
+      "name": "datanc1",
+      "cpu_s": 25.3,
+      "rss_KiB": 2027756.0,
+      "exit": 0.0
+    },
+    {
+      "name": "datanc2",
+      "cpu_s": 20.150000000000002,
+      "rss_KiB": 1953172.0,
+      "exit": 0.0
+    },
+    {
+      "name": "datanc3",
+      "cpu_s": 14.0,
+      "rss_KiB": 1835716.0,
+      "exit": 0.0
+    },
+    {
+      "name": "datanc4",
+      "cpu_s": 9.18,
+      "rss_KiB": 1743904.0,
+      "exit": 0.0
+    },
+    {
+      "name": "datanc5",
+      "cpu_s": 3.4899999999999998,
+      "rss_KiB": 1642296.0,
+      "exit": 0.0
+    },
+    {
+      "name": "nodedatanc-fixed",
+      "cpu_s": 2.91,
+      "rss_KiB": 1647140.0,
+      "exit": 0.0
+    }
+  ],
+  "acceptance": [
+    {
+      "name": "packednc0",
+      "cpu_s": 3.1900000000000004,
+      "rss_KiB": 1915668.0,
+      "exit": 0.0
+    },
+    {
+      "name": "packednc1",
+      "cpu_s": 4.779999999999999,
+      "rss_KiB": 2175780.0,
+      "exit": 0.0
+    },
+    {
+      "name": "packednc2",
+      "cpu_s": 4.859999999999999,
+      "rss_KiB": 2080060.0,
+      "exit": 0.0
+    },
+    {
+      "name": "packednc3",
+      "cpu_s": 3.6599999999999997,
+      "rss_KiB": 1897548.0,
+      "exit": 0.0
+    },
+    {
+      "name": "packednc4",
+      "cpu_s": 3.1500000000000004,
+      "rss_KiB": 1775396.0,
+      "exit": 0.0
+    },
+    {
+      "name": "packednc5",
+      "cpu_s": 2.19,
+      "rss_KiB": 1659828.0,
+      "exit": 0.0
+    },
+    {
+      "name": "chunknc0",
+      "cpu_s": 14.13,
+      "rss_KiB": 2035016.0,
+      "exit": 0.0
+    },
+    {
+      "name": "chunknc1",
+      "cpu_s": 16.85,
+      "rss_KiB": 2489804.0,
+      "exit": 0.0
+    },
+    {
+      "name": "chunknc2",
+      "cpu_s": 34.580000000000005,
+      "rss_KiB": 3135580.0,
+      "exit": 0.0
+    },
+    {
+      "name": "chunknc3",
+      "cpu_s": 41.79,
+      "rss_KiB": 3757496.0,
+      "exit": 0.0
+    },
+    {
+      "name": "chunknc4",
+      "cpu_s": 64.58,
+      "rss_KiB": 4546972.0,
+      "exit": 0.0
+    },
+    {
+      "name": "chunknc5",
+      "cpu_s": 16.009999999999998,
+      "rss_KiB": 3255772.0,
+      "exit": 0.0
+    },
+    {
+      "name": "shapenc",
+      "cpu_s": 16.29,
+      "rss_KiB": 3218708.0,
+      "exit": 0.0
+    },
+    {
+      "name": "endpointnc0-fixed",
+      "cpu_s": 1.8900000000000001,
+      "rss_KiB": 1639132.0,
+      "exit": 0.0
+    },
+    {
+      "name": "endpointnc1-fixed",
+      "cpu_s": 3.18,
+      "rss_KiB": 1771092.0,
+      "exit": 0.0
+    },
+    {
+      "name": "endpointnc2-fixed",
+      "cpu_s": 3.1799999999999997,
+      "rss_KiB": 1766484.0,
+      "exit": 0.0
+    },
+    {
+      "name": "endpointnc3-fixed",
+      "cpu_s": 3.1700000000000004,
+      "rss_KiB": 1770916.0,
+      "exit": 0.0
+    },
+    {
+      "name": "endpointnc4-fixed",
+      "cpu_s": 3.16,
+      "rss_KiB": 1768832.0,
+      "exit": 0.0
+    },
+    {
+      "name": "endpointnc5-fixed",
+      "cpu_s": 3.18,
+      "rss_KiB": 1779404.0,
+      "exit": 0.0
+    },
+    {
+      "name": "marginnc-fixed",
+      "cpu_s": 15.76,
+      "rss_KiB": 3253944.0,
+      "exit": 0.0
+    },
+    {
+      "name": "acceptnc-fixed",
+      "cpu_s": 1.65,
+      "rss_KiB": 1627144.0,
+      "exit": 0.0
+    }
+  ],
+  "data_cpu_s": 91.36,
+  "acceptance_cpu_s": 261.23,
+  "total_cpu_s": 352.59000000000003,
+  "projection_34_cpu_h_derived": 3.330016666666667,
+  "peak_process_rss_KiB": 4546972.0,
+  "arithmetic_gate": true
+}

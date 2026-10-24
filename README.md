@@ -2,7 +2,7 @@
 
 [![check](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml/badge.svg)](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml)
 
-## A trained transformer, checked from its weights
+![A 113 by 113 square, one cell per input pair (a, b). Each cell is shaded by the proved answer (a + b) mod 113: dark for 0, light for 112. The shade brightens from the top left to the anti-diagonal, snaps back to dark, and brightens again to the bottom right. Beside it: 12,769 input pairs, every cell proved by Lean's kernel, integer weights at S = 256, exact real softmax.](transformer/figures/all-pairs.svg)
 
 A one-layer, four-head transformer adds modulo 113 correctly on all 12,769 input
 pairs. The model uses quantised integer weights at `S = 256` and exact real softmax.
@@ -30,16 +30,7 @@ and the [evidence release](https://github.com/teal-sea/lean-checked-network/rele
 
 ## ACAS Xu certificate checking
 
-The [ACAS certificate project](acas/) checks an exported alpha-beta-CROWN input-split
-certificate for the frozen ACAS Xu network 1_1, property 1, and connects it to a Lean
-real-arithmetic safety theorem. Its [status](acas/STATUS.md) records the release gates,
-measurements and limits.
-
-AI agents have now built a Lean check of an alpha-beta-CROWN certificate for ACAS Xu network 1_1, property 1, from the VNN-COMP benchmark, using TorchLean’s exact network semantics. The theorem is `ACASChecked.acas_1_1_property1 : Frozen.ACASXu_1_1_Property1`, with standard axioms only.
-
-The committed certificate has 34 leaves. In the pilot run, kernel acceptance of all leaves took 38.10 minutes wall time and 3.46 CPU-hours (rounded from 3.4594); this was the arithmetic pilot, not the full release build. The final theorem uses only `propext`, `Classical.choice`, and `Quot.sound`. Nanoda checked 59,489 declarations with zero typechecker errors and one axiom pretty-printer error. Four rejection controls and 26 Python tests passed.
-
-The theorem covers the frozen exact real-arithmetic network only. The ONNX importer is audited, not proved correct; IEEE execution, other networks or properties, and aircraft behavior remain outside the claim.
+Lean checks an alpha-beta-CROWN certificate for the frozen exact-real ACAS Xu network 1_1, property 1, using TorchLean semantics; see the [ACAS evidence and limits](acas/README.md).
 
 ## Earlier MLP result
 

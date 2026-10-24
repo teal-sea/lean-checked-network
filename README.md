@@ -28,6 +28,19 @@ pairs. The model uses quantised integer weights at `S = 256` and exact real soft
 Read the [status](transformer/STATUS.md), the [Kronecker method note](transformer/mathlib/KRONECKER.md),
 and the [evidence release](https://github.com/teal-sea/lean-checked-network/releases/tag/transformer-final-raw-evidence).
 
+## ACAS Xu certificate checking
+
+The [ACAS certificate project](acas/) checks an exported alpha-beta-CROWN input-split
+certificate for the frozen ACAS Xu network 1_1, property 1, and connects it to a Lean
+real-arithmetic safety theorem. Its [status](acas/STATUS.md) records the release gates,
+measurements and limits.
+
+AI agents have now built a Lean check of an alpha-beta-CROWN certificate for ACAS Xu network 1_1, property 1, from the VNN-COMP benchmark, using TorchLean’s exact network semantics. The theorem is `ACASChecked.acas_1_1_property1 : Frozen.ACASXu_1_1_Property1`, with standard axioms only.
+
+The committed certificate has 34 leaves. In the pilot run, kernel acceptance of all leaves took 38.10 minutes wall time and 3.46 CPU-hours (rounded from 3.4594); this was the arithmetic pilot, not the full release build. The final theorem uses only `propext`, `Classical.choice`, and `Quot.sound`. Nanoda checked 59,489 declarations with zero typechecker errors and one axiom pretty-printer error. Four rejection controls and 26 Python tests passed.
+
+The theorem covers the frozen exact real-arithmetic network only. The ONNX importer is audited, not proved correct; IEEE execution, other networks or properties, and aircraft behavior remain outside the claim.
+
 ## Earlier MLP result
 
 A small neural network learned to add on a clock with 113 hours: given two numbers `a` and
@@ -271,10 +284,3 @@ step by step is exact arithmetic in Python, not yet in Lean.
 
 MIT (see `LICENSE`). To cite this work, use `CITATION.cff` (GitHub's "Cite this repository"
 button reads it).
-
-## ACAS Xu certificate checking
-
-The [ACAS certificate project](acas/) checks an exported alpha-beta-CROWN input-split
-certificate for the frozen ACAS Xu network 1_1, property 1, and connects it to a Lean
-real-arithmetic safety theorem. Its [status](acas/STATUS.md) records the release gates,
-measurements and limits.

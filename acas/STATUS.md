@@ -16,7 +16,7 @@ No larger-model or deployment result is claimed.
 | Clean-environment Lean kernel replay of every new module | running with the build | per-module state and logs |
 | nanoda on final theorem closure, hard standard-axiom allowlist | pending | `gen/nanoda.py` |
 | Changed weight, corrupted dual, coverage gap, real unsafe weight | pending on packaged bytes | `ControlWeight`, `ControlDual`, `CoverageControl`, `UnsafeControl13` |
-| Byte-for-byte regeneration of every generated Lean file | passed: 1,054 generated files match (measured, 2026-10-24) | `gen/regenerate.py --check` |
+| Byte-for-byte regeneration of every generated Lean file | passed: 1,055 generated files match (measured, 2026-10-24) | `gen/regenerate.py --check` |
 | Python tests | 26 passed (measured, 2026-10-24) | captured pytest output |
 | Independent exact Python receipt replay | all 34 passed; three stale/corrupt receipt controls rejected (measured, 2026-10-24) | `gen/independent.py` |
 | Existing repository CI | passed on initial published head 702695a (measured, 2026-10-24); final evidence head will be checked | existing workflows unchanged; captured check-runs response |

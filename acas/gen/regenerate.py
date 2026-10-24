@@ -6,7 +6,7 @@ G=Path(__file__).resolve().parent; A=G.parent; L=A/'lean/ACASChecked'
 
 def generated(p):
  s=str(p)
- return (p.parts[0].startswith('N') and p.parts[0][1:].isdigit()) or p.parts[0] in ('Instances','ParamChunks') or p.stem in ('Net','Spec','Weights','CoverageData','AllLeaves','ControlDual','ControlWeight','UnsafeNode13','UnsafeControl13','CoverageControl','Final') or p.stem.startswith('Parameters')
+ return (p.parts[0].startswith('N') and p.parts[0][1:].isdigit()) or p.parts[0] in ('Instances','ParamChunks') or p.stem in ('Net','Spec','Weights','CoverageData','AllLeaves','ControlDual','ControlWeight','UnsafeNode13','UnsafeControl13','CoverageControl','Final','NodeNC') or p.stem.startswith('Parameters')
 
 def rename(s):
  mods={str(p.relative_to(L).with_suffix('')).replace('/','.') for p in L.rglob('*.lean')}
@@ -65,6 +65,8 @@ def main():
   parameters(out)
   from generate_final import render
   (out/'Final.lean').write_text(render(json.loads((out/'leaves.json').read_text())))
+  from generate_core import render as render_core
+  (out/'NodeNC.lean').write_text(render_core((G/'templates/Node.lean').read_text()))
   (out/'CoverageControl.lean').write_text((G/'templates/CoverageControl.lean').read_text())
   bad=[];files=[]
   for dest in sorted(L.rglob('*.lean')):

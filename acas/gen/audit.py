@@ -20,7 +20,7 @@ def main():
  if not logs:raise ValueError('no final compilation log in build state')
  line=next(line for line in logs[-1].read_text().splitlines() if "'ACASChecked.acas_1_1_property1' depends on axioms:" in line)
  axioms=re.search(r'\[(.*)\]',line)[1].split(', ')
- assert axioms==['propext','Classical.choice','Quot.sound'],axioms
+ assert len(axioms)==3 and set(axioms)=={'propext','Classical.choice','Quot.sound'},axioms
  result.update(axiom_line=line,axioms=axioms)
  print(json.dumps(result,indent=2))
 if __name__=='__main__':main()

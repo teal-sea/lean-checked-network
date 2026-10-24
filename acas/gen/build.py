@@ -11,7 +11,7 @@ def imports(p):
  return re.findall(r'(?m)^\s*(?:(?:public|private|meta)\s+)*import\s+(?:all\s+)?([\w.]+)',p.read_text())
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--replay',action='store_true');ap.add_argument('--only-replay',action='store_true');ap.add_argument('--jobs',type=int,default=4);ap.add_argument('--out',type=Path,default=A/'work/build');ap.add_argument('--all',action='store_true',help='include controls and auxiliary new modules');args=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--replay',action='store_true');ap.add_argument('--replay-dependencies',action='store_true',help='also replay unchanged pinned dependencies');ap.add_argument('--only-replay',action='store_true');ap.add_argument('--jobs',type=int,default=4);ap.add_argument('--out',type=Path,default=A/'work/build');ap.add_argument('--all',action='store_true',help='include controls and auxiliary new modules');args=ap.parse_args()
  if not 1<=args.jobs<=4:ap.error('jobs must be between 1 and 4')
  output=args.out.resolve();output.mkdir(parents=True,exist_ok=True);
  from toolchain import toolchain_bin
@@ -45,7 +45,8 @@ def main():
  def run(m,slot,fp):
   root,source,olean=modules[m];olean.parent.mkdir(parents=True,exist_ok=True)
   outcomes=[]
-  phases=['replay'] if args.only_replay else ['compile','replay'] if args.replay else ['compile']
+  verify=(args.replay or args.only_replay) and (root==L or args.replay_dependencies)
+  phases=(['replay'] if verify else []) if args.only_replay else ['compile']+(['replay'] if verify else [])
   for phase in phases:
    if shutil.disk_usage(output).free<45_000_000_000:raise RuntimeError('disk reserve reached')
    name=f'{m}-{phase}-{time.time_ns()}';log=output/'logs'/f'{name}.log';tim=log.with_suffix('.time');cpus=f'{slot*2}-{slot*2+1}'
@@ -67,14 +68,14 @@ def main():
     fcntl.flock(f,fcntl.LOCK_EX);f.write(json.dumps(record)+'\n')
    outcomes.append(record)
    if status:raise RuntimeError(f'{m} {phase}: {status}: {log}')
-  return dict(fingerprint=fp,source_sha256=sha(source),olean_sha256=sha(olean),replayed=args.replay or args.only_replay,outcomes=outcomes)
+  return dict(fingerprint=fp,source_sha256=sha(source),olean_sha256=sha(olean),replayed=verify,outcomes=outcomes)
  with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
   futures={}
   while len(done)<len(modules):
    for m in modules:
     if m in done or m in active or any(d in modules and d not in done for d in deps[m]):continue
     fp=fingerprint(m);old=state.get(m)
-    if old and old['fingerprint']==fp and modules[m][2].exists() and sha(modules[m][2])==old['olean_sha256'] and (not(args.replay or args.only_replay) or old['replayed']):done.add(m);continue
+    if old and old['fingerprint']==fp and modules[m][2].exists() and sha(modules[m][2])==old['olean_sha256'] and (not((args.replay or args.only_replay) and (modules[m][0]==L or args.replay_dependencies)) or old['replayed']):done.add(m);continue
     if not slots or fail:continue
     slot=slots.pop(0);futures[pool.submit(run,m,slot,fp)]=(m,slot);active.add(m)
    if not futures:

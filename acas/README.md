@@ -63,10 +63,11 @@ python3 gen/independent.py
 ```
 
 `build.py` is the documented source-build command. It schedules at most four Lean jobs
-with two threads each, each in `certcheck.slice` with `MemoryMax=16G`, and replays new
-modules under an explicit `env -i` environment. Those are resource settings. It builds
+with two threads each, each in `certcheck.slice` with `MemoryMax=16G`, and replays every new ACAS
+module under an explicit `env -i` environment. Those are resource settings. It builds
 TorchLean's needed modules from the pinned sources and accepts Mathlib's official cache;
-it never copies local ACAS or TorchLean objects. Logs, object hashes and resumable state
+it never copies local ACAS or TorchLean objects. `--replay-dependencies` additionally
+replays unchanged dependency modules; nanoda always checks the complete theorem declaration closure. Logs, object hashes and resumable state
 are written to ignored `work/build/`. A fresh build should start with that directory absent.
 
 The original benchmark files are fetched by hash rather than committed: no explicit

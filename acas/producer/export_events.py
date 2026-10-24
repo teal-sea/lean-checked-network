@@ -1,5 +1,7 @@
 """Normalize actual CLI event stream into explicit binary covering tree."""
 import json,sys,os,zlib,time
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"gen"))
 from producer import load
 
 def flat(x):

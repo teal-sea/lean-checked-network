@@ -10,8 +10,9 @@ from auto_LiRPA import BoundedModule,BoundedTensor
 from auto_LiRPA.perturbations import PerturbationLpNorm
 torch.set_num_threads(8)
 def load(net,prop):
-    base='benchmarks/benchmarks/acasxu/'
-    raw=gzip.open(base+f'onnx/ACASXU_run2a_{net}_batch_2000.onnx.gz','rb').read()
+    base='../inputs/'
+    assert net=='1_1' and prop==1
+    raw=open(base+'ACASXU_run2a_1_1_batch_2000.onnx','rb').read()
     m=onnx.load_model_from_string(raw); vals={v.name:numpy_helper.to_array(v).copy() for v in m.graph.initializer}
     assert not vals['input_AvgImg'].any()
     layers=[]; modules=[]
@@ -23,7 +24,7 @@ def load(net,prop):
             lin=torch.nn.Linear(len(layers[-1]['w'][0]),len(b)); lin.weight.data.copy_(torch.tensor(layers[-1]['w'])); lin.bias.data.copy_(torch.tensor(b)); modules.append(lin)
         elif node.op_type=='Relu': modules.append(torch.nn.ReLU())
         else: assert node.op_type in ['Sub','Flatten']
-    spec=gzip.open(base+f'vnnlib/prop_{prop}.vnnlib.gz','rt').read()
+    spec=open(base+'prop_1.vnnlib').read()
     lo=[None]*5;hi=[None]*5
     for op,i,v in re.findall(r'\(assert \((<=|>=) X_(\d) ([-\d.]+)\)\)',spec):
         (hi if op=='<=' else lo)[int(i)]=v

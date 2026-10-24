@@ -4,8 +4,9 @@ from pathlib import Path
 from fractions import Fraction
 import importer as I
 
-RAW=Path('ACASXU_run2a_1_1_batch_2000.onnx').read_bytes()
-PROP=Path('prop_1.vnnlib').read_bytes()
+ROOT=Path(__file__).resolve().parent
+RAW=(ROOT.parent/'inputs/ACASXU_run2a_1_1_batch_2000.onnx').read_bytes()
+PROP=(ROOT.parent/'inputs/prop_1.vnnlib').read_bytes()
 
 def varint(n):
     r=bytearray()
@@ -47,7 +48,22 @@ class ImportTests(unittest.TestCase):
         with self.assertRaises(ValueError): I.validate_sources(RAW[:-1]+bytes([RAW[-1]^1]),PROP)
         with self.assertRaises(ValueError): I.validate_sources(RAW,PROP+b' ')
     def test_input_vectors_unique(self):
-        a=json.loads(Path('agreement.json').read_text())
+        a=json.loads((ROOT/'agreement.json').read_text())
         self.assertEqual(len({tuple(x) for x in a['inputs']}),20)
 
 if __name__=='__main__': unittest.main(verbosity=2)
+
+class ReleaseBindingTests(unittest.TestCase):
+    def test_frozen_statement_bytes(self):
+        original=(ROOT.parent/'lean/ACASChecked/Spec.lean').read_bytes().replace(b'import ACASChecked.Net',b'import Net')
+        self.assertEqual(I.sha(original),'fc9a750a19646c2e66ced81bb8138620861b4c01e1fd0cd9b85baf1030e1a9b0')
+    def test_actual_unsafe_weight_counterexample(self):
+        c=json.loads((ROOT.parent/'producer/crownint-weight-mutation.json').read_text())
+        x=list(map(Fraction,['10736225/16777216','-3/8','-1/4','15938355/33554432','-15938355/33554432']))
+        lo,hi,th=I.property_data(PROP)
+        self.assertTrue(all(Fraction(l)<=v<=Fraction(u) for l,v,u in zip(lo,x,hi)))
+        for k,layer in enumerate(c['layers']):
+            x=[sum((Fraction(w)*v for w,v in zip(row,x)),Fraction(b)) for row,b in zip(layer['w'],layer['b'])]
+            if k<6:x=[max(Fraction(0),v) for v in x]
+        self.assertGreaterEqual(x[0],Fraction(th))
+        self.assertEqual(str(x[0]),'617395803471793988437503247185622853024376841368134534849805963880125184371/3450873173395281893717377931138512726225554486085193277581262111899648')

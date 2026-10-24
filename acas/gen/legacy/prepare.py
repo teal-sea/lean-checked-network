@@ -24,7 +24,7 @@ for i in leaves:
  else: assert weights==(root/'Weights.lean').read_text()
  selected=[*(f'DataNC{k}' for k in range(6)),*(f'PackedNC{k}' for k in range(6)),'NodeDataNC','ShapeNC',*(f'ChunkNC{k}' for k in range(6)),*(f'EndpointNC{k}' for k in range(6)),'MarginNC','AcceptNC']
  for m in selected:
-  p=d/(m+'.lean');s=p.read_text().replace('RouteNC',f'Leaf{i}').replace('node38NC',f'node{i}NC').replace(f'namespace Leaf{i}\n',f'namespace Leaf{i}\nopen SharedWeights\n')
+  p=d/(m+'.lean');s=p.read_text().replace('RouteNC',f'Leaf{i}').replace('node38NC',f'node{i}NC')
   lines=s.splitlines();imports=[l for l in lines if l.startswith('import ')];body=[l for l in lines if not l.startswith('import ')]
   imports=[('import '+f'N{i}.'+l[7:]) if l[7:] in selected else l for l in imports]
   # Data namespace stays top-level; theorem namespaces prevent name collisions.

@@ -8,7 +8,7 @@ G=Path(__file__).resolve().parent; A=G.parent; L=A/'lean'
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def imports(p):
- return re.findall(r'(?m)^\s*(?:(?:public|private|meta)\s+)*import\s+([\w.]+)',p.read_text())
+ return re.findall(r'(?m)^\s*(?:(?:public|private|meta)\s+)*import\s+(?:all\s+)?([\w.]+)',p.read_text())
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--replay',action='store_true');ap.add_argument('--only-replay',action='store_true');ap.add_argument('--jobs',type=int,default=4);ap.add_argument('--out',type=Path,default=A/'work/build');ap.add_argument('--all',action='store_true',help='include controls and auxiliary new modules');args=ap.parse_args()

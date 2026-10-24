@@ -1,0 +1,19 @@
+{
+  "label": "measured",
+  "regeneration": {
+    "status": "pass",
+    "files": 1053,
+    "log": "regeneration-3.log"
+  },
+  "pytest": {
+    "status": "pass",
+    "tests": 26,
+    "log": "pytest-2.log"
+  },
+  "independent": {
+    "status": "pass",
+    "leaves": 34,
+    "controls": 3,
+    "log": "independent.log"
+  }
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Regenerate the frozen importer, receipts and concrete Lean instances in isolation."""
-import argparse,hashlib,json,re,shutil,subprocess,sys,tempfile
+import difflib,argparse,hashlib,json,re,shutil,subprocess,sys,tempfile
 from pathlib import Path
 G=Path(__file__).resolve().parent; A=G.parent; L=A/'lean/ACASChecked'
 
@@ -53,7 +53,7 @@ def main():
   route=root/'route-a';route.mkdir()
   for p in G.joinpath('templates').glob('*.lean'):shutil.copy(p,route/p.name)
   for name in ['prepare.py','patch-generated.py','coveragegen.py','assemble.py','controls-gen.py']:shutil.copy(G/'legacy'/name,out/name)
-  run(out/'prepare.py',out);run(out/'patch-generated.py',out);run(out/'coveragegen.py',out);run(out/'assemble.py',out);run(out/'controls-gen.py',out)
+  run(out/'prepare.py',out);run(out/'coveragegen.py',out);run(out/'assemble.py',out);run(out/'controls-gen.py',out)
   # Generic proof templates are not generated; instances are derived from the leaf list.
   run(G/'legacy/generate_instances.py',step2)
   for p in step2.rglob('*.lean'):
@@ -68,7 +68,9 @@ def main():
    if not src.exists():raise FileNotFoundError(rel)
    expected=rename(src.read_text()).encode();files.append(str(rel))
    if args.check:
-    if dest.read_bytes()!=expected:bad.append(str(rel))
+    if dest.read_bytes()!=expected:
+     if not bad:print(''.join(difflib.unified_diff(dest.read_text().splitlines(True),expected.decode().splitlines(True)))[:2500],flush=True)
+     bad.append(str(rel))
    else:dest.write_bytes(expected)
   if bad:raise SystemExit('Generated files differ: '+', '.join(bad))
   # The importer forward fixtures are Python regression data, not proof premises.

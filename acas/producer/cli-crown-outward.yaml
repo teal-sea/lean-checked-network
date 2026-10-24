@@ -1,9 +1,9 @@
 general:
   device: cpu
 model:
-  onnx_path: /Users/thomas/.hermes/artifacts/cert-checker/w2-producer/work/model-1_1.onnx
+  onnx_path: ../inputs/ACASXU_run2a_1_1_batch_2000.onnx
 specification:
-  vnnlib_path: /Users/thomas/.hermes/artifacts/cert-checker/w2-producer/work/prop-1-outward.vnnlib
+  vnnlib_path: ../inputs/prop-1-outward.vnnlib
 solver:
   batch_size: 64
   bound_prop_method: crown

@@ -8,14 +8,14 @@ No larger-model or deployment result is claimed.
 
 | Gate | Current result | Evidence |
 | --- | --- | --- |
-| Frozen statement and network binding | source audit implemented; full release audit pending | `gen/audit.py`, `gen/source-provenance.json` |
+| Frozen statement and network binding | passed (measured, 2026-10-24); original specification hash restored exactly | `gen/audit.py`, `gen/source-provenance.json` |
 | Pinned dependencies from GitHub, Mathlib cache | passed (measured, 2026-10-24) | release dependency log; committed `lean/lake-manifest.json` |
-| Fresh source build, including TorchLean | running | resource-bounded `gen/build.py --all --replay` |
-| Exact final axiom list | pending on packaged theorem | final build log, then `gen/audit.py` |
-| Source scan for admissions and unsafe evaluation | initial scan passed (measured); final audit pending | `gen/audit.py` |
-| Clean-environment Lean kernel replay of every new module | running with the build | per-module state and logs |
-| nanoda on final theorem closure, hard standard-axiom allowlist | pending | `gen/nanoda.py` |
-| Changed weight, corrupted dual, coverage gap, real unsafe weight | pending on packaged bytes | `ControlWeight`, `ControlDual`, `CoverageControl`, `UnsafeControl13` |
+| Fresh source build, including TorchLean | passed: 1,091 new modules and 793 pinned dependency modules compiled (measured, 2026-10-24) | resource-bounded `gen/build.py --all --replay` |
+| Exact final axiom list | exactly propext, Classical.choice, Quot.sound (measured, 2026-10-24) | final build log, then `gen/audit.py` |
+| Source scan for admissions and unsafe evaluation | passed on all 1,091 new modules (measured, 2026-10-24) | `gen/audit.py` |
+| Clean-environment Lean kernel replay of every new module | all 1,091 passed (measured, 2026-10-24) | per-module state and logs |
+| nanoda on final theorem closure, hard standard-axiom allowlist | running; export succeeded (measured, 2026-10-24) | `gen/nanoda.py` |
+| Changed weight, corrupted dual, coverage gap, real unsafe weight | all four reject by proved Boolean false; compilation and replay pass (measured, 2026-10-24) | `ControlWeight`, `ControlDual`, `CoverageControl`, `UnsafeControl13` |
 | Byte-for-byte regeneration of every generated Lean file | passed: 1,055 generated files match (measured, 2026-10-24) | `gen/regenerate.py --check` |
 | Python tests | 26 passed (measured, 2026-10-24) | captured pytest output |
 | Independent exact Python receipt replay | all 34 passed; three stale/corrupt receipt controls rejected (measured, 2026-10-24) | `gen/independent.py` |
@@ -27,6 +27,34 @@ before the separate semantics proof and independent checker. The existing `check
 Lean job has a **240-minute timeout (reported workflow setting)** and also checks other
 networks. A fresh hosted-runner ACAS build has not been shown to fit its limit. The
 standalone commands retain the complete gate instead of weakening CI's existing checks.
+
+## Release build measurements
+
+The following counts and RSS maxima are measured from captured successful GNU time runs;
+CPU and elapsed sums are derived. They apply to the final Lean source bytes.
+
+| Phase | Successful runs (measured) | CPU seconds (derived) | Sum of elapsed seconds (derived) | Peak RSS KiB (measured) |
+| --- | ---: | ---: | ---: | ---: |
+| New ACAS compilation | 1,091 | 16,117.26 | 16,183.81 | 9,594,708 |
+| New ACAS kernel replay | 1,091 | 26,232.83 | 26,703.03 | 8,985,360 |
+| Pinned dependency source compilation | 793 | 2,828.92 | 2,594.33 | 2,174,248 |
+
+The source-build/replay launch span was **14,407.26 seconds (derived from captured start
+and finish timestamps)**. It includes the additional dependency checks and coordination
+gaps; it is not a sum of serial module times. The new-module CPU totals exclude dependency
+bootstrap, export and nanoda. See `evidence/release/timing-summary.json` and its raw logs.
+
+The initial runner also replayed unchanged dependencies. **569 such replays completed
+(measured)**. One additional FloatLib subtraction replay was deliberately stopped after
+**2,338.61 seconds elapsed (measured wrapper)** and **2,324.65 CPU seconds (derived GNU
+time sum)**, with **12,240,264 KiB peak RSS (measured)**. Its source compilation had passed
+in **8.25 CPU seconds (derived)**. This interrupted extra check is retained in the run ledger;
+it is not a kernel rejection or an ACAS negative-control result. The documented default now
+replays every new ACAS module. Optional `--replay-dependencies` adds unchanged dependencies.
+Nanoda still must check the complete used declaration closure under the hard axiom allowlist.
+
+Leanexport completed in **107.10 seconds wall (measured)** and **106.84 CPU seconds
+(derived)**, with **8,938,116 KiB peak RSS (measured)**. The independent check remains pending.
 
 ## Recorded project gates
 

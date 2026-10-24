@@ -36,7 +36,7 @@ are never admitted as assumptions. Final witnesses use the resulting proved inte
 prove the algebra. `EndpointRules`, `LeafSafety` and `RawLeafSound` establish the
 ordered enclosure invariant and complete leaf soundness. `Parameters`, `ParamChunks`,
 `FrozenFunctions` and `FrozenParameters` connect the checked integer parameters and
-execution to the actual frozen TorchLean model for every real input.
+execution to output zero of the actual frozen TorchLean model for every real input.
 
 ## Packed supplied products
 

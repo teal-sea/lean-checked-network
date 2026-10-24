@@ -8,7 +8,7 @@
   "pytest": {
     "status": "pass",
     "tests": 26,
-    "log": "pytest-2.log"
+    "log": "pytest-publication.log"
   },
   "independent": {
     "status": "pass",

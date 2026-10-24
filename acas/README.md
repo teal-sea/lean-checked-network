@@ -37,7 +37,9 @@ independent nanoda replay has a separate gate in STATUS.md.
 
 ## Re-check
 
-Use the toolchain named in `lean/lean-toolchain`. A Linux user systemd session is required
+Use the release toolchain named in `lean/lean-toolchain`; it bundles the exporter and
+nanoda ([reported release notes](https://lean-lang.org/doc/reference/latest/releases/v4.35.0/)).
+A Linux user systemd session is required
 by the resource wrapper. The package manifest pins TorchLean and its transitive Mathlib.
 No GPU, LibTorch installation, solver account or Gurobi solve is needed for checking.
 

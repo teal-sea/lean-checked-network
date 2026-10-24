@@ -37,6 +37,7 @@ def main():
  result=run('nanoda',[str(tool/'nanoda_bin'),str(out/'nanoda.json')],out/'nanoda.log','64G')
  lines=[x for x in (out/'nanoda.log').read_text().splitlines() if re.search(r'Checked [\d,]+ declarations',x)]
  if not lines:raise RuntimeError('no Checked N declarations success line')
+ if 'no typechecker errors' not in lines[-1]:raise RuntimeError('nanoda did not report no typechecker errors: '+lines[-1])
  assert objects=={str(p):sha(Path(p)) for p in objects},'olean bytes changed during independent replay'
  result.update(checked_line=lines[-1],export_sha256=sha(exp),object_manifest_sha256=sha(out/'objects.json'),axioms=config['permitted_axioms'])
  (out/'result.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))

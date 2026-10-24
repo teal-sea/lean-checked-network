@@ -1,0 +1,5 @@
+{
+  "label": "measured git source subtree identity; individual SHA256 in verification-manifest.json",
+  "git_tree": "4743c4c2a805fee363da6f11f21d1425077cda2c",
+  "path": "acas/lean/ACASChecked"
+}

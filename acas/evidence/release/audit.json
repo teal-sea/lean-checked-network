@@ -1,0 +1,13 @@
+{
+  "stage": "source-audit",
+  "status": "pass",
+  "label": "measured",
+  "modules": 1091,
+  "frozen_statement_restored_sha256": "fc9a750a19646c2e66ced81bb8138620861b4c01e1fd0cd9b85baf1030e1a9b0",
+  "axiom_line": "'ACASChecked.acas_1_1_property1' depends on axioms: [propext, Classical.choice, Quot.sound]",
+  "axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ]
+}

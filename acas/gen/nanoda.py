@@ -10,7 +10,8 @@ def sha(p):
  return h.hexdigest()
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,default=A/'work/nanoda');args=ap.parse_args();out=args.out.resolve();out.mkdir(parents=True,exist_ok=True);(out/'scratch').mkdir(exist_ok=True)
- tool=Path(shutil.which('lean')).resolve().parent
+ from toolchain import toolchain_bin
+ tool=toolchain_bin(out)
  roots=[L/'.lake/build/lib/lean',*sorted((L/'.lake/packages').glob('*/.lake/build/lib/lean')),tool.parent/'lib/lean'];lp=':'.join(map(str,roots))
  objects={str(p):sha(p) for root in roots for p in sorted(root.rglob('*.olean'))}
  (out/'objects.json').write_text(json.dumps(objects,indent=2)+'\n')

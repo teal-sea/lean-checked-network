@@ -13,8 +13,10 @@ def imports(p):
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--replay',action='store_true');ap.add_argument('--only-replay',action='store_true');ap.add_argument('--jobs',type=int,default=4);ap.add_argument('--out',type=Path,default=A/'work/build');ap.add_argument('--all',action='store_true',help='include controls and auxiliary new modules');args=ap.parse_args()
  if not 1<=args.jobs<=4:ap.error('jobs must be between 1 and 4')
- tool=Path(shutil.which('lean')).resolve().parent
- output=args.out.resolve();output.mkdir(parents=True,exist_ok=True);(output/'scratch').mkdir(exist_ok=True);(output/'logs').mkdir(exist_ok=True)
+ output=args.out.resolve();output.mkdir(parents=True,exist_ok=True);
+ from toolchain import toolchain_bin
+ tool=toolchain_bin(output)
+ (output/'scratch').mkdir(exist_ok=True);(output/'logs').mkdir(exist_ok=True)
  lp=subprocess.check_output([str(tool/'lake'),'env','printenv','LEAN_PATH'],cwd=L,text=True).strip()
  env=os.environ.copy();env.update(XDG_RUNTIME_DIR=f'/run/user/{os.getuid()}',DBUS_SESSION_BUS_ADDRESS=f'unix:path=/run/user/{os.getuid()}/bus')
  roots=[L,*sorted((L/'.lake/packages').glob('*'))];paths=[L/'.lake/build/lib/lean',*[p/'.lake/build/lib/lean' for p in roots[1:]],tool.parent/'lib/lean'];lp=':'.join(map(str,paths))

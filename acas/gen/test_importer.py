@@ -59,8 +59,14 @@ class ReleaseBindingTests(unittest.TestCase):
         self.assertEqual(I.sha(original),'fc9a750a19646c2e66ced81bb8138620861b4c01e1fd0cd9b85baf1030e1a9b0')
     def test_actual_unsafe_weight_counterexample(self):
         c=json.loads((ROOT.parent/'producer/crownint-weight-mutation.json').read_text())
+        import copy
+        base=json.loads((ROOT.parent/'producer/certificate.json').read_text())
+        changed=copy.deepcopy(base['layers']);changed[6]['w'][0][25]=1000000
+        self.assertEqual(c['layers'],changed)
         x=list(map(Fraction,['10736225/16777216','-3/8','-1/4','15938355/33554432','-15938355/33554432']))
         lo,hi,th=I.property_data(PROP)
+        box=c['nodes'][13]['box']
+        self.assertTrue(all(Fraction(l)<=v<=Fraction(u) for l,v,u in zip(box[0],x,box[1])))
         self.assertTrue(all(Fraction(l)<=v<=Fraction(u) for l,v,u in zip(lo,x,hi)))
         for k,layer in enumerate(c['layers']):
             x=[sum((Fraction(w)*v for w,v in zip(row,x)),Fraction(b)) for row,b in zip(layer['w'],layer['b'])]

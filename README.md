@@ -34,9 +34,8 @@ AI coding agents (Claude Code and Codex workers) wrote the proofs, generators an
 checks under Thomas Lince's direction. Scholar-style review agents challenged the
 statements, trust boundary and reported claims. This was agent review, not outside
 review. Lean's kernel and `leanchecker` checked proof terms; nanoda independently
-checked the documented theorem closures. The human review boundary is the frozen
-statements, limits and releases, not hand-written proof terms. The published logs
-do not establish which checks Thomas personally repeated by hand. See the
+checked the documented theorem closures. Thomas checked the frozen statements, limits and releases by hand, rather than
+writing the proof terms. See the
 [audit](AUDIT.md), [transformer status](transformer/STATUS.md) and
 [ACAS status](acas/STATUS.md) for checking scope and limitations.
 

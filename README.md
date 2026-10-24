@@ -28,6 +28,17 @@ pairs. The model uses quantised integer weights at `S = 256` and exact real soft
 Read the [status](transformer/STATUS.md), the [Kronecker method note](transformer/mathlib/KRONECKER.md),
 and the [evidence release](https://github.com/teal-sea/lean-checked-network/releases/tag/transformer-final-raw-evidence).
 
+## How this was built
+
+AI coding agents (Claude Code and Codex workers) wrote the proofs, generators and
+checks under Thomas Lince's direction. Scholar-style review agents challenged the
+statements, trust boundary and reported claims. This was agent review, not outside
+review. Lean's kernel and `leanchecker` checked proof terms; nanoda independently
+checked the documented theorem closures. Thomas checked the frozen statements, limits and releases by hand, rather than
+writing the proof terms. See the
+[audit](AUDIT.md), [transformer status](transformer/STATUS.md) and
+[ACAS status](acas/STATUS.md) for checking scope and limitations.
+
 ## ACAS Xu certificate checking
 
 Lean checks an alpha-beta-CROWN certificate for the frozen exact-real ACAS Xu network 1_1, property 1, using TorchLean semantics; see the [ACAS evidence and limits](acas/README.md).

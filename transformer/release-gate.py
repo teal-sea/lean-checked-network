@@ -11,7 +11,11 @@ def run(label, cmd, *, cwd=ROOT, env=None, timeout=None):
         result=subprocess.run(cmd,cwd=cwd,env=env,stdout=output,stderr=subprocess.STDOUT,text=True,timeout=timeout)
     result.stdout=(ROOT/(label+'.log')).read_text()
     elapsed=round(time.monotonic()-start,3)
-    RESULTS.append({'test':label,'seconds':elapsed,'returncode':result.returncode})
+    metrics={'test':label,'seconds':elapsed,'returncode':result.returncode}
+    for name in ['memory.peak','memory.events']:
+        counter=Path('/sys/fs/cgroup')/name
+        if counter.exists(): metrics[name]=counter.read_text().strip()
+    RESULTS.append(metrics)
     print(f'{label}: rc={result.returncode}, measured {elapsed}s',flush=True)
     if result.returncode or label == 'reader':
         print(result.stdout[-6000:], flush=True)

@@ -20,7 +20,7 @@ jobs:
   verify-release:
     name: Published evidence reader and rejection controls
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
         with:
@@ -29,4 +29,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          free -h
+          df -h /
           python3 transformer/release-gate-input.py | docker run --rm -i ubuntu:24.04 bash

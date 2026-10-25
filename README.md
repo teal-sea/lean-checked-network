@@ -1,6 +1,6 @@
 # A trained network, checked by Lean
 
-For the published raw transformer evidence, use the single command block in [VERIFY.md](VERIFY.md). The r2 bundle includes its inventoried verifier and pinned lean-toolchain. Kernel replay checks the shipped theorem term and 20 new modules against the printed proposition; it assumes authenticated earlier project and upstream objects and does not establish that every object was built from bundled src/. A bounded `--from-source` probe compares one module; establishing the full source relationship requires rebuilding and comparing every module with pinned dependencies.
+For the published raw transformer evidence, use the single command block in [VERIFY.md](VERIFY.md). The r2 bundle includes its inventoried verifier and pinned lean-toolchain. Kernel replay checks the shipped theorem term and 20 new modules against the printed proposition; it assumes authenticated earlier project and upstream objects and does not establish that every object was built from bundled src/. A bounded `--from-source` probe compiled one module successfully but produced different object bytes; whole-bundle source reproduction is unestablished. Establishing the full source relationship requires rebuilding and comparing every module with pinned dependencies.
 
 [![check](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml/badge.svg)](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml)
 
@@ -28,7 +28,7 @@ pairs. The model uses quantised integer weights at `S = 256` and exact real soft
   checkpoint.
 
 Read the [status](transformer/STATUS.md), the [Kronecker method note](transformer/mathlib/KRONECKER.md),
-and the [evidence release](https://github.com/teal-sea/lean-checked-network/releases/tag/transformer-final-raw-evidence).
+and the [r2 evidence prerelease](https://github.com/teal-sea/lean-checked-network/releases/tag/transformer-final-raw-evidence-r2).
 
 ## How this was built
 

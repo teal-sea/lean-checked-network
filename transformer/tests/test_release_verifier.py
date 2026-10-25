@@ -25,7 +25,7 @@ VERSION = next(n for n in MAIN.body if isinstance(n, ast.If) and 'expected Lean 
 
 class DiscoveryTests(unittest.TestCase):
     def discover(self, which, run=None, samefile=False, tc=None):
-        scope = dict(NS, tc=tc, view=Path('/private/view'),
+        scope = dict(NS, tc=tc, here=Path('/bundle'), view=Path('/private/view'),
                      sys=SimpleNamespace(argv=['-', '/bundle/verify.sh', '/caller/bin']),
                      base_env={'PATH':'/usr/bin:/bin','HOME':'/private/home'})
         if run is not None:
@@ -37,43 +37,21 @@ class DiscoveryTests(unittest.TestCase):
             exec(compile(ast.Module(body=[DISCOVERY], type_ignores=[]), '<discovery>', 'exec'), scope)
         return scope['tc']
 
-    def test_path_only_no_candidate_execution(self):
-        def forbidden(*args):
-            self.fail('discovery executed a candidate')
-        self.assertEqual(self.discover({'lean':'/tc/bin/lean','leanchecker':'/tc/bin/leanchecker'}, forbidden), Path('/tc'))
-
-    def test_mixed_path_toolchains_reject(self):
-        with self.assertRaisesRegex(ValueError, 'same toolchain'):
-            self.discover({'lean':'/a/bin/lean','leanchecker':'/b/bin/leanchecker'})
-
-    def test_elan_stable_selector_and_clean_environment(self):
+    def test_elan_uses_only_stable_which_and_bundle_pin(self):
         calls=[]
         def run(args, cwd, env=None):
-            calls.append((args, cwd, env))
-            return SimpleNamespace(returncode=0, stdout='/tc/bin/lean\n' if args[1]=='which' else '')
-        self.assertEqual(self.discover({'elan':'/discovery/elan'},run),Path('/tc'))
-        self.assertEqual(calls[0][0],['/discovery/elan','toolchain','install','leanprover/lean4:v4.35.0'])
-        self.assertEqual(calls[1][0],['/discovery/elan','which','lean'])
-        self.assertEqual(calls[1][2],{'PATH':'/usr/bin:/bin','HOME':'/private/home','ELAN_TOOLCHAIN':'leanprover/lean4:v4.35.0'})
+            calls.append((args,cwd,env))
+            return SimpleNamespace(returncode=0,stdout='/tc/bin/lean\n')
+        self.assertEqual(self.discover({'elan':'/bin/elan'},run),Path('/tc'))
+        self.assertEqual(calls,[(['/bin/elan','which','lean'],Path('/bundle'),None)])
 
-    def test_hardlinked_elan_shims(self):
-        def run(args,cwd,env=None):
-            return SimpleNamespace(returncode=0,stdout='/tc/bin/lean\n' if args[1]=='which' else '')
-        self.assertEqual(self.discover({'lean':'/shims/lean','leanchecker':'/shims/leanchecker','elan':'/shims/elan'},run,True),Path('/tc'))
-
-    def test_elan_install_failure_rejects(self):
-        with self.assertRaisesRegex(ValueError, 'elan install failed'):
-            self.discover({'elan':'/bin/elan'},lambda *a:SimpleNamespace(returncode=1,stdout='install error'))
-
-    def test_elan_which_failure_rejects(self):
-        def run(args,*a):
-            return SimpleNamespace(returncode=int(args[1]=='which'),stdout='which error')
-        with self.assertRaisesRegex(ValueError, 'elan which failed'):
-            self.discover({'elan':'/bin/elan'},run)
-
-    def test_no_tools_rejects(self):
-        with self.assertRaisesRegex(ValueError, 'no --toolchain'):
+    def test_no_elan_is_actionable(self):
+        with self.assertRaisesRegex(ValueError,'install elan and run lean --version'):
             self.discover({})
+
+    def test_uninstalled_toolchain_is_actionable(self):
+        with self.assertRaisesRegex(ValueError,'run lean --version in this bundle'):
+            self.discover({'elan':'/bin/elan'},lambda *a:SimpleNamespace(returncode=1,stdout='not installed'))
 
     def test_explicit_toolchain_bypasses_discovery(self):
         self.assertEqual(self.discover({},tc=Path('/explicit')),Path('/explicit'))

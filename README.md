@@ -1,5 +1,7 @@
 # A trained network, checked by Lean
 
+For the published raw transformer evidence, use the single command block in [VERIFY.md](VERIFY.md). The r2 bundle includes its inventoried verifier and pinned lean-toolchain. Kernel replay checks the shipped theorem term and 20 new modules against the printed proposition; it assumes authenticated earlier project and upstream objects and does not establish that every object was built from bundled src/. A bounded `--from-source` probe compares one module; establishing the full source relationship requires rebuilding and comparing every module with pinned dependencies.
+
 [![check](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml/badge.svg)](https://github.com/teal-sea/lean-checked-network/actions/workflows/check.yml)
 
 ![A 113 by 113 square, one cell per input pair (a, b). Each cell is shaded by the proved answer (a + b) mod 113: dark for 0, light for 112. The shade brightens from the top left to the anti-diagonal, snaps back to dark, and brightens again to the bottom right. Beside it: 12,769 input pairs, every cell proved by Lean's kernel, integer weights at S = 256, exact real softmax.](transformer/figures/all-pairs.svg)

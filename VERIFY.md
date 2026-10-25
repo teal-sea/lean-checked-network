@@ -13,7 +13,7 @@ mkdir -p lean-evidence-r2
 cd lean-evidence-r2
 base=https://github.com/teal-sea/lean-checked-network/releases/download/transformer-final-raw-evidence-r2
 curl -fSL --retry 2 "$base/SHA256SUMS" -o SHA256SUMS
-printf '%s  %s\n' 417e2c5059ecc8a495752b17c1ce847c7a99563c05afe9622f2721d2ef3d96e5 SHA256SUMS | sha256sum -c -
+printf '%s  %s\n' 7d5c6116b1e40d627bae043884c1d5ab301f2b098b286a5b08fbc3f2d6140c2c SHA256SUMS | sha256sum -c -
 curl -fSL --retry 2 "$base/transformer-final-raw-evidence-r2.tar.zst" -o transformer-final-raw-evidence-r2.tar.zst
 grep '  transformer-final-raw-evidence-r2.tar.zst$' SHA256SUMS | sha256sum -c -
 tar --zstd -xf transformer-final-raw-evidence-r2.tar.zst

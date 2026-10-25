@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Verify authenticated evidence using an isolated module view.
 # Usage: verify.sh [--toolchain DIR] [--packages DIR] [--full] [--controls]
-#                  [--work DIR] [--threads N]   (default: 2, maximum: 4)
+#                  [--from-source] [--work DIR] [--threads N]   (default: 2, maximum: 4)
 set -euo pipefail
 # The host shell, Python, system utilities and OS loader are trusted bootstrap code.
 # Bash itself has already been loaded by the host. Sanitize before loading Python.
@@ -121,6 +121,7 @@ def main():
     parser.add_argument('--packages', type=Path)
     parser.add_argument('--full', action='store_true')
     parser.add_argument('--controls', action='store_true')
+    parser.add_argument('--from-source', action='store_true', help='rebuild only TransformerCore.Model and compare its object bytes')
     parser.add_argument('--work', type=Path, default=here / 'verify-work')
     parser.add_argument('--threads', type=int, default=2, help='Lean worker threads, default 2, maximum 4')
     args = parser.parse_args(sys.argv[3:])
@@ -128,7 +129,27 @@ def main():
         fail('--threads must be between 1 and 4')
     def step(text):
         print('\n== ' + text, flush=True)
+    # Only the stable elan selector is used. The reader installs the pinned toolchain.
+    tc = args.toolchain
+    if tc is None:
+        elan = shutil.which('elan', path=sys.argv[2])
+        if not elan:
+            fail('install elan and run lean --version in this bundle, or pass --toolchain DIR (Lean 4.35.0)')
+        r = run([elan, 'which', 'lean'], here)
+        if r.returncode:
+            fail('run lean --version in this bundle to install Lean 4.35.0, then retry')
+        tc = Path(r.stdout.strip()).parent.parent
+    tc = tc.resolve(strict=True)
     step('1/6 bundle integrity and pinned Lake project')
+    # SHA256SUMS excludes itself; its digest is pinned in VERIFY.md and release notes.
+    release_files = hashlist(here / 'SHA256SUMS')
+    for rel, (want, _) in release_files.items():
+        checked(here / rel, want)
+    required_packaging = {'verify.sh', 'lean-toolchain', 'README.md', 'MANIFEST.json', 'KernelControl.lean'}
+    if not required_packaging <= set(release_files):
+        fail('release inventory missing packaging files')
+    if (here / 'lean-toolchain').read_text() != 'leanprover/lean4:v4.35.0\n':
+        fail('expected pinned lean-toolchain')
     regular(here / 'MANIFEST.json')
     m = json.loads((here / 'MANIFEST.json').read_text())
     expected_lists = {'bundle-files.sha256', 'package-modules.sha256',
@@ -200,39 +221,6 @@ def main():
     (view / 'home').mkdir()
     env = dict(base_env, HOME=str(view / 'home'), LEAN_NUM_THREADS=str(args.threads))
     step('2/6 toolchain launchers, runtime libraries and core objects')
-    tc = args.toolchain
-    if tc is None:
-        # Do not execute a candidate Lean to discover its prefix. Elan's stable
-        # environment selector works without version-specific `which` flags.
-        discovery_path = sys.argv[2]
-        lean = shutil.which('lean', path=discovery_path)
-        checker = shutil.which('leanchecker', path=discovery_path)
-        # Elan's Lean shims are symlinks or hardlinks to the same executable.
-        if lean and checker and not os.path.samefile(lean, checker):
-            lean = Path(lean).resolve(strict=True)
-            checker = Path(checker).resolve(strict=True)
-            if lean.parent != checker.parent:
-                fail('PATH lean and leanchecker must belong to the same toolchain')
-            tc = lean.parent.parent
-        else:
-            elan = shutil.which('elan', path=discovery_path)
-            if elan is None:
-                for candidate in (Path(base_env['HOME']) / '.elan/bin/elan',
-                                  Path(base_env['HOME']) / '.cargo/bin/elan'):
-                    if candidate.is_file():
-                        elan = str(candidate)
-                        break
-            if not elan:
-                fail('no --toolchain, PATH lean/leanchecker, or elan installation')
-            r = run([elan, 'toolchain', 'install', 'leanprover/lean4:v4.35.0'], view / 'cwd')
-            if r.returncode:
-                fail('elan install failed: ' + r.stdout)
-            discovery_env = dict(base_env, ELAN_TOOLCHAIN='leanprover/lean4:v4.35.0')
-            r = run([elan, 'which', 'lean'], view / 'cwd', discovery_env)
-            if r.returncode:
-                fail('elan which failed: ' + r.stdout)
-            tc = Path(r.stdout.strip()).parent.parent
-    tc = tc.resolve(strict=True)
     isolated_tc = view / 'toolchain'
     def snapshot(src, dst, want, allowed=None):
         # Cache symlinks are allowed only to regular canonical targets inside that package.
@@ -280,6 +268,36 @@ def main():
         snapshot(tc / 'lib/lean' / path, isolated_tc / 'lib/lean' / path, h)
     env['PATH'] = str(isolated_tc / 'bin') + ':/usr/bin:/bin'
     print(f'{len(runtime)} runtime files and {len(core)} core modules authenticated', flush=True)
+    # Exercise a proved declaration through kernel reduction before package setup.
+    source = view / 'cwd/KernelControl.lean'
+    source.write_bytes((here / 'KernelControl.lean').read_bytes())
+    r = run([isolated_tc / 'bin/lean', source], view / 'cwd', env, work / 'kernel-control.out')
+    if r.returncode or r.stdout:
+        fail('kernel declaration rejected:\n' + r.stdout)
+    print('kernel declaration accepted (decide +kernel)', flush=True)
+    if args.from_source:
+        module = 'TransformerCore.Model'
+        source_root = view / 'source'
+        source = source_root / 'TransformerCore/Model.lean'
+        source.parent.mkdir(parents=True)
+        source.write_bytes((here / 'src/TransformerCore/Model.lean').read_bytes())
+        target = source.with_suffix('.olean')
+        r = run([isolated_tc / 'bin/lean', '-o', target, 'TransformerCore/Model.lean'], source_root, env,
+                work / 'from-source.out')
+        if r.returncode:
+            fail('source rebuild failed:\n' + r.stdout)
+        want = digest(here / 'lib/TransformerCore/Model.olean')
+        got = digest(target)
+        result = {'module': module, 'source_sha256': digest(source), 'shipped_sha256': want,
+                  'rebuilt_sha256': got, 'byte_identical': want == got,
+                  'seconds': round(time.monotonic()-start, 3),
+                  'scope': 'one core-only module; does not establish whole-bundle reproducibility'}
+        (work / 'from-source.json').write_text(json.dumps(result, indent=2) + '\n')
+        print(json.dumps(result, sort_keys=True), flush=True)
+        shutil.rmtree(view)
+        if want != got:
+            fail('source rebuild bytes differ; see ' + str(work / 'from-source.json'))
+        return
     step('3/6 authenticated package modules and isolated import view')
     packages = args.packages
     if packages is None:

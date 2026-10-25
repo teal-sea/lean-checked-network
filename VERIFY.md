@@ -23,7 +23,7 @@ curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh
 sh "$HOME/lean-evidence-elan-init.sh" -y --default-toolchain none
 export PATH="$HOME/.elan/bin:$PATH"
 lean --version
-bash ./verify.sh --work "$HOME/verify-work"
+bash ./verify.sh --threads 4 --work "$HOME/verify-work"
 # DOC-END
 ```
 

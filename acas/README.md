@@ -88,4 +88,9 @@ is the untrusted search producer; the export patch retains domains before they a
 exports proof trees from modified producers, with Gurobi in its checking path.
 [Marabou/Imandra](https://github.com/rdesmartin/imandra-marabou-proof-checking/tree/b8f2ae1d4cac0528bb92bade91e1c46fe7e79660/imandrax)
 provides proved constraint-level tree and Farkas checking, with configuration and
-preprocessing limits. No novelty claim is made.
+preprocessing limits.
+[lean4-mlir](https://github.com/brettkoonce/lean4-mlir/tree/744f4958a7f4aaeab44def7c0cb450aa881fd281/LeanMlir/Proofs/Certificates)
+(Koonce, 2026) carries kernel-checked IBP and CROWN-IBP pixel-robustness theorems for a
+quantised 784-16-10 MNIST MLP at radii 1 to 8 of 255 (eight images per radius), with the
+arithmetic closed by `decide +kernel`; those are root-box certificates emitted by its own
+scripts, with no branch-and-bound tree and no external producer. No novelty claim is made.

@@ -28,7 +28,7 @@ pairs. The model uses quantised integer weights at `S = 256` and exact real soft
   checkpoint.
 
 Read the [status](transformer/STATUS.md), the [Kronecker method note](transformer/mathlib/KRONECKER.md),
-and the [r2 evidence prerelease](https://github.com/teal-sea/lean-checked-network/releases/tag/transformer-final-raw-evidence-r2).
+and the [r2 evidence release](https://github.com/teal-sea/lean-checked-network/releases/tag/transformer-final-raw-evidence-r2).
 
 ## How this was built
 

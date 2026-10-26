@@ -1,10 +1,10 @@
 # Verify the published raw transformer evidence
 
-This is the only canonical reader command block. Launch notes and comments should link here. The r2 prerelease supersedes transformer-final-raw-evidence; historical release assets remain in place. No overlay is required.
+This is the only canonical reader command block. Launch notes and comments should link here. The r2 release (`transformer-final-raw-evidence-r2`, GitHub Latest) supersedes `transformer-final-raw-evidence`; historical release assets remain in place. No overlay is required for r2.
 
 Tested gate platform: Ubuntu 24.04 on Linux x86_64. Prerequisites: Bash, Python 3.11+, curl, git, tar, zstd, CA certificates and a C compiler/linker. On Ubuntu install ca-certificates curl git python3 zstd xz-utils build-essential with apt-get. Use a fresh directory and allow at least 30 GB free disk space and 16 GiB of host memory. Network access is needed for GitHub, the Lean distribution and the Mathlib cache. Cold local runs exceeded the 3 to 5 minute job target. A cached two-thread verifier run took 279.1 seconds; it excludes installation, dependency acquisition, downloads and the gate controls. This is not a five-minute end-to-end guarantee. Use the default two Lean threads; a four-thread trial exceeded 18 GiB during replay and failed on the hosted runner.
 
-The checksum list covers the archive and every extracted file, including verify.sh, lean-toolchain and the internal SHA256SUMS. The SHA256SUMS digest below is also published in the prerelease notes. These integrity checks assume the authenticity of the notes or this document; same-host checksums do not establish publisher identity.
+The checksum list covers the archive and every extracted file, including verify.sh, lean-toolchain and the internal SHA256SUMS. The SHA256SUMS digest below is also published in the release notes. These integrity checks assume the authenticity of the notes or this document; same-host checksums do not establish publisher identity.
 
 ```bash
 # DOC-START
@@ -37,6 +37,8 @@ The default run verifies the shipped theorem term against the printed propositio
 
 A reader establishing the rest must rebuild every project module from src/ with the exact pinned Lean and dependency revisions, account for compiler options and generated inputs, compare each object and investigate differences. Pinned dependencies may themselves require rebuilding for a source-only trust chain.
 
+The published release gate treats a recorded `--from-source` byte mismatch as the expected outcome for `TransformerCore.Model` (exit code must match non-identity). Passing the gate therefore does not mean whole-bundle source reproduction.
+
 ## One release gate
 
-verify-release.yml has one Ubuntu job and no matrix. It sends only this document and the test harness through standard input to a fresh ubuntu:24.04 container on the standard hosted runner. The container receives no checkout mount, credentials, host HOME, Lean installation or cache. It downloads the published URLs anonymously and runs the block verbatim, then tests checksum corruption, a mathematically false declaration and the exactly one-line missing-Lean diagnostic. The same gate runs for relevant pull requests, release publication and weekly decay checks. Repository administrators must require this job in branch protection to make it a merge requirement; the workflow itself fails closed.
+verify-release.yml has one Ubuntu job and no matrix. It sends only this document and the test harness through standard input to a fresh ubuntu:24.04 container on the standard hosted runner. The container receives no checkout mount, credentials, host HOME, Lean installation or cache. It downloads the published URLs anonymously and runs the block verbatim, then tests checksum corruption, a mathematically false declaration and the exactly one-line missing-Lean diagnostic. The same gate runs for relevant pull requests, release publication and weekly decay checks. Repository administrators must require this job in branch protection to make it a merge requirement; that requirement is not encoded in this repository. The workflow itself fails closed.

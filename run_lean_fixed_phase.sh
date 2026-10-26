@@ -4,7 +4,7 @@
 # instances tied to the theorem (p = 7, Nanda's five, all frequencies at 113) live in phasegrid/instances.
 # STAGE=build skips the replay; STAGE=replay skips the builds (the audit and the fault run in both).
 set -u
-export PATH="/root/.elan/bin:$PATH"
+export PATH="$HOME/.elan/bin:$PATH"
 cd "$(dirname "$0")/lean"
 status=0
 STAGE=${STAGE:-all}

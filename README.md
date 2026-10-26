@@ -15,14 +15,16 @@ pairs. The model uses quantised integer weights at `S = 256` and exact real soft
   other class, and first argmax returns it. The theorem
   `TransformerBridge.FinalRaw.raw_model_adds_mod_113` has no hypotheses; its axioms
   are `propext`, `Classical.choice`, and `Quot.sound`.
-- **Two kernels checked it.** Lean checked the proof; independently implemented
+- **Checked twice, with stated scope.** Lean checked the proof; the default reader
+  replays the 20 new modules with `leanchecker`. Independently implemented
   `nanoda_bin` 0.4.19 checked 82,927 declarations from the exact released objects,
   with the axiom allowlist enforced and no type-checking errors. It also reported
-  one axiom pretty-printer error.
+  one axiom pretty-printer error. Default `verify.sh` does not invoke nanoda.
 - **Tested wrong data is rejected.** All 9 certificate/table-identity controls were
-  rejected with passing unchanged twins, and `verify.sh` rejected all 11 tested
-  tampering attacks. These tests are not an exhaustive security proof or a claim
-  that every changed weight makes the network incorrect.
+  rejected with passing unchanged twins (`verify.sh --controls`). Separate release-note
+  tampering trials against the verifier are historical; the default reader command does
+  not run them. These tests are not an exhaustive security proof or a claim that every
+  changed weight makes the network incorrect.
 - **The limits are small and explicit.** This is a tiny model on a toy task, proved
   by brute force over all inputs. It is the integer-rounded model, not the float
   checkpoint.
@@ -65,8 +67,10 @@ angles.
   explanation and explicit error bounds proves all 12,769 answers (in Python, not yet in Lean).
 - **The explanation is also a theorem for every clock, 2026-10-16.** Fix the phases of Gromov's analytic
   weights and the unwanted waves cancel exactly: a Lean proof on Mathlib that such a network adds mod p for
-  every modulus p >= 3; choosing scale M=25 gives weights in [-25,25], representable with 6 signed bits (5 magnitude bits plus sign), plus kernel-checked instances down to **12 neurons with 8-bit weights**
-  at 113 and at 257 (`phasegrid/`).
+  every modulus p >= 3; choosing scale M=25 gives weights in [-25,25], representable with 6 signed bits
+  (5 magnitude bits plus sign). Separately, brute-force kernel checks cover **12-neuron 8-bit** nets at
+  113 and at 257; those run at M=127, below the Mathlib cycle theorem's sufficient scales, so they are
+  not instances of that theorem (`phasegrid/`).
 - **Training runs become theorems too, 2026-10-16.** A runner kernel-checks any configuration and states
   exactly where a network is wrong; a recurrent adder is proved for inputs of every length; and the six
   checkpoints of this repository's 64-neuron run carry their exact scores as theorems (`sweep/`, `rnn/`).
@@ -89,20 +93,19 @@ integer arithmetic, cross-checked against the real network, but not written in L
 | --- | --- |
 | The trained network answers `(a + b) mod 113` for all 12,769 pairs | kernel-checked: `LeanCheckedNetwork.Trained.adds_mod_113` |
 | Keep only one circle wave per neuron (each weight table keeps its own amplitude and phase at the neuron's frequency), rounded to whole numbers, drop everything else: still right on all 12,769 pairs; minimum margin 1,980,696 measured separately | correctness kernel-checked: `LeanCheckedNetwork.CircleOnly.adds_mod_113` |
-| Both theorems re-checked by independent checkers: `leanchecker` replayed every module that contains a declaration (40 of 40 in `lean_run.log`), and nanoda, a separate type checker written in Rust, checked the three main theorems (2,569 declarations, in the audit) | kernel-checked twice (see `AUDIT.md`) |
+| Both theorems re-checked by independent checkers: `lean_run.log` (2026-10-15) records `leanchecker` on 40 of 40 Trained+CircleOnly modules; today's `run_lean.sh` also rebuilds FixedPhase12/16 and Mod12All (85 modules) and is what CI runs; nanoda 0.4.17 checked the three main MLP theorems (2,569 declarations). Separate later nanoda runs: transformer 0.4.19 / 82,927; ACAS 59,489 — each reported one axiom pretty-printer error | kernel-checked twice (see `AUDIT.md`) |
 | Swapping the read-out rows of answers 0 and 1 (226 pairs then wrong) makes the same proof fail | kernel rejection: `lean/expected_fail/FaultRow.lean` |
 | The circle explanation, with every error bounded exactly, proves the right answer for all 12,769 pairs (tightest pair keeps 1.7% of the margin) | derived (`mechanism.py`, `MECHANISM.md`) |
-| No single weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one weight change can shift the gap between two scores (at most 254 × 255² = 16,516,350) | derived |
+| No single W2 weight change within [-128, 127] can flip any answer of the trained network: the smallest winning margin (32,654,491) is about twice the most one such change can shift the gap between two scores (at most 254 × 255² = 16,516,350). For an E1/E2 edit the same product bound is not tight enough by itself; measured searches still left margins near 19 to 20 million | derived (W2); measured (E tables) |
 | Remove the circle waves, keep the rest: right on 50 of 12,769 pairs, fewer than the 113 that answering the same number every time would get | measured |
 | Networks written from the circle formula with fixed phases, no training, right on every pair: 12 neurons at modulus 113 with 8-bit weights (frequencies 39 and 45, selected by a measured search over 1,540 two-frequency sets; the explicit network's correctness is kernel-checked), 16 neurons on the same frequencies, 40 neurons on every frequency at modulus 12, and 12 neurons at modulus 257 (66,049 pairs); the theorem for the same construction (it does not reach these networks at their scale) and its three larger instances are in `phasegrid/` | kernel-checked: `LeanCheckedNetwork.FixedPhase12.adds_mod_113`, `FixedPhase16`, `Mod12All.adds_mod_12`, `Mod257Min.adds_mod_257` (2026-10-16, standard axioms, replayed by `leanchecker`); `phasegrid/smallest-networks.md` |
-| A learning curve whose every point is a theorem: the six checkpoints of this repository's 64-neuron training run (`runs/p113_h64.log`, reproduced exactly by `train.py`) are wrong on exactly 3, 2, 3, 2, 2 and 0 pairs, each pair named; every wrong pair is a held-out pair; at every checkpoint the circle-only reduction is wrong on hundreds of pairs, even at step 12,000 where the network is right everywhere | kernel-checked through `sweep/run_one.py`: `answer_iff_not_wrong` with the wrong list proved exact, both networks per checkpoint, 41 of 41 modules replayed by `leanchecker` each, standard axioms (2026-10-16); `sweep/tests/learning-curve-2026-10-16.md` |
+| A learning curve whose every point is a theorem: the six checkpoints of this repository's 64-neuron training run (`runs/p113_h64.log`, reproduced exactly by `train.py`) are wrong on exactly 3, 2, 3, 2, 2 and 0 pairs, each pair named; every wrong pair is a held-out pair; at every checkpoint the circle-only reduction (rescaled into the fast evaluator's range) is wrong on hundreds of pairs, even at step 12,000 where the network is right everywhere. The Lean packages themselves were built in scratch and are not committed; `result.json` per checkpoint is in `sweep/tests/learning-curve/` | kernel-checked through `sweep/run_one.py` in the 2026-10-16 runs: `answer_iff_not_wrong` with the wrong list proved exact, both networks per checkpoint, 41 of 41 modules replayed by `leanchecker` each, standard axioms; `sweep/tests/learning-curve-2026-10-16.md` |
 | 114 of the 128 neurons are alive; each puts a median 97% of its weight energy into one circle frequency | measured |
 | In all 114 live neurons, the largest leftover piece is the wave at three times the neuron's frequency | measured |
 
 The full check's output is in `lean_run.log`; `lean_run.first.log` is the first run, kept because
-its planted-fault check was broken and the correction is recorded there. The claims were
-attacked by three reviewing agents on 2026-10-15; what they found and what changed is in
-`AUDIT.md`.
+its planted-fault check was broken and the correction is recorded there. The claims were attacked by reviewing agents on 2026-10-15 and again on 2026-10-25; what they
+found and what changed is in `AUDIT.md`.
 
 Two kernel soundness bugs in Lean 4 were fixed in point releases on 2026-07-22 (4.32.1) and
 2026-07-28 (4.32.2), and a later search by the Lean FRO and OpenAI found more (Thomas Hales,
@@ -123,8 +126,8 @@ form a phone chip would run. **The trained-MLP claims concern these frozen weigh
 (the circle-only network's weights are whole numbers up to 130 in size).
 
 A 64-neuron version was also trained the same way. After freezing it got 2 or 3 pairs wrong at
-steps 2,000 to 10,000 and all pairs right at step 12,000, when it was stopped; the 128-neuron
-run, right at every checkpoint, was kept (`runs/p113_h64.log`).
+steps 2,000 to 10,000 and all pairs right at step 12,000, when it was stopped (`runs/p113_h64.log`);
+the 128-neuron run, right at every checkpoint, was kept (`runs/p113_h128.log`).
 
 ## How the Lean check works
 
@@ -165,13 +168,13 @@ python3 mechanism.py network/trained.npz     # the circle proof and its soundnes
 ```
 
 Each command exits non-zero if any check fails. GitHub Actions runs the listed MLP checks on pushes to main and on pull requests
-(`.github/workflows/check.yml`); ACAS has a separate reproduction gate, not CI. Lean is pinned to 4.35.0-rc2, the version the audit's
-independent checkers used.
+(`.github/workflows/check.yml`); that job does not run `run_lean_fixed_phase.sh` (Mod257Min) or ACAS. ACAS has a separate
+reproduction gate, not CI. Lean for the MLP path is pinned to 4.35.0-rc2; Mathlib / transformer release paths use 4.35.0.
 
 Rebuild from scratch:
 
 ```bash
-python3 train.py 113 128 0 1e-2 1.0 0.5 20000 runs/p113_h128.npz   # ~20 min on one core; same integer weights as network/trained.npz
+python3 train.py 113 128 0 1e-2 1.0 0.5 20000 runs/p113_h128.npz   # wall time is machine-dependent (tens of minutes to a few hours on one core); same integer weights as network/trained.npz
 python3 circle_only.py network/trained.npz network/circle_only.npz
 python3 gen_lean.py network/trained.npz Trained 16                 # writes the Lean weights and row proofs
 python3 gen_lean.py network/circle_only.npz CircleOnly 16
@@ -189,10 +192,10 @@ python3 figure.py network/trained.npz figures/circle.svg
 | `lean/expected_fail/FaultRow.lean` | the planted fault; it must be rejected |
 | `train.py`, `circle_only.py`, `mechanism.py`, `figure.py`, `gen_lean.py` | training, the circle-only network, the circle proof, the figure, Lean generation |
 | `verify_weights.py` | checks, without Lean, that the Lean weight files are the networks in `network/` |
-| `run_lean.sh`, `lean_run.log` | the full check and its output |
-| `.github/workflows/check.yml` | runs the listed MLP checks on pushes to main and on pull requests; ACAS has a separate reproduction gate, not CI |
-| `MECHANISM.md`, `AUDIT.md` | the circle proof in detail; the adversarial audit |
-| `make_fixed_phase.py`, `make_fixed_phase6.py`, `search_min.py`, `run_lean_fixed_phase.sh`, `lean_run_fixed_phase.log` | the small fixed-phase networks: generators, the search for the smallest, their kernel check and its output; write-up in `phasegrid/smallest-networks.md` |
+| `run_lean.sh`, `lean_run.log` | today's full check (Trained, CircleOnly, FixedPhase12/16, Mod12All) and the 2026-10-15 Trained+CircleOnly log |
+| `.github/workflows/check.yml` | runs the listed MLP checks on pushes to main and on pull requests; does not run `run_lean_fixed_phase.sh` or ACAS. Requiring `verify-release` in branch protection is an admin setting, not encoded here |
+| `MECHANISM.md`, `AUDIT.md` | the circle proof in detail; the adversarial audits |
+| `make_fixed_phase.py`, `make_fixed_phase6.py`, `search_min.py`, `run_lean_fixed_phase.sh`, `lean_run_fixed_phase.log` | the small fixed-phase networks (including Mod257Min): generators, the search for the smallest, their kernel check; the committed log is historical (older FixedPhase40/448/Mod7 builds). Write-up in `phasegrid/smallest-networks.md` |
 | `rnn/`, `sweep/`, `prime_env/` | the three directories described above, each with its own README |
 | `phasegrid/` | the every-modulus theorem on Mathlib (`mathlib/`), the derivation's numerical check (`stage1/`), the kernel-checked instances in core Lean (`instances/`), logs |
 | `runs/` | training logs |

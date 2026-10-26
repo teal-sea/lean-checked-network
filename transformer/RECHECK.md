@@ -1,8 +1,12 @@
 # Re-checking the transformer release
 
-`verify-release.sh` is the standalone verifier for the `transformer-final-raw-evidence`
-release. Main previously contained only `mathlib/verify.sh`, the older source-build
-CI gate. That gate remains unchanged; it is not the standalone release verifier.
+For the current published evidence, use [VERIFY.md](../VERIFY.md) and the
+`transformer-final-raw-evidence-r2` asset. No overlay is required for r2.
+
+`verify-release.sh` began as the standalone verifier repair for the older
+`transformer-final-raw-evidence` release. Main previously contained only
+`mathlib/verify.sh`, the older source-build CI gate. That gate remains unchanged; it is
+not the standalone release verifier.
 
 The compatibility repair uses elan's stable `ELAN_TOOLCHAIN` selector with `elan
 which lean`, not `elan which --toolchain`. Without elan, real `lean` and
@@ -15,12 +19,13 @@ Caller PATH is passed as discovery data, never copied into the Lean/Lake runtime
 environment. All original hash inventories, module isolation, proposition/axiom
 checks, replay and paired-control checks remain intact.
 
-## Overlay installation
+## Overlay installation (historical: pre-r2 archive only)
 
-The original release archive still embeds the broken script. Until a repaired
-archive is published, explicitly overlay the standalone repaired verifier after
-extracting. Run from a directory containing the downloaded original archive and a
-checkout of this revision at `lean-checked-network`:
+The original `transformer-final-raw-evidence` archive embedded a broken script. r2 ships
+a repaired verifier and needs no overlay. For the historical archive only, explicitly
+overlay the standalone repaired verifier after extracting. Run from a directory
+containing the downloaded original archive and a checkout of this revision at
+`lean-checked-network`:
 
 ```sh
 tar --zstd -xf transformer-final-raw-evidence.tar.zst

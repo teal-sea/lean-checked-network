@@ -21,8 +21,10 @@ How the result was checked: ordinary compilation, `leanchecker` replay, an exact
 and 9 wrong-data controls, each rejected by the kernel as false. Each control has a twin with the data
 unchanged, and every twin passes.
 
-To re-check it, use the release asset `transformer-final-raw-evidence`. It carries every object and
-source in the theorem's project closure (2,141 modules), with provenance, and a `verify.sh`.
+To re-check it, use the release asset `transformer-final-raw-evidence-r2` (see [VERIFY.md](../VERIFY.md)).
+It carries every object and source in the theorem's project closure, with provenance, and a
+`verify.sh`. No overlay is required for r2. The earlier `transformer-final-raw-evidence` asset
+remains as history.
 
 The generated certificate modules (`RawPacked.Generated`, `RawCorrespondence.*`, `InputAll`) are not
 committed. CI and the project host emit them, and their exact sources are in the release bundle.
@@ -100,4 +102,4 @@ The current candidate adds the missing `fastCheck` unfolding alongside `cachedFa
 
 Cached mode builds/replays generic support and edge fixtures, requires the altered-packed-literal rejection, generates and checks reproducible cache sources, then builds/replays every frozen cache unit serially before three cached pairs. It retains data hashes, bounds/Cols gates, source scans, axiom audit, resource receipts and per-pair replay. Artifact `transformer-core-cached-pair-pilot` contains `ci-out/` (including `STATUS.txt`, complete `.out` logs, time/RSS files and codegen manifests), smoke output and generated cache/support sources; retention is explicitly seven days. Failed smoke gates also expose their complete retained command output in Actions.
 
-Earlier run 38997742989 remains the split-bounds and row0-timeout history above. Run 39000697859 subsequently verified all split bounds, Cols and three direct pairs. The Bridge verification at a6e8a74 and recheck on c82d285 supersede the earlier uncompiled-Bridge status. Row0, all-input acceptance, transfer to Mathlib bounds (`hB`) and exact raw-weight identity (`hT`) remain open.
+Earlier run 38997742989 remains the split-bounds and row0-timeout history above. Run 39000697859 subsequently verified all split bounds, Cols and three direct pairs. The Bridge verification at a6e8a74 and recheck on c82d285 supersede the earlier uncompiled-Bridge status. *Superseded 2026-10-22 for the release theorem path: `hA`, `hB` and `hT` are proved under `FinalRaw` (see the top of this file). The core-lane row0 / `AllInputs` route described in the history above remains unproved as a separate, slower enumeration path.*

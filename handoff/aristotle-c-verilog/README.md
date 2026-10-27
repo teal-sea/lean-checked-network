@@ -334,6 +334,7 @@ proof produced by Aristotle, replayed by leanchecker" is, if that is what happen
 
 | File | What it is |
 | --- | --- |
+| `START-HERE.md` | one-page plain-English cover sheet |
 | `README.md` | this document |
 | `research-note-2026-10-27.md` | the research behind sections 1 and 2, with sources |
 | `fault_census.py` | measured baselines for workstream 2; usage in its docstring |

@@ -5,7 +5,7 @@ Usage: python3 make_grid.py [OUT.json]
 Cost model (see README.md). Kernel time per network is proportional to p^2 (H + p): p rows, p
 inputs per row, and per input the fast evaluator does about H big-number steps plus about p
 steps to unpack and compare the scores. The constant comes from the repo's own figure
-(README.md, 'both networks checked in 26 minutes on a 4-core machine'; lean_run.log itself
+(RESULTS.md, formerly README.md, 'both networks checked in 26 minutes on a 4-core machine'; lean_run.log itself
 records a cached build of 0 s and a 21-minute replay): both networks at p=113, H=128 built in 26 minutes on 4 cores, so one network
 is about 3,120 core-seconds, and 3120 / (113^2 * 241) = 1.01e-3 core-seconds per unit.
 The leanchecker replay re-does the kernel work (21 minutes against 26 in the repo's log): 0.8x.

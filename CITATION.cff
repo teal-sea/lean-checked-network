@@ -2,10 +2,11 @@ cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
 title: "A trained network, checked by Lean"
 abstract: >-
-  A two-layer neural network trained on half of the pairs of addition modulo 113, with Lean 4
-  kernel-checked proofs that its frozen integer weights give the right answer on all 12,769
-  inputs and that its circle (Fourier) waves alone suffice, plus an exact certificate built from
-  that explanation.
+  Lean 4 kernel-checked theorems about small neural networks: a trained one-layer transformer
+  (integer weights, exact real softmax) and a trained two-layer MLP that add modulo 113 on all
+  12,769 inputs; an alpha-beta-CROWN certificate for ACAS Xu network 1_1, property 1; a
+  Mathlib theorem that fixed-phase cosine networks add modulo p for every p >= 3; and a trained
+  recurrent adder correct on inputs of every length.
 authors:
   - family-names: Lince
     given-names: Thomas

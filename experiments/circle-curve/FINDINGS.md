@@ -66,3 +66,31 @@ So faithfulness of the one-wave explanation is non-monotone in weight decay (tru
   residual's own spectrum.
 - Whether any of this holds in the transformer. Untested.
 - None of the grid cells are kernel-checked. The weights are here so they can be.
+
+## Update, same day: what the missing 6% is
+
+Scripts: `miss_map.py`, `readout_test.py`, `bias_test.py` (run on `final_weights/`).
+
+1. The one-wave projection's misses are not scattered: they come in whole answer classes
+   (at frac 0.5, several residues c are wrong on all 97 pairs, the median residue on 0).
+   That is a readout problem, not a per-pair one.
+2. One-wave embeddings with the full readout table beat the net (8, 4, 0 wrong at wd 0.1).
+   Full embeddings with a one-wave readout fail (1,830 / 1,489 / 2,111). The extra piece is in
+   the readout only. It is not DC (adding the readout's DC does nothing) and it is not a few
+   extra waves (top-8 frequencies per readout column still leaves 34 to 43 wrong).
+3. It is a single bias vector over the 97 output classes. The squared activation of a clock
+   neuron has a constant part; the net reads that constant through the readout's off-frequency
+   components and gets a per-class offset. Adding exactly that vector (residual readout x mean
+   squared activation, 97 numbers) to the one-wave network gives 10 / 2 / 0 / 4 / 37 wrong at
+   wd 0.1, 0.1, 0.1, 0.3, 0.03: equal to or better than the trained net.
+4. The vector is the exact negative of the clock's own uneven per-class baseline
+   (correlation -1.00 in every generalizing net, 8 of 8). So the complete mechanism in the
+   middle band is: clock neurons, plus a baseline cancellation stored in the readout's
+   non-dominant frequencies. At wd >= 1 the clock's baseline is small relative to its margin
+   (spread/gap 0.2 to 0.3) so the clock alone suffices; at wd 0.03 to 0.3 it is about the
+   size of the margin (0.7 to 1.3), so without the cancellation 1 in 7 answers flip.
+   At wd 0 the residual is memorization, not this vector (correlation -0.57; adding it hurts).
+
+Open: why the clock's baseline is uneven at low wd (cluster phase imbalance is the guess), and
+sealing "one-wave net + bias" in Lean. The bias can be realized as constant neurons
+(E1 constant, E2 zero, readout column = bias / const^2), so the existing checker may apply.

@@ -91,6 +91,53 @@ Scripts: `miss_map.py`, `readout_test.py`, `bias_test.py` (run on `final_weights
    size of the margin (0.7 to 1.3), so without the cancellation 1 in 7 answers flip.
    At wd 0 the residual is memorization, not this vector (correlation -0.57; adding it hurts).
 
-Open: why the clock's baseline is uneven at low wd (cluster phase imbalance is the guess), and
-sealing "one-wave net + bias" in Lean. The bias can be realized as constant neurons
-(E1 constant, E2 zero, readout column = bias / const^2), so the existing checker may apply.
+## Kill test (same day): train with an explicit output bias
+
+`train_bias.py` is the grid trainer with one change, a bias vector on the logits (no weight decay on
+it); `bias_grid.txt` is 26 runs; `kill_test.py` scores them against the matched no-bias cells;
+results in `kill_test_results.txt`, weights in `bias_final_weights/`.
+
+Prediction: if the readout's off-frequency component exists to flatten the clock's baseline, a net
+with a bias parameter puts the cancellation there, the junk disappears, and one wave per neuron
+plus the learned bias explains the net.
+
+- Confirmed at wd 0.1 and 0.3 (frac 0.3 and 0.5, 5 seeds each): the learned bias is the negative
+  clock baseline (corr 0.95 to 0.99) and one wave + learned bias is wrong on 4 to 45 pairs where one
+  wave alone is wrong on 600 to 4,000 (one seed: 340). The readout junk shrinks by about a third
+  (7.5% to 5.7% of energy, 6.5% to 4%) but does not vanish: the bias is the residual's main job,
+  not its only one.
+- Fails at wd 0.03: one wave + learned bias still wrong on 660 to 1,500 (net 120 to 200). Something
+  else lives in the residual at low wd; the 200k-step runs show it is not cleanup time.
+- wd 0: no effect, as expected (the residual is memorization).
+- wd 1: with a bias the clock alone gets worse (43 to 243 wrong vs 11 to 21) and clock + bias is
+  0 to 3 wrong: the cancellation moved from the readout into the bias.
+
+## Derivation (same day): the bias from the clock alone
+
+`derive_bias.py`, results in `derive_bias_results.txt`. For a one-wave neuron the mean squared
+activation is a constant m_h, so the clock's per-class baseline is sum over frequency clusters k of
+Re(e^{2 pi i k c / p} Z_k) with Z_k the cluster's sum of m_h C_h e^{i psi_h} (readout amplitude and
+phase). It vanishes when each cluster's readout phasors cancel. Measured over the 141 short-run cells:
+
+- every generalizing net keeps its own class marginal flat (spread 1 to 10% of the margin), so the
+  loss forces whatever baseline the clock leaves to be cancelled by the rest of the readout;
+- the clock's baseline is about one margin at wd 0.03 to 0.3 (0.7 to 1.3) and a quarter at wd 1,
+  a tenth at wd 3; cluster imbalance falls from 0.8 to 0.65 to 0.3 over the same range, and the
+  margin grows, so both effects contribute;
+- adding the derived bias (readout residual times mean activation, 97 numbers) to the clock gives
+  0 to 39 wrong in every generalizing configuration from wd 0.03 up, including p 53, 113, H 64,
+  256. It also turns the wd 0 frac 0.5 memorizer (net wrong on 2,628) into an adder wrong on 8.
+
+## Status of each claim (the certainty ladder)
+
+| claim | status |
+|---|---|
+| each trained table is wrong on exactly k pairs (per cell) | measured here; kernel-checkable with `sweep/run_one.py`'s stages |
+| clock + bias table is wrong on exactly k pairs (per cell) | measured, two independent evaluators agree (`bias_test.py`, `sweep/run_one.py`'s `evaluate`); sealing in progress with `seal_cell.py` |
+| the clock + bias tables are within x/1000 of the trained tables' energy, extra neurons constant | exact integer statement, `Bridge.lean`; sealing in progress |
+| the first H columns are each neuron's dominant wave; the bias construction | measured (Python FFT); the one step the kernel does not see |
+| the bias equals the negative clock baseline | measured (corr -1.00 by construction when the net's marginal is flat; the flat marginal is measured) |
+| the junk exists only to flatten the baseline | refuted in the strong form by the kill test; the weak form (main job) measured |
+| faithfulness of one wave per neuron is non-monotone in wd | measured, 5 seeds, holds at p 53, 113, H 64, 256 |
+
+Open: what else the residual carries at wd 0.03 (and the remaining third at wd 0.1).

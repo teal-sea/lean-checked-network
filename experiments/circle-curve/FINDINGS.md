@@ -168,7 +168,11 @@ pruned. So in the middle band weight decay prunes most neurons and the survivors
 they had at step 100; at wd >= 1 few neurons die and about a quarter change frequency between
 steps 100 and 500. The clock-vs-rest margin crossing in `unmask.py` does not predict the grok step
 (it fires after it by a factor of about 2.5 at wd >= 1 and never at wd <= 0.3, where the "rest"
-includes the bias); `unmask2.py` repeats it with the bias split out. "Grokking is unmasking" is not
+includes the bias). `unmask2.py` repeats it with the bias split out: the step at which clock + bias
+beats the remaining mask on half the held-out pairs exists in 99 of the 102 grokking runs and in
+none of the 52 others, and it is monotone in the grok step (Spearman 0.96 over 99 runs) but lags
+it by a factor of 1.6 to 2.0 (quartiles). A consistent decomposition, not a predictor:
+beating the mask on a pair is sufficient for the net to be right on it, not necessary. "Grokking is unmasking" is not
 claimed here: that sentence is Nanda et al.'s cleanup phase and Swaroop's "sharpens an algorithm
 encoded during memorization", and the wd 1 cells show the clock being completed during grokking
 (658 wrong at step 100, 94 at 500, 0 at the end), not merely revealed.

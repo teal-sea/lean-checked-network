@@ -1,0 +1,1 @@
+cell                         | with bias: net  1wave  1wave+b  W2res  corr(b,-base) | no bias: net  1wave  W2res  base/gap

@@ -57,6 +57,7 @@ def main():
     ap.add_argument("--repo", default=str(HERE.parent.parent))
     ap.add_argument("--jobs", type=int, default=2); ap.add_argument("--build-jobs", type=int, default=0)
     ap.add_argument("--energy-permille", type=int, default=0, help="bound stated per table; 0 = measured, rounded up")
+    ap.add_argument("--pure-clock", action="store_true", help="seal the one-wave projection alone, no bias neurons")
     args = ap.parse_args()
     repo = Path(args.repo).resolve(); out = Path(args.outdir).resolve(); out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ, OMP_NUM_THREADS="1"); env["PATH"] = str(Path.home() / ".elan" / "bin") + os.pathsep + env.get("PATH", "")
@@ -64,6 +65,8 @@ def main():
     p, H = int(d["p"]), int(d["H"])
     E1, E2, W2 = (d[k].astype(np.int64) for k in ["E1q", "E2q", "W2q"])
     (E1r, E2r, W2r), n, energy, bias = clock_bias(E1, E2, W2, p, H)
+    if args.pure_clock:
+        E1r, E2r, W2r, n, bias = E1r[:, :H], E2r[:, :H], W2r[:, :H], 0, np.zeros(p)
     permille = [args.energy_permille or int(np.ceil(e * 1000)) for e in energy]
     np.savez(out / "clock_bias.npz", E1q=E1r, E2q=E2r, W2q=W2r, bias=bias, n_bias_neurons=n, energy=np.array(energy), p=p, H=H)
     nets = {"trained": (E1, E2, W2), "clock_bias": (E1r, E2r, W2r)}
@@ -99,7 +102,7 @@ def main():
     modules = ["LeanCheckedNetwork.Network", "LeanCheckedNetwork.Fast", "LeanCheckedNetwork.WrongSet", "LeanCheckedNetwork.Bridge"]
     main_theorems = {}
     for name, key, net_desc, Hn in [("Trained", "trained", "the trained network, weights frozen to whole numbers", H),
-                                    ("ClockBias", "clock_bias", f"the clock-plus-bias reduction: one wave per neuron plus {n} constant bias neurons", H + n)]:
+                                    ("ClockBias", "clock_bias", (f"the clock-plus-bias reduction: one wave per neuron plus {n} constant bias neurons" if n else "the one-wave reduction: each neuron reduced to its dominant wave, no bias neurons"), H + n)]:
         wrong_rows = [[] for _ in range(p)]
         for a, b in evals[key]["wrong_pairs"]: wrong_rows[a].append(b)
         mods, k = write_network(root, lib, name, desc, net_desc, *nets[key], wrong_rows, chunks, p, Hn, Path(args.npz).name)

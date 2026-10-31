@@ -34,6 +34,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("seal_dir"); ap.add_argument("out_dir")
     ap.add_argument("--build-jobs", type=int, default=0)
+    ap.add_argument("--only", default="", help="run one control: positive | drop_pair | energy_bound | extra_entry | shape")
     args = ap.parse_args()
     seal = Path(args.seal_dir).resolve(); out = Path(args.out_dir).resolve(); out.mkdir(parents=True, exist_ok=True)
     src = seal / "lean"
@@ -99,6 +100,7 @@ def main():
         return f"shape_E1 bias neurons {n} -> {int(n) + 1}"
 
     plan = [("positive", None), ("drop_pair", doctor_drop_pair), ("energy_bound", doctor_energy), ("extra_entry", doctor_extra), ("shape", doctor_shape)]
+    if args.only: plan = [pl for pl in plan if pl[0] == args.only]
     for name, fn in plan:
         d = fresh(name)
         note = fn(d) if fn else "undoctored copy"

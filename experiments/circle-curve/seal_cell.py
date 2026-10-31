@@ -169,7 +169,9 @@ end {lib}
         src = "import LeanCheckedNetwork\n" + "".join(f"#print axioms {t}\n" for ts in main_theorems.values() for t in ts)
         (ldir / "Axioms.lean").write_text(src)
         rc, log, dt = run(["lake", "env", "lean", "Axioms.lean"], ldir, env=env, log=out / "axioms.log")
-        for line in log.splitlines():
+        # Lean wraps a long axiom list over several lines; join them before matching
+        joined = re.sub(r",\s*\n\s*", ", ", log)
+        for line in joined.splitlines():
             mm = re.match(r"'(.+)' depends on axioms: \[(.*)\]", line)
             if mm: axioms[mm.group(1)] = [x.strip() for x in mm.group(2).split(",") if x.strip()]
             elif "does not depend on any axioms" in line: axioms[line.split("'")[1]] = []

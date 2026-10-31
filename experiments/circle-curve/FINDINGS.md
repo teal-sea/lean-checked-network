@@ -132,12 +132,30 @@ phase). It vanishes when each cluster's readout phasors cancel. Measured over th
 
 | claim | status |
 |---|---|
-| each trained table is wrong on exactly k pairs (per cell) | measured here; kernel-checkable with `sweep/run_one.py`'s stages |
-| clock + bias table is wrong on exactly k pairs (per cell) | measured, two independent evaluators agree (`bias_test.py`, `sweep/run_one.py`'s `evaluate`); sealing in progress with `seal_cell.py` |
-| the clock + bias tables are within x/1000 of the trained tables' energy, extra neurons constant | exact integer statement, `Bridge.lean`; sealing in progress |
+| each trained table is wrong on exactly k pairs (per cell) | **kernel-checked** for 3 cells (`seals/`), measured for the rest |
+| clock + bias table is wrong on exactly k pairs (per cell) | **kernel-checked** for 3 cells (`seals/`); measured elsewhere, two independent evaluators agree |
+| the clock + bias tables are within x/1000 of the trained tables' energy, extra neurons constant | **kernel-checked** for the same 3 cells (`Bridge.lean`) |
 | the first H columns are each neuron's dominant wave; the bias construction | measured (Python FFT); the one step the kernel does not see |
 | the bias equals the negative clock baseline | measured (corr -1.00 by construction when the net's marginal is flat; the flat marginal is measured) |
 | the junk exists only to flatten the baseline | refuted in the strong form by the kill test; the weak form (main job) measured |
 | faithfulness of one wave per neuron is non-monotone in wd | measured, 5 seeds, holds at p 53, 113, H 64, 256 |
 
 Open: what else the residual carries at wd 0.03 (and the remaining third at wd 0.1).
+
+## Kernel-checked cells (2026-10-31, hermes-ovh, Lean 4.35.0-rc2, no Mathlib)
+
+`seal_cell.py` built a fresh package per cell (`seals/<cell>/lean`, build artifacts not kept), ran
+`lake build` (zero sorry), replayed all 43 modules with `leanchecker`, printed the axioms of every
+main theorem (propext, Classical.choice, Quot.sound or none), and scanned for forbidden tokens;
+`seal_verdict.py` re-derives the verdict from the logs. Each took about 13 min to build and 12 to replay.
+
+| cell | trained wrong | clock + bias wrong | bias neurons | energy outside the wave, stated (E1, E2, W2) |
+|---|---|---|---|---|
+| p 97, H 128, frac 0.30, wd 0.1, 200k steps, seed 0 | 31 | 10 | 3 | 56, 59, 76 per mille |
+| p 97, H 128, frac 0.50, wd 0.1, 20k steps, seed 0 | 0 (`adds_mod_97`) | 0 (`adds_mod_97`) | 5 | 27, 25, 69 per mille |
+| p 97, H 128, frac 0.30, wd 0.3, 20k steps, seed 0 | 18 | 4 | 4 | 60, 61, 65 per mille |
+
+What the kernel saw: both weight tables as explicit integers, the wrong-pair lists, the three
+bridge facts. What it did not see: that the first 128 columns are each neuron's dominant wave and
+that the bias columns come from the readout residual. That step is Python (`seal_cell.py`,
+`clock_bias`) and is the chain's one measured link.

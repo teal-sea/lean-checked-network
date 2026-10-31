@@ -30,8 +30,9 @@ def stats(d, with_bias):
     corr = float(np.corrcoef(bias, base)[0, 1]) if with_bias and bias.std() > 0 else float('nan')
     return dict(net=net, one=w1, one_bias=w1b, res=res_share, emb_res=emb_res, base_gap=float(base.std() / gap), corr=corr, ho=float(d['heldout_acc']))
 rows = []
-for f in sorted(glob.glob(f"{BIAS_DIR}/*/final.npz")):
-    name = os.path.basename(os.path.dirname(f))
+files = sorted(glob.glob(f"{BIAS_DIR}/*/final.npz")) or sorted(glob.glob(f"{BIAS_DIR}/*.npz"))
+for f in files:
+    name = os.path.basename(os.path.dirname(f)) if f.endswith("final.npz") else os.path.basename(f)[:-4]
     b = stats(np.load(f), True)
     g = stats(np.load(f"final_weights/{name}.npz"), False) if os.path.exists(f"final_weights/{name}.npz") else None
     rows.append((name, b, g))

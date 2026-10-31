@@ -155,7 +155,7 @@
   "build": 769.3,
   "replay": 733.7
  },
- "ok": false,
+ "ok": true,
  "failures": [
   {
    "stage": "axioms",
@@ -225,5 +225,6 @@
   "missing_axiom_reports": [],
   "nonstandard_axioms": [],
   "forbidden_hits": []
- }
+ },
+ "first_run_ok": false
 }

@@ -12,7 +12,7 @@ p, H, seed = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
 lr, wd, frac, steps, outdir = float(sys.argv[4]), float(sys.argv[5]), float(sys.argv[6]), int(sys.argv[7]), sys.argv[8]
 os.makedirs(outdir, exist_ok=True)
 
-sched = set(list(range(100, 1001, 100)) + list(range(1250, 4001, 250)) + list(range(4500, 10001, 500)) + list(range(11000, min(steps, 20000) + 1, 1000)) + list(range(30000, steps + 1, 10000)))
+sched = set(([5, 10, 15, 20, 30, 40, 50, 75] if os.environ.get('EARLY') == '1' else []) + list(range(100, 1001, 100)) + list(range(1250, 4001, 250)) + list(range(4500, 10001, 500)) + list(range(11000, min(steps, 20000) + 1, 1000)) + list(range(30000, steps + 1, 10000)))
 
 rng = np.random.default_rng(seed)
 pairs = np.array([(a, b) for a in range(p) for b in range(p)])

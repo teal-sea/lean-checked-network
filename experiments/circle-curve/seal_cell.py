@@ -164,7 +164,7 @@ end {lib}
             procs = still
         bad = [m for m, r in replay.items() if r["exit"] != 0]
         if bad: fail("replay", f"leanchecker failed on {bad}")
-    result["seconds"]["replay"] = round(time.time() - t0, 1); result["stages"]["replay"] = {"ok": sum(1 for r in replay.values() if r["exit"] == 0), "of": len(modules)}; save()
+    result["seconds"]["replay"] = round(time.time() - t0, 1); result["stages"]["replay"] = {"ok": sum(1 for r in replay.values() if r["exit"] == 0), "of": len(modules), "modules": replay}; save()
 
     # axioms
     axioms = {}

@@ -2,7 +2,9 @@
 
 Usage: python3 train_act.py ACT P HIDDEN SEED LR WD TRAIN_FRACTION STEPS OUTDIR, ACT in {sq, relu}.
 ACT sq is train_ckpt2.py exactly (x^2). EXTRA_STEPS=1,2,3 (environment) adds checkpoints at those steps.
-NOISE_FRAC=f (fifth batch) replaces the labels of a fraction f of the training pairs by wrong ones. ACT relu replaces x^2 by max(x, 0) in the forward pass, the
+NOISE_FRAC=f (fifth batch) replaces the labels of a fraction f of the training pairs by wrong ones.
+HOLDOUT_TOKENS=k / HOLDOUT_SUMS=k (seventh batch) drop from the training split every pair that contains
+one of k tokens, or whose sum is one of k sums (chosen by a separate generator). ACT relu replaces x^2 by max(x, 0) in the forward pass, the
 frozen evaluation and the gradient ((z > 0) for 2z); nothing else changes (same init, AdamW-style
 decoupled weight decay, lr, schedule, 8-bit freezing, checkpoint format plus an `act` field).
 """
@@ -34,6 +36,16 @@ if NOISE > 0:  # fifth batch: this fraction of the training labels replaced by w
     nrng = np.random.default_rng(10_000 + seed)
     noisy = nrng.choice(tr, int(round(NOISE * n_train)), replace=False)
     labels = labels.copy(); labels[noisy] = (labels[noisy] + nrng.integers(1, p, len(noisy))) % p
+HT, HS = int(os.environ.get('HOLDOUT_TOKENS', '0')), int(os.environ.get('HOLDOUT_SUMS', '0'))
+hold_tokens = hold_sums = np.array([], dtype=np.int64)
+if HT or HS:  # seventh batch: k tokens that never occur (as a or b) or k sums that are never a training label; separate generator, init unchanged
+    hrng = np.random.default_rng(20_000 + seed)
+    if HT:
+        hold_tokens = np.sort(hrng.choice(p, HT, replace=False))
+    if HS:
+        hold_sums = np.sort(hrng.choice(p, HS, replace=False))
+    keep = ~(np.isin(pairs[tr, 0], hold_tokens) | np.isin(pairs[tr, 1], hold_tokens) | np.isin(labels[tr], hold_sums))
+    tr = tr[keep]; n_train = len(tr); te = np.setdiff1d(np.arange(len(pairs)), tr)
 onehot = np.eye(p)
 
 E1 = rng.normal(0, 1, (p, H)) / np.sqrt(H)
@@ -69,7 +81,7 @@ def save(path, step):
     ties = int((top2[:, 0] == top2[:, 1]).sum())
     print(f"step {step}: train {acc(tr):.4f} held-out {acc(te):.4f} frozen wrong {wrong} ties {ties} gap {int((top2[:,1]-top2[:,0]).min())}",
           file=sys.stderr, flush=True)
-    np.savez(path, act=ACT, noise_frac=NOISE, p=p, H=H, seed=seed, lr=lr, wd=wd, frac=frac, steps=step, train_idx=tr,
+    np.savez(path, act=ACT, noise_frac=NOISE, hold_tokens=hold_tokens, hold_sums=hold_sums, p=p, H=H, seed=seed, lr=lr, wd=wd, frac=frac, steps=step, train_idx=tr,
              E1=params[0], E2=params[1], W2=params[2], E1q=E1q, E2q=E2q, W2q=W2q,
              train_acc=acc(tr), heldout_acc=acc(te))
 

@@ -132,3 +132,21 @@ t*; (2) for r > 0.15, t* is at most the predicted value (the law saturates towar
 1 / sqrt(H) (r falls like 1 / sqrt(H), lr x H grows like H), not like 1 / H as for x^2. Win: the
 law (1) holds for at least 9 of the 11 seed-0 runs it covers (r <= 0.15), which would make the hidden adder's
 arrival time predictable from one number of the activation.
+
+## Seventh batch (fixed 2026-11-01 ~18:35 Bogota, before any of its runs; GitHub Actions)
+
+The fourth batch's frac-0.05 training sets happened to miss a whole token (seed 0 never sees token 74)
+or a whole sum (seed 1 never sees 83; seed 2 never sees 35, nor 32 as first token), and their
+projections still became exact on all pairs. This batch makes that deliberate. x^2, p 97, the usual
+frac 0.3 split with every pair removed that contains one of k held-out tokens (as a or as b), or whose
+sum is one of k held-out sums (`HOLDOUT_TOKENS`, `HOLDOUT_SUMS`, chosen by a separate generator so the
+initialization is the clean run's). k = 1, 3, 10, 30; H 1024 and 2048; seeds 0-2; 500 Adam steps,
+checkpoints as in the fourth batch C. Jobs in `sweeps/batch7.txt`.
+
+Measure (`holdout_eval.py`): the integer pure clock (what a seal checks) scored on all 9,409 pairs and
+separately on the pairs with a held-out token, the pairs with a held-out sum, the training pairs and
+the other untrained pairs; t* = first checkpoint from which it is wrong on 0 of all 9,409 pairs to step
+500. Predictions: (1) for k = 1 and 3, tokens and sums, t* is finite at both widths in every seed;
+(2) the frozen network itself is wrong on almost every pair with a held-out token or sum (it has
+nothing to recall there). Win: an exact projection on all pairs with 30 tokens (31% of the
+vocabulary) never seen, or with 30 sums never seen as a label, in any seed.

@@ -220,9 +220,12 @@ disagreement counts are measured, not sealed. With the clock-only cells, "clock 
 200k-step wd 0.1 cell; 2,089 against 0 at frac 0.5, 647 against 4 at wd 0.3); the pairwise
 agreement of the two reduced tables is still measured. At step 20 of the wd-0 run the net is wrong
 on 8,696 of 9,409 while its projection is wrong on 81, both kernel-checked. Negative control (the
-200k-step wd 0.1 clock + bias package, boat.dev): the undoctored copy builds (399 s); the four
-doctored copies (drop a wrong pair, lower a per-mille bound by one, change an extra-column entry,
-state the wrong neuron count) are running and each must fail to build. Running too, one Lean
+200k-step wd 0.1 clock + bias package, boat.dev, `seals/negative_control_*`): the undoctored copy
+builds (399 s); each of four doctored copies fails to build (410 to 477 s): dropping the wrong pair
+(3, 28) from the lists, a kernel type mismatch in the row theorem; lowering the E1 energy bound from
+56 to 55 per mille (measured 55.87), a kernel type mismatch in the bridge; changing one extra-column
+entry from 127 to 126, `decide` proves the extra-column proposition false; stating 4 bias neurons
+instead of 3, a kernel type mismatch in the shape theorem. Running too, one Lean
 process at a time after three were killed for memory in 8 GB: the pure one-wave projection of the
 p 97, H 256, wd 0 net at step 100 and at step 20k (measured: net wrong on 6,559 and 6,555,
 projection on 0 and 0, the two tables disagreeing on exactly the net's wrong pairs).
@@ -235,6 +238,7 @@ projection on 0 and 0, the two tables disagreeing on exactly the net's wrong pai
 | the clock + bias table is wrong on exactly k pairs (per cell) | kernel-checked for 3 cells; measured elsewhere, two independent evaluators agree |
 | the clock-only table is wrong on exactly k pairs (per cell) | kernel-checked for 4 cells (1,486; 2,089; 647; 81) |
 | the reduced tables are within x/1000 of the trained tables' energy, extra neurons constant | kernel-checked for all 7 packages |
+| a doctored package (pair dropped, bound lowered by one, extra entry changed, wrong neuron count) is rejected | kernel-checked negative control, 4 of 4 rejected, the undoctored copy builds |
 | the first H columns are each neuron's dominant wave; the bias construction | measured (Python FFT); the one step the kernel does not see |
 | the one-wave projection's equivariant part is an exact adder | measured, 75 cells, 0 wrong in all |
 | the clock's non-equivariant artifacts are what the readout cancels; the c-only part is the largest | measured; clock minus c-only 0 to 48 wrong, minus all three 0 to 1, in 35 middle-band cells |
@@ -280,7 +284,6 @@ architecture.
 
 ## Open
 
-- The negative control's four doctored builds (running on boat.dev); only the undoctored build is in.
 - The pairwise agreement of two answer functions as one theorem; the clock-only and clock + bias
   counts are sealed separately against the same trained table.
 - Whether the same artifact-cancellation account holds in the repo's transformer. Untested.

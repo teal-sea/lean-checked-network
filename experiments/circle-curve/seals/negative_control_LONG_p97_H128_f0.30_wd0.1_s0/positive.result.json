@@ -1,0 +1,15 @@
+{
+ "seal": "/home/user/seal/negctl_src",
+ "lib": "LeanCheckedNetwork.Seal.._C_LONG_p97_H128_f0_30_wd0_1_s0",
+ "controls": {
+  "positive": {
+   "note": "undoctored copy",
+   "exit": 0,
+   "built": true,
+   "seconds": 398.8,
+   "errors": [],
+   "as_expected": true
+  }
+ },
+ "ok": true
+}

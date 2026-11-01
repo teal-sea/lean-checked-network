@@ -319,5 +319,50 @@
   },
   "train_acc": 1.0,
   "heldout_acc": 0.0009110233829334953
+ },
+ "x2_f015_H1024_s0_step1": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-18/x2_f0.15_H1024_s0/ckpt_step1.npz (train_act.py sq, EXTRA_STEPS, numpy 2.5.3)",
+  "sha256_of_source_npz": "749c867c67a667bdf25be52348d972da7bf7743dbbee3b4c9400e8f6120daa23",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.15,
+   "steps": 1
+  },
+  "train_acc": 0.16513111268603828,
+  "heldout_acc": 0.005751437859464866
+ },
+ "x2_f015_H1024_s2_step1": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-18/x2_f0.15_H1024_s2/ckpt_step1.npz (train_act.py sq, EXTRA_STEPS, numpy 2.5.3)",
+  "sha256_of_source_npz": "870287424406ebef97cf7f793c9d25b381991570ecf3e7b53f4f2a77b4c67e3f",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.15,
+   "steps": 1
+  },
+  "train_acc": 0.2593905031892275,
+  "heldout_acc": 0.005501375343835959
+ },
+ "x2_f010_H1024_s2_step2": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-17/x2_f0.1_H1024_s2/ckpt_step2.npz (train_act.py sq, EXTRA_STEPS, numpy 2.5.3)",
+  "sha256_of_source_npz": "c91e496f78f696d5b7fa7241261d8d402dcc39e5eeee470086f22b84fd82aae8",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.1,
+   "steps": 2
+  },
+  "train_acc": 0.39213602550478216,
+  "heldout_acc": 0.00413320736891828
  }
 }

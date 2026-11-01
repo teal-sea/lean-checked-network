@@ -133,7 +133,7 @@ t*; (2) for r > 0.15, t* is at most the predicted value (the law saturates towar
 law (1) holds for at least 9 of the 11 seed-0 runs it covers (r <= 0.15), which would make the hidden adder's
 arrival time predictable from one number of the activation.
 
-## Seventh batch (fixed 2026-11-01 ~18:35 Bogota, before any of its runs; GitHub Actions)
+## Seventh batch (fixed 2026-11-01 ~18:20 Bogota, before any of its runs; GitHub Actions)
 
 The fourth batch's frac-0.05 training sets happened to miss a whole token (seed 0 never sees token 74)
 or a whole sum (seed 1 never sees 83; seed 2 never sees 35, nor 32 as first token), and their

@@ -1,0 +1,13 @@
+# Batch 3 (2026-11-01 ~12:30 Bogota): activation generality and one-step SGD. Rule: for each activation,
+# does the float one-wave projection reach 0 wrong while the net memorizes (held-out < 0.5)? Prediction:
+# yes for gelu, silu, abs; no for tanh (odd). One-step SGD: is the projection exact after 1-3 plain
+# gradient steps for some lr, as after one Adam step?
+gen gelu_H1024_s0 X=0 gelu 97 1024 0 1e-2 0.0 0.30 20000
+gen silu_H1024_s0 X=0 silu 97 1024 0 1e-2 0.0 0.30 20000
+gen gelu_H1024_s1 X=0 gelu 97 1024 1 1e-2 0.0 0.30 20000
+gen silu_H1024_s1 X=0 silu 97 1024 1 1e-2 0.0 0.30 20000
+gen sgd_lr1_H1024_s0 OPT=sgd+EXTRA_STEPS=1,2,3 sq 97 1024 0 1 0.0 0.30 3
+gen sgd_lr10_H1024_s0 OPT=sgd+EXTRA_STEPS=1,2,3 sq 97 1024 0 10 0.0 0.30 3
+gen sgd_lr100_H1024_s0 OPT=sgd+EXTRA_STEPS=1,2,3 sq 97 1024 0 100 0.0 0.30 3
+gen sgd_lr1000_H1024_s0 OPT=sgd+EXTRA_STEPS=1,2,3 sq 97 1024 0 1000 0.0 0.30 3
+gen sgd_lr10000_H1024_s0 OPT=sgd+EXTRA_STEPS=1,2,3 sq 97 1024 0 10000 0.0 0.30 3

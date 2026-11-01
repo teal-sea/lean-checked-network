@@ -18,6 +18,7 @@ case $kind in
   relu) $PY $MS/train_act.py relu "$@" "$d" > "$d/train.log" 2>&1 && $PY $MS/analyze_act.py "$d" > "$d/analyze.log" 2>&1 ;;
   sqe)  ev=$1; shift; env "$ev" $PY $CC/train_ckpt2.py "$@" "$d" > "$d/train.log" 2>&1 && $PY $CC/analyze_curve.py "$d" > "$d/analyze.log" 2>&1 ;;
   relue) ev=$1; shift; env "$ev" $PY $MS/train_act.py relu "$@" "$d" > "$d/train.log" 2>&1 && $PY $MS/analyze_act.py "$d" > "$d/analyze.log" 2>&1 ;;
+  gen)  IFS='+' read -ra evs <<< "$1"; shift; env "${evs[@]}" $PY $MS/train_gen.py "$@" "$d" > "$d/train.log" 2>&1 && $PY $MS/analyze_gen.py "$d" > "$d/analyze.log" 2>&1 ;;
   tf)   $PY $TC/train_curve.py "$d" "$@" --threads 1 > "$d/train.log" 2>&1 \
           && $PY $TC/reduce.py "$d"/ckpt_*.npz > "$d/reduce.jsonl" 2> "$d/reduce.log" \
           && $PY $TC/probe_sum_part.py "$d"/ckpt_*.npz > "$d/probe.jsonl" 2> "$d/probe.log" ;;

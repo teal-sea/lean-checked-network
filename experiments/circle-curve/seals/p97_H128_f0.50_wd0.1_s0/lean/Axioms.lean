@@ -1,0 +1,13 @@
+import LeanCheckedNetwork
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.Trained.answer_iff_not_wrong
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.Trained.adds_mod_97
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.ClockBias.answer_iff_not_wrong
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.ClockBias.adds_mod_97
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.shape_E1
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.shape_E2
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.shape_W2
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.energy_E1
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.energy_E2
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.energy_W2
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.extra_E1
+#print axioms LeanCheckedNetwork.Seal.C_p97_H128_f0_50_wd0_1_s0.extra_E2

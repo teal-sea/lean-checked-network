@@ -1,0 +1,15 @@
+import LeanCheckedNetwork
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.Trained.answer_iff_not_wrong
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.Trained.wrongPairs_length
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.Trained.wrongPairs_nodup
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.Trained.wrongPairs_in_range
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.ClockBias.answer_iff_not_wrong
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.ClockBias.adds_mod_97
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.shape_E1
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.shape_E2
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.shape_W2
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.energy_E1
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.energy_E2
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.energy_W2
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.extra_E1
+#print axioms LeanCheckedNetwork.Seal.C_p97_H256_f0_30_wd0_0_s0_step100.extra_E2

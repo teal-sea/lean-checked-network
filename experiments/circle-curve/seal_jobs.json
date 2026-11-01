@@ -1,0 +1,68 @@
+[
+ {
+  "name": "p97_H256_f0.30_wd0.0_s0_step100",
+  "kind": "seal",
+  "npz": "seal_inputs/p97_H256_f0.30_wd0.0_s0_step100.npz",
+  "pure_clock": true
+ },
+ {
+  "name": "p97_H256_f0.30_wd0.0_s0_step20000",
+  "kind": "seal",
+  "npz": "seal_inputs/p97_H256_f0.30_wd0.0_s0_step20000.npz",
+  "pure_clock": true
+ },
+ {
+  "name": "early_p97_H128_f0.15_wd0.0_s0_step20",
+  "kind": "seal",
+  "npz": "seal_inputs/early_p97_H128_f0.15_wd0.0_s0_step20.npz",
+  "pure_clock": true
+ },
+ {
+  "name": "clockonly_LONG_p97_H128_f0.30_wd0.1_s0",
+  "kind": "seal",
+  "npz": "seal_inputs/clockonly_LONG_p97_H128_f0.30_wd0.1_s0.npz",
+  "pure_clock": true
+ },
+ {
+  "name": "clockonly_p97_H128_f0.50_wd0.1_s0",
+  "kind": "seal",
+  "npz": "seal_inputs/clockonly_p97_H128_f0.50_wd0.1_s0.npz",
+  "pure_clock": true
+ },
+ {
+  "name": "clockonly_p97_H128_f0.30_wd0.3_s0",
+  "kind": "seal",
+  "npz": "seal_inputs/clockonly_p97_H128_f0.30_wd0.3_s0.npz",
+  "pure_clock": true
+ },
+ {
+  "name": "negctl_positive_LONG_wd0.1_s0",
+  "kind": "negative",
+  "seal_dir": "seals/LONG_p97_H128_f0.30_wd0.1_s0",
+  "only": "positive"
+ },
+ {
+  "name": "negctl_drop_pair_LONG_wd0.1_s0",
+  "kind": "negative",
+  "seal_dir": "seals/LONG_p97_H128_f0.30_wd0.1_s0",
+  "only": "drop_pair"
+ },
+ {
+  "name": "negctl_energy_bound_LONG_wd0.1_s0",
+  "kind": "negative",
+  "seal_dir": "seals/LONG_p97_H128_f0.30_wd0.1_s0",
+  "only": "energy_bound"
+ },
+ {
+  "name": "negctl_extra_entry_LONG_wd0.1_s0",
+  "kind": "negative",
+  "seal_dir": "seals/LONG_p97_H128_f0.30_wd0.1_s0",
+  "only": "extra_entry"
+ },
+ {
+  "name": "negctl_shape_LONG_wd0.1_s0",
+  "kind": "negative",
+  "seal_dir": "seals/LONG_p97_H128_f0.30_wd0.1_s0",
+  "only": "shape"
+ }
+]

@@ -1,0 +1,18 @@
+{
+ "seal": "/home/user/seal/negctl_src",
+ "lib": "LeanCheckedNetwork.Seal.C_LONG_p97_H128_f0_30_wd0_1_s0",
+ "controls": {
+  "drop_pair": {
+   "note": "dropped (3, 28)",
+   "exit": 1,
+   "built": false,
+   "seconds": 451.5,
+   "errors": [
+    "error: LeanCheckedNetwork/Seal/C_LONG_p97_H128_f0_30_wd0_1_s0/Trained/Rows00.lean:56:2: (kernel) application type mismatch",
+    "error: build failed"
+   ],
+   "as_expected": true
+  }
+ },
+ "ok": true
+}

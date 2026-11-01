@@ -412,5 +412,21 @@
   "act": "abs",
   "train_acc": 1.0,
   "heldout_acc": 0.004099605223200729
+ },
+ "x2_f005_H1024_s0_step10": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-15/x2_f0.05_H1024_s0/ckpt_step10.npz (train_act.py sq, EXTRA_STEPS, numpy 2.5.3)",
+  "sha256_of_source_npz": "06e7e0b9f82ee06503edc73c377fc5dd53f7b1747224136a85750eea4724312f",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.05,
+   "steps": 10
+  },
+  "train_acc": 0.6063829787234043,
+  "heldout_acc": 0.009620762948875714,
+  "note": "the 470 training pairs never contain token 74 (neither a nor b); token 74 rows of E1 and E2 are untouched by training"
  }
 }

@@ -4,6 +4,7 @@ import json, re, sys, glob, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'sweep'))
 from run_one import STANDARD_AXIOMS, FORBIDDEN
 for out in sorted(glob.glob(os.path.join(sys.argv[1], '*/'))):
+    if not os.path.exists(out + 'build.log'): continue   # e.g. the negative-control directory
     d = json.load(open(out + 'result.json'))
     build = open(out + 'build.log').read()
     build_ok = 'Build completed successfully' in build and not re.search(r"declaration uses [`']sorry", build)

@@ -57,7 +57,8 @@ fits half the training pairs, and at wd 0 nothing removes it.
 p 97, H 128, frac 0.15, wd 0, 20k steps, five seeds: net wrong on 7,952 to 7,970 (held-out 0.4 to
 0.6%, below chance); projection wrong on 29, 78, 29, 236, 49. At H 256, frac 0.3: net wrong on
 6,534 to 6,555 (held-out 0.5 to 0.8%); projection wrong on 0, 18, 13. At step 100 of the H 256 seed
-0 run: net wrong on 6,559, projection wrong on 0 (gap 765,374, no ties).
+0 run: net wrong on 6,559, projection wrong on 0 (gap 765,374, no ties); both counts kernel-checked at
+step 100 and at step 20k (6,555 and 0), see the kernel-checked cells below.
 
 Scope: at frac 0.3, H 128 the projection is wrong on 518 to 1,982; at p 113 it is wrong on ~2,500 of
 12,769 and degrades over training (seed 2: 913 at step 100, 3,778 at 20k); at p 257 on 19,000 to
@@ -207,6 +208,8 @@ replay 11):
 | p 97, H 128, frac 0.50, wd 0.1, 20k steps, seed 0 | 0 (`adds_mod_97`) | 2,089 | 2,089 | 27, 25, 69 per mille |
 | p 97, H 128, frac 0.30, wd 0.3, 20k steps, seed 0 | 18 | 647 | 649 pairs (both wrong on 13, agreeing on 3) | 60, 61, 65 per mille |
 | p 97, H 128, frac 0.15, wd 0, step 20, seed 0 | 8,696 | 81 | 8,701 pairs (both wrong on 76, agreeing on 0) | 933, 935, 927 per mille |
+| p 97, H 256, frac 0.30, wd 0, step 100, seed 0 | 6,559 | 0 (`adds_mod_97`) | 6,559 (the net's wrong pairs) | 885, 881, 886 per mille |
+| p 97, H 256, frac 0.30, wd 0, 20k steps, seed 0 | 6,555 | 0 (`adds_mod_97`) | 6,555 (the net's wrong pairs) | 865, 860, 861 per mille |
 
 Each: build completed with zero sorry warnings, 43 of 43 modules replayed by `leanchecker` (which
 prints a message and exits non-zero on any problem; all logs are empty), 16, 14 or 12 main
@@ -225,26 +228,28 @@ builds (399 s); each of four doctored copies fails to build (410 to 477 s): drop
 (3, 28) from the lists, a kernel type mismatch in the row theorem; lowering the E1 energy bound from
 56 to 55 per mille (measured 55.87), a kernel type mismatch in the bridge; changing one extra-column
 entry from 127 to 126, `decide` proves the extra-column proposition false; stating 4 bias neurons
-instead of 3, a kernel type mismatch in the shape theorem. Running too, one Lean
-process at a time after three were killed for memory in 8 GB: the pure one-wave projection of the
-p 97, H 256, wd 0 net at step 100 and at step 20k (measured: net wrong on 6,559 and 6,555,
-projection on 0 and 0, the two tables disagreeing on exactly the net's wrong pairs).
+instead of 3, a kernel type mismatch in the shape theorem. The two H 256 cells
+are the wd-0 result of section 2 sealed: the memorizing net is wrong on 6,559 (step 100) and 6,555
+(step 20k) of 9,409 pairs while the one-wave projection of the same weights adds mod 97 on every
+pair (smallest winning gap 765,374 and 592,984, no ties), with the dominant waves carrying only 11
+to 14 percent of the tables' energy. They took one Lean process at a time (build 53 to 60 min,
+replay 45 min) after three processes were killed for memory in 8 GB.
 
 ## Status of each claim (the certainty ladder)
 
 | claim | status |
 |---|---|
-| each trained table is wrong on exactly k pairs (per cell) | kernel-checked for 4 trained tables (3 middle-band, 1 at step 20); measured for the rest |
+| each trained table is wrong on exactly k pairs (per cell) | kernel-checked for 6 trained tables (3 middle-band, the wd-0 H 128 net at step 20, the wd-0 H 256 net at step 100 and 20k); measured for the rest |
 | the clock + bias table is wrong on exactly k pairs (per cell) | kernel-checked for 3 cells; measured elsewhere, two independent evaluators agree |
-| the clock-only table is wrong on exactly k pairs (per cell) | kernel-checked for 4 cells (1,486; 2,089; 647; 81) |
-| the reduced tables are within x/1000 of the trained tables' energy, extra neurons constant | kernel-checked for all 7 packages |
+| the clock-only table is wrong on exactly k pairs (per cell) | kernel-checked for 6 cells (1,486; 2,089; 647; 81; 0; 0) |
+| the reduced tables are within x/1000 of the trained tables' energy, extra neurons constant | kernel-checked for all 9 packages |
 | a doctored package (pair dropped, bound lowered by one, extra entry changed, wrong neuron count) is rejected | kernel-checked negative control, 4 of 4 rejected, the undoctored copy builds |
 | the first H columns are each neuron's dominant wave; the bias construction | measured (Python FFT); the one step the kernel does not see |
 | the one-wave projection's equivariant part is an exact adder | measured, 75 cells, 0 wrong in all |
 | the clock's non-equivariant artifacts are what the readout cancels; the c-only part is the largest | measured; clock minus c-only 0 to 48 wrong, minus all three 0 to 1, in 35 middle-band cells |
 | an explicit bias absorbs the cancellation | measured: nearly all of its effect on answers at wd 0.1 to 0.3, a third of its energy; partly at wd 0.03 |
 | the projection's accuracy is non-monotone in wd under this filter | measured, 5 seeds; the wd-0 dip is filter- and fraction-dependent, the middle-band failure is not |
-| a wd-0 memorizer's dominant waves form an adder while its held-out function is anti-aligned | measured (p 97, H 128 and 256, frac <= 0.3); H 256 step 100 and step 20k sealing |
+| a wd-0 memorizer's dominant waves form an adder while its held-out function is anti-aligned | the adder and the memorization kernel-checked for the H 256 seed-0 net at step 100 and 20k (wrong on 6,559 / 6,555 vs 0 / 0); measured for the other seeds and widths; the anti-alignment is measured |
 | the adder is written in the first 20 steps | measured, one seed (`controls/early_*`); the step-20 pair (net 8,696, projection 81) kernel-checked for that seed |
 
 ## Related work

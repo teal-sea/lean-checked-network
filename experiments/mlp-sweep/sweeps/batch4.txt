@@ -1,4 +1,4 @@
-# Fourth batch (rules in experiments/mlp-sweep/RULES.md, fixed 2026-11-01 ~16:30 Bogota before any run).
+# Fourth batch (rules in experiments/mlp-sweep/RULES.md, fixed 2026-11-01 ~15:50 Bogota before any run).
 # Format: KIND NAME SETTINGS ARGS (job.sh); SETTINGS are '+'-joined VAR=value.
 #keep: ^(abs_[^/]*/(ckpt_step(1|2|3|4|5|100|20000)|final)|x2_f[^/]*_H(512|1024)_[^/]*/ckpt_step([1-9]|10))\.npz$
 # A. |x| at smaller width (integer projection by analyze_act.py), and a shuffled-label control.

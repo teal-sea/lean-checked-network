@@ -1,7 +1,8 @@
 """experiments/circle-curve/train_ckpt2.py with the activation as the first argument (2026-11-01).
 
 Usage: python3 train_act.py ACT P HIDDEN SEED LR WD TRAIN_FRACTION STEPS OUTDIR, ACT in {sq, relu}.
-ACT sq is train_ckpt2.py exactly (x^2). EXTRA_STEPS=1,2,3 (environment) adds checkpoints at those steps. ACT relu replaces x^2 by max(x, 0) in the forward pass, the
+ACT sq is train_ckpt2.py exactly (x^2). EXTRA_STEPS=1,2,3 (environment) adds checkpoints at those steps.
+NOISE_FRAC=f (fifth batch) replaces the labels of a fraction f of the training pairs by wrong ones. ACT relu replaces x^2 by max(x, 0) in the forward pass, the
 frozen evaluation and the gradient ((z > 0) for 2z); nothing else changes (same init, AdamW-style
 decoupled weight decay, lr, schedule, 8-bit freezing, checkpoint format plus an `act` field).
 """
@@ -28,6 +29,11 @@ n_train = int(round(frac * len(pairs)))
 tr, te = perm[:n_train], perm[n_train:]
 if SHUFFLE:
     labels = labels.copy(); labels[tr] = labels[tr][rng.permutation(n_train)]  # control: training labels permuted
+NOISE = float(os.environ.get('NOISE_FRAC', '0'))
+if NOISE > 0:  # fifth batch: this fraction of the training labels replaced by wrong ones, drawn from a separate generator so that the init is the clean run's
+    nrng = np.random.default_rng(10_000 + seed)
+    noisy = nrng.choice(tr, int(round(NOISE * n_train)), replace=False)
+    labels = labels.copy(); labels[noisy] = (labels[noisy] + nrng.integers(1, p, len(noisy))) % p
 onehot = np.eye(p)
 
 E1 = rng.normal(0, 1, (p, H)) / np.sqrt(H)
@@ -63,7 +69,7 @@ def save(path, step):
     ties = int((top2[:, 0] == top2[:, 1]).sum())
     print(f"step {step}: train {acc(tr):.4f} held-out {acc(te):.4f} frozen wrong {wrong} ties {ties} gap {int((top2[:,1]-top2[:,0]).min())}",
           file=sys.stderr, flush=True)
-    np.savez(path, act=ACT, p=p, H=H, seed=seed, lr=lr, wd=wd, frac=frac, steps=step, train_idx=tr,
+    np.savez(path, act=ACT, noise_frac=NOISE, p=p, H=H, seed=seed, lr=lr, wd=wd, frac=frac, steps=step, train_idx=tr,
              E1=params[0], E2=params[1], W2=params[2], E1q=E1q, E2q=E2q, W2q=W2q,
              train_acc=acc(tr), heldout_acc=acc(te))
 

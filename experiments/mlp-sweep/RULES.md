@@ -38,7 +38,7 @@ to 20k (nets wrong on 6,552 to 6,577); ReLU H 512 seed 1 has the net wrong on ev
 The rule and prediction are in the headers of `jobs_A3.txt` and `jobs_B3.txt` and in `train_gen.py`:
 activations GELU, SiLU, |x| and tanh at H 1024, and one-step plain gradient descent.
 
-## Fourth batch (fixed 2026-11-01 ~16:30 Bogota, before any of its runs; GitHub Actions)
+## Fourth batch (fixed 2026-11-01 ~15:50 Bogota, before any of its runs; GitHub Actions)
 
 Batch 3 found |x| exact at every checkpoint, tanh at chance, and GELU and SiLU partial (falling,
 not exact by 20k). Three questions, all at p 97, lr 0.01, weight decay 0, Adam, init N(0, 1/H).
@@ -82,3 +82,21 @@ to f^(-alpha) where t* is finite. The two simplest pictures give alpha = 1/2 (no
 over a random subset of a row) or alpha = 1 (signal linear in f against fixed noise); this is a
 measurement, not a prediction. Win: an exact projection after one step at frac 0.1 or below, at
 any H up to 4096.
+
+## Fifth batch (fixed 2026-11-01 ~16:10 Bogota, before any of its runs; GitHub Actions)
+
+Jobs in `sweeps/batch5.txt`. x^2, Adam, lr 0.01, weight decay 0, frac 0.3, integer projection
+`circle_wrong` by `analyze_act.py`; t* as in the fourth batch (first checkpoint from which
+`circle_wrong` stays 0 to the end of the run).
+
+**A. Wrong labels.** `NOISE_FRAC` = 0.25, 0.5 or 0.75 of the training labels replaced by wrong
+ones (a separate generator, so the initialization is the clean run's); H 1024, 2048 and 4096,
+seeds 0-2, 500 steps. Prediction from the simplest signal-to-noise picture (only the correct pairs
+add to the aligned part of the first update): t* x lr x H x (1 - noise) of about 10, as at
+noise 0, so t* = 1 needs lr x H of about 13 at noise 0.25 (H 2048 and 4096), 20 at 0.5 (H 4096,
+H 2048 at the edge) and 40 at 0.75 (H 4096 at the edge). Win: an exact projection after one step
+with half of the training labels wrong.
+
+**B. Does the width needed depend on p?** p 31, 61, 127 and 257, H 256, 384, 512 and 768, seeds
+0-4, checkpoints at steps 1 to 5. Prediction: t* depends on lr x H and not on p (within one step),
+following t* x lr x H of about 10 (t* 4, 3, 2, 2 at the four widths).

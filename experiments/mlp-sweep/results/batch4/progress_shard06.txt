@@ -1,0 +1,8 @@
+=== tanhs10_H1024_s0 start 20:55:15
+=== tanhs100_H1024_s0 start 20:55:15
+=== gelus1_H1024_s0_20k start 20:55:15
+=== x2_f0.05_H4096_s0 start 20:55:15
+=== x2_f0.05_H4096_s0 exit 0 after 612 s
+=== tanhs10_H1024_s0 exit 0 after 674 s
+=== tanhs100_H1024_s0 exit 0 after 686 s
+=== gelus1_H1024_s0_20k exit 0 after 6921 s

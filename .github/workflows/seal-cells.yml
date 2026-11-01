@@ -1,6 +1,6 @@
 name: Seal cells (circle-curve MLP)
 
-# Kernel-checks the cells listed in experiments/mlp-sweep/seal_queue.json with
+# Kernel-checks the cells listed in experiments/mlp-sweep/seal_queues/<name>.json (for branch seal/<name>) with
 # experiments/circle-curve/seal_cell.py, one GitHub-hosted runner per cell (4 vCPU, 16 GB),
 # for cells too wide for the 8 GB boxes. Runs only on pushes to seal/** branches.
 # Each entry: {"name", "npz" (repo path), "pure_clock" (bool), "build_jobs", "jobs", "chunks"}.
@@ -19,7 +19,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - id: q
-        run: echo "cells=$(python3 -c 'import json; print(json.dumps(json.load(open("experiments/mlp-sweep/seal_queue.json"))))')" >> "$GITHUB_OUTPUT"
+        run: |
+          q="experiments/mlp-sweep/seal_queues/${GITHUB_REF_NAME#seal/}.json"
+          echo "queue $q"
+          echo "cells=$(python3 -c 'import json, sys; print(json.dumps(json.load(open(sys.argv[1]))))' "$q")" >> "$GITHUB_OUTPUT"
 
   seal:
     needs: plan

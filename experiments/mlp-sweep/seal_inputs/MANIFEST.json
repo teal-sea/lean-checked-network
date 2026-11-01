@@ -73,5 +73,65 @@
   },
   "train_acc": 1.0,
   "heldout_acc": 0.0033404190707561495
+ },
+ "x2_H512_s0_step2": {
+  "from": "box run first_steps/sq_H512_s0/ckpt_step2.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "f15f644e386ba3303aebdd695686bd254701581b6628856c1fdf40a444239d6d",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2
+  },
+  "train_acc": 0.085724406659582,
+  "heldout_acc": 0.005769814758578804
+ },
+ "x2_H512_s1_step2": {
+  "from": "box run first_steps/sq_H512_s1/ckpt_step2.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "761b30cb1168a1b36edb31cf49873ad9d02d20e0608fe3fa5e5ac421bdbf2eee",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 1,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2
+  },
+  "train_acc": 0.13708820403825717,
+  "heldout_acc": 0.0039477679927118125
+ },
+ "x2_H512_s2_step2": {
+  "from": "box run first_steps/sq_H512_s2/ckpt_step2.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "824c0000ea7a018b34767778c0f1e0fc04050b7b7a442b349f65a1f1e5a559a0",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2
+  },
+  "train_acc": 0.10166489550123982,
+  "heldout_acc": 0.0031885818402672336
+ },
+ "x2_H1024_s0_step1": {
+  "from": "box run first_steps/sq_H1024_s0/ckpt_step1.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "94844473133ed32bc51d09ef301e1625869d360f3e2199169718ac41b7f49742",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.12964930924548354,
+  "heldout_acc": 0.0036440935317339812
  }
 }

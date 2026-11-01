@@ -197,5 +197,21 @@
   "train_acc": 0.09776833156216791,
   "heldout_acc": 0.0036440935317339812,
   "net_wrong_numpy": 9116
+ },
+ "relu_H1024_s0_final": {
+  "from": "box run relu_H1024_s0/final.npz (train_act.py relu)",
+  "sha256_of_source_npz": "70c583c0bb5f4d88cd0437037ccb321abf43c7ee7d2c2d16ec0351045cbb0e8f",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "act": "relu",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0
  }
 }

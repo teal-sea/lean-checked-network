@@ -1,0 +1,8 @@
+=== gelus3_H1024_s1 start 20:55:13
+=== silus3_H1024_s0 start 20:55:13
+=== gelus10_H1024_s0 start 20:55:13
+=== gelus10_H1024_s1 start 20:55:13
+=== silus3_H1024_s0 exit 0 after 729 s
+=== gelus10_H1024_s1 exit 0 after 1236 s
+=== gelus10_H1024_s0 exit 0 after 1341 s
+=== gelus3_H1024_s1 exit 0 after 1359 s

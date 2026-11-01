@@ -1,0 +1,8 @@
+=== x2_p61_H768_s2 start 21:15:26
+=== x2_p61_H768_s3 start 21:15:26
+=== x2_p61_H768_s4 start 21:15:26
+=== x2_p31_H256_s0 start 21:15:26
+=== x2_p31_H256_s0 exit 0 after 3 s
+=== x2_p61_H768_s2 exit 0 after 10 s
+=== x2_p61_H768_s3 exit 0 after 12 s
+=== x2_p61_H768_s4 exit 0 after 13 s

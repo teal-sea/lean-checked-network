@@ -32,3 +32,4 @@ case $kind in
 esac
 rc=$?
 echo "=== $name exit $rc after $(( $(date +%s) - t0 )) s" >> ~/tc/out/progress.txt
+exit $rc

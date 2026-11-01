@@ -5,8 +5,11 @@ statements ("wrong on exactly k pairs", adds_mod_p when k = 0), the same energy/
 the same reduction (one wave per neuron; with bias neurons unless --pure-clock). For ReLU a bias
 neuron is constant 127 after the activation (E1 = 127, E2 = 0), so its read-out column carries
 bias / 127 instead of bias / 127^2. The activation defaults to the checkpoint's `act` field.
+--act abs (added for the fourth batch) is the same with lean/LeanCheckedNetwork/Abs.lean (answerA,
+fastAnswerA, answerA_eq_fastAnswerA): the absolute value, also never negative, and a bias neuron is
+again constant 127 after the activation.
 
-Usage: python3 seal_act.py final.npz OUTDIR [--act sq|relu] [--repo DIR] [--jobs N] [--build-jobs N]
+Usage: python3 seal_act.py final.npz OUTDIR [--act sq|relu|abs] [--repo DIR] [--jobs N] [--build-jobs N]
        [--chunks N] [--pure-clock] [--energy-permille X]
 """
 import argparse, json, os, re, shutil, subprocess, sys, time
@@ -21,7 +24,12 @@ ACT = "sq"
 
 
 def act_fn(z):
-    return z * z if ACT == "sq" else np.maximum(z, 0)
+    return {"sq": lambda z: z * z, "relu": lambda z: np.maximum(z, 0), "abs": np.abs}[ACT](z)
+
+
+# Lean names of the non-square evaluators: module, answer, fast answer, fast check, equality theorem, word
+LEAN_ACT = {"relu": ("Relu", "answerR", "fastAnswerR", "fastOkR", "answerR_eq_fastAnswerR", "ReLU"),
+            "abs": ("Abs", "answerA", "fastAnswerA", "fastOkA", "answerA_eq_fastAnswerA", "absolute values")}
 
 
 def evaluate(E1, E2, W2):
@@ -50,22 +58,23 @@ def evaluate(E1, E2, W2):
 
 
 def write_network(root, lib, name, desc, net_desc, E1, E2, W2, wrong_rows, chunks, p, H, src):
-    """run_one.write_network; for ReLU, the generated files are pointed at Relu.lean's definitions."""
+    """run_one.write_network; for ReLU (abs), the generated files are pointed at Relu.lean's (Abs.lean's) definitions."""
     mods, k = write_network_sq(root, lib, name, desc, net_desc, E1, E2, W2, wrong_rows, chunks, p, H, src)
-    if ACT == "relu":
+    if ACT in LEAN_ACT:
+        mod, ans, fans, fok, eqthm, word = LEAN_ACT[ACT]
         d = root / name
         w = (d / "Weights.lean").read_text()
-        for old, new in [("import LeanCheckedNetwork.Network\n", "import LeanCheckedNetwork.Relu\n"),
-                         ("LeanCheckedNetwork.answer E1 E2 W2 a b", "LeanCheckedNetwork.answerR E1 E2 W2 a b"),
-                         ("squares", "ReLU")]:
+        for old, new in [("import LeanCheckedNetwork.Network\n", f"import LeanCheckedNetwork.{mod}\n"),
+                         ("LeanCheckedNetwork.answer E1 E2 W2 a b", f"LeanCheckedNetwork.{ans} E1 E2 W2 a b"),
+                         ("squares", word)]:
             n = w.count(old)
             assert n == (1 if old != "squares" else n), (old, n)
             w = w.replace(old, new)
         (d / "Weights.lean").write_text(w)
         # non-overlapping patterns, each exactly once per row theorem
-        new = {"rw [answer_eq_fastAnswer E1 E2 W2 ": "rw [answerR_eq_fastAnswerR E1 E2 W2 ",
-               "(fastOk E1 E2 ": "(fastOkR E1 E2 ", "((fastAnswer E1 E2 W2 ": "((fastAnswerR E1 E2 W2 ",
-               "show LeanCheckedNetwork.answer E1 E2 W2 ": "show LeanCheckedNetwork.answerR E1 E2 W2 "}
+        new = {"rw [answer_eq_fastAnswer E1 E2 W2 ": f"rw [{eqthm} E1 E2 W2 ",
+               "(fastOk E1 E2 ": f"({fok} E1 E2 ", "((fastAnswer E1 E2 W2 ": f"(({fans} E1 E2 W2 ",
+               "show LeanCheckedNetwork.answer E1 E2 W2 ": f"show LeanCheckedNetwork.{ans} E1 E2 W2 "}
         seen = {k: 0 for k in new}
         for f in sorted(d.glob("Rows*.lean")):
             t = f.read_text()
@@ -112,7 +121,7 @@ def main():
     ap.add_argument("--pure-clock", action="store_true", help="seal the one-wave projection alone, no bias neurons")
     ap.add_argument("--chunks", type=int, default=16, help="row modules per network (default 16, as in every earlier seal); "
                     "more, smaller modules lower the memory of each Lean process for wide networks")
-    ap.add_argument("--act", choices=["sq", "relu"], default=None, help="default: the checkpoint's act field, else sq")
+    ap.add_argument("--act", choices=["sq", "relu", "abs"], default=None, help="default: the checkpoint's act field, else sq")
     ap.add_argument("--max-heartbeats", type=int, default=None, help="add `set_option maxHeartbeats N` to the generated "
                     "Weights files (an elaboration resource limit; the default 200000 is too small for 512-wide tables)")
     ap.add_argument("--max-rec-depth", type=int, default=None, help="raise `set_option maxRecDepth` in the generated Weights "
@@ -161,7 +170,7 @@ def main():
     if ldir.exists(): shutil.rmtree(ldir)
     (ldir / "LeanCheckedNetwork").mkdir(parents=True)
     for f in ["lakefile.toml", "lean-toolchain"]: shutil.copy(repo / "lean" / f, ldir / f)
-    for f in ["Network.lean", "Fast.lean", "Relu.lean"]: shutil.copy(repo / "lean" / "LeanCheckedNetwork" / f, ldir / "LeanCheckedNetwork" / f)
+    for f in ["Network.lean", "Fast.lean", "Relu.lean", "Abs.lean"]: shutil.copy(repo / "lean" / "LeanCheckedNetwork" / f, ldir / "LeanCheckedNetwork" / f)
     shutil.copy(repo / "sweep" / "WrongSet.lean", ldir / "LeanCheckedNetwork" / "WrongSet.lean")
     shutil.copy(HERE.parent / "circle-curve" / "Bridge.lean", ldir / "LeanCheckedNetwork" / "Bridge.lean")
     tag = re.sub(r"[^A-Za-z0-9]", "_", Path(args.npz).stem)
@@ -170,9 +179,9 @@ def main():
     root = ldir / "LeanCheckedNetwork" / "Seal" / tag
     chunks = min(p, args.chunks)
     desc = json.dumps(result["config"])
-    modules = ["LeanCheckedNetwork.Network", "LeanCheckedNetwork.Fast", "LeanCheckedNetwork.WrongSet", "LeanCheckedNetwork.Bridge"] + (["LeanCheckedNetwork.Relu"] if ACT == "relu" else [])
+    modules = ["LeanCheckedNetwork.Network", "LeanCheckedNetwork.Fast", "LeanCheckedNetwork.WrongSet", "LeanCheckedNetwork.Bridge"] + ([f"LeanCheckedNetwork.{LEAN_ACT[ACT][0]}"] if ACT in LEAN_ACT else [])
     main_theorems = {}
-    for name, key, net_desc, Hn in [("Trained", "trained", "the trained " + ("ReLU " if ACT == "relu" else "") + "network, weights frozen to whole numbers", H),
+    for name, key, net_desc, Hn in [("Trained", "trained", "the trained " + {"relu": "ReLU ", "abs": "absolute-value "}.get(ACT, "") + "network, weights frozen to whole numbers", H),
                                     ("ClockBias", "clock_bias", (f"the clock-plus-bias reduction: one wave per neuron plus {n} constant bias neurons" if n else "the one-wave reduction: each neuron reduced to its dominant wave, no bias neurons"), H + n)]:
         wrong_rows = [[] for _ in range(p)]
         for a, b in evals[key]["wrong_pairs"]: wrong_rows[a].append(b)

@@ -17,7 +17,7 @@ import numpy as np
 
 ACT = sys.argv.pop(1)
 OPT = os.environ.get('OPT', 'adam')
-S = float(os.environ.get('ACT_S', '1'))
+SCALE = float(os.environ.get('ACT_S', '1'))  # not S: save() uses S for its scores
 assert OPT in ('adam', 'sgd')
 _C = np.sqrt(2 / np.pi)
 
@@ -41,9 +41,9 @@ ACTS = {'sq': (lambda z: z * z, lambda z: 2 * z),
         'silu': (lambda z: z * _sig(z), lambda z: _sig(z) * (1 + z * (1 - _sig(z)))),
         'abs': (np.abs, np.sign),
         'tanh': (np.tanh, lambda z: 1 - np.tanh(z) ** 2),
-        'gelus': (lambda z: _gelu(S * z) / S, lambda z: _dgelu(S * z)),
-        'silus': (lambda z: z * _sig(S * z), lambda z: _sig(S * z) * (1 + S * z * (1 - _sig(S * z)))),
-        'tanhs': (lambda z: np.tanh(S * z) / S, lambda z: 1 - np.tanh(S * z) ** 2)}
+        'gelus': (lambda z: _gelu(SCALE * z) / SCALE, lambda z: _dgelu(SCALE * z)),
+        'silus': (lambda z: z * _sig(SCALE * z), lambda z: _sig(SCALE * z) * (1 + SCALE * z * (1 - _sig(SCALE * z)))),
+        'tanhs': (lambda z: np.tanh(SCALE * z) / SCALE, lambda z: 1 - np.tanh(SCALE * z) ** 2)}
 assert ACT in ACTS
 act, dact = ACTS[ACT]
 p, H, seed = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
@@ -97,7 +97,7 @@ def save(path, step):
     ties = int((top2[:, 0] == top2[:, 1]).sum())
     print(f"step {step}: train {acc(tr):.4f} held-out {acc(te):.4f} frozen wrong {wrong} ties {ties} gap {int((top2[:,1]-top2[:,0]).min())}",
           file=sys.stderr, flush=True)
-    np.savez(path, act=ACT, act_s=S, opt=OPT, p=p, H=H, seed=seed, lr=lr, wd=wd, frac=frac, steps=step, train_idx=tr,
+    np.savez(path, act=ACT, act_s=SCALE, opt=OPT, p=p, H=H, seed=seed, lr=lr, wd=wd, frac=frac, steps=step, train_idx=tr,
              E1=params[0], E2=params[1], W2=params[2], E1q=E1q, E2q=E2q, W2q=W2q,
              train_acc=acc(tr), heldout_acc=acc(te))
 

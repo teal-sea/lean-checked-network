@@ -117,6 +117,8 @@ def main():
                     "Weights files (an elaboration resource limit; the default 200000 is too small for 512-wide tables)")
     ap.add_argument("--max-rec-depth", type=int, default=None, help="raise `set_option maxRecDepth` in the generated Weights "
                     "files above 100000 (needed to elaborate 1024-wide list literals)")
+    ap.add_argument("--right-iff-trained", action="store_true", help="also state, for the trained network, that it answers "
+                    "(a + b) %% p exactly on its training pairs (requires its wrong set to be the held-out set; checked in numpy first)")
     args = ap.parse_args()
     repo = Path(args.repo).resolve(); out = Path(args.outdir).resolve(); out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ, OMP_NUM_THREADS="1"); env["PATH"] = str(Path.home() / ".elan" / "bin") + os.pathsep + env.get("PATH", "")
@@ -143,6 +145,14 @@ def main():
     for k, ev in evals.items():
         if not ev["w2_in_fast_range"]: fail("numpy", f"{k}: W2 outside [-128, 127]")
         if not ev["fast_digit_bound_ok"]: fail("numpy", f"{k}: digit bound")
+    train_rows = None
+    if args.right_iff_trained:
+        tr_idx = np.asarray(d["train_idx"]); tr = np.zeros(p * p, bool); tr[tr_idx] = True
+        held = [(int(i) // p, int(i) % p) for i in np.nonzero(~tr)[0]]
+        if sorted(evals["trained"]["wrong_pairs"]) != held:
+            fail("numpy", "--right-iff-trained: the trained network's wrong set is not the held-out set")
+        train_rows = [sorted(int(i) % p for i in tr_idx if int(i) // p == a) for a in range(p)]
+        result["right_iff_trained"] = {"train_pairs": int(tr.sum()), "heldout_pairs": len(held)}
     if result["failures"]: save(); sys.exit(1)
 
     # generate
@@ -205,7 +215,44 @@ end {lib}
 """)
     modules.append(f"{lib}.Bridge")
     main_theorems["bridge"] = [f"{lib}.{t}" for t in ["shape_E1", "shape_E2", "shape_W2", "energy_E1", "energy_E2", "energy_W2", "extra_E1", "extra_E2"]]
-    (ldir / "LeanCheckedNetwork.lean").write_text(f"import {lib}.Trained.AllInputs\nimport {lib}.ClockBias.AllInputs\nimport {lib}.Bridge\n")
+    if train_rows is not None:
+        rows_txt = "\n".join("  [" + ", ".join(map(str, r)) + "]," for r in train_rows[:-1]) + "\n  [" + ", ".join(map(str, train_rows[-1])) + "]]"
+        (root / "Trained" / "Train.lean").write_text(f"""import {lib}.Trained.AllInputs
+
+/-!
+# The trained network is right exactly on its training pairs
+
+`trainRows` lists, row by row, the {sum(len(r) for r in train_rows)} pairs the network was trained on (from the
+checkpoint's `train_idx`). `right_iff_trained`: for every pair, the network answers `(a + b) % {p}`
+if and only if the pair was a training pair. So it is right on every training pair and wrong on
+every one of the {p * p - sum(len(r) for r in train_rows)} held-out pairs.
+-/
+
+set_option maxRecDepth 100000
+
+namespace {lib}.Trained
+
+/-- Row `a` lists every `b` such that `(a, b)` was a training pair. -/
+def trainRows : List (List Nat) := [
+{rows_txt}
+
+/-- Each row of wrong answers is the complement of the training row. -/
+theorem wrongRows_eq_complement :
+    wrongRows = (List.range {p}).map (fun a => (List.range {p}).filter (fun b => !((trainRows.getD a []).contains b))) := by
+  decide +kernel
+
+/-- The network answers `(a + b) % {p}` exactly on the training pairs. -/
+theorem right_iff_trained : ∀ a, a < {p} → ∀ b, b < {p} →
+    (answer a b = (a + b) % {p} ↔ b ∈ trainRows.getD a []) := by
+  intro a ha b hb
+  rw [rows a ha b hb, wrongRows_eq_complement]
+  simp [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range ha, List.mem_filter, List.mem_range, hb]
+
+end {lib}.Trained
+""")
+        modules.append(f"{lib}.Trained.Train")
+        main_theorems["trained_train"] = [f"{lib}.Trained.right_iff_trained"]
+    (ldir / "LeanCheckedNetwork.lean").write_text(f"import {lib}.Trained.AllInputs\nimport {lib}.ClockBias.AllInputs\nimport {lib}.Bridge\n" + (f"import {lib}.Trained.Train\n" if train_rows is not None else ""))
     result["seconds"]["gen"] = round(time.time() - t0, 1); result["stages"]["gen"] = {"modules": modules, "main_theorems": main_theorems}; save()
 
     # build

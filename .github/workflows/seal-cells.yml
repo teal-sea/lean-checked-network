@@ -3,7 +3,9 @@ name: Seal cells (circle-curve MLP)
 # Kernel-checks the cells listed in experiments/mlp-sweep/seal_queues/<name>.json (for branch seal/<name>) with
 # experiments/circle-curve/seal_cell.py, one GitHub-hosted runner per cell (4 vCPU, 16 GB),
 # for cells too wide for the 8 GB boxes. Runs only on pushes to seal/** branches.
-# Each entry: {"name", "npz" (repo path), "pure_clock" (bool), "build_jobs", "jobs", "chunks"}.
+# Each entry: {"name", "npz" (repo path), "pure_clock" (bool), "build_jobs", "jobs", "chunks"}, optional
+# "max_heartbeats", "max_rec_depth", "script" (default experiments/circle-curve/seal_cell.py; the ReLU
+# sealer is experiments/mlp-sweep/seal_act.py) and "extra" (more flags, e.g. --right-iff-trained).
 # Results: one artifact per cell with result.json, the build/replay/axiom logs and the generated
 # Lean sources (no .lake), exactly as seal_cell.py writes them.
 
@@ -49,7 +51,7 @@ jobs:
       - name: Seal
         run: |
           mkdir -p out
-          python3 experiments/circle-curve/seal_cell.py "${{ matrix.cell.npz }}" "out/${{ matrix.cell.name }}" --repo . \
+          python3 ${{ matrix.cell.script || 'experiments/circle-curve/seal_cell.py' }} "${{ matrix.cell.npz }}" "out/${{ matrix.cell.name }}" --repo . ${{ matrix.cell.extra || '' }} \
             --jobs ${{ matrix.cell.jobs }} --build-jobs ${{ matrix.cell.build_jobs }} --chunks ${{ matrix.cell.chunks }} \
             ${{ matrix.cell.pure_clock && '--pure-clock' || '' }} ${{ matrix.cell.max_heartbeats && format('--max-heartbeats {0}', matrix.cell.max_heartbeats) || '' }} ${{ matrix.cell.max_rec_depth && format('--max-rec-depth {0}', matrix.cell.max_rec_depth) || '' }} 2>&1 | tee "out/${{ matrix.cell.name }}.log" || true
           python3 experiments/circle-curve/seal_verdict.py out/ || true

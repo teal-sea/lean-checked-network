@@ -133,5 +133,21 @@
   },
   "train_acc": 0.12964930924548354,
   "heldout_acc": 0.0036440935317339812
+ },
+ "relu_H512_s1_final": {
+  "from": "box run relu_H512_s1/final.npz (train_act.py relu)",
+  "sha256_of_source_npz": "1a2f4b3015d4c550431415bb212fafc2a3f6aa71565dbf9e83fee31b60d6600d",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 1,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "act": "relu",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0
  }
 }

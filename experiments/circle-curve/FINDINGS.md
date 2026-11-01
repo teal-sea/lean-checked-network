@@ -197,30 +197,51 @@ that the bias columns come from the readout residual. That construction is Pytho
 | p 97, H 128, frac 0.50, wd 0.1, 20k steps, seed 0 | 0 (`adds_mod_97`) | 0 (`adds_mod_97`) | 0 | 5 | 27, 25, 69 per mille |
 | p 97, H 128, frac 0.30, wd 0.3, 20k steps, seed 0 | 18 | 4 | 21 pairs (both wrong on 1) | 4 | 60, 61, 65 per mille |
 
+Clock-only cells: the one-wave projection with no bias neurons, sealed beside the same trained
+tables (boat.dev trial boxes, 4 vCPU and 8 GB, 2026-10-31; about 20 min per cell, build 8 and
+replay 11):
+
+| cell | trained wrong | clock alone wrong | disagree on | energy outside the wave, stated (E1, E2, W2) |
+|---|---|---|---|---|
+| p 97, H 128, frac 0.30, wd 0.1, 200k steps, seed 0 | 31 | 1,486 | 1,493 pairs (both wrong on 19, agreeing on 5) | 56, 59, 76 per mille |
+| p 97, H 128, frac 0.50, wd 0.1, 20k steps, seed 0 | 0 (`adds_mod_97`) | 2,089 | 2,089 | 27, 25, 69 per mille |
+| p 97, H 128, frac 0.30, wd 0.3, 20k steps, seed 0 | 18 | 647 | 649 pairs (both wrong on 13, agreeing on 3) | 60, 61, 65 per mille |
+| p 97, H 128, frac 0.15, wd 0, step 20, seed 0 | 8,696 | 81 | 8,701 pairs (both wrong on 76, agreeing on 0) | 933, 935, 927 per mille |
+
 Each: build completed with zero sorry warnings, 43 of 43 modules replayed by `leanchecker` (which
-prints a message and exits non-zero on any problem; all logs are empty), 16 (or 12) main theorems
-on propext, Classical.choice, Quot.sound or no axioms, no forbidden token. Record: the first run's
-own axiom parser failed on Lean's line-wrapped output, so each `result.json` carries
-`first_run_ok: false` and the verdict re-derived from the logs by `seal_verdict.py`
-(`verdict.ok: true`). The disagreement counts are measured, not sealed; the clock-only table (no
-bias neurons) is not sealed in these three cells; no negative control (a doctored list that the
-kernel must reject) has been run on these packages yet. Pending on the Mac: the pure one-wave
-projection of the p 97, H 256, wd 0, step-100 net (net wrong on 6,559, projection on 0).
+prints a message and exits non-zero on any problem; all logs are empty), 16, 14 or 12 main
+theorems (fewer when a table has no wrong pair) on propext, Classical.choice, Quot.sound or no
+axioms, no forbidden token. Record: in the first three cells the first run's own axiom parser
+failed on Lean's line-wrapped output, so their `result.json` carry `first_run_ok: false` and the
+verdict re-derived from the logs by `seal_verdict.py` (`verdict.ok: true`); the four clock-only
+cells ran with the fixed parser (`first_run_ok: true`) and were re-derived the same way. The
+disagreement counts are measured, not sealed. With the clock-only cells, "clock alone wrong on
+1,486, clock + bias wrong on 10" is two kernel-checked counts against one trained table (the
+200k-step wd 0.1 cell; 2,089 against 0 at frac 0.5, 647 against 4 at wd 0.3); the pairwise
+agreement of the two reduced tables is still measured. At step 20 of the wd-0 run the net is wrong
+on 8,696 of 9,409 while its projection is wrong on 81, both kernel-checked. Negative control (the
+200k-step wd 0.1 clock + bias package, boat.dev): the undoctored copy builds (399 s); the four
+doctored copies (drop a wrong pair, lower a per-mille bound by one, change an extra-column entry,
+state the wrong neuron count) are running and each must fail to build. Running too, one Lean
+process at a time after three were killed for memory in 8 GB: the pure one-wave projection of the
+p 97, H 256, wd 0 net at step 100 and at step 20k (measured: net wrong on 6,559 and 6,555,
+projection on 0 and 0, the two tables disagreeing on exactly the net's wrong pairs).
 
 ## Status of each claim (the certainty ladder)
 
 | claim | status |
 |---|---|
-| each trained table is wrong on exactly k pairs (per cell) | kernel-checked for 3 cells; measured for the rest |
+| each trained table is wrong on exactly k pairs (per cell) | kernel-checked for 4 trained tables (3 middle-band, 1 at step 20); measured for the rest |
 | the clock + bias table is wrong on exactly k pairs (per cell) | kernel-checked for 3 cells; measured elsewhere, two independent evaluators agree |
-| the reduced tables are within x/1000 of the trained tables' energy, extra neurons constant | kernel-checked for the same 3 cells |
+| the clock-only table is wrong on exactly k pairs (per cell) | kernel-checked for 4 cells (1,486; 2,089; 647; 81) |
+| the reduced tables are within x/1000 of the trained tables' energy, extra neurons constant | kernel-checked for all 7 packages |
 | the first H columns are each neuron's dominant wave; the bias construction | measured (Python FFT); the one step the kernel does not see |
 | the one-wave projection's equivariant part is an exact adder | measured, 75 cells, 0 wrong in all |
 | the clock's non-equivariant artifacts are what the readout cancels; the c-only part is the largest | measured; clock minus c-only 0 to 48 wrong, minus all three 0 to 1, in 35 middle-band cells |
 | an explicit bias absorbs the cancellation | measured: nearly all of its effect on answers at wd 0.1 to 0.3, a third of its energy; partly at wd 0.03 |
 | the projection's accuracy is non-monotone in wd under this filter | measured, 5 seeds; the wd-0 dip is filter- and fraction-dependent, the middle-band failure is not |
-| a wd-0 memorizer's dominant waves form an adder while its held-out function is anti-aligned | measured (p 97, H 128 and 256, frac <= 0.3); H 256 step 100 sealing |
-| the adder is written in the first 20 steps | measured, one seed (`controls/early_*`) |
+| a wd-0 memorizer's dominant waves form an adder while its held-out function is anti-aligned | measured (p 97, H 128 and 256, frac <= 0.3); H 256 step 100 and step 20k sealing |
+| the adder is written in the first 20 steps | measured, one seed (`controls/early_*`); the step-20 pair (net 8,696, projection 81) kernel-checked for that seed |
 
 ## Related work
 
@@ -259,8 +280,7 @@ architecture.
 
 ## Open
 
-- A negative control on the sealed packages (drop a wrong pair, lower a per-mille bound, change an
-  extra-column entry; the kernel must reject each).
-- Sealing a clock-only table beside clock + bias, and the pairwise agreement of two answer
-  functions, so "clock alone wrong on 1,486, clock + bias wrong on 10" is one kernel-checked pair.
+- The negative control's four doctored builds (running on boat.dev); only the undoctored build is in.
+- The pairwise agreement of two answer functions as one theorem; the clock-only and clock + bias
+  counts are sealed separately against the same trained table.
 - Whether the same artifact-cancellation account holds in the repo's transformer. Untested.

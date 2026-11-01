@@ -27,7 +27,7 @@ for out in sorted(glob.glob(os.path.join(sys.argv[1], '*/'))):
         txt = open(f).read()
         hits += [f"{f}: {w}" for w in FORBIDDEN if w in txt]
     ok = build_ok and replay_ok and not missing and not bad and not hits
-    d['first_run_ok'] = d.get('ok'); d['ok'] = ok
+    d.setdefault('first_run_ok', d.get('ok')); d['ok'] = ok   # the first run's own verdict is kept as a record
     d['verdict'] = {'ok': ok, 'build_ok': build_ok, 'replay_ok': replay_ok, 'axioms': ax, 'missing_axiom_reports': missing, 'nonstandard_axioms': bad, 'forbidden_hits': hits}
     json.dump(d, open(out + 'result.json', 'w'), indent=1)
     print(os.path.basename(out.rstrip('/')), '| OK' if ok else '| FAIL', '| build', build_ok, '| replay', replay_ok, f"{d['stages']['replay']['ok']}/{len(mods)}", '| axioms', len(expected), 'theorems, missing', missing, 'nonstandard', bad, '| forbidden', hits, '| wrong', {k: v['wrong_count'] for k, v in d['networks'].items()})

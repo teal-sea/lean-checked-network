@@ -148,6 +148,158 @@ ReLU, are wrong on every held-out pair (6,586 of 6,586) at every checkpoint from
 row/column exclusion of result 3 does not depend on the activation. The |x| nets are below chance
 (0.05 to 0.26%) but not at 0.
 
+### 6. |x| from width 512 (fourth batch A)
+
+Rules in `RULES.md` (fourth batch, A), run on GitHub Actions (`sweeps/batch4.txt`); curves in
+`results/batch4/`. |x|, p 97, frac 0.3, 20k steps; the integer projection of `analyze_act.py`, the
+quantity a seal checks, at the 44 checkpoints from step 100 to 20k:
+
+| H | seeds | net wrong at 20k | held-out accuracy, highest from step 100 | projection wrong, 44 checkpoints |
+| --- | --- | --- | --- | --- |
+| 256 | 3 | 6,525 to 6,542 | 0.74 to 1.02% | never 0: 2 to 27 (9, 6, 25 at 20k) |
+| 512 | 3 | 6,551, 6,559, 6,560 | 0.41 to 0.52% | **0 at every checkpoint, all three seeds** (no ties) |
+| 1024 | seed 2 | 6,569 | 0.24% | 0 at every checkpoint, and from step 3 |
+
+The prediction fixed before the runs (exact at H 512 for every seed) held. At H 512 the projection is
+wrong on 1 to 25 pairs at step 5 and exact at the next checkpoint, step 100. The shuffled-label control
+(H 512, seed 0) memorizes its labels and its projection stays at 9,219 to 9,308 wrong at all 51
+checkpoints, inside the range of untrained projections (9,226 to 9,388 at step 0). With the
+baseline-cancelling bias, H 256 seeds 0 and 1 are exact from step 100 too (seed 2: 0 to 5). Seeds 0 and
+1 at H 1024 (third batch) were measured with the float projection only (exact at every checkpoint).
+
+### 7. The even part of the activation writes the adder and reads it (fourth batch B)
+
+f(s z) / s for GELU and SiLU at s = 1, 3, 10, 30, 100 and tanh at s = 1, 10, 100, H 1024, 2,000 steps
+(GELU seeds 0 and 1, SiLU and tanh seed 0), and plain GELU (s = 1, seed 0) to 20k. s reads the same
+activation at s times the pre-activation, so the weights, init and optimizer do not change. r is the
+size of the even part against the odd part at initialization, computed before the runs. The float
+one-wave projection (`analyze_gen.py`) is read with the network's own activation, and by
+`analyze_even.py` with z^2 and with |z| (the even part of GELU or SiLU gives the same counts as z^2 in
+every run, so z^2 and |z| are the two independent readouts). t* = first checkpoint from which the count
+stays 0 to step 2,000.
+
+| run | r | own readout wrong at 1,000 / 2,000 | t* own readout | t* read with z^2 / with \|z\| |
+| --- | --- | --- | --- | --- |
+| SiLU, s = 1 | 0.028 | 6,501 / 6,139 | none | 50 / 50 |
+| GELU, s = 1 (2 seeds) | 0.044 | 4,460 to 4,909 / 4,137 to 4,424 | none | 20 / 20 |
+| SiLU, s = 3 | 0.083 | 788 / 604 | none | 20 / 20 |
+| GELU, s = 3 (2 seeds) | 0.131 | 32 to 69 / 16 to 37 | none | 10 / 20 |
+| SiLU, s = 10 | 0.265 | 0 / 0 | 50 | 2 / 5 |
+| GELU, s = 10 (2 seeds) | 0.404 | 0 / 0 | 50 | 2 / 4 to 5 |
+| SiLU, s = 30 | 0.620 | 0 / 0 | 20 | 2 / 3 |
+| GELU, s = 30 (2 seeds) | 0.798 | 0 / 0 | 10, 50 | 1 to 2 / 4 |
+| SiLU, s = 100 | 0.928 | 0 / 0 | 600 | 2 / 4 |
+| GELU, s = 100 (2 seeds) | 0.975 | 0 / 0 | 50, 1,000 | 2 / 4 to 5 |
+| tanh, s = 1, 10, 100 | 0 | 9,297 to 9,315 / 9,297 to 9,305 | none | none / none (9,182 to 9,403) |
+
+Every one of these networks fits its training pairs from step 100 on and is wrong on all 6,586
+held-out pairs. The four predictions fixed before the runs:
+
+1. The own-readout count falls as r rises, GELU and SiLU on one ordering: held (monotone where it is
+   above 0; 9 of the 15 runs tie at 0).
+2. "Exact only where r is at least 0.9, and there from step 100": failed both ways. Every run with r
+   from 0.265 up is exact at steps 1,000 and 2,000, and two of the three runs with r above 0.9 have
+   single-pair misses after step 100 (GELU s = 100 seed 1 at steps 200, 600, 800 and 900; SiLU s = 100
+   at step 500).
+3. tanh at chance at every s: held, under every readout.
+4. The odd part alone at chance: held in every run. For GELU and SiLU the odd part is exactly z/2,
+   whose class scores have the form U(a, c) + V(b, c) and so can never add; this is a sanity check.
+
+Not predicted (the readouts were fixed in advance, their outcome was not): **read with z^2 or |z|, the
+projection is exact in every GELU and SiLU run and stays exact**, from step 20 for plain GELU and step
+50 for plain SiLU, while read with their own activation it never is. For the GELU memorizer run to
+20k, the z^2 readout is exact at all 44 checkpoints from step 100 to 20k while its own readout is
+wrong on 3,575 to 6,502 pairs. For tanh the same readouts stay at chance. It is the one-wave
+projection that adds: the unprojected GELU and SiLU nets read with z^2 or |z| are wrong on 6,510 to
+6,561 pairs, no better than as memorizers.
+
+Reading (an interpretation): the even part of the activation writes the adder into each neuron's
+dominant wave, the odd part writes nothing (tanh), and at read-out the odd part's additively separable
+scores mask an adder that is already there (GELU, SiLU). Post hoc, for the four runs with r at most
+0.131, the first step from which the z^2 readout stays exact fits t* x lr x H x r of about 9 (the
+intervals the checkpoint grid allows overlap at 8.5 to 9.0); larger r is faster than that. The sixth
+batch tests this law on activations it was not fitted on.
+
+The GitHub rerun of plain GELU (s = 1, seed 0) reproduces the third batch's box run at all 45 common
+checkpoints.
+
+### 8. How little data one step needs (fourth batch C)
+
+x^2, frac 0.05 to 0.3, H 512 to 4096, seeds 0-2, 500 Adam steps, integer projection. t* = first
+checkpoint (steps 1 to 10, 15, 20, 30, 50, 75, then every 100) from which the projection is wrong on 0
+pairs to step 500; - means it never settles (with the smallest count).
+
+| frac (training pairs) | H 512 | H 1024 | H 2048 | H 4096 |
+| --- | --- | --- | --- | --- |
+| 0.05 (470) | 20, - (1), 30 | 10, 20, 20 | 5, 15, 10 | 6, 9, 8 |
+| 0.075 (706) | 20, 20, 30 | 7, 15, 15 | **1**, 8, 5 | **1**, 7, 5 |
+| 0.1 (941) | 15, 15, 15 | 10, 15, 2 | **1, 1, 1** | **1, 1, 1** |
+| 0.15 (1,411) | 15, 15, 9 | **1**, 2, **1** | **1, 1, 1** | **1, 1, 1** |
+| 0.2 (1,882) | 15, 3, 4 | **1, 1, 1** | **1, 1, 1** | **1, 1, 1** |
+| 0.3 (2,823) | 2, 2, 2 | **1, 1, 1** | **1, 1, 1** | **1, 1, 1** |
+
+The win fixed in advance (exact after one step at frac 0.1 or below, at any H up to 4096) is met:
+**one Adam step on 10% of the table gives an exact projection at H 2048 and 4096 in all three seeds**,
+and on 7.5% in seed 0 at both widths. At frac 0.3 the law t* x lr x H of about 10 is reproduced (t* 2
+at H 512, 1 at H 1024). The work t* x lr x H grows faster than 1/frac: a log-log fit over the finite
+cells gives an exponent of 1.37 (1.53 leaving out the cells at the t* = 1 floor, which only bound the
+work from above; 0.9 to 1.9 by width), steeper than both simple pictures (1/2 and 1). The fit's
+pooling and its treatment of the floor were not fixed in advance.
+
+**Generalization to what was never seen.** At frac 0.05 the training sets are small enough to miss
+whole tokens and sums. Seed 0's 470 pairs never contain token 74 (as a or as b), so training never
+touches the rows of E1 and E2 for 74 (identical at steps 1 and 10); seed 1's never contain a pair
+with sum 83; seed 2's never contain sum 35 or first token 32. In all three the projection becomes
+exact on all 9,409 pairs at H 1024 to 4096, including the 193 pairs with token 74 and the 97 pairs
+with each unseen sum. The one-wave projection fills these in from the waves of the other tokens; the
+memorizing network cannot (its rows for token 74 are its random initialization).
+
+Caveats from the independent check: for a given frac and seed every width trains on the same pairs
+(the split is drawn before the init), and the subsets are nested across fractions, so a column of the
+table is three training sets, not three independent draws per cell. The H 2048 and 4096 weights were
+not kept; those cells rest on the runner's curves (the runs are deterministic and can be redone).
+
+### 9. Wrong labels (fifth batch A)
+
+x^2, frac 0.3, a fraction of the training labels replaced by wrong ones (`NOISE_FRAC`, drawn from a
+separate generator so the initialization and the split are the clean run's), 500 steps, integer
+projection scored against (a + b) mod 97 on all 9,409 pairs. t* per seed, with the prediction fixed in
+advance (t* x lr x H x (1 - noise) of about 10):
+
+| wrong labels | H 1024 (predicted t*) | H 2048 | H 4096 |
+| --- | --- | --- | --- |
+| 25% | 2, 1, 2 (2) | **1, 1, 1** (1) | **1, 1, 1** (1) |
+| 50% | 6, 10, 6 (2) | 2, 5, 6 (1) | **1, 1**, 2 (1) |
+| 75% | 15, 20, 20 (4) | 15, 15, 15 (2) | 9, 10, 9 (1) |
+
+The win fixed in advance is met: **with half of the training labels wrong, one Adam step gives an exact
+projection at H 4096 in two of three seeds** (the third at step 2). The prediction held at 25% wrong and
+failed at 50% (except H 4096 seeds 0 and 1) and at 75%: wrong labels cost more than missing ones. Clean
+runs with the same number of correct pairs are faster (frac 0.15, as many correct pairs as 50% noise:
+t* 1, 2, 1 at H 1024; frac 0.075 against 75% noise: 7, 15, 15 against 15, 20, 20). The networks fit
+their wrong labels (train accuracy 1.0 against the noisy labels by step 15 to 30; at step 500 the
+8-bit nets are wrong on 7,273 to 8,671 pairs, about 6,560 plus the noisy training pairs); with 75% wrong
+labels the projection becomes exact while that fitting is under way and stays exact to step 500 while
+the network memorizes the wrong labels. No shuffled-label control was run at these widths.
+
+### 10. Width against modulus (fifth batch B)
+
+x^2, frac 0.3, p 31 to 257, H 256 to 768, seeds 0-4, steps 1 to 5 only (t* above 5 is censored), integer
+projection. t* per seed (> 5: not exact by step 5):
+
+| p | H 256 | H 384 | H 512 | H 768 |
+| --- | --- | --- | --- | --- |
+| 31 | > 5 in all 5 | > 5, > 5, > 5, 2, 4 | 5, 2, 3, 2, 2 | 2, 2, 1, 1, 4 |
+| 61 | 5, > 5, > 5, 4, > 5 | > 5, 2, 3, 2, 3 | 2, 3, 2, 2, 2 | 1, 2, 2, 2, 1 |
+| 127 | > 5, > 5, 5, 4, > 5 | 2, 3, 3, 2, 2 | 2 in all 5 | **1 in all 5** |
+| 257 | > 5, > 5, > 5, 4, 5 | 3, 3, 3, 2, 2 | 2 in all 5 | **1 in all 5** |
+
+The prediction fixed in advance (t* 4, 3, 2, 2 at the four widths, the same for every p within one
+step) holds for 60 of the 80 runs. It fails at H 256 for every p (14 of 20 runs not exact by step 5)
+and for p 31 at the larger widths. The width needed does not grow with p from 31 to 257; the small
+moduli are the harder ones. At frac 0.3 small p also means few pairs per residue (0.3 p: 9 at p 31,
+77 at p 257), which this batch cannot separate from p itself.
+
 ## Kernel-checked
 
 Seventeen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
@@ -199,8 +351,9 @@ The H 1024 cell took 4 h 8 min on one runner (build 2 h 10, replay 1 h 58), insi
 
 All five H 512 memorizers (seeds 0-4 at 20k) are now sealed.
 
-Running: x^2 H 1024 seeds 1 and 2 after one Adam step at lr 0.01 and seed 0 at 20k; and from the fourth batch, one step on 15%
-of the pairs (seeds 0 and 2) and two steps on 10% (seed 2), all at H 1024.
+Running: x^2 H 1024 seeds 1 and 2 after one Adam step at lr 0.01 and seed 0 at 20k; one step on
+15% of the pairs (seeds 0 and 2) and two steps on 10% (seed 2), all at H 1024; 10 steps on 5% of the
+pairs with token 74 never seen (H 1024, seed 0); and |x| at H 512, seeds 0-2 at 20k.
 
 ## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)
 
@@ -233,9 +386,8 @@ looked is the exact, all-seed, all-checkpoint, one-step measurement.
 
 ## Open
 
-- |x| at H 512 (does it hold at the width where x^2 first holds, and a seal there).
-- GELU and SiLU with larger initialization: the even-part reading predicts that the projection
-  becomes exact early once pre-activations are of order 1, and that tanh stays at chance at every
-  scale.
-- Smaller training fractions for the one-step result (frac 0.15 holds at H 512 over 20k steps).
+- The sixth batch (`RULES.md`): does the hidden adder arrive at t* x lr x H x r of about 9 for
+  activations the law was not fitted on (z^2 + c z, tanh(z) + d z^2, GELU at H 512 to 4096)?
+- Seals of the GELU result (its projection read with z^2 is an x^2 network, so the existing pipeline
+  applies) and of one-step cells at H 2048 (beyond one runner's 6 hours as the pipeline stands).
 - Liu & Lu's filter (frequency from W2 alone, no rounding) on these nets, to measure the difference.

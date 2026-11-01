@@ -51,7 +51,7 @@ jobs:
           mkdir -p out
           python3 experiments/circle-curve/seal_cell.py "${{ matrix.cell.npz }}" "out/${{ matrix.cell.name }}" --repo . \
             --jobs ${{ matrix.cell.jobs }} --build-jobs ${{ matrix.cell.build_jobs }} --chunks ${{ matrix.cell.chunks }} \
-            ${{ matrix.cell.pure_clock && '--pure-clock' || '' }} ${{ matrix.cell.max_heartbeats && format('--max-heartbeats {0}', matrix.cell.max_heartbeats) || '' }} 2>&1 | tee "out/${{ matrix.cell.name }}.log" || true
+            ${{ matrix.cell.pure_clock && '--pure-clock' || '' }} ${{ matrix.cell.max_heartbeats && format('--max-heartbeats {0}', matrix.cell.max_heartbeats) || '' }} ${{ matrix.cell.max_rec_depth && format('--max-rec-depth {0}', matrix.cell.max_rec_depth) || '' }} 2>&1 | tee "out/${{ matrix.cell.name }}.log" || true
           python3 experiments/circle-curve/seal_verdict.py out/ || true
           rm -rf out/*/lean/.lake
           python3 -c "import json,sys; r=json.load(open('out/${{ matrix.cell.name }}/result.json')); print('ok', r.get('ok'), 'failures', r.get('failures')); sys.exit(0 if r.get('ok') else 1)"

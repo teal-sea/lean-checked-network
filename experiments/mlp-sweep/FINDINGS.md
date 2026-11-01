@@ -95,8 +95,37 @@ Pending: the GitHub Actions workflow `seal-cells.yml` is sealing, with the uncha
 x^2 H 512 seeds 0, 1, 3, 4 at 20k, seed 0 at step 100, seeds 0-2 at step 2, and H 1024 seed 0 at
 step 1. Each seal states the trained net's exact wrong count and `adds_mod_97` for its projection.
 
+## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)
+
+Each result is partly known. What is known is the mechanism; what is not reported anywhere we
+looked is the exact, all-seed, all-checkpoint, one-step measurement.
+
+- **Result 1.** Liu & Lu 2026 (arXiv 2605.18022) "frequency filtration" (per neuron, the largest
+  frequency of the output weights, kept in the input weights too) turns noisy-label and low-data
+  memorizers into near-perfect predictors (ReLU and x^2, P 113, AdamW wd 0.1, one seed, after 200k
+  epochs, not exact, no rounding). Swaroop 2026 (2603.23784) builds 69 to 81% predictors from a
+  memorization checkpoint (ReLU, wd 1), and its hand-built random-phase nets reach about 100% at
+  N 512, so the width threshold itself is expected. Gromov 2023 reads the first-overfit phase as
+  "periodic structure does not form". New here: weight decay 0 with clean labels, exact after
+  integer rounding on all p^2 pairs, every seed, every checkpoint from step 100, with the
+  initialization still present and the net below chance.
+- **Result 2.** The phase coupling is derived by Wang et al. 2026 (2610.11833; each mode's update is
+  the product of the other two, arg U + arg V - arg W -> 0, gradient flow) and He et al. 2026
+  (2602.16849; the initial spectrum picks each neuron's frequency, alignment over thousands of
+  steps). That coupling also predicts our two negative controls (init alone, update alone). Not
+  found anywhere: one full-size Adam step at standard initialization giving an exact projection
+  while the network is at chance. The closest papers use warmup or lr 1e-4, so their first step is
+  tiny. Width matters beyond the relative step size lr x sqrt(H): H 2048 at lr 0.00125 (relative
+  step 0.057) needs 3 steps, H 512 at lr 0.005 (relative step 0.113) needs 3 to 4.
+- **Result 3.** The row/column exclusion argument is stated by Gu et al. (2610.35036, posted
+  26 Oct 2026) for random Latin squares, whose memorizers end below chance; the classical name is
+  anti-learning (Kowalczyk & Chapelle, ALT 2005). Below-chance addition memorizers appear without
+  comment in Swaroop 2026 and transiently in He et al. 2026. New here: a permanent weight-decay-0
+  memorizer on clean addition at exactly 0 of 6,586, the measured 99.98% same-row-or-column label
+  reuse, and the contrast with its own projection (7 to 67 wrong).
+
 ## Open
 
 - Controls queued: shuffled training labels at H 512 (x^2 and ReLU), `EARLY=1` reruns, frac 0.15.
 - ReLU at H 1024 and 2048 (is the ReLU projection exact at larger width?).
-- Prior art for results 2 and 3 (search running).
+- Liu & Lu's filter (frequency from W2 alone, no rounding) on these nets, to measure the difference.

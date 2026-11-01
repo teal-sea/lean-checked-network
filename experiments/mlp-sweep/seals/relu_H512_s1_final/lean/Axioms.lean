@@ -1,0 +1,18 @@
+import LeanCheckedNetwork
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.Trained.answer_iff_not_wrong
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.Trained.wrongPairs_length
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.Trained.wrongPairs_nodup
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.Trained.wrongPairs_in_range
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.ClockBias.answer_iff_not_wrong
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.ClockBias.wrongPairs_length
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.ClockBias.wrongPairs_nodup
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.ClockBias.wrongPairs_in_range
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.shape_E1
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.shape_E2
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.shape_W2
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.energy_E1
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.energy_E2
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.energy_W2
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.extra_E1
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.extra_E2
+#print axioms LeanCheckedNetwork.Seal.C_relu_H512_s1_final.Trained.right_iff_trained

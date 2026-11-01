@@ -150,7 +150,7 @@ row/column exclusion of result 3 does not depend on the activation. The |x| nets
 
 ## Kernel-checked
 
-Fifteen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
+Sixteen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
 per cell, queues in `seal_queues/`) with the unchanged `seal_cell.py --pure-clock` for x^2 and
 `seal_act.py --right-iff-trained` for ReLU, which reads the activation from the checkpoint (`--max-heartbeats` and `--chunks` change only
 elaboration limits and file layout). Every verdict is ok: the build has no `sorry`, `leanchecker`
@@ -168,6 +168,7 @@ of steps, optimizer) is measured provenance, not part of what is checked.
 | --- | --- | --- | --- | --- |
 | x2_H512_s0_final | 20k Adam steps, seed 0 | 6,552 | adds mod 97 | 3,890,477 |
 | x2_H512_s1_final | seed 1 | 6,564 | adds mod 97 | 3,284,529 |
+| x2_H512_s2_final | seed 2 | 6,560 | adds mod 97 | 3,672,160 |
 | x2_H512_s3_final | seed 3 | 6,563 | adds mod 97 | 3,014,016 |
 | x2_H512_s4_final | seed 4 | 6,559 | adds mod 97 | 3,861,987 |
 | x2_H512_s0_step100 | 100 Adam steps, seed 0 | 6,563 | adds mod 97 | 4,425,284 |
@@ -191,8 +192,11 @@ no `adds_mod_97`.
 
 The H 1024 cell took 4 h 8 min on one runner (build 2 h 10, replay 1 h 58), inside the 6-hour limit.
 
-Running: x^2 H 512 seed 2 at 20k (so that all five H 512 seeds are sealed) and ReLU H 1024 seed 0
-at 20k (`right_iff_trained` plus an exact projection).
+All five H 512 memorizers (seeds 0-4 at 20k) are now sealed.
+
+Running: ReLU H 1024 seed 0 at 20k (`right_iff_trained` plus an exact projection); x^2 H 1024 seeds 1
+and 2 after one Adam step at lr 0.01 and seed 0 at 20k; and from the fourth batch, one step on 15%
+of the pairs (seeds 0 and 2) and two steps on 10% (seed 2), all at H 1024.
 
 ## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)
 

@@ -1,0 +1,18 @@
+{
+ "seal": "/home/user/seal/negctl_src",
+ "lib": "LeanCheckedNetwork.Seal.C_LONG_p97_H128_f0_30_wd0_1_s0",
+ "controls": {
+  "extra_entry": {
+   "note": "ClockBias.E1 row 0 last extra entry 127 -> 126",
+   "exit": 1,
+   "built": false,
+   "seconds": 476.9,
+   "errors": [
+    "error: LeanCheckedNetwork/Seal/C_LONG_p97_H128_f0_30_wd0_1_s0/Bridge.lean:21:77: Tactic `decide` proved that the proposition",
+    "error: build failed"
+   ],
+   "as_expected": true
+  }
+ },
+ "ok": true
+}

@@ -1,0 +1,18 @@
+{
+ "seal": "/home/user/seal/negctl_src",
+ "lib": "LeanCheckedNetwork.Seal.C_LONG_p97_H128_f0_30_wd0_1_s0",
+ "controls": {
+  "shape": {
+   "note": "shape_E1 bias neurons 3 -> 4",
+   "exit": 1,
+   "built": false,
+   "seconds": 411.9,
+   "errors": [
+    "error: LeanCheckedNetwork/Seal/C_LONG_p97_H128_f0_30_wd0_1_s0/Bridge.lean:11:73: (kernel) application type mismatch",
+    "error: build failed"
+   ],
+   "as_expected": true
+  }
+ },
+ "ok": true
+}

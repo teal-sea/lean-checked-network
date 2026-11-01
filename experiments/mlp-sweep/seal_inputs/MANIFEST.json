@@ -260,5 +260,19 @@
   },
   "train_acc": 1.0,
   "heldout_acc": 0.004251442453689645
+ },
+ "smoke_abs_p11_H16": {
+  "from": "GitHub Actions sweep/smoke4 run 41349168013, abs_H16_s0/final.npz (toy p 11, H 16: a test of Abs.lean and seal_act.py --act abs, not a result)",
+  "sha256_of_source_npz": "3936bad9f07f9a836a41613b5ad1ef727df6a6659a75178c9fbe31b3a940d4f3",
+  "config": {
+   "p": 11,
+   "H": 16,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 120
+  },
+  "act": "abs"
  }
 }

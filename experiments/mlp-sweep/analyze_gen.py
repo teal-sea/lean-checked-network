@@ -15,13 +15,14 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
-def acts(s=1.0):
+def acts(s=1.0, c=0.0):
     C = np.sqrt(2 / np.pi)
     sig = lambda z: 1 / (1 + np.exp(-z))  # noqa: E731
     gelu = lambda z: 0.5 * z * (1 + np.tanh(C * (z + 0.044715 * z ** 3)))  # noqa: E731
     return {'sq': lambda z: z * z, 'relu': lambda z: np.maximum(z, 0),
             'gelu': gelu, 'silu': lambda z: z * sig(z), 'abs': np.abs, 'tanh': np.tanh,
-            'gelus': lambda z: gelu(s * z) / s, 'silus': lambda z: z * sig(s * z), 'tanhs': lambda z: np.tanh(s * z) / s}
+            'gelus': lambda z: gelu(s * z) / s, 'silus': lambda z: z * sig(s * z), 'tanhs': lambda z: np.tanh(s * z) / s,
+            'sqlin': lambda z: z * z + c * z, 'tanhsq': lambda z: np.tanh(z) + c * z * z}
 
 
 def wrong(E1, E2, W2, p, f):
@@ -48,7 +49,8 @@ def main():
     for f in files:
         d = np.load(f)
         p, step = int(d["p"]), int(d["steps"]); act = str(d["act"]); s = float(d["act_s"]) if "act_s" in d.files else 1.0
-        fn = acts(s)[act]
+        c = float(d["act_c"]) if "act_c" in d.files else 0.0
+        fn = acts(s, c)[act]
         cols = [d[k] for k in ["E1", "E2", "W2"]]
         nw = wrong(*cols, p, fn); pw = wrong(*one_wave(cols, p), p, fn)
         rows.append(dict(step=step, act=act, opt=str(d["opt"]) if "opt" in d.files else "adam", train_acc=float(d["train_acc"]),

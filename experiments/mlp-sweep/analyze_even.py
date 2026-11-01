@@ -22,12 +22,13 @@ for f in files:
     d = np.load(f)
     p, step, act = int(d["p"]), int(d["steps"]), str(d["act"])
     s = float(d["act_s"]) if "act_s" in d.files else 1.0
-    fn = acts(s)[act]
+    c = float(d["act_c"]) if "act_c" in d.files else 0.0
+    fn = acts(s, c)[act]
     evals = {'own': fn, 'even': lambda z: (fn(z) + fn(-z)) / 2, 'odd': lambda z: (fn(z) - fn(-z)) / 2,
              'sq': lambda z: z * z, 'abs': np.abs}
     cols = [d[k] for k in ["E1", "E2", "W2"]]
     proj = one_wave(cols, p)
-    row = dict(step=step, act=act, s=s, train_acc=float(d["train_acc"]), heldout_acc=float(d["heldout_acc"]))
+    row = dict(step=step, act=act, s=s, c=c, train_acc=float(d["train_acc"]), heldout_acc=float(d["heldout_acc"]))
     for name, g in evals.items():
         row[f"net_{name}"] = wrong(*cols, p, g)
         row[f"proj_{name}"] = wrong(*proj, p, g)

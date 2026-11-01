@@ -100,3 +100,35 @@ with half of the training labels wrong.
 **B. Does the width needed depend on p?** p 31, 61, 127 and 257, H 256, 384, 512 and 768, seeds
 0-4, checkpoints at steps 1 to 5. Prediction: t* depends on lr x H and not on p (within one step),
 following t* x lr x H of about 10 (t* 4, 3, 2, 2 at the four widths).
+
+## Sixth batch (fixed 2026-11-01 ~17:30 Bogota, before any of its runs; GitHub Actions)
+
+The fourth batch (B) found that the float one-wave projection read with z^2 (or |z|, or the even part
+of the activation) is exact in every GELU and SiLU run, from step 20 at s = 1, while read with the
+network's own activation it is not. Post hoc, the first step from which the z^2 readout stays exact,
+t*, fits t* x lr x H x r of about 9 for the four runs with small even part (r 0.028 to 0.131; the
+intervals the checkpoint grid allows overlap at 8.5 to 9.0) and is smaller than that law for larger r.
+This batch tests that law on activations it was not fitted on. Jobs in `sweeps/batch6.txt`; p 97,
+frac 0.3, lr 0.01, weight decay 0, Adam, init N(0, 1/H), 300 steps, checkpoints at every step to 20,
+every 2 to 40, every 5 to 100 and every 10 to 300; `analyze_even.py` on every checkpoint.
+
+Measure: t* = the first checkpoint from which `proj_sq` (the float projection read with z^2) is 0 at
+every later checkpoint to step 300. r = mean |even part| / mean |odd part| of the activation over
+pre-activations N(0, 2/H), computed before the runs:
+
+| run (H 1024 unless stated) | r | predicted t* = 9 / (lr x H x r) |
+| --- | --- | --- |
+| z^2 + c z, c = 0.25, 0.5, 1, 2, 4, 8 | 0.222, 0.111, 0.0554, 0.0277, 0.0138, 0.0069 | 4.0, 7.9, 15.9, 31.7, 63.5, 126.9 |
+| tanh(z) + d z^2, d = 0.5, 1, 2, 4, 10 | 0.0277, 0.0555, 0.111, 0.222, 0.555 | 31.7, 15.8, 7.9, 4.0, 1.6 |
+| GELU at H 512, 2048, 4096 | 0.0624, 0.0312, 0.0221 | 28.2, 14.1, 9.9 |
+
+Seeds 0 and 1 each. Controls: tanh at H 4096 (no even part: t* never) and z^2 + 0 z at H 1024
+(plain x^2: t* = 1).
+
+Predictions: (1) for every run with r <= 0.15, the measured t* is within a factor 2 of the predicted
+t*; (2) for r > 0.15, t* is at most the predicted value (the law saturates toward x^2's t* = 1);
+(3) z^2 + c z and tanh(z) + d z^2 with the same r (c = 1 / d) have t* within a factor 2 of each other;
+(4) the tanh control never has the z^2 readout exact. For GELU the law predicts t* falling like
+1 / sqrt(H) (r falls like 1 / sqrt(H), lr x H grows like H), not like 1 / H as for x^2. Win: the
+law (1) holds for at least 9 of the 11 seed-0 runs it covers (r <= 0.15), which would make the hidden adder's
+arrival time predictable from one number of the activation.

@@ -274,5 +274,50 @@
    "steps": 120
   },
   "act": "abs"
+ },
+ "x2_H1024_s1_step1": {
+  "from": "box run first_steps/sq_H1024_s1/ckpt_step1.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "11d88e15cc1813a47701dcd2fb1b297f83beaaf3b60a99ebd189fd346aa8b522",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 1,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.14488133191640098,
+  "heldout_acc": 0.0044032796841785606
+ },
+ "x2_H1024_s2_step1": {
+  "from": "box run first_steps/sq_H1024_s2/ckpt_step1.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "8a26f2d2fb3e0b820e87d6c9d962ff36ba25e77e6df2786c39f1b9fd65631875",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.0871413390010627,
+  "heldout_acc": 0.004858791375645309
+ },
+ "x2_H1024_s0_final": {
+  "from": "box run x2_H1024_s0/ckpt_step20000.npz",
+  "sha256_of_source_npz": "9691ba84e5c524e4e40da4e586764512c58e28cd2fb64556365eb2e96971f9e3",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "train_acc": 1.0,
+  "heldout_acc": 0.0009110233829334953
  }
 }

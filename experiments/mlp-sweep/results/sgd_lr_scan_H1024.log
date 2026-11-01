@@ -1,0 +1,25 @@
+== sgd_lr1_H1024_s0
+step      0 sq net wrong  9317 | projection wrong  9380 | acc tr 0.010 te 0.0099
+step      1 sq net wrong  9318 | projection wrong  9379 | acc tr 0.010 te 0.0097
+step      2 sq net wrong  9318 | projection wrong  9377 | acc tr 0.010 te 0.0097
+step      3 sq net wrong  9317 | projection wrong  9376 | acc tr 0.010 te 0.0099
+== sgd_lr10_H1024_s0
+step      0 sq net wrong  9317 | projection wrong  9380 | acc tr 0.010 te 0.0099
+step      1 sq net wrong  9315 | projection wrong  9372 | acc tr 0.009 te 0.0103
+step      2 sq net wrong  9309 | projection wrong  9351 | acc tr 0.011 te 0.0105
+step      3 sq net wrong  9313 | projection wrong  9336 | acc tr 0.011 te 0.0097
+== sgd_lr100_H1024_s0
+step      0 sq net wrong  9317 | projection wrong  9380 | acc tr 0.010 te 0.0099
+step      1 sq net wrong  9304 | projection wrong  9002 | acc tr 0.017 te 0.0085
+step      2 sq net wrong  9283 | projection wrong  7633 | acc tr 0.027 te 0.0074
+step      3 sq net wrong  9259 | projection wrong  5156 | acc tr 0.038 te 0.0065
+== sgd_lr1000_H1024_s0
+step      0 sq net wrong  9317 | projection wrong  9380 | acc tr 0.010 te 0.0099
+step      1 sq net wrong  9144 | projection wrong     0 | acc tr 0.086 te 0.0033
+step      2 sq net wrong  9093 | projection wrong     0 | acc tr 0.107 te 0.0023
+step      3 sq net wrong  9067 | projection wrong     0 | acc tr 0.118 te 0.0015
+== sgd_lr10000_H1024_s0
+step      0 sq net wrong  9317 | projection wrong  9380 | acc tr 0.010 te 0.0099
+step      1 sq net wrong  9235 | projection wrong   127 | acc tr 0.053 te 0.0036
+step      2 sq net wrong  8548 | projection wrong     0 | acc tr 0.305 te 0.0000
+step      3 sq net wrong  9295 | projection wrong  9242 | acc tr 0.032 te 0.0035

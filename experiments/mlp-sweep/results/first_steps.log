@@ -1,0 +1,192 @@
+== sq H 256 seed 0
+step      0 sq net wrong  9300 | circle wrong  9323 bias  9322 (float  9326, of-float  932
+step      1 sq net wrong  9233 | circle wrong  2206 bias  9103 (float  2093, of-float  220
+step      2 sq net wrong  9146 | circle wrong    53 bias  8830 (float    54, of-float    5
+step      3 sq net wrong  9093 | circle wrong     5 bias  8687 (float     5, of-float     
+step      4 sq net wrong  9064 | circle wrong     0 bias  8798 (float     0, of-float     
+step      5 sq net wrong  9067 | circle wrong     1 bias  8822 (float     1, of-float     
+step      5 sq net wrong  9067 | circle wrong     1 bias  8822 (float     1, of-float     
+== sq H 256 seed 1
+step      0 sq net wrong  9321 | circle wrong  9273 bias  9278 (float  9285, of-float  927
+step      1 sq net wrong  9232 | circle wrong  4657 bias  8629 (float  4556, of-float  465
+step      2 sq net wrong  9126 | circle wrong   325 bias  8571 (float   302, of-float   32
+step      3 sq net wrong  9083 | circle wrong    34 bias  8652 (float    30, of-float    3
+step      4 sq net wrong  9078 | circle wrong     6 bias  8733 (float     5, of-float     
+step      5 sq net wrong  9059 | circle wrong     1 bias  8771 (float     1, of-float     
+step      5 sq net wrong  9059 | circle wrong     1 bias  8771 (float     1, of-float     
+== sq H 256 seed 2
+step      0 sq net wrong  9301 | circle wrong  9276 bias  9333 (float  9271, of-float  927
+step      1 sq net wrong  9243 | circle wrong  1865 bias  9220 (float  1810, of-float  186
+step      2 sq net wrong  9170 | circle wrong    53 bias  8969 (float    49, of-float    5
+step      3 sq net wrong  9133 | circle wrong     2 bias  8821 (float     1, of-float     
+step      4 sq net wrong  9124 | circle wrong     0 bias  8813 (float     0, of-float     
+step      5 sq net wrong  9118 | circle wrong     0 bias  8806 (float     0, of-float     
+step      5 sq net wrong  9118 | circle wrong     0 bias  8806 (float     0, of-float     
+== sq H 512 seed 0
+step      0 sq net wrong  9309 | circle wrong  9216 bias  9260 (float  9211, of-float  921
+step      1 sq net wrong  9189 | circle wrong    12 bias  9239 (float    13, of-float    1
+step      2 sq net wrong  9129 | circle wrong     0 bias  9114 (float     0, of-float     
+step      3 sq net wrong  9095 | circle wrong     0 bias  9002 (float     0, of-float     
+step      4 sq net wrong  9096 | circle wrong     0 bias  8979 (float     0, of-float     
+step      5 sq net wrong  9097 | circle wrong     0 bias  8934 (float     0, of-float     
+step      5 sq net wrong  9097 | circle wrong     0 bias  8934 (float     0, of-float     
+== sq H 512 seed 1
+step      0 sq net wrong  9319 | circle wrong  9390 bias  9312 (float  9391, of-float  939
+step      1 sq net wrong  9116 | circle wrong    97 bias  9109 (float    91, of-float    9
+step      2 sq net wrong  8997 | circle wrong     0 bias  8743 (float     0, of-float     
+step      3 sq net wrong  8999 | circle wrong     0 bias  8677 (float     0, of-float     
+step      4 sq net wrong  9038 | circle wrong     0 bias  8781 (float     0, of-float     
+step      5 sq net wrong  9055 | circle wrong     0 bias  8879 (float     0, of-float     
+step      5 sq net wrong  9055 | circle wrong     0 bias  8879 (float     0, of-float     
+== sq H 512 seed 2
+step      0 sq net wrong  9308 | circle wrong  9390 bias  9353 (float  9390, of-float  939
+step      1 sq net wrong  9188 | circle wrong    85 bias  9218 (float    69, of-float    8
+step      2 sq net wrong  9105 | circle wrong     0 bias  8834 (float     0, of-float     
+step      3 sq net wrong  9075 | circle wrong     0 bias  8683 (float     0, of-float     
+step      4 sq net wrong  9091 | circle wrong     0 bias  8713 (float     0, of-float     
+step      5 sq net wrong  9103 | circle wrong     0 bias  8801 (float     0, of-float     
+step      5 sq net wrong  9103 | circle wrong     0 bias  8801 (float     0, of-float     
+== sq H 1024 seed 0
+step      0 sq net wrong  9315 | circle wrong  9372 bias  9315 (float  9371, of-float  937
+step      1 sq net wrong  9018 | circle wrong     0 bias  8736 (float     0, of-float     
+step      2 sq net wrong  8995 | circle wrong     0 bias  8585 (float     0, of-float     
+step      3 sq net wrong  9003 | circle wrong     0 bias  8661 (float     0, of-float     
+step      4 sq net wrong  9013 | circle wrong     0 bias  8670 (float     0, of-float     
+step      5 sq net wrong  9017 | circle wrong     0 bias  8652 (float     0, of-float     
+step      5 sq net wrong  9017 | circle wrong     0 bias  8652 (float     0, of-float     
+== sq H 1024 seed 1
+step      0 sq net wrong  9325 | circle wrong  9381 bias  9351 (float  9381, of-float  938
+step      1 sq net wrong  8974 | circle wrong     0 bias  8826 (float     0, of-float     
+step      2 sq net wrong  8972 | circle wrong     0 bias  8979 (float     0, of-float     
+step      3 sq net wrong  9029 | circle wrong     0 bias  9063 (float     0, of-float     
+step      4 sq net wrong  9069 | circle wrong     0 bias  9031 (float     0, of-float     
+step      5 sq net wrong  9078 | circle wrong     0 bias  9016 (float     0, of-float     
+step      5 sq net wrong  9078 | circle wrong     0 bias  9016 (float     0, of-float     
+== sq H 1024 seed 2
+step      0 sq net wrong  9323 | circle wrong  9309 bias  9348 (float  9306, of-float  930
+step      1 sq net wrong  9132 | circle wrong     0 bias  8937 (float     0, of-float     
+step      2 sq net wrong  9076 | circle wrong     0 bias  8900 (float     0, of-float     
+step      3 sq net wrong  9090 | circle wrong     0 bias  8877 (float     0, of-float     
+step      4 sq net wrong  9112 | circle wrong     0 bias  8835 (float     0, of-float     
+step      5 sq net wrong  9118 | circle wrong     0 bias  8796 (float     0, of-float     
+step      5 sq net wrong  9118 | circle wrong     0 bias  8796 (float     0, of-float     
+== sq H 2048 seed 0
+step      0 sq net wrong  9305 | circle wrong  9386 bias  9365 (float  9386, of-float  938
+step      1 sq net wrong  8970 | circle wrong     0 bias  8621 (float     0, of-float     
+step      2 sq net wrong  9012 | circle wrong     0 bias  8634 (float     0, of-float     
+step      3 sq net wrong  9054 | circle wrong     0 bias  8642 (float     0, of-float     
+step      4 sq net wrong  9061 | circle wrong     0 bias  8639 (float     0, of-float     
+step      5 sq net wrong  9056 | circle wrong     0 bias  8634 (float     0, of-float     
+step      5 sq net wrong  9056 | circle wrong     0 bias  8634 (float     0, of-float     
+== sq H 2048 seed 1
+step      0 sq net wrong  9317 | circle wrong  9299 bias  9331 (float  9301, of-float  929
+step      1 sq net wrong  9014 | circle wrong     0 bias  8816 (float     0, of-float     
+step      2 sq net wrong  9061 | circle wrong     0 bias  8926 (float     0, of-float     
+step      3 sq net wrong  9101 | circle wrong     0 bias  8939 (float     0, of-float     
+step      4 sq net wrong  9115 | circle wrong     0 bias  8961 (float     0, of-float     
+step      5 sq net wrong  9114 | circle wrong     0 bias  8937 (float     0, of-float     
+step      5 sq net wrong  9114 | circle wrong     0 bias  8937 (float     0, of-float     
+== sq H 2048 seed 2
+step      0 sq net wrong  9320 | circle wrong  9377 bias  9362 (float  9379, of-float  937
+step      1 sq net wrong  9040 | circle wrong     0 bias  8836 (float     0, of-float     
+step      2 sq net wrong  9095 | circle wrong     0 bias  8926 (float     0, of-float     
+step      3 sq net wrong  9132 | circle wrong     0 bias  8935 (float     0, of-float     
+step      4 sq net wrong  9146 | circle wrong     0 bias  8934 (float     0, of-float     
+step      5 sq net wrong  9154 | circle wrong     0 bias  8930 (float     0, of-float     
+step      5 sq net wrong  9154 | circle wrong     0 bias  8930 (float     0, of-float     
+== relu H 256 seed 0
+step      0 relu net wrong  9313 | circle wrong  9278 bias  9320 (float  9277, of-float  9
+step      1 relu net wrong  9256 | circle wrong  8744 bias  9229 (float  8759, of-float  8
+step      2 relu net wrong  9198 | circle wrong  8113 bias  9196 (float  8110, of-float  8
+step      3 relu net wrong  9157 | circle wrong  7010 bias  9096 (float  7009, of-float  7
+step      4 relu net wrong  9140 | circle wrong  5832 bias  9005 (float  5851, of-float  5
+step      5 relu net wrong  9108 | circle wrong  5096 bias  9049 (float  5070, of-float  5
+step      5 relu net wrong  9108 | circle wrong  5096 bias  9049 (float  5070, of-float  5
+== relu H 256 seed 1
+step      0 relu net wrong  9304 | circle wrong  9276 bias  9276 (float  9284, of-float  9
+step      1 relu net wrong  9264 | circle wrong  8815 bias  9160 (float  8813, of-float  8
+step      2 relu net wrong  9226 | circle wrong  8248 bias  9092 (float  8231, of-float  8
+step      3 relu net wrong  9190 | circle wrong  7371 bias  9086 (float  7352, of-float  7
+step      4 relu net wrong  9147 | circle wrong  6177 bias  8979 (float  6204, of-float  6
+step      5 relu net wrong  9113 | circle wrong  5607 bias  8948 (float  5557, of-float  5
+step      5 relu net wrong  9113 | circle wrong  5607 bias  8948 (float  5557, of-float  5
+== relu H 256 seed 2
+step      0 relu net wrong  9306 | circle wrong  9278 bias  9311 (float  9277, of-float  9
+step      1 relu net wrong  9261 | circle wrong  8586 bias  9265 (float  8597, of-float  8
+step      2 relu net wrong  9236 | circle wrong  7620 bias  9133 (float  7554, of-float  7
+step      3 relu net wrong  9209 | circle wrong  6125 bias  9226 (float  6117, of-float  6
+step      4 relu net wrong  9188 | circle wrong  5545 bias  9251 (float  5570, of-float  5
+step      5 relu net wrong  9173 | circle wrong  5006 bias  9248 (float  5020, of-float  5
+step      5 relu net wrong  9173 | circle wrong  5006 bias  9248 (float  5020, of-float  5
+== relu H 512 seed 0
+step      0 relu net wrong  9310 | circle wrong  9307 bias  9310 (float  9311, of-float  9
+step      1 relu net wrong  9244 | circle wrong  7308 bias  9253 (float  7340, of-float  7
+step      2 relu net wrong  9158 | circle wrong  4714 bias  9180 (float  4699, of-float  4
+step      3 relu net wrong  9131 | circle wrong  3472 bias  9100 (float  3499, of-float  3
+step      4 relu net wrong  9072 | circle wrong  2546 bias  8998 (float  2545, of-float  2
+step      5 relu net wrong  9009 | circle wrong  1951 bias  8916 (float  1916, of-float  1
+step      5 relu net wrong  9009 | circle wrong  1951 bias  8916 (float  1916, of-float  1
+== relu H 512 seed 1
+step      0 relu net wrong  9308 | circle wrong  9352 bias  9319 (float  9355, of-float  9
+step      1 relu net wrong  9189 | circle wrong  8008 bias  9193 (float  8020, of-float  8
+step      2 relu net wrong  9100 | circle wrong  5924 bias  8951 (float  5931, of-float  5
+step      3 relu net wrong  9098 | circle wrong  3563 bias  9070 (float  3565, of-float  3
+step      4 relu net wrong  9079 | circle wrong  2406 bias  9122 (float  2399, of-float  2
+step      5 relu net wrong  9034 | circle wrong  2100 bias  9161 (float  2080, of-float  2
+step      5 relu net wrong  9034 | circle wrong  2100 bias  9161 (float  2080, of-float  2
+== relu H 512 seed 2
+step      0 relu net wrong  9310 | circle wrong  9346 bias  9335 (float  9345, of-float  9
+step      1 relu net wrong  9215 | circle wrong  7728 bias  9237 (float  7724, of-float  7
+step      2 relu net wrong  9167 | circle wrong  5745 bias  9129 (float  5798, of-float  5
+step      3 relu net wrong  9166 | circle wrong  4278 bias  9080 (float  4246, of-float  4
+step      4 relu net wrong  9154 | circle wrong  3257 bias  9046 (float  3255, of-float  3
+step      5 relu net wrong  9120 | circle wrong  2697 bias  9001 (float  2670, of-float  2
+step      5 relu net wrong  9120 | circle wrong  2697 bias  9001 (float  2670, of-float  2
+== relu H 1024 seed 0
+step      0 relu net wrong  9307 | circle wrong  9345 bias  9321 (float  9339, of-float  9
+step      1 relu net wrong  9157 | circle wrong  4533 bias  9091 (float  4474, of-float  4
+step      2 relu net wrong  9105 | circle wrong  1045 bias  8961 (float  1050, of-float  1
+step      3 relu net wrong  9060 | circle wrong   418 bias  8883 (float   422, of-float   
+step      4 relu net wrong  8959 | circle wrong   172 bias  8767 (float   170, of-float   
+step      5 relu net wrong  8738 | circle wrong    63 bias  8660 (float    61, of-float   
+step      5 relu net wrong  8738 | circle wrong    63 bias  8660 (float    61, of-float   
+== relu H 1024 seed 1
+step      0 relu net wrong  9329 | circle wrong  9347 bias  9330 (float  9346, of-float  9
+step      1 relu net wrong  9157 | circle wrong  4093 bias  9271 (float  4044, of-float  4
+step      2 relu net wrong  9124 | circle wrong  1558 bias  9143 (float  1551, of-float  1
+step      3 relu net wrong  9086 | circle wrong   660 bias  9060 (float   655, of-float   
+step      4 relu net wrong  8983 | circle wrong   292 bias  8992 (float   290, of-float   
+step      5 relu net wrong  8751 | circle wrong   130 bias  8830 (float   121, of-float   
+step      5 relu net wrong  8751 | circle wrong   130 bias  8830 (float   121, of-float   
+== relu H 1024 seed 2
+step      0 relu net wrong  9323 | circle wrong  9306 bias  9334 (float  9309, of-float  9
+step      1 relu net wrong  9208 | circle wrong  4176 bias  9278 (float  4084, of-float  4
+step      2 relu net wrong  9162 | circle wrong  1738 bias  9111 (float  1696, of-float  1
+step      3 relu net wrong  9142 | circle wrong   777 bias  9145 (float   736, of-float   
+step      4 relu net wrong  9100 | circle wrong   313 bias  9187 (float   310, of-float   
+step      5 relu net wrong  8934 | circle wrong   157 bias  9068 (float   158, of-float   
+step      5 relu net wrong  8934 | circle wrong   157 bias  9068 (float   158, of-float   
+== relu H 2048 seed 0
+step      0 relu net wrong  9309 | circle wrong  9364 bias  9372 (float  9363, of-float  9
+step      1 relu net wrong  9122 | circle wrong  1077 bias  8908 (float  1050, of-float  1
+step      2 relu net wrong  9083 | circle wrong   183 bias  8912 (float   186, of-float   
+step      3 relu net wrong  8954 | circle wrong    51 bias  8812 (float    52, of-float   
+step      4 relu net wrong  8536 | circle wrong     4 bias  8527 (float     5, of-float   
+step      5 relu net wrong  7654 | circle wrong     1 bias  7402 (float     1, of-float   
+step      5 relu net wrong  7654 | circle wrong     1 bias  7402 (float     1, of-float   
+== relu H 2048 seed 1
+step      0 relu net wrong  9294 | circle wrong  9309 bias  9336 (float  9306, of-float  9
+step      1 relu net wrong  9130 | circle wrong  1963 bias  9122 (float  1970, of-float  1
+step      2 relu net wrong  9109 | circle wrong   495 bias  9121 (float   500, of-float   
+step      3 relu net wrong  9002 | circle wrong   150 bias  9037 (float   149, of-float   
+step      4 relu net wrong  8614 | circle wrong    29 bias  8848 (float    31, of-float   
+step      5 relu net wrong  7679 | circle wrong     1 bias  7677 (float     1, of-float   
+step      5 relu net wrong  7679 | circle wrong     1 bias  7677 (float     1, of-float   
+== relu H 2048 seed 2
+step      0 relu net wrong  9327 | circle wrong  9343 bias  9331 (float  9344, of-float  9
+step      1 relu net wrong  9162 | circle wrong  1967 bias  9166 (float  1931, of-float  1
+step      2 relu net wrong  9172 | circle wrong   690 bias  9230 (float   680, of-float   
+step      3 relu net wrong  9099 | circle wrong   171 bias  9173 (float   175, of-float   
+step      4 relu net wrong  8795 | circle wrong    14 bias  8971 (float    13, of-float   
+step      5 relu net wrong  7817 | circle wrong     2 bias  8439 (float     2, of-float   
+step      5 relu net wrong  7817 | circle wrong     2 bias  8439 (float     2, of-float   

@@ -21,3 +21,14 @@ evaluator in Lean first.
 
 Also on box B: two more weight-decay-1 transformer seeds (10k epochs) for the transformer
 reduction search (`experiments/transformer-curve`).
+
+## Second batch (fixed 2026-11-01 ~11:00 Bogota, after the first H 512 results)
+
+First results: x^2 H 512 seeds 0, 1, 3, 4 have `circle_wrong` 0 at every checkpoint from step 100
+to 20k (nets wrong on 6,552 to 6,577); ReLU H 512 seed 1 has the net wrong on every held-out pair
+(6,586) and the projection wrong on 6 to 7. Added:
+- Controls: shuffled training labels at H 512 (x^2 and ReLU, seed 0); the projection must be at
+  chance. `EARLY=1` reruns (identical training, extra checkpoints at steps 5 to 75) at H 512 for
+  x^2 seed 0 and ReLU seed 1, to see the first step at which the projection is exact.
+- ReLU width: H 1024 seeds 0-2 and H 2048 seed 0. Win as before: projection wrong on 0.
+- x^2 at frac 0.15, H 512, seeds 0-1: does the width result hold with half the training pairs?

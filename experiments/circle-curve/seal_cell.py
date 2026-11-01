@@ -58,6 +58,8 @@ def main():
     ap.add_argument("--jobs", type=int, default=2); ap.add_argument("--build-jobs", type=int, default=0)
     ap.add_argument("--energy-permille", type=int, default=0, help="bound stated per table; 0 = measured, rounded up")
     ap.add_argument("--pure-clock", action="store_true", help="seal the one-wave projection alone, no bias neurons")
+    ap.add_argument("--chunks", type=int, default=16, help="row modules per network (default 16, as in every earlier seal); "
+                    "more, smaller modules lower the memory of each Lean process for wide networks")
     args = ap.parse_args()
     repo = Path(args.repo).resolve(); out = Path(args.outdir).resolve(); out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ, OMP_NUM_THREADS="1"); env["PATH"] = str(Path.home() / ".elan" / "bin") + os.pathsep + env.get("PATH", "")
@@ -97,7 +99,7 @@ def main():
     tag = "C_" + tag
     lib = f"LeanCheckedNetwork.Seal.{tag}"
     root = ldir / "LeanCheckedNetwork" / "Seal" / tag
-    chunks = min(p, 16)
+    chunks = min(p, args.chunks)
     desc = json.dumps(result["config"])
     modules = ["LeanCheckedNetwork.Network", "LeanCheckedNetwork.Fast", "LeanCheckedNetwork.WrongSet", "LeanCheckedNetwork.Bridge"]
     main_theorems = {}

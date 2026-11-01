@@ -1,0 +1,60 @@
+name: Seal cells (circle-curve MLP)
+
+# Kernel-checks the cells listed in experiments/mlp-sweep/seal_queue.json with
+# experiments/circle-curve/seal_cell.py, one GitHub-hosted runner per cell (4 vCPU, 16 GB),
+# for cells too wide for the 8 GB boxes. Runs only on pushes to seal/** branches.
+# Each entry: {"name", "npz" (repo path), "pure_clock" (bool), "build_jobs", "jobs", "chunks"}.
+# Results: one artifact per cell with result.json, the build/replay/axiom logs and the generated
+# Lean sources (no .lake), exactly as seal_cell.py writes them.
+
+on:
+  push:
+    branches: ['seal/**']
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      cells: ${{ steps.q.outputs.cells }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: q
+        run: echo "cells=$(python3 -c 'import json; print(json.dumps(json.load(open("experiments/mlp-sweep/seal_queue.json"))))')" >> "$GITHUB_OUTPUT"
+
+  seal:
+    needs: plan
+    name: seal ${{ matrix.cell.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        cell: ${{ fromJSON(needs.plan.outputs.cells) }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan (the Lean version comes from lean/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Machine
+        run: nproc; free -g; df -h . | tail -1; cat lean/lean-toolchain
+      - name: Seal
+        run: |
+          mkdir -p out
+          python3 experiments/circle-curve/seal_cell.py "${{ matrix.cell.npz }}" "out/${{ matrix.cell.name }}" --repo . \
+            --jobs ${{ matrix.cell.jobs }} --build-jobs ${{ matrix.cell.build_jobs }} --chunks ${{ matrix.cell.chunks }} \
+            ${{ matrix.cell.pure_clock && '--pure-clock' || '' }} 2>&1 | tee "out/${{ matrix.cell.name }}.log" || true
+          python3 experiments/circle-curve/seal_verdict.py out/ || true
+          rm -rf out/*/lean/.lake
+          python3 -c "import json,sys; r=json.load(open('out/${{ matrix.cell.name }}/result.json')); print('ok', r.get('ok'), 'failures', r.get('failures')); sys.exit(0 if r.get('ok') else 1)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seal-${{ matrix.cell.name }}
+          path: out/
+          retention-days: 30

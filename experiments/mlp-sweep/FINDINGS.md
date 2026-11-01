@@ -300,6 +300,47 @@ and for p 31 at the larger widths. The width needed does not grow with p from 31
 moduli are the harder ones. At frac 0.3 small p also means few pairs per residue (0.3 p: 9 at p 31,
 77 at p 257), which this batch cannot separate from p itself.
 
+### 11. When the hidden adder arrives: a law that holds for GELU at every width and fails for z^2 + c z (sixth batch)
+
+Rules in `RULES.md` (sixth batch), fixed before the runs. p 97, frac 0.3, H 1024 unless stated, 300
+Adam steps, checkpoints at every step to 20, every 2 to 40, every 5 to 100. t* = first checkpoint from
+which the float projection read with z^2 is exact to step 300; predicted t* = 9 / (lr x H x r), with r
+the even part's size at initialization (the post-hoc law of result 7). Seeds 0 and 1:
+
+| activation | r | predicted t* | measured t* | own readout wrong at 300 |
+| --- | --- | --- | --- | --- |
+| GELU, H 512 | 0.062 | 28.2 | 24, 26 | 5,626, 6,594 |
+| GELU, H 1024 (fourth batch, coarser grid) | 0.044 | 19.9 | 11 to 20, both seeds | 6,291, 6,845 (at 200) |
+| GELU, H 2048 | 0.031 | 14.1 | 14, 13 | 6,017, 6,600 |
+| GELU, H 4096 | 0.022 | 9.9 | 10, 9 | 7,316, 7,135 |
+| tanh(z) + d z^2, d = 0.5 | 0.028 | 31.7 | 17, 17 | 8,288, 8,427 |
+| d = 1 | 0.055 | 15.8 | 13, 12 | 6,388, 7,148 |
+| d = 2 | 0.111 | 7.9 | 9, 8 | 2,415, 2,888 |
+| d = 4 | 0.222 | 4.0 | 3, 3 | 15, 32 |
+| d = 10 | 0.555 | 1.6 | 1, 1 | 0, 0 |
+| z^2 + c z, c = 0.25 | 0.222 | 4.0 | 3, 3 | 0, 0 |
+| c = 0.5 | 0.111 | 7.9 | 10, 10 | 1,189, 1,590 |
+| c = 1 | 0.055 | 15.9 | 13, 12 | 6,467, 7,108 |
+| c = 2 | 0.028 | 31.7 | **15, 14** | 8,590, 8,695 |
+| c = 4 | 0.014 | 63.5 | **16, 16** | 9,066, 9,096 |
+| c = 8 | 0.007 | 126.9 | **24, 22** | 9,213, 9,206 |
+| controls: z^2 + 0 z; tanh at H 4096 | | 1; never | 1; never (z^2 readout 9,240 or more) | 0; 9,319 |
+
+Prediction 1 (within a factor 2 for every run with r at most 0.15) held in 8 of the 11 seed-0 runs, short
+of the 9 fixed as the win: **the law failed for z^2 + c z at c = 2, 4 and 8**, where the adder arrives at
+step 15 to 24 instead of growing like c. It held for every GELU run, and there quantitatively: the
+predicted fall like 1/sqrt(H) (28, 20, 14, 10) matches the measured 24 to 26, 20, 13 to 14 and 9 to 10.
+Prediction 2 (no slower than the law for r above 0.15) held in all 6 runs. Prediction 3 (z^2 + c z and
+tanh(z) + d z^2 with the same r within a factor 2 of each other) held in all four pairs, including the
+pair where both miss the law (c = 2: 15, 14; d = 0.5: 17, 17). Prediction 4 (tanh never) held. Every one
+of these networks memorizes (wrong on all 6,586 held-out pairs at step 300) and only the activations
+with the largest even part (r of 0.22 and up) have their own readout exact.
+
+So r at initialization predicts the arrival when it comes early (t* up to about 13, any width) and
+underestimates it beyond that: by step 15 the weights have moved by about 15 x lr = 0.15 per entry,
+several times the initialization scale (1/sqrt(H) = 0.03), so the pre-activations and with them the even
+part's share have grown. That reading is post hoc and untested.
+
 ## Kernel-checked
 
 Seventeen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
@@ -386,8 +427,8 @@ looked is the exact, all-seed, all-checkpoint, one-step measurement.
 
 ## Open
 
-- The sixth batch (`RULES.md`): does the hidden adder arrive at t* x lr x H x r of about 9 for
-  activations the law was not fitted on (z^2 + c z, tanh(z) + d z^2, GELU at H 512 to 4096)?
+- The arrival law with the pre-activation scale measured along training rather than at
+  initialization (result 11's failure at large c).
 - Seals of the GELU result (its projection read with z^2 is an x^2 network, so the existing pipeline
   applies) and of one-step cells at H 2048 (beyond one runner's 6 hours as the pipeline stands).
 - Liu & Lu's filter (frequency from W2 alone, no rounding) on these nets, to measure the difference.

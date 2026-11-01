@@ -1,0 +1,8 @@
+=== gelu_H2048_s0 start 22:30:18
+=== gelu_H2048_s1 start 22:30:18
+=== gelu_H4096_s0 start 22:30:18
+=== gelu_H4096_s1 start 22:30:18
+=== gelu_H2048_s0 exit 0 after 1733 s
+=== gelu_H2048_s1 exit 0 after 1736 s
+=== gelu_H4096_s1 exit 0 after 2781 s
+=== gelu_H4096_s0 exit 0 after 2782 s

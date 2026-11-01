@@ -1,0 +1,8 @@
+=== tanhsq2_H1024_s0 start 22:30:16
+=== tanhsq2_H1024_s1 start 22:30:16
+=== tanhsq4_H1024_s0 start 22:30:16
+=== tanhsq4_H1024_s1 start 22:30:16
+=== tanhsq2_H1024_s1 exit 0 after 492 s
+=== tanhsq4_H1024_s1 exit 0 after 493 s
+=== tanhsq4_H1024_s0 exit 0 after 497 s
+=== tanhsq2_H1024_s0 exit 0 after 498 s

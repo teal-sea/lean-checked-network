@@ -425,6 +425,38 @@ looked is the exact, all-seed, all-checkpoint, one-step measurement.
   memorizer on clean addition at exactly 0 of 6,586, the measured 99.98% same-row-or-column label
   reuse, and the contrast with its own projection (7 to 67 wrong).
 
+### Prior art for results 6 to 10 (second search, 2026-11-01 evening)
+
+Two searchers and one adversarial refuter per claim group, papers opened; the synthesis is in
+`results/prior_art_batch45_2026-11-01.md`.
+
+- **One step, little data, wrong labels (results 2, 8, 9): partly known.** The mechanism is published
+  (Wang et al. 2610.11833: each mode's update is the product of the other two, through the
+  activation's second derivative; He et al. 2602.16849). One large gradient step is known to learn
+  features on other tasks, but those results erase the initialization and train the read-out
+  afterwards (Barak et al. 2207.08799, footnote 9 and Prop. 9, on parity; Damian et al. 2206.15144;
+  Dandi et al. 2305.18270; Shi et al. 2310.12408). The closest statement on modular addition is Kumar &
+  Sankaranarayanan 2610.22593, Thm. 4.2(iii): a refit read-out above 1 - eps from the first update while
+  the net lags, with an initialization built from the data, width p^2 (p - 1)^2 and no exactness.
+  Filtration of noisy-label and low-data memorizers after 200k epochs (Liu & Lu 2605.18022) and
+  corrupted-label generalization at data fraction 0.5 (Doshi et al. 2310.13061) are known. Not found: an
+  exact data-free projection after one step from an i.i.d. initialization while the net and the update
+  alone are at chance; the same on 10% of the table or with 25 to 50% wrong labels; a learning-rate
+  window for one plain step; any arrival law in lr x width (existing timing laws concern the net's own
+  grokking and have no width term).
+- **The even part (results 5, 6, 7, 11): partly known.** That the activation's second-order term drives
+  the Fourier coupling is in Wang et al. (Sec. 3.2, App. B, where tanh nets also generalize poorly), and
+  that a trained ReLU net read with |x| or x^2 keeps its accuracy while x or x^3 drops to chance is in He
+  et al. (Table 1, footnote 2), Wu et al. 2410.07476 and Stander et al. 2312.06581. More even part means
+  earlier grokking in Salah & Yevick 2411.05353 (x + a x^2). Not found: GELU or SiLU networks whose
+  projection is wrong on thousands of pairs read with their own activation and exact read with x^2,
+  |x| or their own even part; the f(s z)/s knob and one curve across GELU and SiLU; networks trained with
+  |x|; a null for tanh under even read-outs; the arrival law. The finding also explains an open
+  observation in Gromov 2301.02679 (App. B, Fig. 6): his hand-built one-wave weights read with GELU stay
+  near chance where x^2, |x| and ReLU work.
+- Corrections to the first search: Barak et al. do have a one-step statement (on parity, with the
+  initialization erased), and Kumar & Sankaranarayanan Thm. 4.2(iii) is closer than first graded.
+
 ## Open
 
 - The arrival law with the pre-activation scale measured along training rather than at

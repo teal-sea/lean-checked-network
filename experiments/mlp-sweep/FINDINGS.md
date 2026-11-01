@@ -24,6 +24,11 @@ p 97, frac 0.3, 20k steps, x^2:
 | 256 | 3 so far | 6,521 to 6,555 | 0.49 to 1.03% | 0 at step 100 in all; 0, 3, 4 at 20k |
 | 512 | 5 | 6,552 to 6,564 | 0.27 to 0.50% | **0 at all 45 checkpoints, every seed** |
 | 1024 | 3 | 6,572 to 6,580 | 0.09 to 0.21% | **0 at all 45 checkpoints, every seed** |
+| 512, frac 0.15 | 2 | 7,988, 7,989 | 0.11, 0.13% | **0 at all 45 checkpoints, both seeds** |
+
+Controls: with the training labels shuffled (H 512, seed 0, x^2 and ReLU) the projection stays at
+chance at every checkpoint (9,182 to 9,352 wrong). An `EARLY=1` rerun of H 512 seed 0 has the
+projection exact from step 5 on (net wrong on 9,097 at step 5, 6,655 at step 20).
 
 The nets fit every training pair and are below chance on held-out pairs; the winning gaps of the
 projections are in the millions (3.0 to 3.9 million at 20k for H 512), no ties. At initialization
@@ -40,6 +45,10 @@ Checkpoints at steps 1 to 5 (`first_steps.sh`, `EXTRA_STEPS`), p 97, frac 0.3, l
 | 512 | 2, 2, 2 (12, 97, 85 wrong at step 1) | 8,997 to 9,129 |
 | 1024 | 1, 1, 1 | 8,974 to 9,132 |
 | 2048 | 1, 1, 1 | 8,970 to 9,040 |
+
+**How often** (`first_steps4.sh`, 20 seeds per width, lr 0.01): exact at step 1 in 19 of 20 seeds at
+H 768 (the twentieth wrong on 1 pair, exact at step 2) and 20 of 20 at H 1024 (H 1536 and 2048
+running).
 
 After one step an H 1024 net fits 9 to 15% of its training pairs and is below chance on held-out
 pairs (0.09 to 0.49%), and its projection is right on all 9,409 pairs.
@@ -74,14 +83,20 @@ Same runs with max(x, 0) in place of x^2:
 | --- | --- | --- | --- | --- |
 | 256 | 5 | 6,585 to 6,586 | 0 or 1 of 6,586 | 754 to 1,309 (592 to 1,048) |
 | 512 | 3 | 6,586 | **0 of 6,586** | 7, 37, 67 (7, 31, 52) |
+| 1024 | 3 | 6,586 | **0 of 6,586** | **0, 0, 0** (seeds 0 and 2: 0 at all 45 checkpoints from step 100; seed 1: 0 or 1) |
+| 2048 | 1 | 6,586 | **0 of 6,586** | **0 at all 45 checkpoints** |
 | 256, wd 1 (control) | 2 | 0, 1 | all | 0, 1 |
+
+So from width 1024 a ReLU network that is wrong on every single held-out pair, and right on every
+training pair, has one-wave projection that is an exact adder on all 9,409 pairs.
 
 Chance would be about 68 held-out pairs right. The mechanism (measured on H 512 seed 1): on
 99.98% of held-out pairs the net's answer is a label of some training pair in the same row a or the
 same column b, and (a + b) mod p is never such a label, since a + b' = a + b forces b' = b. The x^2
 memorizers do the same on 90.6 to 91.4% of held-out pairs, which is why their held-out accuracy is
 below chance. ReLU writes the adder more slowly than x^2: at step 5, H 1024 is still wrong on 63
-and 130.
+and 130; an `EARLY=1` rerun of ReLU H 512 seed 1 goes 2,100 (step 5), 541 (10), 100 (20), 31 (30),
+6 (100).
 
 ### 4. The transformer does not do this
 
@@ -127,5 +142,4 @@ looked is the exact, all-seed, all-checkpoint, one-step measurement.
 ## Open
 
 - Controls queued: shuffled training labels at H 512 (x^2 and ReLU), `EARLY=1` reruns, frac 0.15.
-- ReLU at H 1024 and 2048 (is the ReLU projection exact at larger width?).
 - Liu & Lu's filter (frequency from W2 alone, no rounding) on these nets, to measure the difference.

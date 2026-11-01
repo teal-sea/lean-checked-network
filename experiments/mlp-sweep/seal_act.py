@@ -113,6 +113,8 @@ def main():
     ap.add_argument("--chunks", type=int, default=16, help="row modules per network (default 16, as in every earlier seal); "
                     "more, smaller modules lower the memory of each Lean process for wide networks")
     ap.add_argument("--act", choices=["sq", "relu"], default=None, help="default: the checkpoint's act field, else sq")
+    ap.add_argument("--max-heartbeats", type=int, default=None, help="add `set_option maxHeartbeats N` to the generated "
+                    "Weights files (an elaboration resource limit; the default 200000 is too small for 512-wide tables)")
     args = ap.parse_args()
     repo = Path(args.repo).resolve(); out = Path(args.outdir).resolve(); out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ, OMP_NUM_THREADS="1"); env["PATH"] = str(Path.home() / ".elan" / "bin") + os.pathsep + env.get("PATH", "")
@@ -163,6 +165,10 @@ def main():
         wrong_rows = [[] for _ in range(p)]
         for a, b in evals[key]["wrong_pairs"]: wrong_rows[a].append(b)
         mods, k = write_network(root, lib, name, desc, net_desc, *nets[key], wrong_rows, chunks, p, Hn, Path(args.npz).name)
+        if args.max_heartbeats is not None:
+            wf = root / name / "Weights.lean"; t = wf.read_text()
+            assert t.count("set_option maxRecDepth 100000\n") == 1
+            wf.write_text(t.replace("set_option maxRecDepth 100000\n", f"set_option maxRecDepth 100000\nset_option maxHeartbeats {args.max_heartbeats}\n"))
         modules += mods
         main_theorems[key] = [f"{lib}.{name}.answer_iff_not_wrong"] + ([f"{lib}.{name}.adds_mod_{p}"] if k == 0 else [f"{lib}.{name}.wrongPairs_length", f"{lib}.{name}.wrongPairs_nodup", f"{lib}.{name}.wrongPairs_in_range"])
     (root / "Bridge.lean").write_text(f"""import LeanCheckedNetwork.Bridge

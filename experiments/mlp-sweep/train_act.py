@@ -1,7 +1,7 @@
 """experiments/circle-curve/train_ckpt2.py with the activation as the first argument (2026-11-01).
 
 Usage: python3 train_act.py ACT P HIDDEN SEED LR WD TRAIN_FRACTION STEPS OUTDIR, ACT in {sq, relu}.
-ACT sq is train_ckpt2.py exactly (x^2). ACT relu replaces x^2 by max(x, 0) in the forward pass, the
+ACT sq is train_ckpt2.py exactly (x^2). EXTRA_STEPS=1,2,3 (environment) adds checkpoints at those steps. ACT relu replaces x^2 by max(x, 0) in the forward pass, the
 frozen evaluation and the gradient ((z > 0) for 2z); nothing else changes (same init, AdamW-style
 decoupled weight decay, lr, schedule, 8-bit freezing, checkpoint format plus an `act` field).
 """
@@ -17,6 +17,7 @@ lr, wd, frac, steps, outdir = float(sys.argv[4]), float(sys.argv[5]), float(sys.
 os.makedirs(outdir, exist_ok=True)
 
 sched = set(([5, 10, 15, 20, 30, 40, 50, 75] if os.environ.get('EARLY') == '1' else []) + list(range(100, 1001, 100)) + list(range(1250, 4001, 250)) + list(range(4500, 10001, 500)) + list(range(11000, min(steps, 20000) + 1, 1000)) + list(range(30000, steps + 1, 10000)))
+sched |= {int(x) for x in os.environ.get('EXTRA_STEPS', '').split(',') if x}  # e.g. EXTRA_STEPS=1,2,3,4
 
 rng = np.random.default_rng(seed)
 pairs = np.array([(a, b) for a in range(p) for b in range(p)])

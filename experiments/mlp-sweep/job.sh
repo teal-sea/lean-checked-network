@@ -4,7 +4,8 @@
 # environment setting first (SHUFFLE_LABELS=1, EARLY=1), tf: transformer-curve/train_curve.py + reduce.py +
 # probe_sum_part.py), gen: mlp-sweep/train_gen.py + analyze_gen.py with '+'-joined VAR=value settings first;
 # fourth batch: gene (gen + analyze_even.py), genq (gen + analyze_act.py, the integer projection),
-# acte (train_act.py + analyze_act.py with '+'-joined settings). One core per job; four at a time.
+# acte (train_act.py + analyze_act.py with '+'-joined settings), genx (gene + int_even.py). One core per job;
+# four at a time.
 set -u
 kind=$1; name=$2; shift 2
 PY=~/tc/venv/bin/python
@@ -25,6 +26,8 @@ case $kind in
           && $PY $MS/analyze_even.py "$d" > "$d/even.log" 2>&1 ;;
   genq) IFS='+' read -ra evs <<< "$1"; shift; env "${evs[@]}" $PY $MS/train_gen.py "$@" "$d" > "$d/train.log" 2>&1 && $PY $MS/analyze_gen.py "$d" > "$d/analyze.log" 2>&1 \
           && $PY $MS/analyze_act.py "$d" > "$d/analyze_int.log" 2>&1 ;;
+  genx) IFS='+' read -ra evs <<< "$1"; shift; env "${evs[@]}" $PY $MS/train_gen.py "$@" "$d" > "$d/train.log" 2>&1 && $PY $MS/analyze_gen.py "$d" > "$d/analyze.log" 2>&1 \
+          && $PY $MS/analyze_even.py "$d" > "$d/even.log" 2>&1 && $PY $MS/int_even.py "$d" > "$d/int_even.log" 2>&1 ;;
   acte) IFS='+' read -ra evs <<< "$1"; shift; env "${evs[@]}" $PY $MS/train_act.py "$@" "$d" > "$d/train.log" 2>&1 && $PY $MS/analyze_act.py "$d" > "$d/analyze.log" 2>&1 ;;
   tf)   $PY $TC/train_curve.py "$d" "$@" --threads 1 > "$d/train.log" 2>&1 \
           && $PY $TC/reduce.py "$d"/ckpt_*.npz > "$d/reduce.jsonl" 2> "$d/reduce.log" \

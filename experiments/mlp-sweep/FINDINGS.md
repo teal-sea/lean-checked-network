@@ -150,11 +150,11 @@ row/column exclusion of result 3 does not depend on the activation. The |x| nets
 
 ## Kernel-checked
 
-Sixteen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
+Seventeen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
 per cell, queues in `seal_queues/`) with the unchanged `seal_cell.py --pure-clock` for x^2 and
 `seal_act.py --right-iff-trained` for ReLU, which reads the activation from the checkpoint (`--max-heartbeats` and `--chunks` change only
 elaboration limits and file layout). Every verdict is ok: the build has no `sorry`, `leanchecker`
-replays every module (75 of 75; 139 of 139 at H 1024; 77 of 77 for ReLU), `#print axioms` shows only `propext`,
+replays every module (75 of 75; 139 of 139 at H 1024; 77 of 77 and 141 of 141 for ReLU), `#print axioms` shows only `propext`,
 `Classical.choice` and `Quot.sound`, and the forbidden-token scan is empty. The packages are in
 `seals/` (result.json, logs and the generated Lean sources); `seal_inputs/MANIFEST.json` gives each
 cell's source checkpoint and its sha256.
@@ -185,17 +185,21 @@ of steps, optimizer) is measured provenance, not part of what is checked.
 Chance is about 9,312 wrong, so the nine early cells are kernel-checked networks at chance whose
 one-wave projections are exact adders.
 
-The ReLU seal, relu_H512_s1_final (20k Adam steps, seed 1), proves that the trained net is right on
-a pair if and only if the pair is one of its 2,823 training pairs (`right_iff_trained`): wrong on
-all 6,586 held-out pairs. Its projection is wrong on 7 pairs (kernel-checked count), so it carries
-no `adds_mod_97`.
+Two ReLU seals prove that the trained net is right on a pair if and only if the pair is one of its
+2,823 training pairs (`right_iff_trained`): wrong on all 6,586 held-out pairs.
+
+- relu_H512_s1_final (20k Adam steps, seed 1): its projection is wrong on 7 pairs (kernel-checked
+  count), so it carries no `adds_mod_97`.
+- **relu_H1024_s0_final** (20k Adam steps, seed 0): its projection **adds mod 97** (smallest winning
+  gap 11,448). So this ReLU network is proved wrong on every pair it was not trained on, and the
+  one-wave projection of its own weights is proved to add mod 97 on all 9,409 pairs (5 h 23 min on
+  one runner).
 
 The H 1024 cell took 4 h 8 min on one runner (build 2 h 10, replay 1 h 58), inside the 6-hour limit.
 
 All five H 512 memorizers (seeds 0-4 at 20k) are now sealed.
 
-Running: ReLU H 1024 seed 0 at 20k (`right_iff_trained` plus an exact projection); x^2 H 1024 seeds 1
-and 2 after one Adam step at lr 0.01 and seed 0 at 20k; and from the fourth batch, one step on 15%
+Running: x^2 H 1024 seeds 1 and 2 after one Adam step at lr 0.01 and seed 0 at 20k; and from the fourth batch, one step on 15%
 of the pairs (seeds 0 and 2) and two steps on 10% (seed 2), all at H 1024.
 
 ## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)

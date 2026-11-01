@@ -1,0 +1,22 @@
+# probe_sum_part.py (held-out / train split version) on box A, 2026-11-01 ~10:30 Bogota, printed lines.
+# Columns: checkpoint, epoch, net wrong pairs, all-pairs sum part wrong sums | held-out-only wrong sums, min gap,
+# fewest held-out pairs for any sum | train-only wrong sums, min gap, fewest train pairs for any sum. Out of 113 sums.
+# wd1_s0 checkpoints 0-3000, then wd0_s0 at epoch 20000 (last line).
+ckpt_000000.npz 0 net 12662 all 112 | heldout 112 -0.98873 pairs>= 67 | train 112 -0.97976 pairs>= 20
+ckpt_000005.npz 5 net 12675 all 112 | heldout 112 -0.79081 pairs>= 67 | train 112 -0.72014 pairs>= 20
+ckpt_000010.npz 10 net 12640 all 112 | heldout 112 -0.96578 pairs>= 67 | train 110 -0.80933 pairs>= 20
+ckpt_000020.npz 20 net 12546 all 111 | heldout 113 -1.0113 pairs>= 67 | train 92 -0.72357 pairs>= 20
+ckpt_000030.npz 30 net 12474 all 107 | heldout 113 -1.13357 pairs>= 67 | train 29 -0.53769 pairs>= 20
+ckpt_000050.npz 50 net 12095 all 108 | heldout 113 -1.88299 pairs>= 67 | train 0 0.24503 pairs>= 20
+ckpt_000075.npz 75 net 11178 all 94 | heldout 113 -3.26047 pairs>= 67 | train 0 1.47841 pairs>= 20
+ckpt_000100.npz 100 net 9293 all 48 | heldout 110 -5.245 pairs>= 67 | train 0 3.90266 pairs>= 20
+ckpt_000150.npz 150 net 8202 all 25 | heldout 108 -8.88609 pairs>= 67 | train 0 8.91883 pairs>= 20
+ckpt_000200.npz 200 net 8156 all 19 | heldout 108 -8.41967 pairs>= 67 | train 0 9.40173 pairs>= 20
+ckpt_000300.npz 300 net 8060 all 13 | heldout 106 -7.77697 pairs>= 67 | train 0 10.238 pairs>= 20
+ckpt_000500.npz 500 net 7917 all 6 | heldout 101 -7.32802 pairs>= 67 | train 0 12.47147 pairs>= 20
+ckpt_000750.npz 750 net 7793 all 3 | heldout 91 -7.36854 pairs>= 67 | train 0 15.87684 pairs>= 20
+ckpt_001000.npz 1000 net 7697 all 0 | heldout 85 -7.96733 pairs>= 67 | train 0 19.16625 pairs>= 20
+ckpt_001500.npz 1500 net 7501 all 0 | heldout 63 -7.07699 pairs>= 67 | train 0 21.28531 pairs>= 20
+ckpt_002000.npz 2000 net 7396 all 1 | heldout 68 -5.82071 pairs>= 67 | train 0 10.44774 pairs>= 20
+ckpt_003000.npz 3000 net 7063 all 0 | heldout 40 -7.87425 pairs>= 67 | train 0 19.61761 pairs>= 20
+ckpt_020000.npz 20000 net 7711 all 11 | heldout 99 -81.68598 pairs>= 67 | train 0 73.715 pairs>= 20

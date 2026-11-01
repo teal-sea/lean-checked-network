@@ -33,7 +33,22 @@ def probe(path):
     F = np.fft.rfft(Rc, axis=0)                                            # along s
     energy = (np.abs(F[1:57]) ** 2).sum(1)
     rank = list(np.argsort(-energy) + 1)
+    # the same average restricted to held-out pairs, and to training pairs: memorizing the training
+    # pairs (whose label is their sum) pushes the all-pairs average toward an adder by itself
+    tr = np.zeros(P * P, bool); tr[np.asarray(z["train_idx"])] = True; tr = tr.reshape(P, P)
+    split = {}
+    for name, mask in (("heldout", ~tr), ("train", tr)):
+        Rx = np.full((P, P), np.nan); n_min = P
+        for s in range(P):
+            a = T[mask[T, (s - T) % P]]
+            n_min = min(n_min, len(a))
+            if len(a): Rx[s] = L[a, (s - a) % P].mean(0)
+        ok = ~np.isnan(Rx[:, 0])
+        gx = Rx[T, T] - np.where(np.eye(P, dtype=bool), -np.inf, Rx).max(1)
+        split[name] = {"wrong_sums": int((Rx[ok].argmax(1) != T[ok]).sum()), "sums_with_pairs": int(ok.sum()),
+                       "min_pairs_per_sum": int(n_min), "min_gap": round(float(np.nanmin(gx)), 5)}
     out = {"file": os.path.basename(path), "epoch": int(z["epoch"]), "net_wrong": int((L.reshape(-1, P).argmax(1) != Y).sum()),
+           "split": split,
            "sum_part_wrong_sums": int((R.argmax(1) != T).sum()), "sum_part_min_gap": round(float(gap.min()), 5),
            "sum_part_share": round(share, 5), "K_from_R": [int(k) for k in rank[:8]], "N_oracle": {}}
     for m in M_LIST:

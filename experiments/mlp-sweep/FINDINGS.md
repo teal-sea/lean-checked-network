@@ -150,11 +150,11 @@ row/column exclusion of result 3 does not depend on the activation. The |x| nets
 
 ## Kernel-checked
 
-Fourteen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
+Fifteen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
 per cell, queues in `seal_queues/`) with the unchanged `seal_cell.py --pure-clock` for x^2 and
 `seal_act.py --right-iff-trained` for ReLU, which reads the activation from the checkpoint (`--max-heartbeats` and `--chunks` change only
 elaboration limits and file layout). Every verdict is ok: the build has no `sorry`, `leanchecker`
-replays every module (75 of 75, 77 of 77 for ReLU), `#print axioms` shows only `propext`,
+replays every module (75 of 75; 139 of 139 at H 1024; 77 of 77 for ReLU), `#print axioms` shows only `propext`,
 `Classical.choice` and `Quot.sound`, and the forbidden-token scan is empty. The packages are in
 `seals/` (result.json, logs and the generated Lean sources); `seal_inputs/MANIFEST.json` gives each
 cell's source checkpoint and its sha256.
@@ -179,8 +179,9 @@ of steps, optimizer) is measured provenance, not part of what is checked.
 | x2_H512_lr002_s2_step1 | seed 2 | 9,116 | adds mod 97 | 8,535 |
 | x2_H512_sgd1536_s0_step1 | **1 plain gradient step** (lr 1,536), seed 0 | 9,183 | adds mod 97 | 14,886 |
 | x2_H512_sgd1536_s1_step1 | seed 1 | 9,122 | adds mod 97 | 6,305 |
+| x2_H1024_s0_step1 | **1 Adam step at the standard lr 0.01**, H 1024, seed 0 | 9,018 | adds mod 97 | 72,595 |
 
-Chance is about 9,312 wrong, so the eight early cells are kernel-checked networks at chance whose
+Chance is about 9,312 wrong, so the nine early cells are kernel-checked networks at chance whose
 one-wave projections are exact adders.
 
 The ReLU seal, relu_H512_s1_final (20k Adam steps, seed 1), proves that the trained net is right on
@@ -188,9 +189,10 @@ a pair if and only if the pair is one of its 2,823 training pairs (`right_iff_tr
 all 6,586 held-out pairs. Its projection is wrong on 7 pairs (kernel-checked count), so it carries
 no `adds_mod_97`.
 
-Running: x^2 H 512 seed 2 at 20k (so that all five H 512 seeds are sealed), x^2 H 1024 seed 0 after
-one Adam step at lr 0.01, and ReLU H 1024 seed 0 at 20k (`right_iff_trained` plus an exact
-projection). The H 1024 cells may not fit the runners' 6-hour limit.
+The H 1024 cell took 4 h 8 min on one runner (build 2 h 10, replay 1 h 58), inside the 6-hour limit.
+
+Running: x^2 H 512 seed 2 at 20k (so that all five H 512 seeds are sealed) and ReLU H 1024 seed 0
+at 20k (`right_iff_trained` plus an exact projection).
 
 ## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)
 

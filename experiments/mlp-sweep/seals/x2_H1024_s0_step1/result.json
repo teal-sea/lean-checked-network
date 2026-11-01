@@ -1,0 +1,893 @@
+{
+ "source": "/home/runner/work/lean-checked-network/lean-checked-network/experiments/mlp-sweep/seal_inputs/x2_H1024_s0_step1.npz",
+ "config": {
+  "p": 97,
+  "H": 1024,
+  "seed": 0,
+  "lr": 0.01,
+  "wd": 0.0,
+  "frac": 0.3,
+  "steps": 1
+ },
+ "repo_commit": "7fa940c42d385ad9043efb7274a9fa9a50d5b96a",
+ "lean_toolchain": "leanprover/lean4:v4.35.0-rc2",
+ "reduction": {
+  "n_bias_neurons": 0,
+  "energy_outside_wave": [
+   0.9359400716446601,
+   0.9457089413857603,
+   0.9420500647334007
+  ],
+  "energy_permille_stated": [
+   936,
+   946,
+   943
+  ]
+ },
+ "networks": {
+  "trained": {
+   "wrong_count": 9018,
+   "ties": 0,
+   "smallest_winning_gap": 6654,
+   "largest_weight": 127,
+   "w2_in_fast_range": true,
+   "max_hidden_sum": 1936283,
+   "fast_digit_bound_ok": true
+  },
+  "clock_bias": {
+   "wrong_count": 0,
+   "ties": 0,
+   "smallest_winning_gap": 72595,
+   "largest_weight": 21,
+   "w2_in_fast_range": true,
+   "max_hidden_sum": 115881,
+   "fast_digit_bound_ok": true
+  }
+ },
+ "stages": {
+  "gen": {
+   "modules": [
+    "LeanCheckedNetwork.Network",
+    "LeanCheckedNetwork.Fast",
+    "LeanCheckedNetwork.WrongSet",
+    "LeanCheckedNetwork.Bridge",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Weights",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Table",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows00",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows01",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows02",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows03",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows04",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows05",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows06",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows07",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows08",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows09",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows10",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows11",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows12",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows13",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows14",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows15",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows16",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows17",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows18",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows19",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows20",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows21",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows22",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows23",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows24",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows25",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows26",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows27",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows28",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows29",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows30",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows31",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows32",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows33",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows34",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows35",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows36",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows37",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows38",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows39",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows40",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows41",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows42",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows43",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows44",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows45",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows46",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows47",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows48",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows49",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows50",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows51",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows52",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows53",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows54",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows55",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows56",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows57",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows58",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows59",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows60",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows61",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows62",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows63",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.AllInputs",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Weights",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Table",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows00",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows01",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows02",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows03",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows04",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows05",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows06",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows07",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows08",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows09",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows10",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows11",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows12",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows13",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows14",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows15",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows16",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows17",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows18",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows19",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows20",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows21",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows22",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows23",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows24",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows25",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows26",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows27",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows28",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows29",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows30",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows31",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows32",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows33",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows34",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows35",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows36",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows37",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows38",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows39",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows40",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows41",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows42",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows43",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows44",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows45",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows46",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows47",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows48",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows49",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows50",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows51",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows52",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows53",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows54",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows55",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows56",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows57",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows58",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows59",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows60",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows61",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows62",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows63",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.AllInputs",
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Bridge"
+   ],
+   "main_theorems": {
+    "trained": [
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.answer_iff_not_wrong",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_length",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_nodup",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_in_range"
+    ],
+    "clock_bias": [
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.answer_iff_not_wrong",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.adds_mod_97"
+    ],
+    "bridge": [
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_E1",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_E2",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_W2",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_E1",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_E2",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_W2",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.extra_E1",
+     "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.extra_E2"
+    ]
+   }
+  },
+  "build": {
+   "exit": 0,
+   "completed": true,
+   "sorry_warnings": 0,
+   "errors": []
+  },
+  "replay": {
+   "ok": 139,
+   "of": 139,
+   "modules": {
+    "LeanCheckedNetwork.Network": {
+     "exit": 0,
+     "seconds": 0.5
+    },
+    "LeanCheckedNetwork.Fast": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.WrongSet": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Bridge": {
+     "exit": 0,
+     "seconds": 0.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Weights": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Table": {
+     "exit": 0,
+     "seconds": 8.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows00": {
+     "exit": 0,
+     "seconds": 78.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows01": {
+     "exit": 0,
+     "seconds": 77.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows02": {
+     "exit": 0,
+     "seconds": 79.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows03": {
+     "exit": 0,
+     "seconds": 78.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows04": {
+     "exit": 0,
+     "seconds": 79.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows05": {
+     "exit": 0,
+     "seconds": 77.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows06": {
+     "exit": 0,
+     "seconds": 79.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows07": {
+     "exit": 0,
+     "seconds": 76.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows08": {
+     "exit": 0,
+     "seconds": 78.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows09": {
+     "exit": 0,
+     "seconds": 79.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows10": {
+     "exit": 0,
+     "seconds": 76.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows11": {
+     "exit": 0,
+     "seconds": 75.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows12": {
+     "exit": 0,
+     "seconds": 77.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows13": {
+     "exit": 0,
+     "seconds": 77.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows14": {
+     "exit": 0,
+     "seconds": 78.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows15": {
+     "exit": 0,
+     "seconds": 78.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows16": {
+     "exit": 0,
+     "seconds": 78.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows17": {
+     "exit": 0,
+     "seconds": 77.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows18": {
+     "exit": 0,
+     "seconds": 78.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows19": {
+     "exit": 0,
+     "seconds": 77.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows20": {
+     "exit": 0,
+     "seconds": 77.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows21": {
+     "exit": 0,
+     "seconds": 77.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows22": {
+     "exit": 0,
+     "seconds": 80.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows23": {
+     "exit": 0,
+     "seconds": 80.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows24": {
+     "exit": 0,
+     "seconds": 76.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows25": {
+     "exit": 0,
+     "seconds": 79.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows26": {
+     "exit": 0,
+     "seconds": 74.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows27": {
+     "exit": 0,
+     "seconds": 76.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows28": {
+     "exit": 0,
+     "seconds": 76.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows29": {
+     "exit": 0,
+     "seconds": 77.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows30": {
+     "exit": 0,
+     "seconds": 77.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows31": {
+     "exit": 0,
+     "seconds": 76.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows32": {
+     "exit": 0,
+     "seconds": 76.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows33": {
+     "exit": 0,
+     "seconds": 37.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows34": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows35": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows36": {
+     "exit": 0,
+     "seconds": 36.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows37": {
+     "exit": 0,
+     "seconds": 37.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows38": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows39": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows40": {
+     "exit": 0,
+     "seconds": 37.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows41": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows42": {
+     "exit": 0,
+     "seconds": 37.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows43": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows44": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows45": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows46": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows47": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows48": {
+     "exit": 0,
+     "seconds": 37.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows49": {
+     "exit": 0,
+     "seconds": 36.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows50": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows51": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows52": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows53": {
+     "exit": 0,
+     "seconds": 36.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows54": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows55": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows56": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows57": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows58": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows59": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows60": {
+     "exit": 0,
+     "seconds": 37.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows61": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows62": {
+     "exit": 0,
+     "seconds": 37.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.Rows63": {
+     "exit": 0,
+     "seconds": 37.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.AllInputs": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Weights": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Table": {
+     "exit": 0,
+     "seconds": 7.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows00": {
+     "exit": 0,
+     "seconds": 69.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows01": {
+     "exit": 0,
+     "seconds": 69.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows02": {
+     "exit": 0,
+     "seconds": 66.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows03": {
+     "exit": 0,
+     "seconds": 68.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows04": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows05": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows06": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows07": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows08": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows09": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows10": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows11": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows12": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows13": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows14": {
+     "exit": 0,
+     "seconds": 69.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows15": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows16": {
+     "exit": 0,
+     "seconds": 67.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows17": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows18": {
+     "exit": 0,
+     "seconds": 68.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows19": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows20": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows21": {
+     "exit": 0,
+     "seconds": 69.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows22": {
+     "exit": 0,
+     "seconds": 70.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows23": {
+     "exit": 0,
+     "seconds": 68.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows24": {
+     "exit": 0,
+     "seconds": 69.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows25": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows26": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows27": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows28": {
+     "exit": 0,
+     "seconds": 68.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows29": {
+     "exit": 0,
+     "seconds": 67.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows30": {
+     "exit": 0,
+     "seconds": 68.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows31": {
+     "exit": 0,
+     "seconds": 68.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows32": {
+     "exit": 0,
+     "seconds": 69.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows33": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows34": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows35": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows36": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows37": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows38": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows39": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows40": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows41": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows42": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows43": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows44": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows45": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows46": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows47": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows48": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows49": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows50": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows51": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows52": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows53": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows54": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows55": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows56": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows57": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows58": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows59": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows60": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows61": {
+     "exit": 0,
+     "seconds": 32.5
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows62": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.Rows63": {
+     "exit": 0,
+     "seconds": 33.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.AllInputs": {
+     "exit": 0,
+     "seconds": 1.0
+    },
+    "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Bridge": {
+     "exit": 0,
+     "seconds": 79.0
+    }
+   }
+  },
+  "axioms": {
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.answer_iff_not_wrong": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_length": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_nodup": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_in_range": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.answer_iff_not_wrong": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.adds_mod_97": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_E1": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_E2": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_W2": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_E1": [
+    "propext"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_E2": [
+    "propext"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_W2": [
+    "propext"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.extra_E1": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.extra_E2": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ]
+  },
+  "scan": {
+   "hits": []
+  }
+ },
+ "seconds": {
+  "gen": 0.2,
+  "build": 7811.0,
+  "replay": 7079.9
+ },
+ "ok": true,
+ "failures": [],
+ "first_run_ok": true,
+ "verdict": {
+  "ok": true,
+  "build_ok": true,
+  "replay_ok": true,
+  "axioms": {
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.answer_iff_not_wrong": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_length": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_nodup": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.Trained.wrongPairs_in_range": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.answer_iff_not_wrong": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.ClockBias.adds_mod_97": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_E1": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_E2": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.shape_W2": [],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_E1": [
+    "propext"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_E2": [
+    "propext"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.energy_W2": [
+    "propext"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.extra_E1": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ],
+   "LeanCheckedNetwork.Seal.C_x2_H1024_s0_step1.extra_E2": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+   ]
+  },
+  "missing_axiom_reports": [],
+  "nonstandard_axioms": [],
+  "forbidden_hits": []
+ }
+}

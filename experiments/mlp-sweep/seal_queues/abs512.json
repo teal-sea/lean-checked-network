@@ -1,0 +1,32 @@
+[
+ {
+  "name": "abs_H512_s0_final",
+  "npz": "experiments/mlp-sweep/seal_inputs/abs_H512_s0_final.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000,
+  "script": "experiments/mlp-sweep/seal_act.py"
+ },
+ {
+  "name": "abs_H512_s1_final",
+  "npz": "experiments/mlp-sweep/seal_inputs/abs_H512_s1_final.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000,
+  "script": "experiments/mlp-sweep/seal_act.py"
+ },
+ {
+  "name": "abs_H512_s2_final",
+  "npz": "experiments/mlp-sweep/seal_inputs/abs_H512_s2_final.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000,
+  "script": "experiments/mlp-sweep/seal_act.py"
+ }
+]

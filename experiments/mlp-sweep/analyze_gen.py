@@ -15,12 +15,13 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
-def acts():
+def acts(s=1.0):
     C = np.sqrt(2 / np.pi)
     sig = lambda z: 1 / (1 + np.exp(-z))  # noqa: E731
+    gelu = lambda z: 0.5 * z * (1 + np.tanh(C * (z + 0.044715 * z ** 3)))  # noqa: E731
     return {'sq': lambda z: z * z, 'relu': lambda z: np.maximum(z, 0),
-            'gelu': lambda z: 0.5 * z * (1 + np.tanh(C * (z + 0.044715 * z ** 3))),
-            'silu': lambda z: z * sig(z), 'abs': np.abs, 'tanh': np.tanh}
+            'gelu': gelu, 'silu': lambda z: z * sig(z), 'abs': np.abs, 'tanh': np.tanh,
+            'gelus': lambda z: gelu(s * z) / s, 'silus': lambda z: z * sig(s * z), 'tanhs': lambda z: np.tanh(s * z) / s}
 
 
 def wrong(E1, E2, W2, p, f):
@@ -40,16 +41,22 @@ def one_wave(cols, p):
     return out
 
 
-outdir = sys.argv[1]
-files = sorted(glob.glob(os.path.join(outdir, "ckpt_step*.npz")), key=lambda f: int(f.split("step")[-1].split(".")[0]))
-rows = []
-for f in files:
-    d = np.load(f)
-    p, step = int(d["p"]), int(d["steps"]); act = str(d["act"]); fn = acts()[act]
-    cols = [d[k] for k in ["E1", "E2", "W2"]]
-    nw = wrong(*cols, p, fn); pw = wrong(*one_wave(cols, p), p, fn)
-    rows.append(dict(step=step, act=act, opt=str(d["opt"]) if "opt" in d.files else "adam", train_acc=float(d["train_acc"]),
-                     heldout_acc=float(d["heldout_acc"]), net_wrong=nw, proj_wrong=pw))
-    print(f"step {step:6d} {act} net wrong {nw:5d} | projection wrong {pw:5d} | acc tr {float(d['train_acc']):.3f} te {float(d['heldout_acc']):.4f}", flush=True)
-with open(os.path.join(outdir, "curve_gen.csv"), "w", newline="") as fh:
-    w = csv.DictWriter(fh, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
+def main():
+    outdir = sys.argv[1]
+    files = sorted(glob.glob(os.path.join(outdir, "ckpt_step*.npz")), key=lambda f: int(f.split("step")[-1].split(".")[0]))
+    rows = []
+    for f in files:
+        d = np.load(f)
+        p, step = int(d["p"]), int(d["steps"]); act = str(d["act"]); s = float(d["act_s"]) if "act_s" in d.files else 1.0
+        fn = acts(s)[act]
+        cols = [d[k] for k in ["E1", "E2", "W2"]]
+        nw = wrong(*cols, p, fn); pw = wrong(*one_wave(cols, p), p, fn)
+        rows.append(dict(step=step, act=act, opt=str(d["opt"]) if "opt" in d.files else "adam", train_acc=float(d["train_acc"]),
+                         heldout_acc=float(d["heldout_acc"]), net_wrong=nw, proj_wrong=pw))
+        print(f"step {step:6d} {act} net wrong {nw:5d} | projection wrong {pw:5d} | acc tr {float(d['train_acc']):.3f} te {float(d['heldout_acc']):.4f}", flush=True)
+    with open(os.path.join(outdir, "curve_gen.csv"), "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,8 @@
+# Smoke test of the fourth-batch job kinds at toy size (p 11, H 16), before batch4.txt.
+#keep: ^(abs_[^/]*/(ckpt_step(1|2|3|4|5|100|20000)|final)|x2_f[^/]*_H(16)_[^/]*/ckpt_step([1-9]|10))\.npz$
+genq abs_H16_s0 EXTRA_STEPS=1,2,3,4,5 abs 11 16 0 1e-2 0.0 0.30 120
+genq abs_H16_shuf_s0 SHUFFLE_LABELS=1+EXTRA_STEPS=1,2,3,4,5 abs 11 16 0 1e-2 0.0 0.30 120
+gene gelus10_H16_s0 ACT_S=10+EXTRA_STEPS=1,2,3,4,5,10,20,50 gelus 11 16 0 1e-2 0.0 0.30 120
+gene silus3_H16_s0 ACT_S=3+EXTRA_STEPS=1,2,3,4,5,10,20,50 silus 11 16 0 1e-2 0.0 0.30 120
+gene tanhs10_H16_s0 ACT_S=10+EXTRA_STEPS=1,2,3,4,5,10,20,50 tanhs 11 16 0 1e-2 0.0 0.30 120
+acte x2_f0.3_H16_s0 EXTRA_STEPS=1,2,3,4,5,6,7,8,9,10,15,20,30,50,75 sq 11 16 0 1e-2 0.0 0.3 120

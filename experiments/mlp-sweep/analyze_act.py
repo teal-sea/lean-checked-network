@@ -18,7 +18,8 @@ ACT = 'sq'
 
 
 def act(z):
-    return z * z if ACT == 'sq' else np.maximum(z, 0)
+    # abs added for the fourth batch; sq and relu unchanged
+    return {'sq': lambda z: z * z, 'relu': lambda z: np.maximum(z, 0), 'abs': np.abs}[ACT](z)
 
 
 def wrong_count(E1, E2, W2, p, bias=None):

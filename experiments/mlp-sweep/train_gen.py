@@ -1,7 +1,9 @@
 """train_act.py generalized (2026-11-01): more activations and a plain-SGD option, for the generality tests.
 
 Usage: python3 train_gen.py ACT P HIDDEN SEED LR WD TRAIN_FRACTION STEPS OUTDIR
-  ACT in {sq, relu, gelu, silu, abs, tanh}; gelu is the tanh approximation. Environment: OPT=sgd
+  ACT in {sq, relu, gelu, silu, abs, tanh}; gelu is the tanh approximation. Added for the fourth
+  batch (RULES.md): gelus, silus, tanhs, the activation f(s z) / s with s from the environment
+  ACT_S (default 1), saved as act_s; the six earlier activations are unchanged. Environment: OPT=sgd
   replaces the Adam step by params -= lr * grad (decoupled weight decay unchanged); EXTRA_STEPS,
   EARLY, SHUFFLE_LABELS as in train_act.py. ACT sq and relu with OPT unset compute exactly what
   train_act.py computes. The float weights E1, E2, W2 are what matter for gelu/silu/tanh (not
@@ -15,6 +17,7 @@ import numpy as np
 
 ACT = sys.argv.pop(1)
 OPT = os.environ.get('OPT', 'adam')
+S = float(os.environ.get('ACT_S', '1'))
 assert OPT in ('adam', 'sgd')
 _C = np.sqrt(2 / np.pi)
 
@@ -37,7 +40,10 @@ ACTS = {'sq': (lambda z: z * z, lambda z: 2 * z),
         'gelu': (_gelu, _dgelu),
         'silu': (lambda z: z * _sig(z), lambda z: _sig(z) * (1 + z * (1 - _sig(z)))),
         'abs': (np.abs, np.sign),
-        'tanh': (np.tanh, lambda z: 1 - np.tanh(z) ** 2)}
+        'tanh': (np.tanh, lambda z: 1 - np.tanh(z) ** 2),
+        'gelus': (lambda z: _gelu(S * z) / S, lambda z: _dgelu(S * z)),
+        'silus': (lambda z: z * _sig(S * z), lambda z: _sig(S * z) * (1 + S * z * (1 - _sig(S * z)))),
+        'tanhs': (lambda z: np.tanh(S * z) / S, lambda z: 1 - np.tanh(S * z) ** 2)}
 assert ACT in ACTS
 act, dact = ACTS[ACT]
 p, H, seed = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
@@ -91,7 +97,7 @@ def save(path, step):
     ties = int((top2[:, 0] == top2[:, 1]).sum())
     print(f"step {step}: train {acc(tr):.4f} held-out {acc(te):.4f} frozen wrong {wrong} ties {ties} gap {int((top2[:,1]-top2[:,0]).min())}",
           file=sys.stderr, flush=True)
-    np.savez(path, act=ACT, opt=OPT, p=p, H=H, seed=seed, lr=lr, wd=wd, frac=frac, steps=step, train_idx=tr,
+    np.savez(path, act=ACT, act_s=S, opt=OPT, p=p, H=H, seed=seed, lr=lr, wd=wd, frac=frac, steps=step, train_idx=tr,
              E1=params[0], E2=params[1], W2=params[2], E1q=E1q, E2q=E2q, W2q=W2q,
              train_acc=acc(tr), heldout_acc=acc(te))
 

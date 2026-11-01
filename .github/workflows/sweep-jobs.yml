@@ -1,0 +1,88 @@
+name: Sweep jobs (MLP sweep, NumPy)
+
+# Runs the job lines of experiments/mlp-sweep/sweeps/<name>.txt (for branch sweep/<name>) through
+# experiments/mlp-sweep/job.sh, four lines per GitHub-hosted runner (4 vCPU, 16 GB), one core per job,
+# exactly as on the boat.dev boxes (~/tc/repo, ~/tc/venv/bin/python, ~/tc/out). Runs only on pushes to
+# sweep/** branches. Each runner uploads its ~/tc/out as one artifact; checkpoints are kept only when
+# their path under ~/tc/out (run/file) matches the sweep file's `#keep:` regex (default: none) and they
+# are under 6 MB.
+
+on:
+  push:
+    branches: ['sweep/**']
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.q.outputs.shards }}
+      keep: ${{ steps.q.outputs.keep }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: q
+        run: |
+          f="experiments/mlp-sweep/sweeps/${GITHUB_REF_NAME#sweep/}.txt"
+          echo "sweep file $f"
+          python3 - "$f" >> "$GITHUB_OUTPUT" <<'PY'
+          import json, sys
+          lines = [l.strip() for l in open(sys.argv[1])]
+          keep = next((l[len('#keep:'):].strip() for l in lines if l.startswith('#keep:')), '^$')
+          jobs = [l for l in lines if l and not l.startswith('#')]
+          shards = [{'i': i, 'jobs': jobs[4 * i:4 * i + 4]} for i in range((len(jobs) + 3) // 4)]
+          print('shards=' + json.dumps(shards))
+          print('keep=' + keep)
+          PY
+
+  run:
+    needs: plan
+    name: shard ${{ matrix.shard.i }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install numpy==2.5.3
+      - name: Machine and box layout
+        run: |
+          nproc; free -g
+          mkdir -p ~/tc/venv/bin ~/tc/out
+          ln -s "$GITHUB_WORKSPACE" ~/tc/repo
+          ln -s "$(which python3)" ~/tc/venv/bin/python
+          ~/tc/venv/bin/python -c "import numpy; print(numpy.__version__)"
+      - name: Jobs
+        env:
+          JOBS: ${{ toJSON(matrix.shard.jobs) }}
+        run: |
+          python3 -c "import json, os; print('\n'.join(json.loads(os.environ['JOBS'])))" > shard.txt
+          cat shard.txt
+          xargs -P 4 -L 1 bash ~/tc/repo/experiments/mlp-sweep/job.sh < shard.txt
+          cat ~/tc/out/progress.txt
+      - name: Keep the listed checkpoints only
+        if: always()
+        env:
+          KEEP: ${{ needs.plan.outputs.keep }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          keep = re.compile(os.environ['KEEP'])
+          root = os.path.expanduser('~/tc/out')
+          for d, _, fs in os.walk(root):
+              for f in fs:
+                  q = os.path.join(d, f)
+                  if f.endswith('.npz') and not (keep.search(os.path.relpath(q, root)) and os.path.getsize(q) < 6_000_000):
+                      os.remove(q)
+          PY
+          du -sh ~/tc/out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sweep-${{ matrix.shard.i }}
+          path: ~/tc/out/
+          retention-days: 30

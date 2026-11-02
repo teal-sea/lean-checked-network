@@ -477,13 +477,15 @@ result 2 and the exact memorizers of result 1 do not depend on our read-out** (t
 Our rule is never later: t* is at most Liu & Lu's in 70 of the 70 runs where both are finite, and Liu & Lu
 is never exact at a checkpoint where ours is not. At H 1024 ours is exact at step 1 in every seed and theirs from step 2
 to 6. The gap is large with little data, wrong labels or unseen tokens and sums (5 to 35 steps, or not
-within the run). Most of it is the DC bin. With Adam, an output column drifts by a constant when many
-classes are seldom labels, and a frequency's energy is split between bins k and p - k while DC sits in one,
-so the paper's arg max over single bins picks k = 0 and the neuron becomes a constant that drops out. At 2%
-of the table and H 4096 that happens to 4,040 to 4,081 of 4,096 neurons by step 1,000 (seed 1: 9,107 pairs
-wrong); with 70 tokens unseen, to 510 to 753 of 1,024 by step 100. Excluding DC recovers part of it (70 tokens: exact from step 20 or
-30) but not all (2%: 1,417 wrong at step 1,000, where ours is exact from step 20 in one seed): W2 alone is
-a worse guide to a neuron's frequency than all three columns together.
+within the run). In most cells excluding DC from the paper's arg max changes no t* (the third column), so
+the gap comes from choosing the frequency from W2 alone: it is a worse guide to a neuron's frequency than
+all three columns together. In the two scarcest cells DC breaks the filter outright. With Adam, an output
+column drifts by a constant when many classes are seldom labels, and a frequency's energy is split between
+bins k and p - k while DC sits in one, so the arg max over single bins picks k = 0 and the neuron becomes
+a constant that drops out. At 2% of the table and H 4096 that happens to 4,040 to 4,081 of 4,096 neurons by
+step 1,000 (seed 1: 9,107 pairs wrong); with 70 tokens unseen, to 510 to 753 of 1,024 by step 100.
+Excluding DC rescues the 70-token cell (exact from step 20 or 30) but not the 2% one (1,417 wrong at step
+1,000 in seed 1, where ours is exact from step 20).
 
 **At width the choice hardly matters: one Adam step at H 4096 with a frequency drawn at random for each
 neuron gives an exact adder in 4 of 5 seeds (the fifth is wrong on 1 pair and exact from step 2), and in 7
@@ -491,8 +493,10 @@ of 10 fresh draws on seed 0 (the other three wrong on 18, 1 and 1 pairs).** At H
 are wrong on 17 to 73 pairs at step 1 and exact from step 4 to 7; at H 1024 on 1,158 to 3,341, exact at
 one to three checkpoints between steps 10 and 20 in four seeds and then lost again (3 to 88 wrong at step
 100); the least
-energetic frequency never works. So after one step the adder is written at most frequencies of most
-neurons, more strongly at the more energetic ones, and a read-out need only keep one frequency per neuron.
+energetic frequency never works. So after one step the adder is not confined to each neuron's strongest
+frequency: frequencies drawn at random carry enough of it, summed over 4,096 neurons, and the weakest carry
+none. At that width a read-out need only keep one frequency per neuron; which one matters at smaller
+widths and with less data.
 Why the network itself, which keeps them all, stays at chance is not tested here; one candidate is the
 products of different frequencies that x^2 forms inside each neuron.
 

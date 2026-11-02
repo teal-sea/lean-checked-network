@@ -430,7 +430,7 @@ checkpoint and lose it again while the network memorizes (H 2048, frac 0.02, see
 
 ## Kernel-checked
 
-Twenty seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
+Twenty-six seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
 per cell, queues in `seal_queues/`) with the unchanged `seal_cell.py --pure-clock` for x^2 and
 `seal_act.py` for ReLU (with `--right-iff-trained`) and |x| (`lean/LeanCheckedNetwork/Abs.lean`), reading the activation from the checkpoint (`--max-heartbeats` and `--chunks` change only
 elaboration limits and file layout). Every verdict is ok: the build has no `sorry`, `leanchecker`
@@ -461,11 +461,17 @@ of steps, optimizer) is measured provenance, not part of what is checked.
 | x2_H512_sgd1536_s0_step1 | **1 plain gradient step** (lr 1,536), seed 0 | 9,183 | adds mod 97 | 14,886 |
 | x2_H512_sgd1536_s1_step1 | seed 1 | 9,122 | adds mod 97 | 6,305 |
 | x2_H1024_s0_step1 | **1 Adam step at the standard lr 0.01**, H 1024, seed 0 | 9,018 | adds mod 97 | 72,595 |
+| x2_H1024_s1_step1 | 1 Adam step, H 1024, seed 1 | 8,974 | adds mod 97 | 56,367 |
+| x2_H1024_s2_step1 | 1 Adam step, H 1024, seed 2 | 9,132 | adds mod 97 | 64,668 |
+| x2_f015_H1024_s0_step1 | **1 Adam step on 15% of the table** (1,411 pairs), H 1024, seed 0 | 9,127 | adds mod 97 | 12,641 |
+| x2_f015_H1024_s2_step1 | 1 Adam step on 15%, seed 2 | 9,000 | adds mod 97 | 15,244 |
+| x2_f010_H1024_s2_step2 | **2 Adam steps on 10% of the table** (941 pairs), H 1024, seed 2 | 9,001 | adds mod 97 | 34,165 |
+| x2_H1024_s0_final | 20k Adam steps, H 1024, seed 0 (memorizer) | 6,580 | adds mod 97 | 12,971,053 |
 | abs_H512_s0_final | **\|x\|**, 20k Adam steps, seed 0 | 6,551 | adds mod 97 | 11,085 |
 | abs_H512_s1_final | \|x\|, seed 1 | 6,559 | adds mod 97 | 33,652 |
 | abs_H512_s2_final | \|x\|, seed 2 | 6,560 | adds mod 97 | 33,400 |
 
-Chance is about 9,312 wrong, so the nine early cells are kernel-checked networks at chance whose
+Chance is about 9,312 wrong, so the fourteen early cells are kernel-checked networks at chance whose
 one-wave projections are exact adders.
 
 Two ReLU seals prove that the trained net is right on a pair if and only if the pair is one of its
@@ -482,9 +488,9 @@ The H 1024 cell took 4 h 8 min on one runner (build 2 h 10, replay 1 h 58), insi
 
 All five H 512 memorizers (seeds 0-4 at 20k) are now sealed.
 
-Running: x^2 H 1024 seeds 1 and 2 after one Adam step at lr 0.01 and seed 0 at 20k; one step on
-15% of the pairs (seeds 0 and 2) and two steps on 10% (seed 2), all at H 1024; 10 steps on 5% of the
-pairs with token 74 never seen (H 1024, seed 0); from the seventh batch two steps with 30 tokens never seen and nine with 30 sums never a label; from
+All three H 1024 seeds of the one-step result (lr 0.01) are now sealed.
+
+Running: 10 steps on 5% of the pairs with token 74 never seen (H 1024, seed 0); from the seventh batch two steps with 30 tokens never seen and nine with 30 sums never a label; from
 the ninth, 15 steps on 240 pairs that use only 27 of the 97 tokens; and the GELU memorizer (20k) and
 SiLU net (2k) read as x^2 networks (all at H 1024).
 

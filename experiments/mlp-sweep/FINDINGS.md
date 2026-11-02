@@ -368,13 +368,41 @@ never outputs them (wrong on all 2,910 such pairs) and the projection does. Both
 the win fixed in advance (30 tokens or 30 sums, any seed) is met for both. Held-out sums are the harder
 case (7 to 15 steps against 1 to 2 for tokens). The eighth batch looks for where it stops.
 
+### 13. How far it goes: exact with 70 of 97 tokens, or 80 of 97 sums, never seen (eighth batch)
+
+Rules in `RULES.md` (eighth batch), fixed before the runs: the seventh batch's setup with k = 40 to 80
+held-out tokens or sums, H 2048 and 4096, three seeds, 500 steps. t* per seed; "-" means not exact by
+step 500 (with the smallest count):
+
+| held out | training pairs | H 2048 | H 4096 | net wrong on the held-out pairs |
+| --- | --- | --- | --- | --- |
+| 40 tokens | 961 | 1, 2, 2 | 1, 1, 1 | 6,131 to 6,147 of 6,160 |
+| 50 tokens | 663 | 4, 6, 5 | 1, 6, 5 | 7,163 to 7,173 of 7,200 |
+| 60 tokens | 408 | 15, 7, 9 | 8, 6, 5 | 7,988 to 8,004 of 8,040 |
+| **70 tokens** | **240** | **15, 15, 15** | **9, 15, 15** | 8,619 to 8,636 of 8,680 |
+| 80 tokens | 81 | - (1), - (394), - (2) | - (1), - (130), - (5) | 9,046 to 9,063 of 9,120 |
+| 40 sums | 1,676 | 15, 10, 15 | 15, 9, 15 | all 3,880 |
+| 50 sums | 1,375 | 15, 20, 20 | 15, 15, 15 | all 4,850 |
+| 60 sums | 1,076 | 20, 20, 20 | 15, 15, 15 | all 5,820 |
+| 70 sums | 790 | 30, 20, 30 | 20, 20, 20 | all 6,790 |
+| **80 sums** | **522** | **30, 50, 50** | **30, 30, 30** | all 7,760 |
+
+**Trained on 240 pairs drawn from 27 of the 97 tokens, the projection is an exact adder on all 9,409
+pairs (every seed, both widths)**, including the 8,680 pairs that contain one of the 70 tokens the
+network never saw, where the network is right on 44 to 61 (chance is about 89). With 80 sums never used
+as a label (522 training pairs with 17 distinct labels), the projection is exact in all six runs, while
+the network outputs none of the unseen sums. The largest k exact in every seed is 70 for tokens and at
+least 80 for sums, at both widths; the guess recorded in advance (50) was too low, and the win (k of 49
+or more tokens, any seed) is met. At 80 tokens (17 seen, 81 training pairs) two of three seeds end 1 to
+5 pairs short.
+
 ## Kernel-checked
 
-Seventeen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
+Twenty seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
 per cell, queues in `seal_queues/`) with the unchanged `seal_cell.py --pure-clock` for x^2 and
-`seal_act.py --right-iff-trained` for ReLU, which reads the activation from the checkpoint (`--max-heartbeats` and `--chunks` change only
+`seal_act.py` for ReLU (with `--right-iff-trained`) and |x| (`lean/LeanCheckedNetwork/Abs.lean`), reading the activation from the checkpoint (`--max-heartbeats` and `--chunks` change only
 elaboration limits and file layout). Every verdict is ok: the build has no `sorry`, `leanchecker`
-replays every module (75 of 75; 139 of 139 at H 1024; 77 of 77 and 141 of 141 for ReLU), `#print axioms` shows only `propext`,
+replays every module (75 of 75; 139 of 139 at H 1024; 77 of 77 and 141 of 141 for ReLU; 76 of 76 for |x|), `#print axioms` shows only `propext`,
 `Classical.choice` and `Quot.sound`, and the forbidden-token scan is empty. The packages are in
 `seals/` (result.json, logs and the generated Lean sources); `seal_inputs/MANIFEST.json` gives each
 cell's source checkpoint and its sha256.
@@ -401,6 +429,9 @@ of steps, optimizer) is measured provenance, not part of what is checked.
 | x2_H512_sgd1536_s0_step1 | **1 plain gradient step** (lr 1,536), seed 0 | 9,183 | adds mod 97 | 14,886 |
 | x2_H512_sgd1536_s1_step1 | seed 1 | 9,122 | adds mod 97 | 6,305 |
 | x2_H1024_s0_step1 | **1 Adam step at the standard lr 0.01**, H 1024, seed 0 | 9,018 | adds mod 97 | 72,595 |
+| abs_H512_s0_final | **\|x\|**, 20k Adam steps, seed 0 | 6,551 | adds mod 97 | 11,085 |
+| abs_H512_s1_final | \|x\|, seed 1 | 6,559 | adds mod 97 | 33,652 |
+| abs_H512_s2_final | \|x\|, seed 2 | 6,560 | adds mod 97 | 33,400 |
 
 Chance is about 9,312 wrong, so the nine early cells are kernel-checked networks at chance whose
 one-wave projections are exact adders.
@@ -421,7 +452,8 @@ All five H 512 memorizers (seeds 0-4 at 20k) are now sealed.
 
 Running: x^2 H 1024 seeds 1 and 2 after one Adam step at lr 0.01 and seed 0 at 20k; one step on
 15% of the pairs (seeds 0 and 2) and two steps on 10% (seed 2), all at H 1024; 10 steps on 5% of the
-pairs with token 74 never seen (H 1024, seed 0); and |x| at H 512, seeds 0-2 at 20k.
+pairs with token 74 never seen (H 1024, seed 0); and from the seventh batch two steps with 30 tokens never seen and nine with 30 sums never a label
+(H 1024).
 
 ## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)
 

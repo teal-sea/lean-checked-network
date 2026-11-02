@@ -441,7 +441,7 @@ checkpoint and lose it again while the network memorizes (H 2048, frac 0.02, see
 
 ## Kernel-checked
 
-Twenty-nine seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
+Thirty seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
 per cell, queues in `seal_queues/`) with the unchanged `seal_cell.py --pure-clock` for x^2 and
 `seal_act.py` for ReLU (with `--right-iff-trained`) and |x| (`lean/LeanCheckedNetwork/Abs.lean`), reading the activation from the checkpoint (`--max-heartbeats` and `--chunks` change only
 elaboration limits and file layout). Every verdict is ok: the build has no `sorry`, `leanchecker`
@@ -481,6 +481,7 @@ of steps, optimizer) is measured provenance, not part of what is checked.
 | x2_f005_H1024_s0_step10 | **10 Adam steps on 5% of the table (470 pairs) that never contain token 74**, H 1024 | 9,038 | adds mod 97 | 8,713 |
 | x2_ht30_H1024_s0_step2 | **2 Adam steps on 1,324 pairs that never contain 30 of the 97 tokens**, H 1024, seed 0 | 9,148 | adds mod 97 | 20,889 |
 | x2_hs30_H1024_s2_step9 | **9 Adam steps on 1,961 pairs that never have 30 of the sums as a label**, H 1024, seed 2 | 8,958 | adds mod 97 | 20,116 |
+| x2_ht70_H1024_s0_step15 | **15 Adam steps on 240 pairs that use only 27 of the 97 tokens** (70 never seen), H 1024, seed 0 | 9,121 | adds mod 97 | 47,102 |
 | abs_H512_s0_final | **\|x\|**, 20k Adam steps, seed 0 | 6,551 | adds mod 97 | 11,085 |
 | abs_H512_s1_final | \|x\|, seed 1 | 6,559 | adds mod 97 | 33,652 |
 | abs_H512_s2_final | \|x\|, seed 2 | 6,560 | adds mod 97 | 33,400 |
@@ -504,8 +505,7 @@ All five H 512 memorizers (seeds 0-4 at 20k) are now sealed.
 
 All three H 1024 seeds of the one-step result (lr 0.01) are now sealed.
 
-Running: from the ninth batch, 15 steps on 240 pairs that use only 27 of the 97 tokens; and the GELU memorizer (20k) and
-SiLU net (2k) read as x^2 networks (all at H 1024).
+Running: the GELU memorizer (20k) and SiLU net (2k) read as x^2 networks (H 1024).
 
 ## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)
 

@@ -34,5 +34,5 @@ for kind, label, g in (('t', 'held-out TOKENS', 'tok'), ('s', 'held-out SUMS', '
                 t = tstar(rows)
                 out.append(f"t* {t if t else '-(' + str(min(int(r['clock_wrong']) for r in rows if int(r['step']) >= 1)) + ')'} | "
                            f"{last[f'clock_wrong_{g}']}/{last[f'net_wrong_{g}']} of {last[f'pairs_{g}']}")
-            ntr = next((cells[(kind, k, H, s)][-1].get('pairs_train') for s in range(3) if (kind, k, H, s) in cells), None)
+            ntr = cells.get((kind, k, H, 0), [{}])[-1].get('pairs_train')
             print(f"  H {H} k {k:2d} (train {ntr}): " + '  ||  '.join(out))

@@ -173,3 +173,16 @@ B. The limit with more width: 80, 85 and 90 held-out tokens (17, 12 and 7 tokens
 90 held-out sums (7 labels seen) at H 4096, seeds 0-2. Predictions: 80 tokens exact in at least two
 seeds at H 8192 (at H 4096 two seeds ended 1 and 5 pairs short); 85 and 90 not; 90 sums exact in at
 least one seed.
+
+
+## Tenth batch (fixed 2026-11-01 ~20:23 Bogota, before any of its runs; GitHub Actions)
+
+The eighth and ninth batches found an exact projection from 240 training pairs (drawn from 27 tokens)
+and not from 81 (17 tokens). How little random data suffices? x^2, p 97, plain random splits with
+frac 0.01, 0.015, 0.02, 0.025 and 0.03 (94, 141, 188, 235 and 282 of the 9,409 pairs), H 2048 and 4096,
+seeds 0-2, 1,000 Adam steps, checkpoints at steps 1 to 10, 15, 20, 30, 50, 75 and every 100;
+`analyze_act.py` (integer projection). Jobs in `sweeps/batch10.txt`. t* as before (first checkpoint
+from which the projection is exact on all 9,409 pairs to step 1,000). This is a measurement: report the
+smallest frac with t* finite in at least one seed and in all three, per width. A guess, recorded so it
+can be wrong: exact from frac 0.025 at H 4096. Win: an exact projection from at most 2% of the table
+(188 pairs), any seed.

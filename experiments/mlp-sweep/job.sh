@@ -38,6 +38,7 @@ case $kind in
   tf)   $PY $TC/train_curve.py "$d" "$@" --threads 1 > "$d/train.log" 2>&1 \
           && $PY $TC/reduce.py "$d"/ckpt_*.npz > "$d/reduce.jsonl" 2> "$d/reduce.log" \
           && $PY $TC/probe_sum_part.py "$d"/ckpt_*.npz > "$d/probe.jsonl" 2> "$d/probe.log" ;;
+  *)    echo "job.sh: unknown kind '$kind' for $name" | tee "$d/error.log" >&2; false ;;
 esac
 rc=$?
 echo "=== $name exit $rc after $(( $(date +%s) - t0 )) s" >> ~/tc/out/progress.txt

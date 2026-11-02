@@ -1,3 +1,5 @@
+## runs: 80 of the 80 in sweeps/batch11.txt found; missing: none; not in the batch: none; duplicates ignored: none
+
 ## t* per reading (seeds in order) | wrong at step 1 (seed 0)
 group | ours | ours_float | ll | ll_nodc | ll_int | rand | min | step 1 wrong (s0): ours ours_float ll ll_nodc ll_int rand min net
 x2_H1024_lr1e-2 | 1,1,1,1,1 | 1,1,1,1,1 | 2,6,2,3,3 | 2,6,2,2,2 | 2,6,2,3,3 | -,-,-,-,- | -,-,-,-,- | 0 0 11 6 5 2639 9281 9018
@@ -112,17 +114,20 @@ x2_H512_s4_final.npz: ll_int 0 (ties 0) | ours 0 (ties 0) | agree 0.666 | net 65
 2a. ll exact at step 1, H 4096, lr 0.01: 5 of 5 seeds
 2. FAILED (lr 0.01 runs at H >= 1024 where t*(ll) and t*(ours) differ by more than 2 steps: ['x2_H1024_lr1e-2_s1 (ll 6, ours 1)', 'x2_f0.02_H4096_s1 (ll -, ours 20)', 'x2_f0.05_H1024_s0 (ll 30, ours 10)', 'x2_f0.05_H1024_s1 (ll -, ours 20)', 'x2_f0.05_H1024_s2 (ll -, ours 20)', 'x2_f0.10_H1024_s0 (ll 15, ours 10)', 'x2_f0.10_H1024_s1 (ll 20, ours 15)', 'x2_f0.10_H1024_s2 (ll 20, ours 2)', 'x2_f0.10_H2048_s0 (ll 10, ours 1)', 'x2_f0.10_H2048_s1 (ll 15, ours 1)', 'x2_f0.10_H2048_s2 (ll 15, ours 1)', 'x2_f0.15_H1024_s0 (ll 10, ours 1)', 'x2_f0.15_H1024_s1 (ll 15, ours 2)', 'x2_f0.15_H1024_s2 (ll 15, ours 1)', 'x2_hs30_H1024_s0 (ll -, ours 15)', 'x2_hs30_H1024_s1 (ll 50, ours 15)', 'x2_hs30_H1024_s2 (ll 30, ours 9)', 'x2_ht30_H1024_s0 (ll 7, ours 2)', 'x2_ht30_H1024_s1 (ll 9, ours 2)', 'x2_ht30_H1024_s2 (ll 9, ours 2)', 'x2_ht70_H1024_s0 (ll -, ours 15)', 'x2_ht70_H1024_s1 (ll -, ours 20)', 'x2_ht70_H1024_s2 (ll -, ours 20)', 'x2_n0.5_H4096_s0 (ll 8, ours 1)', 'x2_n0.5_H4096_s1 (ll 8, ours 1)', 'x2_n0.5_H4096_s2 (ll 9, ours 2)', 'x2_n0.75_H4096_s0 (ll 15, ours 9)', 'x2_n0.75_H4096_s1 (ll 15, ours 10)', 'x2_n0.75_H4096_s2 (ll 15, ours 9)']; neither finite: ['x2_f0.02_H4096_s0', 'x2_f0.02_H4096_s2'])
 3. rand exact at some checkpoint (H >= 2048, lr 0.01): ['x2_H2048_lr1e-2_s0', 'x2_H2048_lr1e-2_s1', 'x2_H2048_lr1e-2_s2', 'x2_H2048_lr1e-2_s3', 'x2_H2048_lr1e-2_s4', 'x2_H4096_lr1e-2_s0', 'x2_H4096_lr1e-2_s1', 'x2_H4096_lr1e-2_s2', 'x2_H4096_lr1e-2_s3', 'x2_H4096_lr1e-2_s4', 'x2_f0.10_H2048_s0', 'x2_f0.10_H2048_s1', 'x2_f0.10_H2048_s2', 'x2_n0.5_H4096_s0', 'x2_n0.5_H4096_s1', 'x2_n0.5_H4096_s2']; min ever exact at H <= 1024: none -> held
-4. t*(ours_float) <= t*(ours) fails in ['x2_f0.05_H1024_s0', 'x2_hs30_H1024_s2']; t*(ll) <= t*(ll_int) fails in ['x2_H1024_lr2.5e-3_s3'] -> FAILED
+4. as written, t*(ours_float) <= t*(ours) fails in ['x2_f0.05_H1024_s0', 'x2_hs30_H1024_s2']; t*(ll) <= t*(ll_int) fails in ['x2_H1024_lr2.5e-3_s3'] -> FAILED
+4. as its title reads (the frozen reading no later than the float one): t*(ours) <= t*(ours_float) fails in 6 runs ['x2_H1024_lr2.5e-3_s3', 'x2_H1024_lr5e-3_s3', 'x2_H512_lr1e-2_s4', 'x2_f0.02_H4096_s2', 'x2_mem_H512_s4', 'x2_n0.5_H4096_s2']; t*(ll_int) <= t*(ll) fails in 8 runs ['x2_H1024_lr2.5e-3_s1', 'x2_H1024_lr2.5e-3_s4', 'x2_H1024_lr5e-3_s1', 'x2_H2048_lr2.5e-3_s3', 'x2_H2048_lr5e-3_s1', 'x2_H512_lr1e-2_s1', 'x2_f0.05_H1024_s0', 'x2_f0.10_H2048_s0'] -> FAILED
+   (the frozen tables are each scaled to 127 and rounded; the float and frozen readings differ by both, and this batch cannot separate them)
 5. x2_mem_H512_s0: ll exact at every checkpoint from 100: True (worst 0); agree_q at 20k 0.666 (agree_f 0.674); max DC share 0.039
 5. x2_mem_H512_s1: ll exact at every checkpoint from 100: True (worst 0); agree_q at 20k 0.654 (agree_f 0.652); max DC share 0.055
 5. x2_mem_H512_s2: ll exact at every checkpoint from 100: True (worst 0); agree_q at 20k 0.654 (agree_f 0.666); max DC share 0.055
 5. x2_mem_H512_s3: ll exact at every checkpoint from 100: True (worst 0); agree_q at 20k 0.705 (agree_f 0.707); max DC share 0.053
 5. x2_mem_H512_s4: ll exact at every checkpoint from 100: True (worst 0); agree_q at 20k 0.666 (agree_f 0.666); max DC share 0.053
 5. held
-6. t* x lr x H across lr 0.01, 0.005, 0.0025 (per H and seed; within a factor 2?)
-   ours: 10 of 10 within a factor 2 | H1024s0:10/5/5 H1024s1:10/10/8 H1024s2:10/10/8 H1024s3:10/10/8 H1024s4:10/10/8 H2048s0:20/10/10 H2048s1:20/10/10 H2048s2:20/10/10 H2048s3:20/10/10 H2048s4:20/10/10
-   ll: 9 of 10 within a factor 2 | H1024s0:20/15/13 H1024s1:61/36/15 H1024s2:20/15/23 H1024s3:31/20/26 H1024s4:31/15/15 H2048s0:20/10/10 H2048s1:20/10/10 H2048s2:20/20/15 H2048s3:20/20/10 H2048s4:20/20/15
-   rand: 2 of 10 within a factor 2 | H1024s0:[None, None, None] H1024s1:[None, None, None] H1024s2:[None, None, None] H1024s3:[None, None, None] H1024s4:[None, None, None] H2048s0:102/41/36 H2048s1:123/154/102 H2048s2:143/41/31 H2048s3:82/41/31 H2048s4:102/72/77
+6. t* x lr x H at lr 0.01, 0.005 and 0.0025, H 1024 and 2048, seeds 0-4, one constant per reading (all values within a factor 2?); t* = 1 is a floor and is left out, a reading never exact fails the law
+   ours: 14 values from 5.1 to 10.2 (factor 2.0); 16 at the t* = 1 floor; never exact in 0 -> held
+   ll: 23 values from 10.2 to 61.4 (factor 6.0); 7 at the t* = 1 floor; never exact in 0 -> FAILED
+   rand: 15 values from 30.7 to 153.6 (factor 5.0); 0 at the t* = 1 floor; never exact in 15 -> FAILED
+6. FAILED (the guess names ll and rand; ours is shown for reference)
 
 ## win conditions
 H 512, lr 0.01, step 1 exact: ll 0 of 5, ours 0 of 5

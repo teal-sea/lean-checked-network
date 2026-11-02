@@ -1,0 +1,2 @@
+H4096_s0_step1: wrong pairs of 9,409 for generators 50000 to 50009: [18, 0, 0, 0, 1, 0, 1, 0, 0, 0]
+H2048_s0_step5: wrong pairs of 9,409 for generators 50000 to 50009: [1, 0, 1, 4, 0, 1, 0, 0, 0, 0]

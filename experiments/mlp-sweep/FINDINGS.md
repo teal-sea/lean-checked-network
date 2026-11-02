@@ -451,8 +451,8 @@ energetic one. `filters.py` on 79 deterministic reruns (the 22 that repeat a sea
 frozen tables bit for bit) and on the 33 seal inputs. Two implementations written from the paper alone by
 separate agents reproduce `filters.py`'s Liu & Lu numbers on 10 checkpoints
 (`results/batch11/independent_check.md`). t* per seed as before, read on the checkpoint grid (every step to
-10, then 15, 20, 30, 50, 75, 100 and every 100 after); "-" means not exact at every checkpoint to the end
-of the run (100 steps unless stated):
+10, then 15, 20, 30, 50, 75, 100 and every 100 after; the memorizer row's grid is in note (b)); "-" means
+not exact at every checkpoint to the end of the run (100 steps unless stated):
 
 | cell (frac 0.3, lr 0.01 unless stated) | ours | Liu & Lu as published | Liu & Lu without DC | random frequency |
 | --- | --- | --- | --- | --- |
@@ -460,7 +460,7 @@ of the run (100 steps unless stated):
 | H 1024 | 1, 1, 1, 1, 1 | 2, 6, 2, 3, 3 | 2, 6, 2, 2, 2 | - (all five) |
 | H 2048 | 1, 1, 1, 1, 1 | **1, 1, 1, 1, 1** | 1, 1, 1, 1, 1 | 5, 6, 7, 4, 5 |
 | H 4096 | 1, 1, 1, 1, 1 | **1, 1, 1, 1, 1** | 1, 1, 1, 1, 1 | **1, 1, 1, 2, 1** |
-| memorizers, H 512, 20k steps | 2, 2, 2, 2, 2 | 10, 10, 10, 10, 10 | 10, 10, 10, 10, 10 | - (all five) |
+| memorizers, H 512, 20k steps (b) | 2, 2, 2, 2, 2 | 10, 10, 10, 10, 10 | 10, 10, 10, 10, 10 | - (all five) |
 | frac 0.15, H 1024 | 1, 2, 1 | 10, 15, 15 | 10, 15, 15 | - |
 | frac 0.10, H 2048 | 1, 1, 1 | 10, 15, 15 | 15, 15, 15 | -, 15, 15 |
 | frac 0.02, H 4096, 1,000 steps (a) | -, 20, - | -, -, - | -, -, - | -, -, - |
@@ -470,8 +470,14 @@ of the run (100 steps unless stated):
 | 30 sums never seen, H 1024 | 15, 15, 9 | -, 50, 30 | -, 50, 30 | - |
 | 70 tokens never seen, H 1024 | 15, 20, 20 | -, -, - | 20, 30, 30 | - |
 
-(a) Seed 2's "-" under ours is a rounding loss: the same projection in float is exact from step 500, the
-rounded one ends 886 pairs wrong at step 1,000.
+(a) Seed 2's "-" under ours is a freezing loss: the same rule on the float weights is exact from step 500,
+while on the frozen tables (each table scaled so its largest entry is 127, then rounded) it ends 886 pairs
+wrong at step 1,000. This batch cannot say how much of that is the scaling and how much the rounding.
+
+(b) The memorizer reruns saved checkpoints only at steps 1 to 5, 10, 20 and 50 below step 100 (and every
+250, 500 or 1,000 steps past 1,000), so their t* is read on that coarser grid. Their first 100 steps are
+identical, column for column, to the H 512 row's runs, which on the full grid give Liu & Lu 10, 9, 10, 7, 10
+(without DC 10, 9, 10, 6, 10) and ours 2, 2, 2, 2, 2.
 
 All cells, the lr 0.005 and 0.0025 runs and the per-step counts are in `results/batch11/` (`summary.txt`
 is `summarize_batch11.py`'s output).
@@ -482,16 +488,19 @@ step 10 to 20,000. At those widths the one-step adder does not depend on our rea
 those six memorizers** (the win fixed in advance). **At H 512 and 1024, the widths of every kernel-checked
 one-step cell, it does: after one step Liu & Lu is exact in no seed (3 to 60 pairs wrong at H 1024, 99
 to 150 at H 512 with lr 0.02, 785 to 2,773 at H 512 with lr 0.01), exact 1 to 5 steps later
-at H 1024 and 5 to 8 later at H 512, and wrong on every kernel-checked one-step cell (5 to 2,754 pairs).
+at H 1024 and 5 to 8 later at H 512. At the sealed step of the 16 one-step cells that were rerun (all but the
+two plain gradient-step seals) it is wrong on 11 to 2,614 pairs, and its frequency applied to the frozen tables
+and rounded is wrong on all 18 one-step seal inputs (5 to 2,754 pairs).
 There our frequency rule is part of result 2**, as RULES.md said FINDINGS must then say.
 
 Our rule is never later: its t* is at most Liu & Lu's in 70 of the 70 runs where both are finite, and Liu
 & Lu is never exact at a checkpoint where ours is not. With little data, wrong labels or unseen tokens and
 sums the gap grows to 5 to 35 steps on the checkpoint grid (at least 1, the grid being coarse past step
-10), or Liu & Lu is not exact within the run. In 9 of the 13 cells of the table, excluding the zero
-frequency changes no t*, and our frequency rule read from the same float weights without rounding
-(`ours_float`, which differs from Liu & Lu without DC only in how each neuron's frequency is chosen) is as
-early as ours: the gap comes from choosing the frequency from W2 alone rather than from all three columns.
+10), or Liu & Lu is not exact within the run. In 9 of the 13 cells of the table (8 if the memorizer row is
+read on its runs' full grid, note (b)), excluding the zero frequency changes no t*, and our frequency rule
+read from the same float weights (`ours_float`, which differs from Liu & Lu without DC only in how each
+neuron's frequency is chosen) is as early as ours in every run of those cells but one (30 sums never seen,
+seed 2: step 10 against 9): the gap comes from choosing the frequency from W2 alone rather than from all three columns.
 In the two scarcest cells the zero frequency also keeps the filter from being exact. At 2% of the table and
 H 4096 it takes 4,040 to 4,081 of 4,096 neurons by step 1,000 and Liu & Lu is at chance (8,708 to 9,107
 wrong); with 70 tokens unseen it takes 510 to 753 of 1,024 by step 100 and Liu & Lu ends 3 to 146 pairs
@@ -507,7 +516,7 @@ energy with 70 tokens unseen, step 15) wins the arg max over single bins.
 **On clean labels with 30% of the table, at H 4096 the choice of frequency hardly matters: one Adam step
 with a frequency drawn at random for each neuron gives an exact adder in 4 of 5 seeds (the fifth is wrong
 on 1 pair and exact from step 2), and in 7 of 10 fresh draws on seed 0 (the other three wrong on 18, 1 and
-1 pairs).** At H 2048 random frequencies are wrong on 17 to 73 pairs at step 1 and exact from step 4 to 7;
+1 pairs; `rand_draws.py`, output in `results/batch11/rand_draws.txt`).** At H 2048 random frequencies are wrong on 17 to 73 pairs at step 1 and exact from step 4 to 7;
 at H 1024 on 1,158 to 3,341, exact at one to three checkpoints between steps 10 and 20 in four seeds and
 then lost again (3 to 23 wrong at step 100 in those four; 88 in the fifth, never exact). The least
 energetic frequency never gives an exact adder (near chance after one step, 8,834 to 9,231 wrong at H
@@ -527,15 +536,20 @@ The guesses: 1 held (ours no later than Liu & Lu in 70 of 70 runs, Liu & Lu no l
 from ours in 29 of the 44 lr 0.01 runs at H >= 1024 where either is finite, on the checkpoint grid; 24 of
 them certainly, while two at 10% of the table and the three with 75% wrong labels could be within 2 steps
 between checkpoints; the clean run among them is H 1024 seed 1, at 6 against 1). 3 held (random exact
-within 100 steps in 16 of the 22 lr 0.01 runs at H >= 2048; least energetic never exact). 4 failed as
-written (t* in float no later than rounded): in 3 of 79 runs the float reading reached t* one or two
-checkpoints after the rounded one (ours twice, Liu & Lu once). The other way round, rounding made t* later
-in 14 runs: by one checkpoint in 11, by three in two (Liu & Lu at H 1024, lr 0.0025, seed 1, from step 6 to
-9; at 5% of the table, seed 0, from step 30 to 100), and at 2% seed 2, where our float projection is exact
-from step 500 and the rounded one never is. 5 held (agreement of the two rules 65% to 71% at 20k; at most
-5.5% of neurons sent to the zero frequency). 6 failed: t* x lr x H stayed within a factor 2 across lr
-0.01, 0.005 and 0.0025 for Liu & Lu in 9 of 10 width-and-seed groups, but for random frequencies in 2 of 10
-(never exact to the end at H 1024).
+within 100 steps in 16 of the 22 lr 0.01 runs at H >= 2048; least energetic never exact). 4 failed both as
+written and as its title reads. As written (t* in float no later than on the frozen tables), in 3 of 79 runs
+the float reading reached t* one or two checkpoints after the frozen one (ours twice, Liu & Lu once). As the
+title reads ("rounding costs nothing": the frozen reading no later than the float one), it fails in 14 runs
+(15 if the memorizer seed 1 is read on its full grid, note (b)): by one checkpoint in 11, by three in two (Liu
+& Lu at H 1024, lr 0.0025, seed 1, from step 6 to 9; at 5% of the table, seed 0, from step 30 to 100), and at
+2% seed 2, where our rule on the float weights is exact from step 500 and on the frozen tables never is. The
+frozen tables differ from the float weights by a separate scale for each table as well as by rounding, and
+this batch cannot separate the two; the scorer first counted only the written direction. 5 held (agreement of the two rules 65% to 71% at 20k; at most
+5.5% of neurons sent to the zero frequency). 6 failed for both readings it names. With one
+constant per reading across lr 0.01, 0.005 and 0.0025, H 1024 and 2048 and seeds 0 to 4 (t* = 1 left out as
+a floor), t* x lr x H spans 10.2 to 61.4 for Liu & Lu (a factor 6) and 30.7 to 153.6 for random frequencies
+(a factor 5, and never exact to the end at H 1024); ours, for reference, spans 5.1 to 10.2. The scorer first
+compared learning rates within each width and seed, where H cancels, and reported Liu & Lu as 9 of 10.
 
 On the seal inputs themselves (frozen tables, Liu & Lu's frequency, rounded): exact on all 12 seals from
 long training (the six x^2 memorizers, H 512 at step 100, the three |x| memorizers, GELU and SiLU read
@@ -648,8 +662,9 @@ looked is the exact, all-seed, all-checkpoint, one-step measurement.
   tiny. Width matters beyond the relative step size lr x sqrt(H): H 2048 at lr 0.00125 (relative
   step 0.057) needs 3 steps, H 512 at lr 0.005 (relative step 0.113) needs 3 to 4. Liu & Lu's filter,
   applied unchanged, also finds the one-step adder at H 2048 and 4096 (5 of 5 seeds each), but not at H
-  512 or 1024: it needs 2 to 6 steps at H 1024 and 6 to 10 at H 512 (ours 1 to 2), and it is wrong on
-  every kernel-checked one-step cell. With little data, wrong labels or unseen tokens or sums it is 5 to
+  512 or 1024: it needs 2 to 6 steps at H 1024 and 6 to 10 at H 512 (ours 1 to 2). At the sealed step of
+  the 16 one-step cells rerun in float it is wrong on 11 to 2,614 pairs, and its frequency on the frozen
+  tables, rounded, is wrong on all 18 one-step seal inputs. With little data, wrong labels or unseen tokens or sums it is 5 to
   35 steps later than ours on the checkpoint grid, or never exact within the run (result 15).
 - **Result 3.** The row/column exclusion argument is stated by Gu et al. (2610.35036, posted
   26 Oct 2026) for random Latin squares, whose memorizers end below chance; the classical name is
@@ -706,7 +721,8 @@ Two searchers and one adversarial refuter per claim group, papers opened; the sy
 - Seals of one-step cells at H 2048 (beyond one runner's 6 hours as the pipeline stands). The GELU result
   is sealed (see Kernel-checked).
 - Why the network is at chance while one frequency per neuron, even a random one, usually reads out as
-  an exact adder (one step, H 4096, clean labels: 4 of 5 seeds, 7 of 10 draws on one seed; result 15). A
+  an exact adder (one step, H 4096, clean labels: 4 of 5 seeds, 7 of 10 draws on one seed; result 15,
+  `rand_draws.py`). A
   candidate: the products of different frequencies that x^2 forms inside each neuron. The published theory
   assumes small initialization, where the other frequencies stay negligible (Wang et al. Thm. 1; He et al.
   Thm. B.4), so it does not answer this.

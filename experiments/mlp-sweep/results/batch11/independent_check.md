@@ -45,7 +45,8 @@ and 3 scored on fewer runs than their wording covers), fixed before any result o
 ## Random frequencies: fresh draws
 
 `rand` uses one draw per run (generator 1000 + seed). Ten more draws (generators 50,000 to 50,009) on two
-checkpoints rerun locally, wrong pairs out of 9,409:
+checkpoints rerun locally, wrong pairs out of 9,409. They were first run by hand and not saved; `rand_draws.py`
+now retrains both checkpoints and repeats the draws, with the same numbers (`rand_draws.txt`):
 
 | checkpoint | ten draws |
 | --- | --- |

@@ -231,3 +231,8 @@ Win (it changes a claim's standing either way): `ll` as published exact at step 
 at some H <= 4096 means result 2 does not depend on our read-out, since a published filter applied unchanged
 sees it; `rand` exact means the first steps write the adder at frequencies no rule singles out. If `ll` is
 never exact at step 1 where `ours` is, the frequency rule is part of result 2 and FINDINGS must say so.
+
+Erratum (added 2026-11-02, after the runs; the text above is unchanged): the "four seal inputs" of the smoke
+tests included a fourth, `smoke_abs_p11_H16.npz` (a p 11 smoke test read with |z|), where `ours` was wrong on
+70 of 121 pairs and `ll_int` on 86, with the two rules agreeing on 62.5% of neurons. It was printed before the
+guesses were fixed and is missing from the list above.

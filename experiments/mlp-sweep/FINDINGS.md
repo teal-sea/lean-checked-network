@@ -221,7 +221,10 @@ intervals the checkpoint grid allows overlap at 8.5 to 9.0); larger r is faster 
 batch tests this law on activations it was not fitted on.
 
 The GitHub rerun of plain GELU (s = 1, seed 0) reproduces the third batch's box run at all 45 common
-checkpoints.
+checkpoints. A second rerun with checkpoints kept (`sweeps/gelukeep.txt`, `int_even.py`) shows the same
+for the sealable quantity: the 8-bit integer projection of the GELU weights, read with z^2, is exact
+with no ties at steps 20, 50, 100, 2,000 and 20,000 (SiLU: from step 20), while the frozen weights
+themselves read with z^2 are wrong on 6,517 pairs at 20k. Seals are running.
 
 ### 8. How little data one step needs (fourth batch C)
 
@@ -460,8 +463,9 @@ All five H 512 memorizers (seeds 0-4 at 20k) are now sealed.
 
 Running: x^2 H 1024 seeds 1 and 2 after one Adam step at lr 0.01 and seed 0 at 20k; one step on
 15% of the pairs (seeds 0 and 2) and two steps on 10% (seed 2), all at H 1024; 10 steps on 5% of the
-pairs with token 74 never seen (H 1024, seed 0); and from the seventh batch two steps with 30 tokens never seen and nine with 30 sums never a label
-(H 1024).
+pairs with token 74 never seen (H 1024, seed 0); from the seventh batch two steps with 30 tokens never seen and nine with 30 sums never a label; from
+the ninth, 15 steps on 240 pairs that use only 27 of the 97 tokens; and the GELU memorizer (20k) and
+SiLU net (2k) read as x^2 networks (all at H 1024).
 
 ## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)
 

@@ -439,17 +439,20 @@ advance (exact from at most 2%, any seed) is met; the guess (exact from 2.5% at 
 right. At 1.5% and below no run gets there, and at these sizes the projection can be exact at one
 checkpoint and lose it again while the network memorizes (H 2048, frac 0.02, seed 1 ends at 1 wrong).
 
-### 15. A published filter sees it too; our frequency rule matters where data is scarce; at width a random frequency works (eleventh batch)
+### 15. Liu & Lu's published filter: the same one-step adder from H 2048, a few steps later at H 512 and 1024; at H 4096 on clean data a random frequency per neuron works (eleventh batch)
 
 Rules in `RULES.md` (eleventh batch), fixed before the runs. Liu & Lu's frequency filtration (arXiv
-2605.18022, Sec. 4 and App. D.1: per neuron, the largest |DFT| of the output weights alone, DC included,
-that DFT row kept in the input weights too, real part, float, no rounding) against the seals' projection
-(the frequency with the most energy summed over E1, E2 and W2, DC excluded, frozen tables, rounded), plus
-a frequency drawn at random for each neuron and the least energetic one. `filters.py` on 79 deterministic
-reruns (the 22 that repeat a sealed cell reproduce its frozen tables bit for bit) and on the 33 seal
-inputs. Two implementations written from the paper alone by separate agents reproduce `filters.py`'s Liu &
-Lu numbers on 10 checkpoints (`results/batch11/independent_check.md`). t* per seed as before; "-" means not
-exact at every checkpoint to the end of the run (100 steps unless stated):
+2605.18022, Sec. 4 and App. D.1: per neuron, the frequency with the largest |DFT| of the output weights
+alone, the arg max taken over all p bins so that the zero frequency is a candidate (the paper never
+mentions it and releases no code), that DFT row kept in the input weights too, real part, float, no
+rounding) against the seals' projection (the frequency with the most energy summed over E1, E2 and W2, DC
+excluded, frozen tables, rounded), plus a frequency drawn at random for each neuron and the least
+energetic one. `filters.py` on 79 deterministic reruns (the 22 that repeat a sealed cell reproduce its
+frozen tables bit for bit) and on the 33 seal inputs. Two implementations written from the paper alone by
+separate agents reproduce `filters.py`'s Liu & Lu numbers on 10 checkpoints
+(`results/batch11/independent_check.md`). t* per seed as before, read on the checkpoint grid (every step to
+10, then 15, 20, 30, 50, 75, 100 and every 100 after); "-" means not exact at every checkpoint to the end
+of the run (100 steps unless stated):
 
 | cell (frac 0.3, lr 0.01 unless stated) | ours | Liu & Lu as published | Liu & Lu without DC | random frequency |
 | --- | --- | --- | --- | --- |
@@ -460,62 +463,85 @@ exact at every checkpoint to the end of the run (100 steps unless stated):
 | memorizers, H 512, 20k steps | 2, 2, 2, 2, 2 | 10, 10, 10, 10, 10 | 10, 10, 10, 10, 10 | - (all five) |
 | frac 0.15, H 1024 | 1, 2, 1 | 10, 15, 15 | 10, 15, 15 | - |
 | frac 0.10, H 2048 | 1, 1, 1 | 10, 15, 15 | 15, 15, 15 | -, 15, 15 |
-| frac 0.02, H 4096, 1,000 steps | -, 20, - | -, -, - | -, -, - | -, -, - |
+| frac 0.02, H 4096, 1,000 steps (a) | -, 20, - | -, -, - | -, -, - | -, -, - |
 | 50% wrong labels, H 4096 | 1, 1, 2 | 8, 8, 9 | 8, 8, 9 | 9, 10, 15 |
 | 75% wrong labels, H 4096 | 9, 10, 9 | 15, 15, 15 | 15, 15, 15 | - |
 | 30 tokens never seen, H 1024 | 2, 2, 2 | 7, 9, 9 | 7, 9, 9 | 15, -, - |
 | 30 sums never seen, H 1024 | 15, 15, 9 | -, 50, 30 | -, 50, 30 | - |
 | 70 tokens never seen, H 1024 | 15, 20, 20 | -, -, - | 20, 30, 30 | - |
 
+(a) Seed 2's "-" under ours is a rounding loss: the same projection in float is exact from step 500, the
+rounded one ends 886 pairs wrong at step 1,000.
+
 All cells, the lr 0.005 and 0.0025 runs and the per-step counts are in `results/batch11/` (`summary.txt`
-is `summarize_batch11.py`'s output). The least energetic frequency is never exact in any run (7,000 or more
-wrong pairs at every checkpoint).
+is `summarize_batch11.py`'s output).
 
 **Liu & Lu's filter, applied unchanged, is exact after one Adam step in 5 of 5 seeds at H 2048 and at H
-4096, and on the five H 512 memorizers at every checkpoint from step 10 to 20,000. So the one-step adder of
-result 2 and the exact memorizers of result 1 do not depend on our read-out** (the win fixed in advance).
-Our rule is never later: t* is at most Liu & Lu's in 70 of the 70 runs where both are finite, and Liu & Lu
-is never exact at a checkpoint where ours is not. At H 1024 ours is exact at step 1 in every seed and theirs from step 2
-to 6. The gap is large with little data, wrong labels or unseen tokens and sums (5 to 35 steps, or not
-within the run). In most cells excluding DC from the paper's arg max changes no t* (the third column), so
-the gap comes from choosing the frequency from W2 alone: it is a worse guide to a neuron's frequency than
-all three columns together. In the two scarcest cells DC breaks the filter outright. With Adam, an output
-column drifts by a constant when many classes are seldom labels, and a frequency's energy is split between
-bins k and p - k while DC sits in one, so the arg max over single bins picks k = 0 and the neuron becomes
-a constant that drops out. At 2% of the table and H 4096 that happens to 4,040 to 4,081 of 4,096 neurons by
-step 1,000 (seed 1: 9,107 pairs wrong); with 70 tokens unseen, to 510 to 753 of 1,024 by step 100.
-Excluding DC rescues the 70-token cell (exact from step 20 or 30) but not the 2% one (1,417 wrong at step
-1,000 in seed 1, where ours is exact from step 20).
+4096 (lr 0.01), and on the five H 512 memorizers and the H 1024 seed 0 memorizer at every checkpoint from
+step 10 to 20,000. At those widths the one-step adder does not depend on our read-out, and neither do
+those six memorizers** (the win fixed in advance). **At H 512 and 1024, the widths of every kernel-checked
+one-step cell, it does: after one step Liu & Lu is exact in no seed (3 to 60 pairs wrong at H 1024, 99
+to 150 at H 512 with lr 0.02, 785 to 2,773 at H 512 with lr 0.01), exact 1 to 5 steps later
+at H 1024 and 5 to 8 later at H 512, and wrong on every kernel-checked one-step cell (5 to 2,754 pairs).
+There our frequency rule is part of result 2**, as RULES.md said FINDINGS must then say.
 
-**At width the choice hardly matters: one Adam step at H 4096 with a frequency drawn at random for each
-neuron gives an exact adder in 4 of 5 seeds (the fifth is wrong on 1 pair and exact from step 2), and in 7
-of 10 fresh draws on seed 0 (the other three wrong on 18, 1 and 1 pairs).** At H 2048 random frequencies
-are wrong on 17 to 73 pairs at step 1 and exact from step 4 to 7; at H 1024 on 1,158 to 3,341, exact at
-one to three checkpoints between steps 10 and 20 in four seeds and then lost again (3 to 88 wrong at step
-100); the least
-energetic frequency never works. So after one step the adder is not confined to each neuron's strongest
-frequency: frequencies drawn at random carry enough of it, summed over 4,096 neurons, and the weakest carry
-none. At that width a read-out need only keep one frequency per neuron; which one matters at smaller
-widths and with less data.
-Why the network itself, which keeps them all, stays at chance is not tested here; one candidate is the
-products of different frequencies that x^2 forms inside each neuron.
+Our rule is never later: its t* is at most Liu & Lu's in 70 of the 70 runs where both are finite, and Liu
+& Lu is never exact at a checkpoint where ours is not. With little data, wrong labels or unseen tokens and
+sums the gap grows to 5 to 35 steps on the checkpoint grid (at least 1, the grid being coarse past step
+10), or Liu & Lu is not exact within the run. In 9 of the 13 cells of the table, excluding the zero
+frequency changes no t*, and our frequency rule read from the same float weights without rounding
+(`ours_float`, which differs from Liu & Lu without DC only in how each neuron's frequency is chosen) is as
+early as ours: the gap comes from choosing the frequency from W2 alone rather than from all three columns.
+In the two scarcest cells the zero frequency also keeps the filter from being exact. At 2% of the table and
+H 4096 it takes 4,040 to 4,081 of 4,096 neurons by step 1,000 and Liu & Lu is at chance (8,708 to 9,107
+wrong); with 70 tokens unseen it takes 510 to 753 of 1,024 by step 100 and Liu & Lu ends 3 to 146 pairs
+wrong. Excluding it rescues the 70-token cell (exact from step 20 or 30) but not the 2% one (1,417 wrong at
+step 1,000 in seed 1, where ours is exact from step 20). Our explanation, not measured here: under gradient
+descent an output column's sum over classes cannot change, because the softmax ignores a shift common to
+all classes (Kunin et al. 2012.04728, Eq. 11; He et al. 2602.16849, Eqs. 5.3-5.4), but Adam's sign-like
+step does not scale with how often a class is a label (Kunstner et al. 2402.19449, Sec. 3.1), so when many
+classes are seldom labels the column drifts by a constant; and since a frequency's energy is split between
+bins k and p - k while the zero frequency sits in one bin, a modest constant (median 5.5% of a column's
+energy with 70 tokens unseen, step 15) wins the arg max over single bins.
+
+**On clean labels with 30% of the table, at H 4096 the choice of frequency hardly matters: one Adam step
+with a frequency drawn at random for each neuron gives an exact adder in 4 of 5 seeds (the fifth is wrong
+on 1 pair and exact from step 2), and in 7 of 10 fresh draws on seed 0 (the other three wrong on 18, 1 and
+1 pairs).** At H 2048 random frequencies are wrong on 17 to 73 pairs at step 1 and exact from step 4 to 7;
+at H 1024 on 1,158 to 3,341, exact at one to three checkpoints between steps 10 and 20 in four seeds and
+then lost again (3 to 23 wrong at step 100 in those four; 88 in the fifth, never exact). The least
+energetic frequency never gives an exact adder (near chance after one step, 8,834 to 9,231 wrong at H
+4096; never below 7,139 anywhere). So after one step the adder is not confined to each neuron's strongest
+frequency: frequencies drawn at random carry enough of it, summed over 4,096 neurons. The published
+dynamics predict this, with every frequency of every neuron pulled toward the phase-sum rule at once, at a
+rate set by its amplitudes (He et al. 2602.16849, Sec. 3.2, Observations 5 and 6; Wang et al. 2610.11833,
+Sec. 4.1; both with small initialization and many steps); no paper we found reads a trained network at a
+random frequency per neuron. Which frequency is kept matters at smaller widths, with less data and with
+wrong labels: at H 4096 with 50% wrong labels a random frequency is wrong on 1,507 to 4,021 pairs after one
+step where ours is exact or 1 pair short, and with 75% wrong labels or 2% of the table it is never exact
+(49 to 343 wrong at step 100; 1,112 to 1,693 at step 1,000).
 
 The guesses: 1 held (ours no later than Liu & Lu in 70 of 70 runs, Liu & Lu no later than random in 26 of
 26; random against least energetic is empty, the latter never being exact). 2 failed: its first half held
 (Liu & Lu exact at step 1 in 5 of 5 seeds at H 2048 and 4096), its second did not (Liu & Lu more than 2 steps
-from ours in 29 of the 44 lr 0.01 runs at H >= 1024 where either is finite: one clean run, H 1024 seed 1 at
-6 against 1, and every little-data, wrong-label and unseen cell). 3 held (random exact within 100 steps in
-16 of the 22 lr 0.01 runs at H >= 2048; least energetic never exact). 4 failed narrowly: in 3 of 79 runs
-the float reading reached t* one or two checkpoints after the rounded one (ours twice, Liu & Lu once). 5
-held (agreement of the two rules 65% to 71% at 20k; at most 5.5% of neurons sent to DC). 6 failed: t* x lr x
-H stayed within a factor 2 across lr 0.01, 0.005 and 0.0025 for Liu & Lu in 9 of 10 width-and-seed groups,
-but for random frequencies in 2 of 10 (never exact to the end at H 1024).
+from ours in 29 of the 44 lr 0.01 runs at H >= 1024 where either is finite, on the checkpoint grid; 24 of
+them certainly, while two at 10% of the table and the three with 75% wrong labels could be within 2 steps
+between checkpoints; the clean run among them is H 1024 seed 1, at 6 against 1). 3 held (random exact
+within 100 steps in 16 of the 22 lr 0.01 runs at H >= 2048; least energetic never exact). 4 failed as
+written (t* in float no later than rounded): in 3 of 79 runs the float reading reached t* one or two
+checkpoints after the rounded one (ours twice, Liu & Lu once). The other way round, rounding made t* later
+in 14 runs: by one checkpoint in 11, by three in two (Liu & Lu at H 1024, lr 0.0025, seed 1, from step 6 to
+9; at 5% of the table, seed 0, from step 30 to 100), and at 2% seed 2, where our float projection is exact
+from step 500 and the rounded one never is. 5 held (agreement of the two rules 65% to 71% at 20k; at most
+5.5% of neurons sent to the zero frequency). 6 failed: t* x lr x H stayed within a factor 2 across lr
+0.01, 0.005 and 0.0025 for Liu & Lu in 9 of 10 width-and-seed groups, but for random frequencies in 2 of 10
+(never exact to the end at H 1024).
 
 On the seal inputs themselves (frozen tables, Liu & Lu's frequency, rounded): exact on all 12 seals from
 long training (the six x^2 memorizers, H 512 at step 100, the three |x| memorizers, GELU and SiLU read
 with z^2) and wrong on all 18 seals from 1 to 15 steps (5 to 2,754 pairs), where the seals' own projection
 is exact. (The two ReLU seals prove a different statement and are left out: 2 and 18 wrong, against 0
-and 7.)
+and 7. The 33rd input is a p 11 smoke test.)
 
 ## Kernel-checked
 
@@ -609,9 +635,10 @@ looked is the exact, all-seed, all-checkpoint, one-step measurement.
   N 512, so the width threshold itself is expected. Gromov 2023 reads the first-overfit phase as
   "periodic structure does not form". New here: weight decay 0 with clean labels, exact after
   integer rounding on all p^2 pairs, every seed, every checkpoint from step 100, with the
-  initialization still present and the net below chance. Their own filter, applied unchanged to these
-  memorizers, is exact too, at every checkpoint from step 10 (result 15): what is new is the regime and
-  the exact all-seed measurement, not the read-out.
+  initialization still present and the net below chance. Their own filter, applied unchanged to six of
+  them (H 512 seeds 0-4, H 1024 seed 0), is exact too, at every checkpoint from step 10 (result 15); the
+  H 1024 seeds 1-2 and the two frac-0.15 memorizers were not read with it. For those six, what is new is
+  the regime and the exact all-seed measurement, not the read-out.
 - **Result 2.** The phase coupling is derived by Wang et al. 2026 (2610.11833; each mode's update is
   the product of the other two, arg U + arg V - arg W -> 0, gradient flow) and He et al. 2026
   (2602.16849; the initial spectrum picks each neuron's frequency, alignment over thousands of
@@ -620,9 +647,10 @@ looked is the exact, all-seed, all-checkpoint, one-step measurement.
   while the network is at chance. The closest papers use warmup or lr 1e-4, so their first step is
   tiny. Width matters beyond the relative step size lr x sqrt(H): H 2048 at lr 0.00125 (relative
   step 0.057) needs 3 steps, H 512 at lr 0.005 (relative step 0.113) needs 3 to 4. Liu & Lu's filter,
-  applied unchanged, also finds the one-step adder at H 2048 and 4096 (5 of 5 seeds each); at H 1024 it
-  needs 2 to 6 steps, and with little data, wrong labels or unseen tokens or sums it is 5 to 35 steps
-  later than ours or never exact within the run (result 15).
+  applied unchanged, also finds the one-step adder at H 2048 and 4096 (5 of 5 seeds each), but not at H
+  512 or 1024: it needs 2 to 6 steps at H 1024 and 6 to 10 at H 512 (ours 1 to 2), and it is wrong on
+  every kernel-checked one-step cell. With little data, wrong labels or unseen tokens or sums it is 5 to
+  35 steps later than ours on the checkpoint grid, or never exact within the run (result 15).
 - **Result 3.** The row/column exclusion argument is stated by Gu et al. (2610.35036, posted
   26 Oct 2026) for random Latin squares, whose memorizers end below chance; the classical name is
   anti-learning (Kowalczyk & Chapelle, ALT 2005). Below-chance addition memorizers appear without
@@ -677,6 +705,8 @@ Two searchers and one adversarial refuter per claim group, papers opened; the sy
   initialization (result 11's failure at large c).
 - Seals of one-step cells at H 2048 (beyond one runner's 6 hours as the pipeline stands). The GELU result
   is sealed (see Kernel-checked).
-- Why the network is at chance while one frequency per neuron, even a random one, reads out as an exact
-  adder (one step, H 4096; result 15). A candidate: the products of different frequencies that x^2
-  forms inside each neuron.
+- Why the network is at chance while one frequency per neuron, even a random one, usually reads out as
+  an exact adder (one step, H 4096, clean labels: 4 of 5 seeds, 7 of 10 draws on one seed; result 15). A
+  candidate: the products of different frequencies that x^2 forms inside each neuron. The published theory
+  assumes small initialization, where the other frequencies stay negligible (Wang et al. Thm. 1; He et al.
+  Thm. B.4), so it does not answer this.

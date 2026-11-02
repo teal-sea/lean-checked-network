@@ -341,6 +341,33 @@ underestimates it beyond that: by step 15 the weights have moved by about 15 x l
 several times the initialization scale (1/sqrt(H) = 0.03), so the pre-activations and with them the even
 part's share have grown. That reading is post hoc and untested.
 
+### 12. Exact on tokens and sums never seen in training (seventh batch)
+
+Rules in `RULES.md` (seventh batch), fixed before the runs. x^2, p 97, the usual frac-0.3 split with
+every pair removed that contains one of k held-out tokens (as a or b), or whose sum is one of k
+held-out sums; 500 Adam steps; integer pure clock (what a seal checks) scored on all 9,409 pairs. t* =
+first checkpoint from which it is exact on all 9,409 pairs to step 500 (three seeds):
+
+| held out | training pairs | H 1024 | H 2048 | net wrong on the held-out pairs at step 500 |
+| --- | --- | --- | --- | --- |
+| 1 token | 2,765 | 1, 1, 1 | 1, 1, 1 | 193 of 193 |
+| 3 tokens | 2,640 | 1, 1, 1 | 1, 1, 1 | 573 of 573 |
+| 10 tokens | 2,286 | 1, 1, 1 | 1, 1, 1 | 1,838 to 1,840 of 1,840 |
+| **30 tokens (31% of the vocabulary)** | 1,324 | **2, 2, 2** | **1, 1, 1** | 4,904 to 4,910 of 4,920 |
+| 1 sum | 2,790 | 1, 1, 1 | 1, 1, 1 | 97 of 97 |
+| 3 sums | 2,725 | 1, 1, 1 | 1, 1, 1 | 291 of 291 |
+| 10 sums | 2,528 | 1, 1, 1 | 1, 1, 1 | 970 of 970 |
+| **30 sums** | 1,961 to 1,981 | 15, 15, 9 | 9, 10, 7 | 2,910 of 2,910 |
+
+All 48 runs are exact on all 9,409 pairs by step 15 and stay exact to step 500. **After one Adam step
+on a training set in which 30 of the 97 tokens never occur, the projection adds correctly on all 4,920
+pairs that contain one of them (H 2048, all three seeds)**, while the network itself is wrong on all
+but 10 to 16 of those pairs; training never touches the network's rows for those tokens, and the
+projection supplies them from each neuron's wave. With 30 sums never shown as a label the network
+never outputs them (wrong on all 2,910 such pairs) and the projection does. Both predictions held and
+the win fixed in advance (30 tokens or 30 sums, any seed) is met for both. Held-out sums are the harder
+case (7 to 15 steps against 1 to 2 for tokens). The eighth batch looks for where it stops.
+
 ## Kernel-checked
 
 Seventeen seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner

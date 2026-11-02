@@ -1,0 +1,18 @@
+## held-out TOKENS: t* (all 9,409 pairs) per seed | at step 500: clock wrong on held-out pairs / net wrong on them (of n pairs) | training pairs
+  H 1024 k  1 (train 2765): t* 1 | 0/193 of 193  ||  t* 1 | 0/193 of 193  ||  t* 1 | 0/193 of 193
+  H 1024 k  3 (train 2640): t* 1 | 0/573 of 573  ||  t* 1 | 0/573 of 573  ||  t* 1 | 0/573 of 573
+  H 1024 k 10 (train 2286): t* 1 | 0/1838 of 1840  ||  t* 1 | 0/1840 of 1840  ||  t* 1 | 0/1840 of 1840
+  H 1024 k 30 (train 1324): t* 2 | 0/4906 of 4920  ||  t* 2 | 0/4909 of 4920  ||  t* 2 | 0/4904 of 4920
+  H 2048 k  1 (train 2765): t* 1 | 0/193 of 193  ||  t* 1 | 0/193 of 193  ||  t* 1 | 0/193 of 193
+  H 2048 k  3 (train 2640): t* 1 | 0/573 of 573  ||  t* 1 | 0/573 of 573  ||  t* 1 | 0/573 of 573
+  H 2048 k 10 (train 2286): t* 1 | 0/1839 of 1840  ||  t* 1 | 0/1839 of 1840  ||  t* 1 | 0/1838 of 1840
+  H 2048 k 30 (train 1324): t* 1 | 0/4910 of 4920  ||  t* 1 | 0/4908 of 4920  ||  t* 1 | 0/4907 of 4920
+## held-out SUMS: t* (all 9,409 pairs) per seed | at step 500: clock wrong on held-out pairs / net wrong on them (of n pairs) | training pairs
+  H 1024 k  1 (train 2790): t* 1 | 0/97 of 97  ||  t* 1 | 0/97 of 97  ||  t* 1 | 0/97 of 97
+  H 1024 k  3 (train 2725): t* 1 | 0/291 of 291  ||  t* 1 | 0/291 of 291  ||  t* 1 | 0/291 of 291
+  H 1024 k 10 (train 2528): t* 1 | 0/970 of 970  ||  t* 1 | 0/970 of 970  ||  t* 1 | 0/970 of 970
+  H 1024 k 30 (train 1981): t* 15 | 0/2910 of 2910  ||  t* 15 | 0/2910 of 2910  ||  t* 9 | 0/2910 of 2910
+  H 2048 k  1 (train 2790): t* 1 | 0/97 of 97  ||  t* 1 | 0/97 of 97  ||  t* 1 | 0/97 of 97
+  H 2048 k  3 (train 2725): t* 1 | 0/291 of 291  ||  t* 1 | 0/291 of 291  ||  t* 1 | 0/291 of 291
+  H 2048 k 10 (train 2528): t* 1 | 0/970 of 970  ||  t* 1 | 0/970 of 970  ||  t* 1 | 0/970 of 970
+  H 2048 k 30 (train 1981): t* 9 | 0/2910 of 2910  ||  t* 10 | 0/2910 of 2910  ||  t* 7 | 0/2910 of 2910

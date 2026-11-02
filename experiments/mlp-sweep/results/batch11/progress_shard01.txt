@@ -1,0 +1,8 @@
+=== x2_mem_H512_s4 start 16:07:17
+=== x2_mem_H1024_s0 start 16:07:17
+=== seal_inputs start 16:07:17
+=== x2_H512_lr1e-2_s0 start 16:07:17
+=== seal_inputs exit 0 after 18 s
+=== x2_H512_lr1e-2_s0 exit 0 after 37 s
+=== x2_mem_H512_s4 exit 0 after 1028 s
+=== x2_mem_H1024_s0 exit 0 after 2000 s

@@ -526,5 +526,39 @@
   "note": "the 1,961 training pairs never have any of 30 held-out sums as their label",
   "train_acc": 0.2131565527791943,
   "heldout_acc": 0.004564983888292159
+ },
+ "gelu_H1024_s0_final_readsq": {
+  "from": "GitHub Actions sweep/gelukeep run 41359691661, artifact sweep-0/gelus1_H1024_s0_20k/ckpt_step20000.npz (train_gen.py gelus/silus with ACT_S=1, i.e. plain GELU; numpy 2.5.3)",
+  "sha256_of_source_npz": "1a0914074497af2d3410f7a2a129608ba54daf8b53076f1432d60a08188b42ac",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "trained_act": "GELU",
+  "note": "trained with GELU; sealed with seal_cell.py as an x^2 network: the 8-bit frozen GELU weights read with z^2, and their one-wave projection read with z^2 (int_even.py: projection exact, no ties, frozen weights read with z^2 wrong on 6517)",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0
+ },
+ "silu_H1024_s0_step2000_readsq": {
+  "from": "GitHub Actions sweep/gelukeep run 41359691661, artifact sweep-0/silus1_H1024_s0/ckpt_step2000.npz (train_gen.py gelus/silus with ACT_S=1, i.e. plain SiLU; numpy 2.5.3)",
+  "sha256_of_source_npz": "24c854731c8befd0eb968530a5950928fdfa93e24fa0cbaf27afbd0d08b00d78",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2000
+  },
+  "trained_act": "SiLU",
+  "note": "trained with SiLU; sealed with seal_cell.py as an x^2 network: the 8-bit frozen SiLU weights read with z^2, and their one-wave projection read with z^2 (int_even.py: projection exact, no ties, frozen weights read with z^2 wrong on 6522)",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0
  }
 }

@@ -164,7 +164,7 @@ and in all three. A guess, recorded so it can be wrong: exact up to k = 50 for b
 Win: an exact projection with at least half of the tokens (k >= 49) never seen in training, any seed,
 H <= 4096.
 
-## Ninth batch (fixed 2026-11-01 ~19:45 Bogota, before any of its runs; GitHub Actions)
+## Ninth batch (fixed 2026-11-01 ~19:37 Bogota, before any of its runs; GitHub Actions)
 
 Setup, measures and t* as in the seventh and eighth batches; jobs in `sweeps/batch9.txt`.
 A. Seal candidates: 60 and 70 held-out tokens at H 1024 (seeds 0-2), checkpoints kept at steps 15,

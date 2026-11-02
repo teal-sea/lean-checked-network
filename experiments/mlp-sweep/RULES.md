@@ -151,7 +151,7 @@ the other untrained pairs; t* = first checkpoint from which it is wrong on 0 of 
 nothing to recall there). Win: an exact projection on all pairs with 30 tokens (31% of the
 vocabulary) never seen, or with 30 sums never seen as a label, in any seed.
 
-## Eighth batch (fixed 2026-11-01 ~18:55 Bogota, before any of its runs; GitHub Actions)
+## Eighth batch (fixed 2026-11-01 ~19:10 Bogota, before any of its runs; GitHub Actions)
 
 The seventh batch found the projection exact on all 9,409 pairs with 30 tokens never seen (one step at
 H 2048) and with 30 sums never seen as a label (9 to 15 steps at H 1024). How far does it go? The same

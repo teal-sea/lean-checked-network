@@ -1,4 +1,4 @@
-# Eighth batch (rules in experiments/mlp-sweep/RULES.md, fixed 2026-11-01 ~18:55 Bogota before any run).
+# Eighth batch (rules in experiments/mlp-sweep/RULES.md, fixed 2026-11-01 ~19:10 Bogota before any run).
 # Format: KIND NAME SETTINGS ARGS (job.sh); SETTINGS are '+'-joined VAR=value.
 #keep: ^$
 acth x2_ht40_H4096_s0 HOLDOUT_TOKENS=40+EXTRA_STEPS=1,2,3,4,5,6,7,8,9,10,15,20,30,50,75 sq 97 4096 0 1e-2 0.0 0.30 500

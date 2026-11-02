@@ -1,0 +1,47 @@
+[
+ {
+  "name": "x2_H512_s0_final",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H512_s0_final.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000
+ },
+ {
+  "name": "x2_H512_s1_final",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H512_s1_final.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000
+ },
+ {
+  "name": "x2_H512_s3_final",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H512_s3_final.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000
+ },
+ {
+  "name": "x2_H512_s4_final",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H512_s4_final.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000
+ },
+ {
+  "name": "x2_H512_s0_step100",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H512_s0_step100.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000
+ }
+]

@@ -1,0 +1,8 @@
+=== x2_f0.03_H4096_s0 start 01:24:20
+=== x2_f0.03_H4096_s1 start 01:24:20
+=== x2_f0.03_H4096_s2 start 01:24:20
+=== x2_f0.01_H2048_s0 start 01:24:20
+=== x2_f0.01_H2048_s0 exit 0 after 386 s
+=== x2_f0.03_H4096_s1 exit 0 after 658 s
+=== x2_f0.03_H4096_s0 exit 0 after 760 s
+=== x2_f0.03_H4096_s2 exit 0 after 761 s

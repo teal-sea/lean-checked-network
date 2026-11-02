@@ -1,0 +1,8 @@
+=== sqlin1_H1024_s0 start 22:30:16
+=== sqlin1_H1024_s1 start 22:30:16
+=== sqlin2_H1024_s0 start 22:30:16
+=== sqlin2_H1024_s1 start 22:30:16
+=== sqlin1_H1024_s0 exit 0 after 309 s
+=== sqlin2_H1024_s0 exit 0 after 310 s
+=== sqlin2_H1024_s1 exit 0 after 310 s
+=== sqlin1_H1024_s1 exit 0 after 310 s

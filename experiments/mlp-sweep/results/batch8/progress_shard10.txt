@@ -1,0 +1,8 @@
+=== x2_ht70_H2048_s2 start 00:18:57
+=== x2_ht70_H2048_s1 start 00:18:57
+=== x2_ht80_H2048_s1 start 00:18:57
+=== x2_ht80_H2048_s0 start 00:18:57
+=== x2_ht80_H2048_s1 exit 0 after 412 s
+=== x2_ht80_H2048_s0 exit 0 after 413 s
+=== x2_ht70_H2048_s1 exit 0 after 415 s
+=== x2_ht70_H2048_s2 exit 0 after 416 s

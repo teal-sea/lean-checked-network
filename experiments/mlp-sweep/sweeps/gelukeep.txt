@@ -1,0 +1,6 @@
+# Seal candidates for the even-part result (2026-11-01, after the fourth batch): plain GELU and SiLU
+# at H 1024 rerun (deterministic: the GitHub GELU rerun matched the box run at all 45 checkpoints)
+# with checkpoints kept, and the integer projection read with z^2 (int_even.py).
+#keep: ^(gelus1_H1024_s0_20k/ckpt_step(20|100|2000|20000)|silus1_H1024_s0/ckpt_step(50|2000))\.npz$
+genx gelus1_H1024_s0_20k ACT_S=1+EXTRA_STEPS=1,2,3,4,5,10,20,50 gelus 97 1024 0 1e-2 0.0 0.30 20000
+genx silus1_H1024_s0 ACT_S=1+EXTRA_STEPS=1,2,3,4,5,10,20,50 silus 97 1024 0 1e-2 0.0 0.30 2000

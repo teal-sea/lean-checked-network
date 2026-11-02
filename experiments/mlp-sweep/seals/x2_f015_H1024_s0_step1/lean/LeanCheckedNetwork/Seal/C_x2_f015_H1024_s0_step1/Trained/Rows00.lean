@@ -1,0 +1,39 @@
+import LeanCheckedNetwork.Seal.C_x2_f015_H1024_s0_step1.Trained.Table
+
+/-! Rows 0 to 1 of the addition table, checked by Lean's kernel for all 97 values of `b`. -/
+
+set_option Elab.async false
+
+namespace LeanCheckedNetwork.Seal.C_x2_f015_H1024_s0_step1.Trained
+
+open LeanCheckedNetwork
+
+theorem fast_0 : ∀ b, b < 97 →
+    (fastOk E1 E2 1024 0 b &&
+      ((fastAnswer E1 E2 W2 1024 0 b == (0 + b) % 97) == !(wrongRows.getD 0 []).contains b)) = true := by
+  decide +kernel
+
+/-- Row 0: the network answers (0 + b) % 97 exactly for the b outside row 0 of `wrongRows`. -/
+theorem row_0 : ∀ b, b < 97 → (answer 0 b = (0 + b) % 97 ↔ b ∉ wrongRows.getD 0 []) := by
+  intro b hb
+  have h := fast_0 b hb
+  simp only [Bool.and_eq_true, beq_iff_eq] at h
+  show LeanCheckedNetwork.answer E1 E2 W2 0 b = _ ↔ _
+  rw [answer_eq_fastAnswer E1 E2 W2 1024 0 b table_ok h.1]
+  exact iff_not_mem_of_beq h.2
+
+theorem fast_1 : ∀ b, b < 97 →
+    (fastOk E1 E2 1024 1 b &&
+      ((fastAnswer E1 E2 W2 1024 1 b == (1 + b) % 97) == !(wrongRows.getD 1 []).contains b)) = true := by
+  decide +kernel
+
+/-- Row 1: the network answers (1 + b) % 97 exactly for the b outside row 1 of `wrongRows`. -/
+theorem row_1 : ∀ b, b < 97 → (answer 1 b = (1 + b) % 97 ↔ b ∉ wrongRows.getD 1 []) := by
+  intro b hb
+  have h := fast_1 b hb
+  simp only [Bool.and_eq_true, beq_iff_eq] at h
+  show LeanCheckedNetwork.answer E1 E2 W2 1 b = _ ↔ _
+  rw [answer_eq_fastAnswer E1 E2 W2 1024 1 b table_ok h.1]
+  exact iff_not_mem_of_beq h.2
+
+end LeanCheckedNetwork.Seal.C_x2_f015_H1024_s0_step1.Trained

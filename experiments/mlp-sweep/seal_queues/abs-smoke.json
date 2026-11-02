@@ -1,0 +1,11 @@
+[
+ {
+  "name": "smoke_abs_p11_H16",
+  "npz": "experiments/mlp-sweep/seal_inputs/smoke_abs_p11_H16.npz",
+  "pure_clock": true,
+  "build_jobs": 4,
+  "jobs": 4,
+  "chunks": 11,
+  "script": "experiments/mlp-sweep/seal_act.py"
+ }
+]

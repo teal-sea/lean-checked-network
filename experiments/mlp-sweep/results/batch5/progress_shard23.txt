@@ -1,0 +1,8 @@
+=== x2_p31_H384_s0 start 21:15:53
+=== x2_p31_H384_s1 start 21:15:53
+=== x2_p31_H384_s2 start 21:15:53
+=== x2_p31_H384_s3 start 21:15:53
+=== x2_p31_H384_s0 exit 0 after 2 s
+=== x2_p31_H384_s1 exit 0 after 2 s
+=== x2_p31_H384_s3 exit 0 after 2 s
+=== x2_p31_H384_s2 exit 0 after 2 s

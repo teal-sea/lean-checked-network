@@ -1,0 +1,652 @@
+{
+ "x2_H512_s0_final": {
+  "from": "box run x2_H512_s0/final.npz",
+  "sha256_of_source_npz": "c9a1cfd93a1e7e73033a9efa12510012f851fd540e307b772ac8fd72a7dcccc2",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "train_acc": 1.0,
+  "heldout_acc": 0.005010628606134224
+ },
+ "x2_H512_s1_final": {
+  "from": "box run x2_H512_s1/final.npz",
+  "sha256_of_source_npz": "111da1f3142dab0ce34ed16eb83281bd3b9ae4ad3a4252c154a82e7db725b3fa",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 1,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "train_acc": 1.0,
+  "heldout_acc": 0.002733070148800486
+ },
+ "x2_H512_s3_final": {
+  "from": "box run x2_H512_s3/final.npz",
+  "sha256_of_source_npz": "9acc7b5321dcfdebf49a9d563b5eb9eee3096e8816019e7fff01d3282546d3c7",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 3,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "train_acc": 1.0,
+  "heldout_acc": 0.0030367446097783178
+ },
+ "x2_H512_s4_final": {
+  "from": "box run x2_H512_s4/final.npz",
+  "sha256_of_source_npz": "6eaaea9f687dded8c458718baec92ea39db0570fbaed5c66cd9783355c4da470",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 4,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "train_acc": 1.0,
+  "heldout_acc": 0.0044032796841785606
+ },
+ "x2_H512_s0_step100": {
+  "from": "box run x2_H512_s0/ckpt_step100.npz",
+  "sha256_of_source_npz": "2794598b972afa3265c1f9b5c5e9bb7fab2a04d9ea54367950c501e4c4581372",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 100
+  },
+  "train_acc": 1.0,
+  "heldout_acc": 0.0033404190707561495
+ },
+ "x2_H512_s0_step2": {
+  "from": "box run first_steps/sq_H512_s0/ckpt_step2.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "f15f644e386ba3303aebdd695686bd254701581b6628856c1fdf40a444239d6d",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2
+  },
+  "train_acc": 0.085724406659582,
+  "heldout_acc": 0.005769814758578804
+ },
+ "x2_H512_s1_step2": {
+  "from": "box run first_steps/sq_H512_s1/ckpt_step2.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "761b30cb1168a1b36edb31cf49873ad9d02d20e0608fe3fa5e5ac421bdbf2eee",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 1,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2
+  },
+  "train_acc": 0.13708820403825717,
+  "heldout_acc": 0.0039477679927118125
+ },
+ "x2_H512_s2_step2": {
+  "from": "box run first_steps/sq_H512_s2/ckpt_step2.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "824c0000ea7a018b34767778c0f1e0fc04050b7b7a442b349f65a1f1e5a559a0",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2
+  },
+  "train_acc": 0.10166489550123982,
+  "heldout_acc": 0.0031885818402672336
+ },
+ "x2_H1024_s0_step1": {
+  "from": "box run first_steps/sq_H1024_s0/ckpt_step1.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "94844473133ed32bc51d09ef301e1625869d360f3e2199169718ac41b7f49742",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.12964930924548354,
+  "heldout_acc": 0.0036440935317339812
+ },
+ "relu_H512_s1_final": {
+  "from": "box run relu_H512_s1/final.npz (train_act.py relu)",
+  "sha256_of_source_npz": "1a2f4b3015d4c550431415bb212fafc2a3f6aa71565dbf9e83fee31b60d6600d",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 1,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "act": "relu",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0
+ },
+ "x2_H512_lr002_s0_step1": {
+  "from": "box run first_steps3/H512_lr0.02_s0/ckpt_step1.npz (train_act.py sq, lr 0.02, EXTRA_STEPS)",
+  "sha256_of_source_npz": "ab0108505b42767ac3b29fef433983a08d41e68a804df092eb8a802b3c759656",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 0,
+   "lr": 0.02,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.077577045696068,
+  "heldout_acc": 0.0060734892195566355,
+  "net_wrong_numpy": 9151
+ },
+ "x2_H512_lr002_s1_step1": {
+  "from": "box run first_steps3/H512_lr0.02_s1/ckpt_step1.npz (train_act.py sq, lr 0.02, EXTRA_STEPS)",
+  "sha256_of_source_npz": "ac7d418c55e368d3942b088eae52262d7a54a8c93eb0ba1ed854bb3719b672df",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 1,
+   "lr": 0.02,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.1271696776478923,
+  "heldout_acc": 0.0044032796841785606,
+  "net_wrong_numpy": 9016
+ },
+ "x2_H512_lr002_s2_step1": {
+  "from": "box run first_steps3/H512_lr0.02_s2/ckpt_step1.npz (train_act.py sq, lr 0.02, EXTRA_STEPS)",
+  "sha256_of_source_npz": "bfeaea5b5f0ba60faceb6e77f78bbcf5ac8ecc0286fd2ba9beec237737e29f91",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 2,
+   "lr": 0.02,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.09776833156216791,
+  "heldout_acc": 0.0036440935317339812,
+  "net_wrong_numpy": 9116
+ },
+ "relu_H1024_s0_final": {
+  "from": "box run relu_H1024_s0/final.npz (train_act.py relu)",
+  "sha256_of_source_npz": "70c583c0bb5f4d88cd0437037ccb321abf43c7ee7d2c2d16ec0351045cbb0e8f",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "act": "relu",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0
+ },
+ "x2_H512_sgd1536_s0_step1": {
+  "from": "box run sgd_one_step/H512_c3_s0/ckpt_step1.npz (train_gen.py sq, OPT=sgd, lr 1536 = 3 H, one step)",
+  "sha256_of_source_npz": "694c2885bebc54b139526e2240e612464ea120878f92296f657a6569dcaa1f4c",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 0,
+   "lr": 1536.0,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "opt": "sgd",
+  "train_acc": 0.06801275239107332,
+  "heldout_acc": 0.00516246583662314
+ },
+ "x2_H512_sgd1536_s1_step1": {
+  "from": "box run sgd_one_step/H512_c3_s1/ckpt_step1.npz (train_gen.py sq, OPT=sgd, lr 1536 = 3 H, one step)",
+  "sha256_of_source_npz": "88b2e0cfa54f8b1756526555233774d62f1fcbcda7c04ad5c8f295c7ec666438",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 1,
+   "lr": 1536.0,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "opt": "sgd",
+  "train_acc": 0.093871767623096,
+  "heldout_acc": 0.002884907379289402
+ },
+ "x2_H512_s2_final": {
+  "from": "box run x2_H512_s2/ckpt_step20000.npz",
+  "sha256_of_source_npz": "db6c71815d56e30d19161260450d10b2748a5dc16a7303283eea07ec128735c6",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "train_acc": 1.0,
+  "heldout_acc": 0.004251442453689645
+ },
+ "smoke_abs_p11_H16": {
+  "from": "GitHub Actions sweep/smoke4 run 41349168013, abs_H16_s0/final.npz (toy p 11, H 16: a test of Abs.lean and seal_act.py --act abs, not a result)",
+  "sha256_of_source_npz": "3936bad9f07f9a836a41613b5ad1ef727df6a6659a75178c9fbe31b3a940d4f3",
+  "config": {
+   "p": 11,
+   "H": 16,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 120
+  },
+  "act": "abs"
+ },
+ "x2_H1024_s1_step1": {
+  "from": "box run first_steps/sq_H1024_s1/ckpt_step1.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "11d88e15cc1813a47701dcd2fb1b297f83beaaf3b60a99ebd189fd346aa8b522",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 1,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.14488133191640098,
+  "heldout_acc": 0.0044032796841785606
+ },
+ "x2_H1024_s2_step1": {
+  "from": "box run first_steps/sq_H1024_s2/ckpt_step1.npz (train_act.py sq = train_ckpt2.py, EXTRA_STEPS=1,2,3,4,5)",
+  "sha256_of_source_npz": "8a26f2d2fb3e0b820e87d6c9d962ff36ba25e77e6df2786c39f1b9fd65631875",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 1
+  },
+  "train_acc": 0.0871413390010627,
+  "heldout_acc": 0.004858791375645309
+ },
+ "x2_H1024_s0_final": {
+  "from": "box run x2_H1024_s0/ckpt_step20000.npz",
+  "sha256_of_source_npz": "9691ba84e5c524e4e40da4e586764512c58e28cd2fb64556365eb2e96971f9e3",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "train_acc": 1.0,
+  "heldout_acc": 0.0009110233829334953
+ },
+ "x2_f015_H1024_s0_step1": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-18/x2_f0.15_H1024_s0/ckpt_step1.npz (train_act.py sq, EXTRA_STEPS, numpy 2.5.3)",
+  "sha256_of_source_npz": "749c867c67a667bdf25be52348d972da7bf7743dbbee3b4c9400e8f6120daa23",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.15,
+   "steps": 1
+  },
+  "train_acc": 0.16513111268603828,
+  "heldout_acc": 0.005751437859464866
+ },
+ "x2_f015_H1024_s2_step1": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-18/x2_f0.15_H1024_s2/ckpt_step1.npz (train_act.py sq, EXTRA_STEPS, numpy 2.5.3)",
+  "sha256_of_source_npz": "870287424406ebef97cf7f793c9d25b381991570ecf3e7b53f4f2a77b4c67e3f",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.15,
+   "steps": 1
+  },
+  "train_acc": 0.2593905031892275,
+  "heldout_acc": 0.005501375343835959
+ },
+ "x2_f010_H1024_s2_step2": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-17/x2_f0.1_H1024_s2/ckpt_step2.npz (train_act.py sq, EXTRA_STEPS, numpy 2.5.3)",
+  "sha256_of_source_npz": "c91e496f78f696d5b7fa7241261d8d402dcc39e5eeee470086f22b84fd82aae8",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.1,
+   "steps": 2
+  },
+  "train_acc": 0.39213602550478216,
+  "heldout_acc": 0.00413320736891828
+ },
+ "abs_H512_s0_final": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-0/abs_H512_s0/final.npz (train_gen.py abs, numpy 2.5.3)",
+  "sha256_of_source_npz": "47b34c1cec4d2cb5aaada6b6dfe6b8c04dbc8958ad1b575c81baf12fde847e7e",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "act": "abs",
+  "train_acc": 1.0,
+  "heldout_acc": 0.00516246583662314
+ },
+ "abs_H512_s1_final": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-1/abs_H512_s1/final.npz (train_gen.py abs, numpy 2.5.3)",
+  "sha256_of_source_npz": "ad89dc08911390402cd3caade6c1acda8e6accb44a117197a8a995e7406381f1",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 1,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "act": "abs",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0044032796841785606
+ },
+ "abs_H512_s2_final": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-1/abs_H512_s2/final.npz (train_gen.py abs, numpy 2.5.3)",
+  "sha256_of_source_npz": "b08df3077558f5d125638424ebbc2c96df85aa1904cfa2ee913816ed1dd3ccda",
+  "config": {
+   "p": 97,
+   "H": 512,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "act": "abs",
+  "train_acc": 1.0,
+  "heldout_acc": 0.004099605223200729
+ },
+ "x2_f005_H1024_s0_step10": {
+  "from": "GitHub Actions sweep/batch4 run 41349257617, artifact sweep-15/x2_f0.05_H1024_s0/ckpt_step10.npz (train_act.py sq, EXTRA_STEPS, numpy 2.5.3)",
+  "sha256_of_source_npz": "06e7e0b9f82ee06503edc73c377fc5dd53f7b1747224136a85750eea4724312f",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.05,
+   "steps": 10
+  },
+  "train_acc": 0.6063829787234043,
+  "heldout_acc": 0.009620762948875714,
+  "note": "the 470 training pairs never contain token 74 (neither a nor b); token 74 rows of E1 and E2 are untouched by training"
+ },
+ "x2_ht30_H1024_s0_step2": {
+  "from": "GitHub Actions sweep/batch7 run 41361863909, artifact sweep-3/x2_ht30_H1024_s0/ckpt_step2.npz (train_act.py sq, HOLDOUT, numpy 2.5.3)",
+  "sha256_of_source_npz": "c3d606eab5d3743d001d6ac8d1d484c2a496809dcc410db1de1eb432ceae5a63",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2
+  },
+  "hold_tokens": [
+   1,
+   4,
+   12,
+   18,
+   20,
+   22,
+   25,
+   31,
+   36,
+   44,
+   46,
+   48,
+   51,
+   52,
+   53,
+   56,
+   59,
+   63,
+   64,
+   69,
+   70,
+   72,
+   74,
+   78,
+   82,
+   83,
+   90,
+   93,
+   94,
+   95
+  ],
+  "hold_sums": [],
+  "note": "the 1,324 training pairs never contain any of 30 held-out tokens (as a or b)",
+  "train_acc": 0.16163141993957703,
+  "heldout_acc": 0.006060606060606061
+ },
+ "x2_hs30_H1024_s2_step9": {
+  "from": "GitHub Actions sweep/batch7 run 41361863909, artifact sweep-9/x2_hs30_H1024_s2/ckpt_step9.npz (train_act.py sq, HOLDOUT, numpy 2.5.3)",
+  "sha256_of_source_npz": "cfc7b936c23a6c94fc1beef523c9d5e5fb74f0ea816228f7d083b08bb5841c7e",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 2,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 9
+  },
+  "hold_tokens": [],
+  "hold_sums": [
+   0,
+   1,
+   2,
+   6,
+   7,
+   8,
+   12,
+   13,
+   16,
+   22,
+   23,
+   27,
+   33,
+   37,
+   54,
+   55,
+   56,
+   57,
+   62,
+   63,
+   65,
+   66,
+   72,
+   75,
+   77,
+   78,
+   80,
+   85,
+   88,
+   93
+  ],
+  "note": "the 1,961 training pairs never have any of 30 held-out sums as their label",
+  "train_acc": 0.2131565527791943,
+  "heldout_acc": 0.004564983888292159
+ },
+ "gelu_H1024_s0_final_readsq": {
+  "from": "GitHub Actions sweep/gelukeep run 41359691661, artifact sweep-0/gelus1_H1024_s0_20k/ckpt_step20000.npz (train_gen.py gelus/silus with ACT_S=1, i.e. plain GELU; numpy 2.5.3)",
+  "sha256_of_source_npz": "1a0914074497af2d3410f7a2a129608ba54daf8b53076f1432d60a08188b42ac",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 20000
+  },
+  "trained_act": "GELU",
+  "note": "trained with GELU; sealed with seal_cell.py as an x^2 network: the 8-bit frozen GELU weights read with z^2, and their one-wave projection read with z^2 (int_even.py: projection exact, no ties, frozen weights read with z^2 wrong on 6517)",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0
+ },
+ "silu_H1024_s0_step2000_readsq": {
+  "from": "GitHub Actions sweep/gelukeep run 41359691661, artifact sweep-0/silus1_H1024_s0/ckpt_step2000.npz (train_gen.py gelus/silus with ACT_S=1, i.e. plain SiLU; numpy 2.5.3)",
+  "sha256_of_source_npz": "24c854731c8befd0eb968530a5950928fdfa93e24fa0cbaf27afbd0d08b00d78",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 2000
+  },
+  "trained_act": "SiLU",
+  "note": "trained with SiLU; sealed with seal_cell.py as an x^2 network: the 8-bit frozen SiLU weights read with z^2, and their one-wave projection read with z^2 (int_even.py: projection exact, no ties, frozen weights read with z^2 wrong on 6522)",
+  "train_acc": 1.0,
+  "heldout_acc": 0.0
+ },
+ "x2_ht70_H1024_s0_step15": {
+  "from": "GitHub Actions sweep/batch9 run 41368164557, artifact sweep-3/x2_ht70_H1024_s0/ckpt_step15.npz (train_act.py sq, HOLDOUT_TOKENS=70, numpy 2.5.3)",
+  "sha256_of_source_npz": "f43e4cf430b4d749bccad88ecee7e84fa9344ea3ca87966e3b7d6a7ae77a4103",
+  "config": {
+   "p": 97,
+   "H": 1024,
+   "seed": 0,
+   "lr": 0.01,
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps": 15
+  },
+  "hold_tokens": [
+   0,
+   2,
+   3,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   17,
+   18,
+   20,
+   21,
+   22,
+   24,
+   25,
+   26,
+   27,
+   28,
+   30,
+   31,
+   32,
+   33,
+   34,
+   35,
+   36,
+   38,
+   39,
+   40,
+   41,
+   42,
+   43,
+   44,
+   45,
+   47,
+   48,
+   51,
+   52,
+   54,
+   55,
+   59,
+   60,
+   61,
+   62,
+   63,
+   65,
+   67,
+   68,
+   69,
+   71,
+   72,
+   75,
+   76,
+   78,
+   81,
+   82,
+   83,
+   87,
+   88,
+   89,
+   90,
+   92,
+   93,
+   94,
+   95,
+   96
+  ],
+  "note": "the 240 training pairs use only 27 of the 97 tokens; 70 tokens never occur",
+  "train_acc": 0.9375,
+  "heldout_acc": 0.006870978296433635
+ }
+}

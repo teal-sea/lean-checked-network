@@ -1,0 +1,8 @@
+=== x2_hs30_H2048_s0 start 23:23:50
+=== x2_hs30_H2048_s1 start 23:23:50
+=== x2_hs30_H2048_s2 start 23:23:50
+=== x2_hs10_H2048_s0 start 23:23:50
+=== x2_hs30_H2048_s1 exit 0 after 505 s
+=== x2_hs30_H2048_s0 exit 0 after 515 s
+=== x2_hs30_H2048_s2 exit 0 after 517 s
+=== x2_hs10_H2048_s0 exit 0 after 535 s

@@ -1,0 +1,5 @@
+# Smoke test of the seventh-batch kind (p 11, H 16).
+#keep: ^$
+acth x2_ht2_H16_s0 HOLDOUT_TOKENS=2+EXTRA_STEPS=1,2,3,4,5 sq 11 16 0 1e-2 0.0 0.30 20
+acth x2_hs2_H16_s0 HOLDOUT_SUMS=2+EXTRA_STEPS=1,2,3,4,5 sq 11 16 0 1e-2 0.0 0.30 20
+acth x2_ht0_H16_s0 EXTRA_STEPS=1,2,3,4,5 sq 11 16 0 1e-2 0.0 0.30 20

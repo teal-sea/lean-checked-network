@@ -1,0 +1,4 @@
+=== x2_ht60_H1024_s1 start 00:38:11
+=== x2_ht60_H1024_s2 start 00:38:11
+=== x2_ht60_H1024_s2 exit 0 after 78 s
+=== x2_ht60_H1024_s1 exit 0 after 78 s

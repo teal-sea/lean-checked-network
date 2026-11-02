@@ -1,0 +1,5 @@
+name = "lean-checked-network"
+defaultTargets = ["LeanCheckedNetwork"]
+
+[[lean_lib]]
+name = "LeanCheckedNetwork"

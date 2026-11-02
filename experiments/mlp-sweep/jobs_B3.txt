@@ -1,0 +1,9 @@
+# Batch 3, box B (same rule as jobs_A3.txt).
+gen abs_H1024_s0 X=0 abs 97 1024 0 1e-2 0.0 0.30 20000
+gen tanh_H1024_s0 X=0 tanh 97 1024 0 1e-2 0.0 0.30 20000
+gen abs_H1024_s1 X=0 abs 97 1024 1 1e-2 0.0 0.30 20000
+gen tanh_H1024_s1 X=0 tanh 97 1024 1 1e-2 0.0 0.30 20000
+gen gelu1step_H1024_s0 EXTRA_STEPS=1,2,3,4,5 gelu 97 1024 0 1e-2 0.0 0.30 5
+gen silu1step_H1024_s0 EXTRA_STEPS=1,2,3,4,5 silu 97 1024 0 1e-2 0.0 0.30 5
+gen abs1step_H1024_s0 EXTRA_STEPS=1,2,3,4,5 abs 97 1024 0 1e-2 0.0 0.30 5
+gen tanh1step_H1024_s0 EXTRA_STEPS=1,2,3,4,5 tanh 97 1024 0 1e-2 0.0 0.30 5

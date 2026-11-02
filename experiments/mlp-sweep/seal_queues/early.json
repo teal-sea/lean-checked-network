@@ -1,0 +1,38 @@
+[
+ {
+  "name": "x2_H512_s0_step2",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H512_s0_step2.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000
+ },
+ {
+  "name": "x2_H512_s1_step2",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H512_s1_step2.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000
+ },
+ {
+  "name": "x2_H512_s2_step2",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H512_s2_step2.npz",
+  "pure_clock": true,
+  "build_jobs": 2,
+  "jobs": 2,
+  "chunks": 32,
+  "max_heartbeats": 4000000
+ },
+ {
+  "name": "x2_H1024_s0_step1",
+  "npz": "experiments/mlp-sweep/seal_inputs/x2_H1024_s0_step1.npz",
+  "pure_clock": true,
+  "build_jobs": 1,
+  "jobs": 1,
+  "chunks": 64,
+  "max_heartbeats": 12000000
+ }
+]

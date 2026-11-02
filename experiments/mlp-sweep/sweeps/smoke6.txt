@@ -1,0 +1,6 @@
+# Smoke test of the sixth-batch activations at toy size (p 11, H 16), before batch6.txt.
+#keep: ^$
+gene sqlin1_H16_s0 ACT_C=1+EXTRA_STEPS=1,2,3,4,5,10,20 sqlin 11 16 0 1e-2 0.0 0.30 30
+gene tanhsq1_H16_s0 ACT_C=1+EXTRA_STEPS=1,2,3,4,5,10,20 tanhsq 11 16 0 1e-2 0.0 0.30 30
+gene sqlin0_H16_s0 ACT_C=0+EXTRA_STEPS=1,2,3,4,5,10,20 sqlin 11 16 0 1e-2 0.0 0.30 30
+gene gelu_H16_s0 ACT_S=1+EXTRA_STEPS=1,2,3,4,5,10,20 gelus 11 16 0 1e-2 0.0 0.30 30

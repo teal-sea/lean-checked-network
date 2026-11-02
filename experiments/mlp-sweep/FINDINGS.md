@@ -250,12 +250,15 @@ work from above; 0.9 to 1.9 by width), steeper than both simple pictures (1/2 an
 pooling and its treatment of the floor were not fixed in advance.
 
 **Generalization to what was never seen.** At frac 0.05 the training sets are small enough to miss
-whole tokens and sums. Seed 0's 470 pairs never contain token 74 (as a or as b), so training never
-touches the rows of E1 and E2 for 74 (identical at steps 1 and 10); seed 1's never contain a pair
-with sum 83; seed 2's never contain sum 35 or first token 32. In all three the projection becomes
-exact on all 9,409 pairs at H 1024 to 4096, including the 193 pairs with token 74 and the 97 pairs
-with each unseen sum. The one-wave projection fills these in from the waves of the other tokens; the
-memorizing network cannot (its rows for token 74 are its random initialization).
+whole tokens and sums. Seed 0's 470 pairs never contain token 74 (as a or as b) nor 68 as a first
+token, so training never changes the float rows of E1 and E2 for them (bit-identical to the
+initialization at every kept step; only their 8-bit rounding is rescaled); seed 1's never contain a
+pair with sum 83; seed 2's never contain sum 35 or first token 32. In all three the projection becomes
+exact on all 9,409 pairs at H 1024 to 4096 (every checkpoint to step 500), including the 193 pairs
+with token 74 and the 97 pairs with each unseen sum. The memorizing network cannot do this (its rows
+for token 74 are its random initialization). The projection can because it reads each weight column in
+token-index order as one wave over Z_97: the cyclic order of the tokens is built into the projection,
+not learned by the network, and it is what fills in the unseen tokens.
 
 Caveats from the independent check: for a given frac and seed every width trains on the same pairs
 (the split is drawn before the init), and the subsets are nested across fractions, so a column of the
@@ -333,16 +336,21 @@ Prediction 1 (within a factor 2 for every run with r at most 0.15) held in 8 of 
 of the 9 fixed as the win: **the law failed for z^2 + c z at c = 2, 4 and 8**, where the adder arrives at
 step 15 to 24 instead of growing like c. It held for every GELU run, and there quantitatively: the
 predicted fall like 1/sqrt(H) (28, 20, 14, 10) matches the measured 24 to 26, 20, 13 to 14 and 9 to 10.
-Prediction 2 (no slower than the law for r above 0.15) held in all 6 runs. Prediction 3 (z^2 + c z and
+(The H 1024 point was in the fit that set the constant 9, so the width scaling is tested by H 512,
+2048 and 4096.) Prediction 2 (no slower than the law for r above 0.15) held in all 6 runs. Prediction 3 (z^2 + c z and
 tanh(z) + d z^2 with the same r within a factor 2 of each other) held in all four pairs, including the
-pair where both miss the law (c = 2: 15, 14; d = 0.5: 17, 17). Prediction 4 (tanh never) held. Every one
-of these networks memorizes (wrong on all 6,586 held-out pairs at step 300) and only the activations
-with the largest even part (r of 0.22 and up) have their own readout exact.
+pair at r = 0.028, where both arrive at about half the predicted time (c = 2: 15, 14, outside the
+factor 2; d = 0.5: 17, 17, just inside). Prediction 4 (tanh never) held. All networks but the plain x^2
+control memorize (wrong on all 6,586 held-out pairs at step 300; the control on 6,577), and only
+z^2 + 0.25 z and tanh(z) + 10 z^2 have their own readout exact (tanh(z) + 4 z^2: 15 and 32 wrong).
 
-So r at initialization predicts the arrival when it comes early (t* up to about 13, any width) and
-underestimates it beyond that: by step 15 the weights have moved by about 15 x lr = 0.15 per entry,
-several times the initialization scale (1/sqrt(H) = 0.03), so the pre-activations and with them the even
-part's share have grown. That reading is post hoc and untested.
+What the law gets right is GELU's width scaling (measured exponent -0.42 to -0.51 against -0.5). At
+fixed H 1024, t* grows with 1/r much more slowly than the law says (log-slope -0.3 for z^2 + c z and
+-0.5 for tanh(z) + d z^2, against -1), so for long arrivals the law predicts later than measured. A
+possible reason, post hoc and untested: by step 15 the weights have moved by about 15 x lr = 0.15 per
+entry, several times the initialization scale (about 0.03), so the pre-activations, and with them the
+even part's share, have grown. With the constant at 8.5, the low end of the fit's range, 9 of 11 runs
+would pass; against the 9 fixed in advance, 8 do.
 
 ### 12. Exact on tokens and sums never seen in training (seventh batch)
 
@@ -351,7 +359,7 @@ every pair removed that contains one of k held-out tokens (as a or b), or whose 
 held-out sums; 500 Adam steps; integer pure clock (what a seal checks) scored on all 9,409 pairs. t* =
 first checkpoint from which it is exact on all 9,409 pairs to step 500 (three seeds):
 
-| held out | training pairs | H 1024 | H 2048 | net wrong on the held-out pairs at step 500 |
+| held out | training pairs (seed 0) | H 1024 | H 2048 | net wrong on the held-out pairs at step 500 |
 | --- | --- | --- | --- | --- |
 | 1 token | 2,765 | 1, 1, 1 | 1, 1, 1 | 193 of 193 |
 | 3 tokens | 2,640 | 1, 1, 1 | 1, 1, 1 | 573 of 573 |
@@ -360,16 +368,19 @@ first checkpoint from which it is exact on all 9,409 pairs to step 500 (three se
 | 1 sum | 2,790 | 1, 1, 1 | 1, 1, 1 | 97 of 97 |
 | 3 sums | 2,725 | 1, 1, 1 | 1, 1, 1 | 291 of 291 |
 | 10 sums | 2,528 | 1, 1, 1 | 1, 1, 1 | 970 of 970 |
-| **30 sums** | 1,961 to 1,981 | 15, 15, 9 | 9, 10, 7 | 2,910 of 2,910 |
+| **30 sums** | 1,981 (1,955 to 1,981 over seeds) | 15, 15, 9 | 9, 10, 7 | 2,910 of 2,910 |
 
 All 48 runs are exact on all 9,409 pairs by step 15 and stay exact to step 500. **After one Adam step
 on a training set in which 30 of the 97 tokens never occur, the projection adds correctly on all 4,920
-pairs that contain one of them (H 2048, all three seeds)**, while the network itself is wrong on all
-but 10 to 16 of those pairs; training never touches the network's rows for those tokens, and the
-projection supplies them from each neuron's wave. With 30 sums never shown as a label the network
-never outputs them (wrong on all 2,910 such pairs) and the projection does. Both predictions held and
+pairs that contain one of them (H 2048, all three seeds)**, while the network itself is right on 28 to
+32 of those pairs at step 1 (10 to 16 at step 500, about chance). Training never changes the float rows
+for those tokens; the projection supplies them from each neuron's wave, read in token-index order (see
+the remark under result 8: the order is the projection's, not the network's). With 30 sums never shown as a label the network
+is wrong on all 2,910 such pairs (at H 1024 it never outputs a held-out sum on any pair at any
+checkpoint) and the projection is right on all of them. Both predictions held and
 the win fixed in advance (30 tokens or 30 sums, any seed) is met for both. Held-out sums are the harder
-case (7 to 15 steps against 1 to 2 for tokens). The eighth batch looks for where it stops.
+case (7 to 15 steps against 1 to 2 for tokens); for 30 sums the projection is first exact at step 1 at
+H 2048 and then loses and regains exactness before t*. The eighth batch looks for where it stops.
 
 ### 13. How far it goes: exact with 70 of 97 tokens, or 80 of 97 sums, never seen (eighth batch)
 
@@ -554,6 +565,15 @@ Two searchers and one adversarial refuter per claim group, papers opened; the sy
   near chance where x^2, |x| and ReLU work.
 - Corrections to the first search: Barak et al. do have a one-step statement (on parity, with the
   initialization erased), and Kumar & Sankaranarayanan Thm. 4.2(iii) is closer than first graded.
+- **Unseen tokens and sums (results 8, 12, 13): not found** (`results/prior_art_unseen_2026-11-01.md`).
+  That networks fail on group elements left out of training is known (Kvinge et al. 2601.21150);
+  Ootani 2609.20166 calls held-out operand rows of modular addition unrecoverable and no transformer in
+  144 runs beats that ceiling. Classes never used as labels are predicted from the order of the labels
+  in ordinal zero-shot learning (Huo & Geng, IJCAI 2017), and models with the group's rotations built in
+  reach unseen group elements (BRo-JEPA 2606.01372; Kam et al. 2607.13749). No opened paper has a
+  read-out that is exact on tokens or sums absent from training. The honest framing: swapping two absent
+  tokens leaves the training set unchanged, so the data alone cannot fix those pairs; the projection
+  fixes them because it brings in the cyclic order of the token indices.
 
 ## Open
 

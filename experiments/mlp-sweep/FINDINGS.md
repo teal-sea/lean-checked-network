@@ -396,6 +396,14 @@ least 80 for sums, at both widths; the guess recorded in advance (50) was too lo
 or more tokens, any seed) is met. At 80 tokens (17 seen, 81 training pairs) two of three seeds end 1 to
 5 pairs short.
 
+The ninth batch (`RULES.md`, fixed before its runs) placed the limit. At H 1024, 60 held-out tokens are
+exact from step 15 in all three seeds and 70 from step 15 to 20 in all three (predicted: all three and
+at least one). More width does not move the limit: at H 8192, 80 held-out tokens end 4, 359 and 4 pairs
+short (predicted exact in at least two seeds: failed), and 85 and 90 are far off (6,890 or more wrong;
+predicted). 90 held-out sums at H 4096 (7 labels seen) end 4,201 to 5,659 short (predicted exact in at
+least one seed: failed). So the limit is set by the data, between 70 and 80 missing tokens (240 and 81
+training pairs) and between 80 and 90 missing sums, not by the width.
+
 ## Kernel-checked
 
 Twenty seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner

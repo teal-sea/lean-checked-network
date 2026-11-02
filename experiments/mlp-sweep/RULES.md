@@ -163,3 +163,13 @@ This is a measurement: report, per width and kind, the largest k with t* finite 
 and in all three. A guess, recorded so it can be wrong: exact up to k = 50 for both kinds at H 4096.
 Win: an exact projection with at least half of the tokens (k >= 49) never seen in training, any seed,
 H <= 4096.
+
+## Ninth batch (fixed 2026-11-01 ~19:45 Bogota, before any of its runs; GitHub Actions)
+
+Setup, measures and t* as in the seventh and eighth batches; jobs in `sweeps/batch9.txt`.
+A. Seal candidates: 60 and 70 held-out tokens at H 1024 (seeds 0-2), checkpoints kept at steps 15,
+20, 30 and 50. Prediction: 60 tokens exact in all three seeds, 70 in at least one.
+B. The limit with more width: 80, 85 and 90 held-out tokens (17, 12 and 7 tokens seen) at H 8192, and
+90 held-out sums (7 labels seen) at H 4096, seeds 0-2. Predictions: 80 tokens exact in at least two
+seeds at H 8192 (at H 4096 two seeds ended 1 and 5 pairs short); 85 and 90 not; 90 sums exact in at
+least one seed.

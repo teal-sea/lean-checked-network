@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Check both networks with Lean's kernel, replay every module with leanchecker (it rechecks the
+# Check the networks with Lean's kernel, replay every module with leanchecker (it rechecks the
 # compiled files with the kernel, so options like debug.skipKernelTC cannot hide anything), run
 # the planted-fault check, print the axioms. Exits non-zero if any step fails.
 # JOBS sets how many modules are replayed at once (default 4, about 2 GB each).
@@ -7,18 +7,20 @@ set -u
 cd "$(dirname "$0")/lean"
 export PATH="$HOME/.elan/bin:$PATH"
 status=0
+# Every module with declarations. The root file LeanCheckedNetwork.lean only imports these; replaying
+# it rechecks all of them at once (over 9 GB), so it is left out: each declaration is replayed once below.
+# Mod257Min (66,049 pairs, 26 minutes) is not in the root build; run_lean_fixed_phase.sh checks and
+# replays it, and lean_run_fixed_phase.log is its record.
+mods=$(find LeanCheckedNetwork -name '*.lean' -not -path '*/Fault/*' -not -path '*/Mod257Min/*' | sed 's/\.lean$//; s|/|.|g' | sort)
 echo "=== build start $(date -u +%FT%TZ)"
-lake build LeanCheckedNetwork > /tmp/build.out 2>&1; b=$?
+# Build every module the replay below reads, not only the root's imports, so a new file under
+# LeanCheckedNetwork/ is built and replayed even if the root does not import it.
+lake build LeanCheckedNetwork $mods > /tmp/build.out 2>&1; b=$?
 grep -E "✖|error|Build completed|warning" /tmp/build.out
 echo "=== build exit $b end $(date -u +%FT%TZ)"
 [ $b -eq 0 ] || status=1
 JOBS=${JOBS:-4}
 echo "=== replay every module with leanchecker, $JOBS at a time"
-# Every module with declarations. The root file LeanCheckedNetwork.lean only imports these; replaying
-# it rechecks all of them at once (over 9 GB), so it is left out: each declaration is replayed once here.
-# Mod257Min (66,049 pairs, 26 minutes) is not in the root build; run_lean_fixed_phase.sh checks and
-# replays it, and lean_run_fixed_phase.log is its record.
-mods=$(find LeanCheckedNetwork -name '*.lean' -not -path '*/Fault/*' -not -path '*/Mod257Min/*' | sed 's/\.lean$//; s|/|.|g' | sort)
 nmods=$(printf '%s\n' $mods | wc -l)
 printf '%s\n' $mods | xargs -P "$JOBS" -I{} sh -c \
   'if lake env leanchecker {} > /tmp/leanchecker.{}.out 2>&1; then echo "OK   {}"; else echo "FAIL {}"; cat /tmp/leanchecker.{}.out; fi' \
@@ -40,14 +42,18 @@ fi
 echo "=== axioms"
 cat > /tmp/axioms_check.lean <<'LEAN'
 import LeanCheckedNetwork
+import LeanCheckedNetwork.Relu
+import LeanCheckedNetwork.Abs
 #print axioms LeanCheckedNetwork.Trained.adds_mod_113
 #print axioms LeanCheckedNetwork.CircleOnly.adds_mod_113
 #print axioms LeanCheckedNetwork.FixedPhase12.adds_mod_113
 #print axioms LeanCheckedNetwork.FixedPhase16.adds_mod_113
 #print axioms LeanCheckedNetwork.Mod12All.adds_mod_12
+#print axioms LeanCheckedNetwork.answerR_eq_fastAnswerR
+#print axioms LeanCheckedNetwork.answerA_eq_fastAnswerA
 LEAN
 lake env lean /tmp/axioms_check.lean > /tmp/axioms.out 2>&1; cat /tmp/axioms.out
 nstd=$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]$" /tmp/axioms.out)
-if [ "$nstd" -eq 5 ]; then echo "all five theorems use only the standard axioms"; else echo "PROBLEM: unexpected axioms"; status=1; fi
+if [ "$nstd" -eq 7 ]; then echo "all seven theorems use only the standard axioms"; else echo "PROBLEM: unexpected axioms"; status=1; fi
 echo "=== done $(date -u +%FT%TZ)"
 exit $status

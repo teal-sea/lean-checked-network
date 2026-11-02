@@ -52,3 +52,23 @@ The new Open question (why the network is at chance while one random frequency p
 adder) is not answered by the published theory, which assumes small initialization where the other
 frequencies stay negligible (Wang et al. Thm. 1; He et al. Thm. B.4); Gromov's accounting of the x^2 terms
 (Sec. 3.1, Eqs. 10-11) covers single-frequency neurons only.
+
+## Code review after the merge (2026-11-02)
+
+A ten-angle review of the merged code (one verifier per candidate, then a sweep for gaps) confirmed 15
+defects, all fixed:
+- FINDINGS: the memorizer row was read on a coarser checkpoint grid than stated (note (b) now gives its grid
+  and its runs' full-grid values); the 5 to 2,754 range on the seal cells was Liu & Lu's frequency on the frozen
+  tables, not the published float filter (11 to 2,614 on the 16 cells rerun in float); "as early as ours" had
+  one exception; float against frozen readings differ by per-table scaling as well as rounding, which this
+  batch cannot separate; the ten fresh draws are now reproducible (`rand_draws.py`).
+- Scoring: guess 4 is now also scored as its title reads (fails in 14 runs); guess 6 with one constant per
+  reading across widths, learning rates and seeds (fails for Liu & Lu, a factor 6, as well as for random
+  frequencies); the scorer checks the runs against `sweeps/batch11.txt` and exits 1 on missing, duplicate or
+  unchecked runs. No other verdict changes.
+- Pipeline: `filters.py` exits 1 when a seal check cannot run or fails and reads table-only inputs; `job.sh`
+  fails on an unknown job kind; `run_lean.sh` builds every module it replays (so a new Lean file cannot break CI
+  the way PR 20 did) and checks the axioms of the ReLU and |x| evaluators too. `filters.py` now shares
+  `int_even.wrong`, computes each table's spectrum once, asserts that its vectorized projection equals the
+  seals' `int_even.clock`, and gives byte-identical output on every test input.
+- RULES: an erratum names the fourth smoke-test input that the eleventh batch's disclosure left out.

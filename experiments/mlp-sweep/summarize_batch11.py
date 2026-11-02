@@ -3,7 +3,11 @@ any result). Usage: python3 summarize_batch11.py DIR (run directories with curve
 seal_inputs/curve_filters.csv from the filt job). Fixed after an independent review and before any result was
 read: readings are looked up as their CSV columns (ours -> ours_wrong, ...), and guesses 2 and 3 cover every
 run the RULES wording covers (2: every lr 0.01 run at H >= 1024, two-sided; 3: every lr 0.01 run at H >= 2048,
-checkpoints to step 100)."""
+checkpoints to step 100). Fixed after a code review, once the results were known (the verdicts these fixes change
+are reported as such in FINDINGS): the runs found are checked against sweeps/batch11.txt (missing, unexpected and
+duplicate runs, and seal checks asked for but absent, make the script exit 1); a missing column is an error, not
+"never exact"; guess 4 is also scored as its title reads; guess 6 is scored with one constant per reading across
+widths, learning rates and seeds, leaving out t* = 1, which is only a floor."""
 import csv
 import glob
 import os
@@ -12,19 +16,34 @@ import sys
 
 READ = ('ours', 'ours_float', 'll', 'll_nodc', 'll_int', 'rand', 'min', 'net')
 root = sys.argv[1]
-runs, seal_rows = {}, []
-for f in glob.glob(os.path.join(root, '**', 'curve_filters.csv'), recursive=True):
+BATCH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sweeps', 'batch11.txt')
+expected, seal_asked = set(), set()
+for line in open(BATCH):
+    parts = line.split()
+    if len(parts) >= 2 and not parts[0].startswith('#'):
+        expected.add(parts[1])
+        if 'SEAL_REF=' in line:
+            seal_asked.add(parts[1])
+runs, seal_rows, dupes = {}, [], []
+for f in sorted(glob.glob(os.path.join(root, '**', 'curve_filters.csv'), recursive=True)):
     name = os.path.basename(os.path.dirname(f))
+    if name in runs or (name == 'seal_inputs' and seal_rows):
+        dupes.append(os.path.relpath(f, root)); continue  # the first one found is kept
     rows = list(csv.DictReader(open(f)))
     if name == 'seal_inputs':
         seal_rows = rows
     else:
         runs[name] = sorted(rows, key=lambda r: int(r['step']))
+found = set(runs) | ({'seal_inputs'} if seal_rows else set())
+missing, unexpected = sorted(expected - found), sorted(found - expected)
+print(f"## runs: {len(found & expected)} of the {len(expected)} in sweeps/batch11.txt found; missing: {missing or 'none'};"
+      f" not in the batch: {unexpected or 'none'}; duplicates ignored: {dupes or 'none'}\n")
 
 
 def val(r, k):
     c = f'{k}_wrong' if k in READ else k
-    return None if r.get(c, '') == '' else int(r[c])
+    v = r[c]  # a missing column is an error, never read as "not exact"
+    return None if v == '' else int(v)
 
 
 def tstar(rows, k):
@@ -81,10 +100,12 @@ for g in sorted(groups):
     print(f'{g}: ' + ' ; '.join(out))
 
 print('\n## seal reproduction (frozen tables of the rerun equal to the seal input at its step)')
-for n in sorted(runs):
-    m = [r['seal_match'] for r in runs[n] if r.get('seal_match', '') != '']
-    if m:
-        print(f"{n}: {'reproduced' if all(x == '1' for x in m) else 'DIFFERENT'}")
+unchecked = []
+for n in sorted(seal_asked):
+    m = [r['seal_match'] for r in runs.get(n, []) if r.get('seal_match', '') != '']
+    if not m:
+        unchecked.append(n)
+    print(f"{n}: {('reproduced' if all(x == '1' for x in m) else 'DIFFERENT') if m else 'NOT CHECKED'}")
 
 if seal_rows:
     print('\n## the seal inputs themselves (frozen tables): wrong pairs, ll_int against ours, agreement')
@@ -128,8 +149,15 @@ print(f"3. rand exact at some checkpoint (H >= 2048, lr 0.01): {sorted(r3) or 'n
 
 bad4 = [n for n in runs if not le(tstar(runs[n], 'ours_float'), tstar(runs[n], 'ours'))]
 bad4b = [n for n in runs if not le(tstar(runs[n], 'll'), tstar(runs[n], 'll_int'))]
-print(f"4. t*(ours_float) <= t*(ours) fails in {sorted(bad4) or 'none'}; t*(ll) <= t*(ll_int) fails in {sorted(bad4b) or 'none'}"
+print(f"4. as written, t*(ours_float) <= t*(ours) fails in {sorted(bad4) or 'none'}; t*(ll) <= t*(ll_int) fails in {sorted(bad4b) or 'none'}"
       f" -> {'held' if not bad4 and not bad4b else 'FAILED'}")
+lose4 = [n for n in runs if not le(tstar(runs[n], 'ours'), tstar(runs[n], 'ours_float'))]
+lose4b = [n for n in runs if not le(tstar(runs[n], 'll_int'), tstar(runs[n], 'll'))]
+print(f"4. as its title reads (the frozen reading no later than the float one): t*(ours) <= t*(ours_float) fails in "
+      f"{len(lose4)} runs {sorted(lose4)}; t*(ll_int) <= t*(ll) fails in {len(lose4b)} runs {sorted(lose4b)}"
+      f" -> {'held' if not lose4 and not lose4b else 'FAILED'}")
+print("   (the frozen tables are each scaled to 127 and rounded; the float and frozen readings differ by both, and this"
+      " batch cannot separate them)")
 
 mem = [f'x2_mem_H512_s{s}' for s in range(5) if f'x2_mem_H512_s{s}' in runs]
 ok5 = True
@@ -144,18 +172,29 @@ for n in mem:
     print(f"5. {n}: ll exact at every checkpoint from 100: {all_exact} (worst {worst}); agree_q at 20k {ag:.3f} (agree_f {agf:.3f}); max DC share {dc:.3f}")
 print(f"5. {'held' if ok5 and len(mem) == 5 else 'FAILED'}")
 
-print('6. t* x lr x H across lr 0.01, 0.005, 0.0025 (per H and seed; within a factor 2?)')
+print('6. t* x lr x H at lr 0.01, 0.005 and 0.0025, H 1024 and 2048, seeds 0-4, one constant per reading (all values'
+      ' within a factor 2?); t* = 1 is a floor and is left out, a reading never exact fails the law')
+held6 = {}
 for k in ('ours', 'll', 'rand'):
-    good, tot, show = 0, 0, []
+    vals, never, floor, show = [], [], 0, []
     for H in (1024, 2048):
-        for s in range(5):
-            v = [tstar(runs.get(name_of(H, lr, s), []), k) for lr in ('1e-2', '5e-3', '2.5e-3')]
-            if any(t is None for t in v):
-                show.append(f'H{H}s{s}:{v}'); tot += 1; continue
-            c = [t * lr * H for t, lr in zip(v, (1e-2, 5e-3, 2.5e-3))]
-            tot += 1; good += max(c) <= 2 * min(c)
-            show.append(f"H{H}s{s}:" + '/'.join(f'{x:.0f}' for x in c))
-    print(f"   {k}: {good} of {tot} within a factor 2 | " + ' '.join(show))
+        for lr_s, lr in (('1e-2', 1e-2), ('5e-3', 5e-3), ('2.5e-3', 2.5e-3)):
+            for s in range(5):
+                n = name_of(H, lr_s, s)
+                if n not in runs:
+                    continue  # reported as missing above
+                t = tstar(runs[n], k)
+                if t is None:
+                    never.append(n)
+                elif t == 1:
+                    floor += 1
+                else:
+                    vals.append(t * lr * H)
+    lo, hi = (min(vals), max(vals)) if vals else (float('nan'), float('nan'))
+    held6[k] = bool(vals) and not never and hi <= 2 * lo
+    print(f"   {k}: {len(vals)} values from {lo:.1f} to {hi:.1f} (factor {hi / lo:.1f}); {floor} at the t* = 1 floor;"
+          f" never exact in {len(never)} -> {'held' if held6[k] else 'FAILED'}")
+print(f"6. {'held' if held6['ll'] and held6['rand'] else 'FAILED'} (the guess names ll and rand; ours is shown for reference)")
 
 # ---------------------------------------------------------------- win conditions
 print('\n## win conditions')
@@ -164,3 +203,9 @@ for H in (512, 1024, 2048, 4096):
     o1 = sum(at(runs.get(name_of(H, '1e-2', s), []), 1, 'ours') == 0 for s in range(5))
     print(f"H {H}, lr 0.01, step 1 exact: ll {n1} of 5, ours {o1} of 5")
 print(f"rand exact anywhere: {sorted(n for n in runs if ever(runs[n], 'rand')) or 'none'}")
+
+problems = ([f'missing runs {missing}'] if missing else []) + ([f'duplicate runs {dupes}'] if dupes else []) \
+    + ([f'seal checks asked for but absent {unchecked}'] if unchecked else [])
+if problems:
+    print('\nINCOMPLETE: ' + '; '.join(problems) + ' (verdicts above may be wrong)')
+    sys.exit(1)

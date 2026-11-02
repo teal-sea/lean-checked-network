@@ -150,3 +150,16 @@ the other untrained pairs; t* = first checkpoint from which it is wrong on 0 of 
 (2) the frozen network itself is wrong on almost every pair with a held-out token or sum (it has
 nothing to recall there). Win: an exact projection on all pairs with 30 tokens (31% of the
 vocabulary) never seen, or with 30 sums never seen as a label, in any seed.
+
+## Eighth batch (fixed 2026-11-01 ~18:55 Bogota, before any of its runs; GitHub Actions)
+
+The seventh batch found the projection exact on all 9,409 pairs with 30 tokens never seen (one step at
+H 2048) and with 30 sums never seen as a label (9 to 15 steps at H 1024). How far does it go? The same
+setup with k = 40, 50, 60, 70, 80 held-out tokens, and separately k = 40 to 80 held-out sums; H 2048 and
+4096; seeds 0-2; 500 steps; checkpoints and measures as in the seventh batch. Jobs in
+`sweeps/batch8.txt`; no checkpoints kept (cells to seal can be rerun, the runs are deterministic).
+
+This is a measurement: report, per width and kind, the largest k with t* finite in at least one seed
+and in all three. A guess, recorded so it can be wrong: exact up to k = 50 for both kinds at H 4096.
+Win: an exact projection with at least half of the tokens (k >= 49) never seen in training, any seed,
+H <= 4096.

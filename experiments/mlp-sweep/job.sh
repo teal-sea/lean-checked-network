@@ -4,7 +4,8 @@
 # environment setting first (SHUFFLE_LABELS=1, EARLY=1), tf: transformer-curve/train_curve.py + reduce.py +
 # probe_sum_part.py), gen: mlp-sweep/train_gen.py + analyze_gen.py with '+'-joined VAR=value settings first;
 # fourth batch: gene (gen + analyze_even.py), genq (gen + analyze_act.py, the integer projection),
-# acte (train_act.py + analyze_act.py with '+'-joined settings), genx (gene + int_even.py), acth (acte + holdout_eval.py). One core per job;
+# acte (train_act.py + analyze_act.py with '+'-joined settings), genx (gene + int_even.py), acth (acte + holdout_eval.py);
+# eleventh batch: actf (train_act.py + filters.py, the same settings for both), filt (filters.py on a directory of the repo). One core per job;
 # four at a time.
 set -u
 kind=$1; name=$2; shift 2
@@ -31,6 +32,9 @@ case $kind in
   acth) IFS='+' read -ra evs <<< "$1"; shift; env "${evs[@]}" $PY $MS/train_act.py "$@" "$d" > "$d/train.log" 2>&1 && $PY $MS/analyze_act.py "$d" > "$d/analyze.log" 2>&1 \
           && $PY $MS/holdout_eval.py "$d" > "$d/holdout.log" 2>&1 ;;
   acte) IFS='+' read -ra evs <<< "$1"; shift; env "${evs[@]}" $PY $MS/train_act.py "$@" "$d" > "$d/train.log" 2>&1 && $PY $MS/analyze_act.py "$d" > "$d/analyze.log" 2>&1 ;;
+  actf) IFS='+' read -ra evs <<< "$1"; shift; env "${evs[@]}" $PY $MS/train_act.py "$@" "$d" > "$d/train.log" 2>&1 \
+          && env "${evs[@]}" $PY $MS/filters.py "$d" > "$d/filters.log" 2>&1 ;;
+  filt) $PY $MS/filters.py ~/tc/repo/"$1" "$d/curve_filters.csv" > "$d/filters.log" 2>&1 ;;
   tf)   $PY $TC/train_curve.py "$d" "$@" --threads 1 > "$d/train.log" 2>&1 \
           && $PY $TC/reduce.py "$d"/ckpt_*.npz > "$d/reduce.jsonl" 2> "$d/reduce.log" \
           && $PY $TC/probe_sum_part.py "$d"/ckpt_*.npz > "$d/probe.jsonl" 2> "$d/probe.log" ;;

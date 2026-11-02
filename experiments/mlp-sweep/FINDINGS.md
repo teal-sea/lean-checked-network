@@ -592,6 +592,6 @@ Two searchers and one adversarial refuter per claim group, papers opened; the sy
 
 - The arrival law with the pre-activation scale measured along training rather than at
   initialization (result 11's failure at large c).
-- Seals of the GELU result (its projection read with z^2 is an x^2 network, so the existing pipeline
-  applies) and of one-step cells at H 2048 (beyond one runner's 6 hours as the pipeline stands).
+- Seals of one-step cells at H 2048 (beyond one runner's 6 hours as the pipeline stands). The GELU result
+  is sealed (see Kernel-checked).
 - Liu & Lu's filter (frequency from W2 alone, no rounding) on these nets, to measure the difference.

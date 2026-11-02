@@ -186,3 +186,48 @@ from which the projection is exact on all 9,409 pairs to step 1,000). This is a 
 smallest frac with t* finite in at least one seed and in all three, per width. A guess, recorded so it
 can be wrong: exact from frac 0.025 at H 4096. Win: an exact projection from at most 2% of the table
 (188 pairs), any seed.
+
+
+## Eleventh batch (fixed 2026-11-02 ~11:05 Bogota, before any of its runs; GitHub Actions)
+
+Is the one-step adder in the weights or in our read-out? Liu & Lu (arXiv 2605.18022, Sec. 4 and App. D.1)
+reduce each neuron to the frequency with the largest |DFT| of its output weights alone (all k, DC included),
+keep that DFT row in its input weights too and take the real part, in float, unrounded. The seals pick the
+frequency from the energy summed over E1, E2 and W2 (DC excluded) and round the frozen 8-bit tables.
+`filters.py` reads every checkpoint eight ways on all 9,409 pairs: the net; `ll` as published; `ll_nodc`
+(k = 0 excluded); `ll_int` (Liu & Lu's frequency on the frozen tables, rounded); `ours_float`; `ours` (the
+seals' projection); and two probes of whether the choice matters at all, `rand` (a frequency drawn uniformly
+per neuron, the same draw at every checkpoint of a run) and `min` (the least energetic frequency). Also the
+share of neurons where `ll` and `ours` pick the same frequency and how many neurons `ll` sends to DC. t* per
+reading as before (first checkpoint from which it is exact to the last).
+
+Reruns, deterministic (22 of them check that they reproduce a seal's frozen tables): memorizers (H 512 seeds
+0-4 and H 1024 seed 0, 20k steps); one step at frac 0.3 (lr 0.01 at H 512 to 4096, seeds 0-4; lr 0.02 at H
+512; lr 0.005 and 0.0025 at H 1024 and 2048, seeds 0-4); frac 0.15, 0.10 and 0.05 at H 1024, 0.10 at H 2048,
+0.02 at H 4096; 50% and 75% wrong labels at H 4096; 30 tokens, 30 sums and 70 tokens never seen at H 1024;
+seeds 0-2 unless stated. Also the 33 seal inputs themselves (frozen tables only: `ll_int` against `ours`).
+Jobs in `sweeps/batch11.txt`.
+
+Seen before these guesses were written (smoke tests of `filters.py`): on four seal inputs `ll_int` was wrong
+on 5 pairs (one step, H 1024 seed 0), 460 (70 tokens never seen, step 15) and 0 (the GELU memorizer read with
+z^2) where `ours` is wrong on 0, and the two rules picked the same frequency for 25%, 28% and 54% of neurons; a
+p 31, H 64 run of 6 steps was far from exact under every reading.
+
+Guesses, recorded so they can be wrong:
+1. The readings order by the energy of the chosen frequency: t*(ours) <= t*(ll) <= t*(rand) <= t*(min) in at
+   least 90% of the runs where both sides of a comparison are finite (ties hold). The published mechanism makes
+   a frequency's phase alignment grow with its amplitude.
+2. `ll` as published is exact at step 1 in at least 3 of 5 seeds at H 2048 and at H 4096 (lr 0.01), and
+   within 2 steps of `ours` in every lr 0.01 run at H >= 1024.
+3. `rand` is exact at some checkpoint within 100 steps at H >= 2048 (lr 0.01) in at least one seed; `min` is
+   never exact at H <= 1024.
+4. Rounding costs nothing: t*(ours_float) <= t*(ours) and t*(ll) <= t*(ll_int) in every run.
+5. Memorizers: `ll` exact at every checkpoint from step 100 to 20k in all five H 512 seeds; the rules agree on
+   40% to 80% of neurons at 20k; `ll` sends under 10% of neurons to DC at every checkpoint.
+6. The arrival law holds for `ll` and `rand` with their own constants: t* x lr x H within a factor 2 across
+   lr 0.01, 0.005 and 0.0025 at H 1024 and 2048.
+
+Win (it changes a claim's standing either way): `ll` as published exact at step 1 in at least 3 of 5 seeds
+at some H <= 4096 means result 2 does not depend on our read-out, since a published filter applied unchanged
+sees it; `rand` exact means the first steps write the adder at frequencies no rule singles out. If `ll` is
+never exact at step 1 where `ours` is, the frequency rule is part of result 2 and FINDINGS must say so.

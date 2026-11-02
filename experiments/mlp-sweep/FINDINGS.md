@@ -441,7 +441,7 @@ checkpoint and lose it again while the network memorizes (H 2048, frac 0.02, see
 
 ## Kernel-checked
 
-Thirty seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
+Thirty-two seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner
 per cell, queues in `seal_queues/`) with the unchanged `seal_cell.py --pure-clock` for x^2 and
 `seal_act.py` for ReLU (with `--right-iff-trained`) and |x| (`lean/LeanCheckedNetwork/Abs.lean`), reading the activation from the checkpoint (`--max-heartbeats` and `--chunks` change only
 elaboration limits and file layout). Every verdict is ok: the build has no `sorry`, `leanchecker`
@@ -505,7 +505,18 @@ All five H 512 memorizers (seeds 0-4 at 20k) are now sealed.
 
 All three H 1024 seeds of the one-step result (lr 0.01) are now sealed.
 
-Running: the GELU memorizer (20k) and SiLU net (2k) read as x^2 networks (H 1024).
+**The even-part result is kernel-checked.** Two seals take networks trained with GELU and with SiLU
+(H 1024, seed 0; `seal_inputs/MANIFEST.json`) and read their 8-bit weights as x^2 networks
+(`seal_cell.py`, unchanged):
+
+| cell | trained with | 8-bit weights read with z^2: wrong | projection read with z^2 | smallest winning gap |
+| --- | --- | --- | --- | --- |
+| gelu_H1024_s0_final_readsq | GELU, 20k Adam steps (memorizer; its own GELU projection is wrong on 3,575) | 6,517 | adds mod 97 | 6,418,911 |
+| silu_H1024_s0_step2000_readsq | SiLU, 2k Adam steps (own projection wrong on 6,139) | 6,522 | adds mod 97 | 5,737,592 |
+
+So the one-wave projection of a GELU memorizer's own weights is proved to add mod 97 on all 9,409 pairs
+once its activation is replaced by z^2. That the GELU network was trained with GELU, and that its
+GELU readout is wrong, is measured (the float evaluation is not in the proof).
 
 ## Prior art (search 2026-11-01: three searchers and three adversarial refuters, papers opened)
 

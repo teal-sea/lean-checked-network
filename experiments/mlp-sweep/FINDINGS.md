@@ -407,6 +407,27 @@ predicted). 90 held-out sums at H 4096 (7 labels seen) end 4,201 to 5,659 short 
 least one seed: failed). So the limit is set by the data, between 70 and 80 missing tokens (240 and 81
 training pairs) and between 80 and 90 missing sums, not by the width.
 
+### 14. Exact from 2% of the table (tenth batch)
+
+Rules in `RULES.md` (tenth batch), fixed before the runs: plain random training sets of 1% to 3% of the
+table, x^2, H 2048 and 4096, three seeds, 1,000 Adam steps, integer projection. t* per seed; "-" means
+not exact at every checkpoint to step 1,000 (smallest count, count at step 1,000):
+
+| frac (pairs) | H 2048 | H 4096 |
+| --- | --- | --- |
+| 0.01 (94) | - (1,696, 1,759), - (2,163, 2,269), - (560, 579) | - (838, 844), - (1,718, 2,128), - (231, 256) |
+| 0.015 (141) | - (334, 557), - (286, 286), - (128, 145) | - (2, 3), - (9, 9), - (8, 67) |
+| **0.02 (188)** | - (11, 174), - (0, 1), **30** | - (1, 9), **20**, - (5, 886) |
+| 0.025 (235) | 30, - (8, 16), 30 | - (0, 2), 15, 20 |
+| 0.03 (282) | 20, 30, 20 | 15, 15, 15 |
+
+**From 188 random pairs, 2% of the table, the projection is an exact adder on all 9,409 pairs and stays
+exact to step 1,000 (one seed at each width)**, while the network fits those pairs and is wrong on
+about 9,210 of the rest. From 282 pairs (3%) every seed is exact at both widths. The win fixed in
+advance (exact from at most 2%, any seed) is met; the guess (exact from 2.5% at H 4096) was about
+right. At 1.5% and below no run gets there, and at these sizes the projection can be exact at one
+checkpoint and lose it again while the network memorizes (H 2048, frac 0.02, seed 1 ends at 1 wrong).
+
 ## Kernel-checked
 
 Twenty seals ran on GitHub Actions (`.github/workflows/seal-cells.yml`, one 4-vCPU, 16 GB runner

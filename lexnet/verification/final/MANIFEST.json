@@ -1,0 +1,48 @@
+{
+  "redactions": {
+    "local scratch root": "<scratch>",
+    "local package root": "<package>"
+  },
+  "files": [
+    {
+      "file": "generator-check.log",
+      "raw_sha256": "e5cea56caff67d260b561022e50fe6cdefe128bb0a8e0dfb892371d887bcb00e",
+      "public_sha256": "e5cea56caff67d260b561022e50fe6cdefe128bb0a8e0dfb892371d887bcb00e"
+    },
+    {
+      "file": "independent-repaired-cases.json",
+      "raw_sha256": "07d65dc3c03b50316eebf6171ec1088608af6356efb1d12c9b44a8989d62df10",
+      "public_sha256": "07d65dc3c03b50316eebf6171ec1088608af6356efb1d12c9b44a8989d62df10"
+    },
+    {
+      "file": "real-head-control.log",
+      "raw_sha256": "160558cf7ca4f36fbeb46235c134424d6c86654f774df98aec729622851a99ee",
+      "public_sha256": "f9831310b1d2b98a7fb03e0c01fd6b4a37a8a6e5a03d5f39224a69596a3e3f95"
+    },
+    {
+      "file": "real-source-directory-guard.log",
+      "raw_sha256": "328915812662c5222cf2c4d66ef4f47f354f01e7cd08311ae93901e7521c5ce1",
+      "public_sha256": "bf34beb322409939f32f7133c47b5ebfe08dac0357b21574a020f28362b949ec"
+    },
+    {
+      "file": "receipts.json",
+      "raw_sha256": "f75a71fc7785051e9c12594bb0474bdd93959d485d06b63f02cb0cf09de76978",
+      "public_sha256": "59fa9464ef553613ec0587fd428319383bed1322c75dd70c1ff9b1ce96a7e3ae"
+    },
+    {
+      "file": "shell-syntax.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "source-preservation.json",
+      "raw_sha256": "2594f495eff2f320ec78b2c5a3ada1d2222eb1b13c85827d3243d7b66e9598ba",
+      "public_sha256": "2594f495eff2f320ec78b2c5a3ada1d2222eb1b13c85827d3243d7b66e9598ba"
+    },
+    {
+      "file": "unit-tests.log",
+      "raw_sha256": "815c57f801b016ef804acad38ac7da556c343be741f528040520926576b30b1b",
+      "public_sha256": "815c57f801b016ef804acad38ac7da556c343be741f528040520926576b30b1b"
+    }
+  ]
+}

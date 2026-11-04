@@ -1,0 +1,6 @@
+evidence/mutant-kw/lean/Flags.lean:31:91: error: Tactic `decide` proved that the proposition
+  ∀ (p : Int × Int), p ∈ List.map wordHash Ref.keywords → p.fst ∈ tab0 ∧ p.snd = 0 ∨ p ∈ kwP
+is false
+evidence/mutant-kw/lean/Flags.lean:32:72: error: Tactic `decide` proved that the proposition
+  ∀ (c : Int), c ∈ tab0 → (c, 0) ∈ List.map wordHash Ref.keywords
+is false

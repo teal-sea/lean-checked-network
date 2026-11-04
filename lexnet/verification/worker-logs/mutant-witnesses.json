@@ -1,0 +1,20 @@
+{
+ "head": {
+  "input_hex": "232f2f",
+  "input": "b'#//'",
+  "length": 3,
+  "original_exact": "988",
+  "mutated_exact": "999",
+  "original_c": "988",
+  "mutated_c": "999"
+ },
+ "kw": {
+  "input_hex": "646f",
+  "input": "b'do'",
+  "length": 2,
+  "original_exact": "11",
+  "mutated_exact": "44",
+  "original_c": "11",
+  "mutated_c": "44"
+ }
+}

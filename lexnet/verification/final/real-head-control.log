@@ -1,0 +1,6 @@
+run directory: <scratch>/controls/run.ork6bu
+head {'kind': 'head coefficient', 'where': 'head[8][5]', 'before': 9.0, 'after': 7.5, 'byte_offset': 79752}
+mutant Reference exit=0
+mutant Pilot exit=0
+mutant Bwd exit=1
+control OK: exactly one error at the frozen location, the false-proposition diagnostic, after two successful prerequisites

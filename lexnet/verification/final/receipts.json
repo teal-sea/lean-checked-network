@@ -1,0 +1,72 @@
+[
+  {
+    "name": "unit-tests",
+    "argv": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-v",
+      "-s",
+      "tests"
+    ],
+    "returncode": 0,
+    "expected_returncode": 0,
+    "wall_s": 14.429,
+    "original_log_sha256": "815c57f801b016ef804acad38ac7da556c343be741f528040520926576b30b1b",
+    "public_log_sha256": "815c57f801b016ef804acad38ac7da556c343be741f528040520926576b30b1b"
+  },
+  {
+    "name": "generator-check",
+    "argv": [
+      "python3",
+      "-B",
+      "generate.py",
+      "--check"
+    ],
+    "returncode": 0,
+    "expected_returncode": 0,
+    "wall_s": 0.928,
+    "original_log_sha256": "e5cea56caff67d260b561022e50fe6cdefe128bb0a8e0dfb892371d887bcb00e",
+    "public_log_sha256": "e5cea56caff67d260b561022e50fe6cdefe128bb0a8e0dfb892371d887bcb00e"
+  },
+  {
+    "name": "shell-syntax",
+    "argv": [
+      "bash",
+      "-n",
+      "verify.sh",
+      "controls.sh"
+    ],
+    "returncode": 0,
+    "expected_returncode": 0,
+    "wall_s": 0.004,
+    "original_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "real-head-control",
+    "argv": [
+      "bash",
+      "controls.sh"
+    ],
+    "returncode": 0,
+    "expected_returncode": 0,
+    "wall_s": 92.312,
+    "original_log_sha256": "160558cf7ca4f36fbeb46235c134424d6c86654f774df98aec729622851a99ee",
+    "public_log_sha256": "f9831310b1d2b98a7fb03e0c01fd6b4a37a8a6e5a03d5f39224a69596a3e3f95"
+  },
+  {
+    "name": "real-source-directory-guard",
+    "argv": [
+      "bash",
+      "verify.sh"
+    ],
+    "returncode": 2,
+    "expected_returncode": 2,
+    "wall_s": 0.266,
+    "original_log_sha256": "328915812662c5222cf2c4d66ef4f47f354f01e7cd08311ae93901e7521c5ce1",
+    "public_log_sha256": "bf34beb322409939f32f7133c47b5ebfe08dac0357b21574a020f28362b949ec"
+  }
+]

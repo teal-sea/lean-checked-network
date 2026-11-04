@@ -1,0 +1,7 @@
+{
+ "kind": "head coefficient",
+ "where": "head[8][5]",
+ "before": 9.0,
+ "after": 7.5,
+ "byte_offset": 79752
+}

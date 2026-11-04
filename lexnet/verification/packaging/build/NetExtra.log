@@ -1,0 +1,14 @@
+lean/NetExtra.lean:270:84: warning: This simp argument is unused:
+  forall_eq_or_imp
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [grp2Rows, List.mem_cons, List.not_mem_nil, or_false, forall_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+lean/NetExtra.lean:271:66: warning: This simp argument is unused:
+  exists_eq_or_imp
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [grp2Rows, List.mem_cons, List.not_mem_nil, or_false, exists_eq_left, e0]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

@@ -1,0 +1,22 @@
+lean/Bwd.lean:57:6: error: Tactic `decide` proved that the proposition
+  ∀ (c0 c1 sl no : Bool),
+    0 + 15 * min 1 (max 0 (-1 + 2 * enc c0 + 2 * enc c1 + 1 * enc sl + 1 * enc no)) = 18 * enc (c0 || c1 || sl && no)
+is false
+lean/Bwd.lean:51:67: warning: This simp argument is unused:
+  List.getD_cons_succ
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [backward, fvec, encR, canonLogits, Ref.label, seenOf, List.getD_cons_zero,
+    List.getD_eq_getElem?_getD, List.getElem?_cons_succ, List.getElem?_cons_zero, Option.getD_some, Prod.mk.injEq,
+    List.cons.injEq, and_true]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+lean/Bwd.lean:52:4: warning: This simp argument is unused:
+  List.getD_cons_zero
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [backward, fvec, encR, canonLogits, Ref.label, seenOf, List.getD_cons_succ,
+    List.getD_eq_getElem?_getD, List.getElem?_cons_succ, List.getElem?_cons_zero, Option.getD_some, Prod.mk.injEq,
+    List.cons.injEq, and_true]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

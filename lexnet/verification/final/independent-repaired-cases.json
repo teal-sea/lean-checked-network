@@ -1,0 +1,18 @@
+{
+  "axioms_only_main": [
+    false,
+    "missing records: ['Lexnet.num_step', 'Lexnet.fwd_step', 'Lexnet.fwd_all', 'Lexnet.bwd_all', 'Lexnet.backward_ok', 'Lexnet.kw_flag', 'Lexnet.ty_flag', 'Lexnet.co_flag', 'Lexnet.kw_char', 'Hash.wordHash_inj', 'Lexnet.core_mem', 'Lexnet.hash_first', 'Lexnet.hash_second', 'Lexnet.hash_full', 'Lexnet.hash_idle', 'Lexnet.automaton_correct']"
+  ],
+  "axioms_plus_error": [
+    false,
+    "line 19 is not an axiom record: 'error: another audit failed'"
+  ],
+  "negative_extra_lean_error": [
+    false,
+    "expected exactly one error, found 2"
+  ],
+  "negative_missing_prerequisites": [
+    false,
+    "need exactly two successful prerequisite compiles"
+  ]
+}

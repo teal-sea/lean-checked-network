@@ -1,0 +1,47 @@
+test_accepts_real_log (test_harness.Axioms.test_accepts_real_log) ... ok
+test_cli_exit_codes (test_harness.Axioms.test_cli_exit_codes) ... ok
+test_rejects_duplicate_garbage_and_error (test_harness.Axioms.test_rejects_duplicate_garbage_and_error) ... ok
+test_rejects_duplicate_main_with_extra_axiom (test_harness.Axioms.test_rejects_duplicate_main_with_extra_axiom) ... ok
+test_rejects_extra_axiom_in_helper (test_harness.Axioms.test_rejects_extra_axiom_in_helper) ... ok
+test_rejects_missing_helper (test_harness.Axioms.test_rejects_missing_helper) ... ok
+test_rejects_only_main_line (test_harness.Axioms.test_rejects_only_main_line) ... ok
+test_rejects_sorry_warning (test_harness.Axioms.test_rejects_sorry_warning) ... ok
+test_rejects_unexpected_name (test_harness.Axioms.test_rejects_unexpected_name) ... ok
+test_rejects_weaker_main_theorem (test_harness.Axioms.test_rejects_weaker_main_theorem) ... ok
+test_accepts_real_log_with_its_linter_warnings (test_harness.Control.test_accepts_real_log_with_its_linter_warnings) ... ok
+test_rejects_added_error (test_harness.Control.test_rejects_added_error) ... ok
+test_rejects_added_error_in_other_file (test_harness.Control.test_rejects_added_error_in_other_file) ... ok
+test_rejects_error_without_decide_body (test_harness.Control.test_rejects_error_without_decide_body) ... ok
+test_rejects_failed_prerequisite (test_harness.Control.test_rejects_failed_prerequisite) ... ok
+test_rejects_leading_garbage (test_harness.Control.test_rejects_leading_garbage) ... ok
+test_rejects_missing_or_extra_prerequisites (test_harness.Control.test_rejects_missing_or_extra_prerequisites) ... ok
+test_rejects_other_error_text_at_location (test_harness.Control.test_rejects_other_error_text_at_location) ... ok
+test_rejects_phrase_only_spoof (test_harness.Control.test_rejects_phrase_only_spoof) ... ok
+test_rejects_wrong_file (test_harness.Control.test_rejects_wrong_file) ... ok
+test_rejects_wrong_location (test_harness.Control.test_rejects_wrong_location) ... ok
+test_rejects_wrong_target_exit (test_harness.Control.test_rejects_wrong_target_exit) ... ok
+test_check_fails_on_changed_lean_byte (test_harness.Generators.test_check_fails_on_changed_lean_byte) ... ok
+test_check_fails_on_changed_weight_byte (test_harness.Generators.test_check_fails_on_changed_weight_byte) ... ok
+test_check_passes_on_package (test_harness.Generators.test_check_passes_on_package) ... ok
+test_bad_axiom_log_fails (test_harness.WorkdirHarness.test_bad_axiom_log_fails) ... ok
+test_controls_refuse_package_dir (test_harness.WorkdirHarness.test_controls_refuse_package_dir) ... ok
+test_missing_lean_gives_actionable_error_before_any_directory (test_harness.WorkdirHarness.test_missing_lean_gives_actionable_error_before_any_directory) ... ok
+test_module_failure_stops_and_keeps_sources (test_harness.WorkdirHarness.test_module_failure_stops_and_keeps_sources) ... ok
+test_no_bytecode_written_into_package (test_harness.WorkdirHarness.test_no_bytecode_written_into_package) ... ok
+test_package_dir_as_work_is_refused_and_nothing_lost (test_harness.WorkdirHarness.test_package_dir_as_work_is_refused_and_nothing_lost) ... ok
+test_relative_parent_and_existing_files_survive (test_harness.WorkdirHarness.test_relative_parent_and_existing_files_survive) ... ok
+test_replay_failure_fails (test_harness.WorkdirHarness.test_replay_failure_fails) ... ok
+test_subdirectory_of_package_is_refused (test_harness.WorkdirHarness.test_subdirectory_of_package_is_refused) ... ok
+test_symlink_to_package_is_refused (test_harness.WorkdirHarness.test_symlink_to_package_is_refused) ... ok
+test_two_runs_use_distinct_directories (test_harness.WorkdirHarness.test_two_runs_use_distinct_directories) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 14.443s
+
+OK
+upstream/SHA256SUMS: OK
+SHA256SUMS.lean: OK
+gen_lean.py -> lean/Pilot.lean: deterministic=True byte-identical-to-committed=True
+gen_extra.py -> lean/NetExtra.lean: deterministic=True byte-identical-to-committed=True
+gen_float.py -> lean/FloatTables.lean: deterministic=True byte-identical-to-committed=True
+generate --check: PASS

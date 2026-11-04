@@ -1,0 +1,8 @@
+repo HEAD 97e349db6a7e9af9bd359c3e065e062e5ed19562
+leanexport exit 0 5s bytes 27238134
+5ab9ee419353c49e75bf290f83d37d00a967acef956db89b793fff63fa1a35c4  <scratch>/nanoda/export.ndjson
+nanoda exit 0 573s
+Checked 4595 declarations with no typechecker errors, 1 pretty printer errors: [
+    "Unable to print axioms",
+]
+DONE

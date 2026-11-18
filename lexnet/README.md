@@ -29,7 +29,9 @@ network unit or generated table in it. Lean's kernel accepts the theorem with on
   policy's quirks visible. For example only the first 14 bytes of a word are remembered, so
   `_Static_assertSuffix` (a longer name that starts with the 14-byte keyword `_Static_assert`) is
   highlighted entirely as a keyword; an escaped newline does not continue a string or a `//` comment;
-  bytes 128 to 255 are punctuation. See `verification/worker-logs/quirks.json` for checked examples.
+  bytes 128 to 255 have null ASCII features, split identifiers, and receive punctuation coloring
+  outside contexts such as strings and comments. See `verification/worker-logs/quirks.json` for
+  checked examples.
 - No claim of scientific priority is made.
 
 ## Layout

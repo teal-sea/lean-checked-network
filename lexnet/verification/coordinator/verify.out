@@ -1,0 +1,47 @@
+HEAD 97e349db6a7e9af9bd359c3e065e062e5ed19562
+0188bedb0765ed5fee5a8763ca09f6dd25faf2eeac5dc775bb06ef306d7cebe2  upstream/lexnet/lexnet_weights.bin
+Pilot regenerated identical
+NetExtra regenerated identical
+build Reference exit 0 1s
+build Units exit 0 2s
+build Pilot exit 0 47s
+build NetExtra exit 0 22s
+build Hash exit 0 2s
+build Flags exit 0 9s
+build Fwd0 exit 0 1s
+build Fwd1a exit 0 118s
+build Fwd1b exit 0 119s
+build Fwd1c exit 0 118s
+build Fwd1d exit 0 78s
+build Fwd1 exit 0 1s
+build Fwd2 exit 0 4s
+build Fwd3a exit 0 2s
+build Bwd exit 0 11s
+build Fwd3 exit 0 2s
+build Full exit 0 2s
+build Axioms exit 0 0s
+'lexnet_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.num_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.fwd_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.fwd_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.bwd_all' depends on axioms: [propext]
+'Lexnet.backward_ok' depends on axioms: [propext]
+'Lexnet.kw_flag' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.ty_flag' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.co_flag' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.kw_char' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Hash.wordHash_inj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.core_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.hash_first' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.hash_second' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.hash_full' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.hash_idle' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.automaton_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+leanchecker --fresh lean.Full exit 0 773s
+mutant Reference exit 1
+mutant Pilot exit 1
+mutant Bwd exit 1
+sample eval exit 0
+12350 ../sample.c
+/dev/fd/63 ../bin-classes.txt differ: byte 1, line 1
+DONE

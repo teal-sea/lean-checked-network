@@ -14,6 +14,7 @@ range. AI coding agents wrote the proofs; Lean's kernel checked them.
 | For every modulus p ≥ 3, a two-layer network with all ⌊(p−1)/2⌋ frequencies, eight rounded fixed-phase cosine neurons each, adds mod p; at scale 25 the weights fit in 6 signed bits | `PhaseGrid.adds_mod_p_full` | A general proof on Mathlib, not enumeration. The network is constructed, not trained, and grows with p |
 | A trained two-layer MLP adds mod 113 on all 12,769 pairs, including the 6,385 it never saw; cut down to one circle wave per neuron, it still does | `LeanCheckedNetwork.Trained.adds_mod_113`, `LeanCheckedNetwork.CircleOnly.adds_mod_113` | Frozen integer weights |
 | A trained recurrent network adds binary numbers of every length | `RnnAdder.Trained.adds` | Five reachable states checked, then induction |
+| A 984-weight recurrent syntax highlighter (lexnet) equals an 187-line readable Lean lexer on every finite byte list | `lexnet_correct` | Exact integer semantics of the pinned weights, not float64 or the C code. See [lexnet/](lexnet/README.md) |
 
 No `sorry`. Every theorem uses Lean's standard axioms (`propext`, `Classical.choice`,
 `Quot.sound`) or fewer.
@@ -72,6 +73,7 @@ For the release, compiling and replaying the new modules took about 11.8 CPU-hou
 | Mod257Min | `./run_lean_fixed_phase.sh`, not in CI |
 | ACAS Xu | `cd acas && ./recheck.sh`; see [acas/README.md](acas/README.md) |
 | Every-modulus theorem | [phasegrid/README.md](phasegrid/README.md) |
+| Lexnet | `cd lexnet && ./verify.sh`, measured about 33 minutes on a loaded host; see [lexnet/README.md](lexnet/README.md) |
 
 ## How it was built
 

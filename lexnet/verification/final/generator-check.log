@@ -1,0 +1,6 @@
+upstream/SHA256SUMS: OK
+SHA256SUMS.lean: OK
+gen_lean.py -> lean/Pilot.lean: deterministic=True byte-identical-to-committed=True
+gen_extra.py -> lean/NetExtra.lean: deterministic=True byte-identical-to-committed=True
+gen_float.py -> lean/FloatTables.lean: deterministic=True byte-identical-to-committed=True
+generate --check: PASS

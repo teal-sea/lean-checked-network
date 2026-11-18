@@ -1,0 +1,33 @@
+work directory: <scratch>/run
+== 1. pinned inputs, accepted sources, generators
+upstream/SHA256SUMS: OK
+SHA256SUMS.lean: OK
+gen_lean.py -> lean/Pilot.lean: deterministic=True byte-identical-to-committed=True
+gen_extra.py -> lean/NetExtra.lean: deterministic=True byte-identical-to-committed=True
+gen_float.py -> lean/FloatTables.lean: deterministic=True byte-identical-to-committed=True
+generate --check: PASS
+== 2. clean sequential build of the theorem closure
+Reference exit=0 wall=5s
+Units exit=0 wall=2s
+Pilot exit=0 wall=51s
+NetExtra exit=0 wall=20s
+Hash exit=0 wall=3s
+Flags exit=0 wall=9s
+Fwd0 exit=0 wall=1s
+Fwd1a exit=0 wall=129s
+Fwd1b exit=0 wall=121s
+Fwd1c exit=0 wall=191s
+Fwd1d exit=0 wall=155s
+Fwd1 exit=0 wall=1s
+Fwd2 exit=0 wall=4s
+Fwd3a exit=0 wall=3s
+Bwd exit=0 wall=12s
+Fwd3 exit=0 wall=3s
+Full exit=0 wall=1s
+Axioms exit=0 wall=1s
+== 3. axiom allowlist
+axiom allowlist OK: 17 theorems checked; lexnet_correct uses exactly ['Classical.choice', 'Quot.sound', 'propext']
+== 4. leanchecker --fresh lean.Full (Lean's kernel replay, scrubbed environment)
+leanchecker exit=0 wall=1247s
+logs kept in <scratch>/run/logs
+VERIFY PASS

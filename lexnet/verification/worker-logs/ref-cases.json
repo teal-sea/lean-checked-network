@@ -1,0 +1,13 @@
+{
+  "cases": 307,
+  "bytes": 8473,
+  "families": {
+    "adversarial": 21,
+    "word-boundaries": 70,
+    "random-bytes": 30,
+    "c-shaped": 40,
+    "delimiters": 40,
+    "long-words": 32,
+    "every-name": 74
+  }
+}

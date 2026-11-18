@@ -1,0 +1,72 @@
+[
+ {
+  "description": "14-byte prefix: a longer name that starts with _Static_assert is a keyword",
+  "input": "b'_Static_assertSuffix'",
+  "classes": "11111111111111111111"
+ },
+ {
+  "description": "13-byte keyword plus a letter is not",
+  "input": "b'static_assertX'",
+  "classes": "44444444444444"
+ },
+ {
+  "description": "escaped newline does not continue a string literal",
+  "input": "b'\"ab\\\\\\ncd\" x'",
+  "classes": "6666044666"
+ },
+ {
+  "description": "escaped newline does not continue a // comment",
+  "input": "b'// a\\\\\\nb c'",
+  "classes": "888880404"
+ },
+ {
+  "description": "backslash-newline does continue a preprocessor line",
+  "input": "b'#define X \\\\\\n  1\\ny'",
+  "classes": "99999999999999904"
+ },
+ {
+  "description": "/*/ does not close itself",
+  "input": "b'/*/ x */ y'",
+  "classes": "8888888804"
+ },
+ {
+  "description": "number runs swallow identifier characters, but stop at a sign",
+  "input": "b'1foo_bar 1e+3'",
+  "classes": "55555555055A5"
+ },
+ {
+  "description": "non-ASCII byte is punctuation, and splits an identifier",
+  "input": "b'a\\xc3\\xa9b'",
+  "classes": "4AA4"
+ },
+ {
+  "description": "function = word then blanks then ( ; a newline stops the lookahead",
+  "input": "b'f \\t(x) g\\n(y)'",
+  "classes": "300A4A040A4A"
+ },
+ {
+  "description": "keyword before ( is a keyword, not a function",
+  "input": "b'if (x) sizeof (y)'",
+  "classes": "110A4A01111110A4A"
+ },
+ {
+  "description": "type before ( stays a type",
+  "input": "b'int (x)'",
+  "classes": "2220A4A"
+ },
+ {
+  "description": "words are cut at 14 bytes: 15-letter identifier is plain identifier",
+  "input": "b'abcdefghijklmno'",
+  "classes": "444444444444444"
+ },
+ {
+  "description": "keyword inside a comment or string stays comment/string",
+  "input": "b'/* if */ \"while\"'",
+  "classes": "8888888806666666"
+ },
+ {
+  "description": "lone slash and star are punctuation",
+  "input": "b'a / b * c'",
+  "classes": "40A040A04"
+ }
+]

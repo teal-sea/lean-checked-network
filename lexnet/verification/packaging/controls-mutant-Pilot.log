@@ -1,0 +1,4 @@
+'Lexnet.projection' depends on axioms: [propext]
+'Lexnet.trans_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Lexnet.features_exact' does not depend on any axioms
+'Lexnet.automaton_correct' depends on axioms: [propext, Classical.choice, Quot.sound]

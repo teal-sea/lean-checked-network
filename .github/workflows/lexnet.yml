@@ -1,0 +1,93 @@
+name: lexnet
+
+# Lexnet proof package checks. The fast harness job runs on every pull request
+# that touches lexnet/. The heavy Lean job (full build, axiom audit, kernel
+# replay, changed-weight control) runs on those pull requests too, and on
+# manual dispatch.
+# Heavy job cost: measured 2026-11-22 on a shared 4 vCPU, 3.8 GiB host.
+# Unmodified ./verify.sh completed: sequential build plus axiom audit, then
+# leanchecker --fresh lean.Full exit 0 in 4752s (about 79 min). Total about
+# 91 min on that loaded host. Timeout is 180 min so a slower runner still
+# fits. If this job becomes too slow for pull requests, gate it behind
+# workflow_dispatch only and keep the harness job as the pull request gate;
+# do not delete it.
+
+on:
+  pull_request:
+    paths:
+      - "lexnet/**"
+      - ".github/workflows/lexnet.yml"
+  push:
+    branches: [main]
+    paths:
+      - "lexnet/**"
+      - ".github/workflows/lexnet.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lexnet-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  harness:
+    name: Harness tests and regeneration check (no Lean)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Shell syntax
+        run: bash -n lexnet/verify.sh lexnet/controls.sh
+      - name: Harness tests (36 tests, stubbed Lean, not proof evidence)
+        run: cd lexnet && python3 -B -m unittest discover -s tests -v
+      - name: Pinned digests and deterministic regeneration
+        run: cd lexnet && python3 -B generate.py --check
+
+  lean:
+    name: Lean build, axiom audit, replay, control
+    needs: harness
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install elan (pinned toolchain comes from lexnet/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Install the pinned toolchain and put its bin first on PATH
+        run: |
+          elan toolchain install "$(cat lexnet/lean-toolchain)"
+          prefix="$(cd lexnet && lean --print-prefix)"
+          echo "$prefix/bin" >> "$GITHUB_PATH"
+          echo "toolchain prefix: $prefix"
+      - name: Toolchain and machine
+        run: |
+          lean --version
+          echo "leanchecker: $(command -v leanchecker)"
+          nproc
+          free -h
+      - name: Full verification (build, axioms, leanchecker --fresh lean.Full)
+        env:
+          LEXNET_WORK: ${{ runner.temp }}/lexnet-verify
+        run: cd lexnet && ./verify.sh
+      - name: Changed-weight negative control (head mutant must be rejected)
+        env:
+          LEXNET_WORK: ${{ runner.temp }}/lexnet-controls
+        run: cd lexnet && ./controls.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lexnet-logs-${{ github.run_id }}
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/lexnet-verify/
+            ${{ runner.temp }}/lexnet-controls/
